@@ -1,7 +1,12 @@
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
+Tags = new Meteor.Collection("tags");
 
 Template.Page1.ideas = function () {
+    return Ideas.find();
+};
+
+Template.Page2.ideas = function () {
     return Ideas.find();
 };
 
@@ -40,11 +45,25 @@ Template.Page1.events({
     }
 });
 
+Template.taggedIdea.done_checkbox = function () {
+  return this.done ? 'checked="checked"' : '';
+};
+
 Template.Page2.events({
     'click button.nextPage': function () {
         //Not working state machine yet
         Session.set("currentState", "Page3");
-    }
+    },
+
+    'click button.tag-ideas': function() {
+        var color = $(this._id).css( "background-color" );
+        console.log($(this).attr('id'));
+        //Session.set("currentState", "Page3");
+    },
+
+    'click .check': function () {
+    Tags.update(this._id, {$set: {done: !this.done}});
+  }
 });
 
 Template.Page3.events({

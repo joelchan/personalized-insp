@@ -83,3 +83,27 @@ body {
     height: 100%;
     position: absolute;
 }
+
+.tag-ideas {
+    font-family: 'HelveticaNeue-Light';
+    font-size: 22px;
+    background: yellow;
+    border-radius: 0;
+    border: none;
+    padding: 0;
+    margin-bottom: -50px;
+    text-align: left;
+}
+
+.selected-tag {
+    background: yellow;
+}
+
+.done .idea-text {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.idea .idea-text {
+   
+}

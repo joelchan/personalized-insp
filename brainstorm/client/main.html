@@ -61,6 +61,7 @@
           <ul>
               {{#each ideas}}
                 {{> simpleIdea}}
+
               {{/each}}
         </ul>
       </div>
@@ -72,12 +73,13 @@
         <input type="text" id="nextIdea" class="line" placeholder="What's your idea?">
       </div>
       <div class="col-lg-2">
-          <button id="submitIdea" class="submitIdea"> Submit </button>
+          <button id="submitIdea" class="submitIdea btn-default btn-primary"> Submit </button>
       </div>
     </div>
     <center>
-        <button id="nextPage" class="nextPage btn-xlarge2">Continue</button>
+        <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
     </center>
+    
 </template>
 
 <template name="brainstorm1">
@@ -88,9 +90,42 @@
     <li>{{idea}}</li>
 </template>
 
+<template name="taggedIdea">
+
+  <input class="check" name="markdone" type="checkbox" {{{done_checkbox}}} />
+  {{ idea }}
+</template>
+
+
 <template name="Page2">
-<h1> Test Page 2 </h1>
+<!-- timer -->
+  <div class="row">
+        <div class="rectangle-timer">Time Left: 4:59
+        </div>
+  </div>
+  <div class="row">
+    <h2>Select items to tag</h2>
+  </div>
+
+
+  <div class="row">
+
+    <!-- <div class="col-lg-3">meow</div>
+    <div class="col-lg-3">pizza</div>
+    <div class="col-lg-3">poo</div>
+    <div class="col-lg-3">hello</div> -->
+
+    {{#each ideas}}
+                <button class="col-lg-3 tag-ideas">{{> taggedIdea}}</button>
+                <button class="col-lg-3 tag-ideas">test</button>
+                <!-- <button id="test" class="tag-ideas"><div class="col-lg-3 selected-tag">test</div></button> -->
+              {{/each}}
+
+  </div> <br><br>
+<div class="row">
         <button id="nextPage" class="nextPage btn-xlarge2">Continue</button>
+
+
 </template>
 
 <template name="Page3">
