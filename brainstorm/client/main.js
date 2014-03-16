@@ -34,7 +34,7 @@ Template.Page1.events({
     },
     'click button.submitIdea': function () {
         if (newIdea) {
-            Ideas.insert({idea: newIdea, done: false});
+            Ideas.insert({idea: newIdea, done: false, tag: ""});
             newIdea = null;
             document.getElementById('nextIdea').value = ""
         }
@@ -50,7 +50,29 @@ Template.taggedIdea.done_class = function () {
   return this.done ? 'done' : '';
 };
 
+var newTag;
 Template.Page2.events({
+    'keyup input#nextTag': function (evt) {
+        newTag = $('#ideastorm input#nextTag').val().trim();
+    },
+
+    'click button.submitTag': function () {
+        if (newTag) {
+            //edit tags for ideas selected
+            console.log("inside newTag");
+            Ideas.find().forEach(function (post) {
+                if (post.done) {
+                    console.log(post);
+                    console.log(post._id);
+                    Ideas.update(post._id, {$set: {done: false, tag: newTag}});
+                    console.log(newTag);
+                }
+            });
+            newTag = null;
+            document.getElementById('nextTag').value = "";
+        }
+    },
+
     'click button.nextPage': function () {
         //Not working state machine yet
         Session.set("currentState", "Page3");
@@ -58,7 +80,6 @@ Template.Page2.events({
 
     'click button.tag-ideas': function() {
         Ideas.update(this._id, {$set: {done: !this.done}});
-        console.log(this.done);
         //Session.set("currentState", "Page3");
     }
 });
