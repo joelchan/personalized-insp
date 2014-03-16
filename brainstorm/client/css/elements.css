@@ -87,7 +87,7 @@ body {
 .tag-ideas {
     font-family: 'HelveticaNeue-Light';
     font-size: 22px;
-    background: yellow;
+    background: white;
     border-radius: 0;
     border: none;
     padding: 0;
@@ -102,7 +102,6 @@ body {
 .idea-text {
     color: black;
 }
-.done .idea-text {
-    text-decoration: line-through;
-    color: #999;
+.done .idea-text{
+    background: yellow;
 }

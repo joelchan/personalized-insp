@@ -57,9 +57,8 @@ Template.Page2.events({
     },
 
     'click button.tag-ideas': function() {
-        var color = $(this._id).css( "background-color" );
-        var test = this.done;
-        console.log(test);
+        Ideas.update(this._id, {$set: {done: !this.done}});
+        console.log(this.done);
         //Session.set("currentState", "Page3");
     }
 });
