@@ -91,9 +91,10 @@
 </template>
 
 <template name="taggedIdea">
-
-  <input class="check" name="markdone" type="checkbox" {{{done_checkbox}}} />
-  {{ idea }}
+  <div class="idea {{done_class}}">
+  <button class="col-lg-3 tag-ideas"><div class="idea-text {{done_class}}">{{ idea }}</div>
+    </button>
+</div>
 </template>
 
 
@@ -116,7 +117,7 @@
     <div class="col-lg-3">hello</div> -->
 
     {{#each ideas}}
-                <button class="col-lg-3 tag-ideas">{{> taggedIdea}}</button>
+                {{> taggedIdea}}
                 <button class="col-lg-3 tag-ideas">test</button>
                 <!-- <button id="test" class="tag-ideas"><div class="col-lg-3 selected-tag">test</div></button> -->
               {{/each}}

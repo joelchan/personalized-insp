@@ -34,7 +34,7 @@ Template.Page1.events({
     },
     'click button.submitIdea': function () {
         if (newIdea) {
-            Ideas.insert({idea: newIdea});
+            Ideas.insert({idea: newIdea, done: false});
             newIdea = null;
             document.getElementById('nextIdea').value = ""
         }
@@ -45,8 +45,9 @@ Template.Page1.events({
     }
 });
 
-Template.taggedIdea.done_checkbox = function () {
-  return this.done ? 'checked="checked"' : '';
+
+Template.taggedIdea.done_class = function () {
+  return this.done ? 'done' : '';
 };
 
 Template.Page2.events({
@@ -57,13 +58,10 @@ Template.Page2.events({
 
     'click button.tag-ideas': function() {
         var color = $(this._id).css( "background-color" );
-        console.log($(this).attr('id'));
+        var test = this.done;
+        console.log(test);
         //Session.set("currentState", "Page3");
-    },
-
-    'click .check': function () {
-    Tags.update(this._id, {$set: {done: !this.done}});
-  }
+    }
 });
 
 Template.Page3.events({
