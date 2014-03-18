@@ -115,13 +115,37 @@
     <div class="col-lg-3">pizza</div>
     <div class="col-lg-3">poo</div>
     <div class="col-lg-3">hello</div> -->
-
+  
     {{#each ideas}}
-                {{> taggedIdea}}
+        {{> taggedIdea}}
                 <!-- <button id="test" class="tag-ideas"><div class="col-lg-3 selected-tag">test</div></button> -->
-              {{/each}}
-
+    {{/each}}
+  
   </div> <br><br>
+<<<<<<< HEAD
+  <div class="row">
+    <h3>Used Tags</h3>
+  </div>
+
+  <div class="row">
+    <div class="tag">
+      <strong>sport</strong>
+      
+    </div>
+  </div>  
+
+  <div class="row">
+      <div class="col-lg-10">
+        <input type="text" id="nextTag" class="line" placeholder="Give a tag">
+      </div>
+      <div class="col-lg-2">
+          <button id="submitTag" class="submitIdea btn-default btn-primary"> Enter </button>
+      </div>
+    </div>
+    <center>
+        <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
+    </center>
+=======
 
   <div class="row">
       <div class="col-lg-10">
@@ -135,6 +159,7 @@
 
 <div class="row">
         <button id="nextPage" class="nextPage btn-xlarge2">Continue</button>
+>>>>>>> 31f69f35a7ab0c6b95d94307d2c60462a6c5fa7d
 
 
 </template>
