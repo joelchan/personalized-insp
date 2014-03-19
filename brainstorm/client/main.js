@@ -1,14 +1,20 @@
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
 Tags = new Meteor.Collection("tags");
+Types = new Meteor.Collection("types");
 
 Template.Page1.ideas = function () {
     return Ideas.find();
 };
 
+Template.Page2.types = function () {
+    return Types.find();
+};
+
 Template.Page2.ideas = function () {
     return Ideas.find();
 };
+
 
 
 // Defines a state machine using "currentState"
@@ -51,7 +57,23 @@ Template.taggedIdea.done_class = function () {
 };
 
 var newTag;
+var newType;
+
 Template.Page2.events({
+    //put tags
+    'keyup input#nextType': function (evt) {
+        newType = $('#ideastorm input#nextType').val().trim();
+    },
+    'click button.submitType': function () {
+        if (newType) {
+            Types.insert({type: newType, done: false, tag: ""});
+            newType = null;
+            console.log(Types);
+            document.getElementById('nextType').value = ""
+        }
+    },
+
+
     'keyup input#nextTag': function (evt) {
         newTag = $('#ideastorm input#nextTag').val().trim();
     },
