@@ -66,7 +66,7 @@ Template.Page2.events({
     },
     'click button.submitType': function () {
         if (newType) {
-            Types.insert({type: newType, done: false, tag: ""});
+            Types.insert({type: newType, done: false, tag: "", color: ""});
             newType = null;
             console.log(Types);
             document.getElementById('nextType').value = ""
@@ -82,11 +82,13 @@ Template.Page2.events({
         if (newTag) {
             //edit tags for ideas selected
             console.log("inside newTag");
+            var color = getRandomColor();
+            console.log("color: " + color);
             Ideas.find().forEach(function (post) {
                 if (post.done) {
                     console.log(post);
                     console.log(post._id);
-                    Ideas.update(post._id, {$set: {done: false, tag: newTag}});
+                    Ideas.update(post._id, {$set: {done: false, tag: newTag, color: color}});
                     console.log(newTag);
                 }
             });
@@ -112,3 +114,12 @@ Template.Page3.events({
         Session.set("currentState", "Page1");
     }
 });
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+    return color;
+}
