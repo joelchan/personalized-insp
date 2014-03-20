@@ -60,18 +60,18 @@ var newTag;
 var newType;
 
 Template.Page2.events({
-    //put tags
-    'keyup input#nextType': function (evt) {
-        newType = $('#ideastorm input#nextType').val().trim();
-    },
-    'click button.submitType': function () {
-        if (newType) {
-            Types.insert({type: newType, done: false, tag: "", color: ""});
-            newType = null;
-            console.log(Types);
-            document.getElementById('nextType').value = ""
-        }
-    },
+    // //put tags
+    // 'keyup input#nextType': function (evt) {
+    //     newType = $('#ideastorm input#nextType').val().trim();
+    // },
+    // 'click button.submitType': function () {
+    //     if (newType) {
+    //         Types.insert({type: newType, done: false, tag: "", color: ""});
+    //         newType = null;
+    //         console.log(Types);
+    //         document.getElementById('nextType').value = ""
+    //     }
+    // },
 
     'keyup input#nextTag': function (evt) {
         newTag = $('#ideastorm input#nextTag').val().trim();
@@ -81,8 +81,8 @@ Template.Page2.events({
         if (newTag) {
             //edit tags for ideas selected
             console.log("inside newTag");
-            var color = getRandomColor();
-            console.log("color: " + color);
+            // var color = getRandomColor();
+            // console.log("color: " + color);
             Ideas.find().forEach(function (post) {
                 if (post.done) {
                     console.log(post);
@@ -91,6 +91,11 @@ Template.Page2.events({
                     console.log(newTag);
                 }
             });
+
+            //add tags in type
+            Types.insert({type: newTag, done: false, tag: ""});
+
+            //reset entry box
             newTag = null;
             document.getElementById('nextTag').value = "";
         }

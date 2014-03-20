@@ -145,10 +145,10 @@
 
   <div class="row">
       <div class="col-lg-10">
-        <input type="text" id="nextType" class="line" placeholder="Give a tag">
+        <input type="text" id="nextTag" class="line" placeholder="Give a tag">
       </div>
       <div class="col-lg-2">
-          <button id="submitType" class="submitType btn-default btn-primary"> Enter </button>
+          <button id="submitTag" class="submitTag btn-default btn-primary"> Enter </button>
       </div>
     </div>
     <center>
@@ -158,7 +158,7 @@
 </template>
 
 <template name="tagIdea">
-  <li><a href="#" class="tag">{{type}}</a></li>
+  <li><a href="#" class="tag" style="background:getRandomColor();">{{type}}</a></li>
 </template>
 
 
