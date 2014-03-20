@@ -73,7 +73,6 @@ Template.Page2.events({
         }
     },
 
-
     'keyup input#nextTag': function (evt) {
         newTag = $('#ideastorm input#nextTag').val().trim();
     },
@@ -88,7 +87,7 @@ Template.Page2.events({
                 if (post.done) {
                     console.log(post);
                     console.log(post._id);
-                    Ideas.update(post._id, {$set: {done: false, tag: newTag, color: color}});
+                    Ideas.update(post._id, {$set: {done: false, tag: newTag}});
                     console.log(newTag);
                 }
             });
