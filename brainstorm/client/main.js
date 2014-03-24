@@ -1,3 +1,13 @@
+$(document).ready(function(){
+
+    var color = getRandomColor();
+
+    $('.tag').css({"background":"blue"});
+
+    console.log("muahahhaa i see you");
+});
+
+
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
 Tags = new Meteor.Collection("tags");
@@ -85,6 +95,7 @@ Template.Page2.events({
             // console.log("color: " + color);
             Ideas.find().forEach(function (post) {
                 if (post.done) {
+                    var color = getRandomColor();                    
                     console.log(post);
                     console.log(post._id);
                     Ideas.update(post._id, {$set: {done: false, tag: newTag}});
@@ -125,5 +136,6 @@ function getRandomColor() {
     for (var i = 0; i < 6; i++ ) {
         color += letters[Math.round(Math.random() * 15)];
     }
+    console.log("color is: " + color);
     return color;
 }

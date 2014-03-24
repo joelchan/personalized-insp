@@ -6,6 +6,17 @@
   <meta name="author" content="">
   <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
   <title>Ideagens</title>
+
+<script>
+$(document).ready(function(){
+
+    var color = getRandomColor();
+
+    $('.tag').css({"background":"blue"});
+
+    console.log("muahahhaa i see you");
+});
+</script>
 </head>
 
 <body>
@@ -152,13 +163,14 @@
       </div>
     </div>
     <center>
-        <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
+        <!-- <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button> -->
+        <button onclick="getRandomColor()" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
     </center>
 
 </template>
 
 <template name="tagIdea">
-  <li><a href="#" class="tag" style="background:getRandomColor();">{{type}}</a></li>
+  <li><a href="#" class="tag">{{type}}</a></li>
 </template>
 
 
