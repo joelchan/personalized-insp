@@ -1,13 +1,3 @@
-$(document).ready(function(){
-
-    var color = getRandomColor();
-
-    $('.tag').css({"background":"blue"});
-
-    console.log("muahahhaa i see you");
-});
-
-
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
 Tags = new Meteor.Collection("tags");
@@ -91,20 +81,19 @@ Template.Page2.events({
         if (newTag) {
             //edit tags for ideas selected
             console.log("inside newTag");
-            // var color = getRandomColor();
-            // console.log("color: " + color);
+            var color = getRandomColor();
+            console.log("color: " + color);
+            Types.insert({type: newTag, done: false, color: color});
             Ideas.find().forEach(function (post) {
                 if (post.done) {
-                    var color = getRandomColor();                    
                     console.log(post);
                     console.log(post._id);
                     Ideas.update(post._id, {$set: {done: false, tag: newTag}});
                     console.log(newTag);
+            	    //add tags in type
                 }
             });
 
-            //add tags in type
-            Types.insert({type: newTag, done: false, tag: ""});
 
             //reset entry box
             newTag = null;

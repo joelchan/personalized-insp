@@ -7,16 +7,6 @@
   <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
   <title>Ideagens</title>
 
-<script>
-$(document).ready(function(){
-
-    var color = getRandomColor();
-
-    $('.tag').css({"background":"blue"});
-
-    console.log("muahahhaa i see you");
-});
-</script>
 </head>
 
 <body>
@@ -148,7 +138,6 @@ $(document).ready(function(){
       
         {{#each types}}
                 {{> tagIdea}}
-
         {{/each}}
         
     </ul>
@@ -170,7 +159,11 @@ $(document).ready(function(){
 </template>
 
 <template name="tagIdea">
-  <li><a href="#" class="tag">{{type}}</a></li>
+  <li>
+    <a href="#" class="tag" style="background: {{color}};">
+      {{type}}
+    </a>
+  </li>
 </template>
 
 
