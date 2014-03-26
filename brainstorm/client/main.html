@@ -57,12 +57,10 @@
       </div>
     </div>
     <div class="row">
-
       <div class="idea-box">
           <ul>
               {{#each ideas}}
                 {{> simpleIdea}}
-
               {{/each}}
         </ul>
       </div>
@@ -111,15 +109,8 @@
 
 
   <div class="row">
-
-    <!-- <div class="col-lg-3">meow</div>
-    <div class="col-lg-3">pizza</div>
-    <div class="col-lg-3">poo</div>
-    <div class="col-lg-3">hello</div> -->
-  
     {{#each ideas}}
         {{> taggedIdea}}
-                <!-- <button id="test" class="tag-ideas"><div class="col-lg-3 selected-tag">test</div></button> -->
     {{/each}}
   
   </div> <br><br>
@@ -128,18 +119,10 @@
   </div>
 
   <div>
-    
     <ul class="tags">
-      <!--
-      <li><a href="#" class="tag">food</a></li>
-      <li><a href="#" class="tag">sport</a></li>
-      <li><a href="#" class="tag">clothes</a></li>
-    -->
-      
         {{#each types}}
                 {{> tagIdea}}
         {{/each}}
-        
     </ul>
   </div>  
 
@@ -152,7 +135,6 @@
       </div>
     </div>
     <center>
-        <!-- <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button> -->
         <button onclick="getRandomColor()" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
     </center>
 
