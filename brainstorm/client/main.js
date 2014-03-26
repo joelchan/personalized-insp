@@ -1,14 +1,13 @@
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
 Tags = new Meteor.Collection("tags");
-Types = new Meteor.Collection("types");
 
 Template.Page1.ideas = function () {
     return Ideas.find();
 };
 
-Template.Page2.types = function () {
-    return Types.find();
+Template.Page2.tags = function () {
+    return Tags.find();
 };
 
 Template.Page2.ideas = function () {
@@ -37,18 +36,34 @@ var newIdea;
 Template.Page1.events({
     'keyup input#nextIdea': function (evt) {
         newIdea = $('#ideastorm input#nextIdea').val().trim();
+        $(document).ready(function(){
+            $('#nextIdea').keypress(function(e){
+              if(e.keyCode==13)
+              $('#submitIdea').click();
+            });
+        });
     },
+
     'click button.submitIdea': function () {
+        if (newIdea) {
+            Ideas.find().forEach(function (post) {
+                if (newIdea == post.idea) {
+                    newIdea = null;
+                }
+            });
+        }
         if (newIdea) {
             Ideas.insert({idea: newIdea, done: false, tag: ""});
             newIdea = null;
             document.getElementById('nextIdea').value = ""
         }
     },
+
     'click button.nextPage': function () {
         //Not working state machine yet
         Session.set("currentState", "Page2");
     }
+
 });
 
 
@@ -57,49 +72,82 @@ Template.taggedIdea.done_class = function () {
 };
 
 var newTag;
-var newType;
 
 Template.Page2.events({
-    // //put tags
-    // 'keyup input#nextType': function (evt) {
-    //     newType = $('#ideastorm input#nextType').val().trim();
-    // },
-    // 'click button.submitType': function () {
-    //     if (newType) {
-    //         Types.insert({type: newType, done: false, tag: "", color: ""});
-    //         newType = null;
-    //         console.log(Types);
-    //         document.getElementById('nextType').value = ""
-    //     }
-    // },
-
+    //put tags
     'keyup input#nextTag': function (evt) {
         newTag = $('#ideastorm input#nextTag').val().trim();
+        $(document).ready(function(){
+            $('#nextTag').keypress(function(e){
+              if(e.keyCode==13)
+              $('#submitTag').click();
+            });
+        });
     },
 
     'click button.submitTag': function () {
         if (newTag) {
-            //edit tags for ideas selected
-            console.log("inside newTag");
+            Tags.find().forEach(function (post) {
+                if (newTag == post.tag) {
+                    newTag = null;
+                }
+            });
+        }
+
+        if (newTag) {
             var color = getRandomColor();
-            console.log("color: " + color);
-            Types.insert({type: newTag, done: false, color: color});
+            Tags.insert({tag: newTag, done: false, color: color});
             Ideas.find().forEach(function (post) {
                 if (post.done) {
                     console.log(post);
                     console.log(post._id);
                     Ideas.update(post._id, {$set: {done: false, tag: newTag}});
                     console.log(newTag);
-            	    //add tags in type
                 }
             });
+            newTag = null;
+            console.log(Tags);
+            document.getElementById('nextTag').value = ""
+        }
+    },
 
+    
+    //when click tags, the ideas with this tag would show
+    'click button.getTag': function(){
+        var getButtonValue = function($button) {
+            var label = $button.text(); 
+            $button.text('');
+            var buttonValue = $button.val();
+            $button.text(label);
+            return buttonValue;
+        }
 
-            //reset entry box
+        Ideas.find().forEach(function (post) {
+            if (post.tag == getButtonValue) {
+                console.log(post.done);
+                Ideas.update(post._id, {$set: {done: false}});
+                }
+            });
+    },
+
+    
+
+    /*'click button.submitTag': function () {
+        if (newTag) {
+            //edit tags for ideas selected
+            console.log("inside newTag");
+            Ideas.find().forEach(function (post) {
+                if (post.done) {
+                    console.log(post);
+                    console.log(post._id);
+                    Ideas.update(post._id, {$set: {done: false, tag: newTag}});
+                    console.log(newTag);
+                }
+            });
             newTag = null;
             document.getElementById('nextTag').value = "";
         }
-    },
+    },*/
 
     'click button.nextPage': function () {
         //Not working state machine yet

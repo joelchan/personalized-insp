@@ -27,6 +27,9 @@ button {
        -moz-border-radius: 8px;
             border-radius: 8px;
     margin-top: 50px;
+
+    border: none;
+    background: none;
 }
 
 .btn-xlarge2 {
@@ -111,7 +114,7 @@ body {
   list-style: none;
   margin: 0;
   overflow: hidden; 
-  padding: 0;
+  padding: 10px;
   font: 12px/1.5 'PT Sans', serif;
 }
 
@@ -121,6 +124,7 @@ body {
 
 .tag {
   background: #eee;
+  font-size: 18px;
   border-radius: 3px 0 0 3px;
   color: #999;
   display: inline-block;
