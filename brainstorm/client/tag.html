@@ -1,7 +1,7 @@
 <template name="tagIdea">
   <li>
     <a href="#" class="tag" style="background: {{color}};">
-      {{type}}
+      {{tag}}
     </a>
   </li>
 </template>
@@ -36,12 +36,12 @@
 
   <div>
     <ul class="tags">
-        {{#each types}}
+        {{#each tags}}
                 {{> tagIdea}}
         {{/each}}
     </ul>
   </div>  
-
+ 
   <div class="row">
       <div class="col-lg-10">
         <input type="text" id="nextTag" class="line" placeholder="Give a tag">
@@ -49,10 +49,12 @@
       <div class="col-lg-2">
           <button id="submitTag" class="submitTag btn-default btn-primary"> Enter </button>
       </div>
-    </div>
-    <center>
-        <button onclick="getRandomColor()" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
-    </center>
+  </div>
+  <center>
+        <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
+  </center>
+
+
 
 </template>
 

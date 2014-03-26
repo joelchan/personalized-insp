@@ -42,13 +42,13 @@ Template.TaggingPage.events({
                 }
             });
         }
-        
+
         if (newTag) {
             //edit tags for ideas selected
             console.log("inside newTag");
             var color = getRandomColor();
             console.log("color: " + color);
-            s.insert({tag: newTag, done: false, color: color});
+            Tags.insert({tag: newTag, done: false, color: color});
             Ideas.find().forEach(function (post) {
                 if (post.done) {
                     console.log(post);
