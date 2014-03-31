@@ -1,0 +1,38 @@
+.idea-block {
+}
+
+.idea-frame {
+    padding: 5px;
+    height:400px;
+    border:1px solid #ccc;
+    font-size: 28px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-family: 'HelveticaNeue-UltraLight';
+    overflow:auto;
+}
+
+.idea-col {
+    border-style: solid;
+    border:3px solid #ccc;
+    height: 390px;
+    padding: 15px;
+    backround: blue;
+}
+.idea-col h3{
+    text-align: center:
+    color: red;
+}
+
+.join-col {
+    border-style: solid;
+    border:3px solid #ccc;
+    height: 390px;
+    padding: 5px;
+    backround: blue;
+    
+}
+
+.join-col h3{
+    text-align: center:
+}

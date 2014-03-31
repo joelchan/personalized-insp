@@ -1,7 +1,29 @@
+<template name="taggableIdea">
+    <div class="idea-block draggable ui-widget-content">
+	{{ idea }}
+    </div>
+</template>
+
+
 <template name="JoinIdeasPage">
     <div class="row">
       <div class="rectangle-timer">Time Left: 4:59
       </div>
+    </div>
+    <div class="row">
+	<div class="idea-frame container">
+	    <div class="row">
+		<div class="idea-col col-md-6">
+		    <h3>Ideas and Tags</h3>
+	    	    {{#each ideas }}
+		        {{> taggableIdea }}
+	            {{/each}}
+		</div>
+		<div class="join-col col-md-6 droppable">
+		    <h3>Tags to join under new label</h3>
+		</div>
+	   </div>
+	</div>
     </div>
     <center>
         <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>

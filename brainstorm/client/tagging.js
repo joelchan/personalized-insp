@@ -20,6 +20,11 @@ function getRandomColor() {
     return color;
 }
 
+Template.TaggingPage.rendered = function() {
+	console.log("testing rendered");
+	$(".draggable").draggable();
+};
+
 var newTag;
 
 Template.TaggingPage.events({
@@ -48,6 +53,7 @@ Template.TaggingPage.events({
             console.log("inside newTag");
             var color = getRandomColor();
             console.log("color: " + color);
+            //add tags in type
             Tags.insert({tag: newTag, done: false, color: color});
             Ideas.find().forEach(function (post) {
                 if (post.done) {
@@ -55,7 +61,6 @@ Template.TaggingPage.events({
                     console.log(post._id);
                     Ideas.update(post._id, {$set: {done: false, tag: newTag}});
                     console.log(newTag);
-            	    //add tags in tag
                 }
             });
 

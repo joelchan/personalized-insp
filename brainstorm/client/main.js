@@ -3,7 +3,6 @@ Template.Page1.ideas = function () {
     return Ideas.find();
 };
 
-
 // Defines a state machine using "currentState"
 // Controls the site page flow
 Session.set("currentState", "Page1");
