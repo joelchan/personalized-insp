@@ -6,11 +6,19 @@
   </li>
 </template>
 
+<template name="circleColor">
+</template>
+
 <template name="taggedIdea">
   <div class="idea {{done_class}}">
-  <button class="col-lg-3 tag-ideas"><div class="idea-text {{done_class}}">{{ idea }}</div>
-    </button>
-</div>
+  <button class="col-lg-3 tag-ideas">
+    <div class="idea-text {{done_class}}">
+      <div class="row">
+        <div class="col-lg-1"><div class="circle" style="background: {{color}};"></div></div>
+        <div class="col-lg-2">{{ idea }}</div></div>
+    </div>
+  </button>
+  </div>
 </template>
 
 <template name="TaggingPage">
@@ -40,7 +48,7 @@
                 {{> tagIdea}}
         {{/each}}
     </ul>
-  </div>  
+  </div>   
  
   <div class="row">
       <div class="col-lg-10">

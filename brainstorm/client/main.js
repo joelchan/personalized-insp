@@ -43,7 +43,7 @@ Template.Page1.events({
             });
         }
         if (newIdea) {
-            Ideas.insert({idea: newIdea, done: false, tag: ""});
+            Ideas.insert({idea: newIdea, done: false, tag: "", color: ""});
             newIdea = null;
             document.getElementById('nextIdea').value = ""
         }
