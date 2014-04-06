@@ -20,3 +20,9 @@ Meteor.startup(function() {
         }
     });
 
+    Meteor.startup(function() {
+        if(Names.find().count()>0){
+            Names.remove({});
+        }
+      });
+

@@ -1,0 +1,30 @@
+<template name="loginPage">
+    <div class="row">
+  <div class="idea-frame container">
+      <div class="row">
+        <div class="col-lg-10">
+        <input type="text" id="name" class="line" placeholder="What's your Name?">
+      </div>
+      <div class="col-lg-2">
+          <button id="submitName" class="submitIdea btn-default btn-primary"> Submit </button>
+      </div>
+     </div>
+      <div class="row">
+      <div class="idea-box">
+          <ul>
+              {{#each names}}
+                {{> simpleName}}
+              {{/each}}
+        </ul>
+      </div>
+
+    </div>
+    </div>
+    <center>
+        <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
+    </center>
+</template>
+
+<template name="simpleName">
+    <li>{{name}}</li>
+</template>
