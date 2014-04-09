@@ -60,7 +60,7 @@ Template.TaggingPage.events({
                 if (post.done) {
                     console.log(post);
                     console.log(post._id);
-                    Ideas.update(post._id, {$set: {done: false, tag: newTag}});
+                    Ideas.update(post._id, {$set: {done: false, tag: newTag, color: color}});
                     console.log(newTag);
                 }
             });

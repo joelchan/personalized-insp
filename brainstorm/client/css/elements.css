@@ -210,5 +210,13 @@ body {
     position: absolute;
 }
 */
+
+.circle {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  background: red;
+  margin-top: 10px;
+}
  
  

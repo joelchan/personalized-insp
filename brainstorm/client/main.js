@@ -5,10 +5,12 @@ Template.Page1.ideas = function () {
 
 // Defines a state machine using "currentState"
 // Controls the site page flow
-Session.set("currentState", "Page1");
+Session.set("currentState", "loginPage");
 Template.brainstorm1.currentPage = function () {
     var currentState =  Session.get('currentState');
     switch(currentState) {
+        case "loginPage":
+            return Template.loginPage();
         case "Page1":
             return Template.Page1();
         case "TaggingPage":
@@ -43,7 +45,7 @@ Template.Page1.events({
             });
         }
         if (newIdea) {
-            Ideas.insert({idea: newIdea, done: false, tag: ""});
+            Ideas.insert({idea: newIdea, done: false, tag: "", color: ""});
             newIdea = null;
             document.getElementById('nextIdea').value = ""
         }
