@@ -20,6 +20,7 @@ function getRandomColor() {
     return color;
 }
 
+
 Template.TaggingPage.rendered = function() {
 	console.log("testing rendered");
 	$(".draggable").draggable();
@@ -70,6 +71,31 @@ Template.TaggingPage.events({
             document.getElementById('nextTag').value = "";
         }
     },
+
+     //when click tags, the ideas with this tag would show
+    //'click button.tag': function () {
+        //console.log("test");
+        // function toggleText(button_id) 
+        // {
+        //    var el = document.getElementById(button_id);
+        //    if (el.firstChild.data == "float") 
+        //    {
+        //        el.firstChild.data = "Unlock";
+        //    }
+        //    else 
+        //    {
+        //      el.firstChild.data = "float";
+        //    }
+        // }
+
+        /*Ideas.find().forEach(function (post) {
+            //console.log(post.done);
+            if (post.tag == getButtonValue) {
+                //console.log(post.done);
+                Ideas.update(post._id, {$set: {done: true}});
+                }
+            });*/
+    //},
 
     'click button.nextPage': function () {
         //Not working state machine yet
