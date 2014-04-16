@@ -21,8 +21,6 @@ function getRandomColor() {
 }
 
 Template.TaggingPage.rendered = function() {
-	console.log("testing rendered");
-	$(".draggable").draggable();
 };
 
 var newTag;
@@ -72,12 +70,10 @@ Template.TaggingPage.events({
     },
 
     'click button.nextPage': function () {
-        //Not working state machine yet
         Session.set("currentState", "JoinIdeasPage");
     },
 
     'click button.tag-ideas': function() {
         Ideas.update(this._id, {$set: {done: !this.done}});
-        //Session.set("currentState", "Page3");
     }
 });

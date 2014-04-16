@@ -1,0 +1,38 @@
+<template name="simpleIdea">
+    <li>{{idea}}</li>
+</template>
+
+<template name="IdeationPage">
+    <div class="row">
+      <!--
+      <div class="rectangle-timer">Time Left: 4:59
+      </div>
+      -->
+    </div>
+    <div class="row">
+      <div class="idea-box">
+          <ul>
+              {{#each ideas}}
+                {{> simpleIdea}}
+              {{/each}}
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-lg-10">
+        <input type="text" id="nextIdea" class="line" placeholder="What's your idea?">
+      </div>
+      <div class="col-lg-2">
+          <button id="submitIdea" class="submitIdea btn-default btn-primary"> Submit </button>
+      </div>
+    </div>
+    <center>
+      <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">
+        Continue
+      </button>
+    </center>
+    
+</template>
+
