@@ -1,25 +1,24 @@
-Template.loginPage.names = function () {
-    return Names.find();
+
+/********************************************************************
+ * Convenience function for logging in users
+ * *****************************************************************/
+function loginUser(user) {
+  var users = Names.find({'name': user['name']});
+  Session.set("currentUser", user);
+  if (users == null) {
+    Names.insert({"name": username});
+  }
 };
 
-Template.loginPage.events({
-	'keyup input#name': function (evt) {
-        newName = $('input#name').val().trim();
-        $(document).ready(function(){
-            $('#name').keypress(function(e){
-              if(e.keyCode==13)
-              $('#submitName').click();
-            });
-        });
-    },
-
-    'click button.submitIdea': function () {
-            Names.insert({name: newName});
-            newName = null;
-            document.getElementById('Name').value = ""
-    },
+/********************************************************************
+ * Login Page event listeners 
+ * *****************************************************************/
+Template.LoginPage.events({
     'click button.nextPage': function () {
-        //Not working state machine yet
-        Session.set("currentState", "Page1");
+        //login user
+        var user = {'name': $('input#name').val().trim()};
+        loginUser(user);
+        //Go to next page
+        Session.set("currentState", "PromptPage");
     },
 });

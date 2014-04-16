@@ -9,83 +9,39 @@
 </head>
 
 <body>
-
-  <!-- Fixed navbar -->
-  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">Ideagens</a>
-      </div>
-      <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Action</a></li>
-              <li><a href="#">Another action</a></li>
-              <li><a href="#">Something else here</a></li>
-              <li class="divider"></li>
-              <li class="dropdown-header">Nav header</li>
-              <li><a href="#">Separated link</a></li>
-              <li><a href="#">One more separated link</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div>
-  </div>
-
-  <div class="container" id="ideastorm">
-      {{> brainstorm1 }}
-  </div> <!-- /container -->
-
+    {{> Brainstorm1 }}
 </body>
 
-<template name="Page1">
-    <div class="row">
-      <div class="rectangle-timer">Time Left: 4:59
+<!-- State Machine -->
+<template name="Brainstorm1">
+  <!-- Navbar -->
+  <div id="header" class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-2">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Ideagens</a>
+          </div>
+        </div>
+        <div class="col-lg-10">
+          <div class="login">
+            {{#if loggedIn }}
+              <span class="userName">
+                <strong>Welcome</strong> {{currentUserName}}
+              </span>
+              <button id="submitLogout" class="submitLogout btn-login">Logout</button>
+            {{else}}
+              User Name:
+              <input type="text" id="userLogin" class="userLogin" placeholder="username">
+              <button id="submitLogin" class="submitLogin btn-login">Login</button>
+            {{/if}}
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="idea-box">
-          <ul>
-              {{#each ideas}}
-                {{> simpleIdea}}
-              {{/each}}
-        </ul>
-      </div>
-
-    </div>
-
-    <div class="row">
-      <div class="col-lg-10">
-        <input type="text" id="nextIdea" class="line" placeholder="What's your idea?">
-      </div>
-      <div class="col-lg-2">
-          <button id="submitIdea" class="submitIdea btn-default btn-primary"> Submit </button>
-      </div>
-    </div>
-    <center>
-        <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">Continue</button>
-    </center>
-    
+  </div>
+  
+  <div class="container" id="ideastorm">
+    {{> currentPage }}
+  </div> <!-- /container -->
 </template>
-
-<template name="brainstorm1">
-    {{{currentPage}}}
-</template>
-
-<template name="simpleIdea">
-    <li>{{idea}}</li>
-</template>
-
-
