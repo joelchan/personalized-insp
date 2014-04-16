@@ -1,4 +1,3 @@
-
 Template.Page1.ideas = function () {
     return Ideas.find();
 };

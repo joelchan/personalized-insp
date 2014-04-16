@@ -65,7 +65,7 @@ Template.TaggingPage.events({
                 }
             });
 
-
+            //console.log(newTag);
             //reset entry box
             newTag = null;
             document.getElementById('nextTag').value = "";
@@ -73,29 +73,28 @@ Template.TaggingPage.events({
     },
 
      //when click tags, the ideas with this tag would show
-    //'click button.tag': function () {
-        //console.log("test");
-        // function toggleText(button_id) 
-        // {
-        //    var el = document.getElementById(button_id);
-        //    if (el.firstChild.data == "float") 
-        //    {
-        //        el.firstChild.data = "Unlock";
-        //    }
-        //    else 
-        //    {
-        //      el.firstChild.data = "float";
-        //    }
-        // }
+    'click button.tag': function () {
+        console.log(this._id);
+        console.log(this.tag);
+        var tagContent = this.tag;
 
-        /*Ideas.find().forEach(function (post) {
-            //console.log(post.done);
-            if (post.tag == getButtonValue) {
-                //console.log(post.done);
-                Ideas.update(post._id, {$set: {done: true}});
+        Ideas.find().forEach(function (post) {
+            //console.log(post._id);
+            console.log(tagContent);
+            if (post.tag == tagContent) {
+                console.log(post.done);
+                if (post.done){  
+                    Ideas.update(post._id, {$set: {done: false}});
+                } else {
+                    Ideas.update(post._id, {$set: {done: true}});
                 }
-            });*/
-    //},
+            } else {
+                if (post.done){
+                    Ideas.update(post._id, {$set: {done: false}});
+                }
+            }
+        });
+    },
 
     'click button.nextPage': function () {
         //Not working state machine yet
