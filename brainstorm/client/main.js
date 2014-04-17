@@ -53,10 +53,19 @@ Template.IdeaGen.currentUserName = function() {
 /********************************************************************
  * IdeaGen App event listeners 
  * *****************************************************************/
+var user;
 Template.IdeaGen.events({
     'click button.submitLogin': function () {
-        var user = {'name': $('#header input#userLogin').val().trim()};
+        user = {'name': $('#header input#userLogin').val().trim()};
         LoginUser(user);
+    },
+    'keyup input#userLogin': function (evt) {
+        $(document).ready(function(){
+            $('#userLogin').keypress(function(e){
+              if(e.keyCode==13)
+              $('#submitLogin').click();
+            });
+        });
     },
 
     'click button.submitLogout': function () {
