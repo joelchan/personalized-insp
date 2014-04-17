@@ -3,6 +3,10 @@ Template.IdeationPage.ideas = function () {
     return Ideas.find();
 };
 
+Template.IdeationPage.prompt = function () {
+  return Session.get("currentPrompt");
+};
+
 // Keeps text input field until submit is pressed
 var newIdea;
 

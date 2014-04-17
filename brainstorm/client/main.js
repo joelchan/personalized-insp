@@ -1,12 +1,20 @@
 // Initialize state machine to login page
 Meteor.startup(function () {
-  Session.set("currentState", "LoginPage");
-  Session.set("currentUser", null);
+  //Set state if no existing user or app state already is set
+  if (!Session.get("currentState")) {
+    var user = Session.get("currentUser");
+    if (Session.get("currentUser")) {
+      Session.set("currentState", "PromptPage");
+    } else { 
+      Session.set("currentState", "LoginPage");
+      Session.set("currentUser", null);
+    }
+  }
 });
 
 // Defines a state machine using "currentState"
 // Controls the site page flow
-Template.Brainstorm1.currentPage = function () {
+Template.IdeaGen.currentPage = function () {
     var currentState =  Session.get('currentState');
     switch(currentState) {
         case "LoginPage":
@@ -25,45 +33,30 @@ Template.Brainstorm1.currentPage = function () {
 };
 
 
-Template.Brainstorm1.loggedIn = function() {
+Template.IdeaGen.loggedIn = function() {
   if (Session.get("currentUser") === null) {
     console.log('no user is logged in');
     return false;
+  } else {
+    return true; 
   }
-  console.log('user is now logged in');
-  var loginState = Session.get("currentUser");
-  return true; 
 };
 
 /********************************************************************
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
-Template.Brainstorm1.currentUserName = function() {
-  var user = Session.get("currentUser");
-  if (user !== null) {
-    console.log("checking user's name is: " + user['name']);
-    return user['name'];
-  } 
+Template.IdeaGen.currentUserName = function() {
+  if (Session.get("currentUser"))
+    return Session.get("currentUser")['name'];
 };
 
 /********************************************************************
- * Login Page event listeners 
+ * IdeaGen App event listeners 
  * *****************************************************************/
-Template.Brainstorm1.events({
+Template.IdeaGen.events({
     'click button.submitLogin': function () {
-        var user = $('#header input#userLogin').val().trim();
-        loginUser(user);
-        var pswd = "protolab"; //Everyone has the same default password
-        var pswd = $('#header input#userPassword').val().trim();
-        console.log("logging in " + user);
-        Meteor.loginWithPassword({username: user, password: pswd});
-        if(Meteor.user() === null) {
-          console.log("could not login " + user);
-        }
-        var currentUser = Accounts.createUser({username: user, password: pswd});
-        if (Meteor.user() === null) {
-          console.log("did not create user account for " + user);
-        }
+        var user = {'name': $('#header input#userLogin').val().trim()};
+        LoginUser(user);
     },
 
     'click button.submitLogout': function () {
