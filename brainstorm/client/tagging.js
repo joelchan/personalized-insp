@@ -20,6 +20,7 @@ function getRandomColor() {
     return color;
 }
 
+
 Template.TaggingPage.rendered = function() {
 };
 
@@ -62,11 +63,35 @@ Template.TaggingPage.events({
                 }
             });
 
-
+            //console.log(newTag);
             //reset entry box
             newTag = null;
             document.getElementById('nextTag').value = "";
         }
+    },
+
+     //when click tags, the ideas with this tag would show
+    'click button.tag': function () {
+        console.log(this._id);
+        console.log(this.tag);
+        var tagContent = this.tag;
+
+        Ideas.find().forEach(function (post) {
+            //console.log(post._id);
+            console.log(tagContent);
+            if (post.tag == tagContent) {
+                console.log(post.done);
+                if (post.done){  
+                    Ideas.update(post._id, {$set: {done: false}});
+                } else {
+                    Ideas.update(post._id, {$set: {done: true}});
+                }
+            } else {
+                if (post.done){
+                    Ideas.update(post._id, {$set: {done: false}});
+                }
+            }
+        });
     },
 
     'click button.nextPage': function () {
