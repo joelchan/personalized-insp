@@ -1,24 +1,61 @@
 Template.TaggingPage.tags = function () {
-    return Tags.find();
+    return Tags.find({question_id: Session.get("currentPrompt")['_id']});
 };
 
-Template.TaggingPage.ideas = function () {
-    return Ideas.find();
+Template.TaggingPage.prompt = function () {
+  return Session.get("currentPrompt")['prompt'];
+};
+
+Template.TaggingPage.ideas1 = function () {
+    //Only show max of 10 ideas
+    var allIdeas = Ideas.find(
+        {question_id: Session.get("currentPrompt")['_id']}).fetch();
+    return GetRandomSet(allIdeas, 7);
+};
+
+Template.TaggingPage.ideas2 = function () {
+    //Only show max of 10 ideas
+    var allIdeas = Ideas.find(
+        {question_id: Session.get("currentPrompt")['_id']}).fetch();
+    var selectIdeas = GetRandomSet(allIdeas, 7);
+    console.log("got " + selectIdeas.length + " ideas");
+    return selectIdeas;
 };
 
 Template.taggedIdea.done_class = function () {
   return this.done ? 'done' : '';
 };
 
-function getRandomColor() {
+GetRandomSet = function getRandomSet(items, numItems) {  
+  var end;
+  if (numItems < items.length) {
+    end = items.length;
+  } else {
+    end = numItems;
+  }
+  return items.slice(0, end);
+};
+
+getRandomColor = function getRandomColor() {
     var letters = '0123456789ABCDEF'.split('');
     var color = '#';
     for (var i = 0; i < 6; i++ ) {
         color += letters[Math.round(Math.random() * 15)];
     }
-    console.log("color is: " + color);
     return color;
-}
+};
+
+function toggleIdea(idea) {
+  console.log("toggling idea status " + idea.done);
+  if (idea.done) {
+    Ideas.update(idea._id, {$set: {done: false}});
+    $(idea).attr({'background': '#3276b1',
+        'color': '#fff'});
+  } else {
+    Ideas.update(idea._id, {$set: {done: true}});
+    $(idea).attr({background: 'yellow', color: '#000'});
+  }
+};
 
 
 Template.TaggingPage.rendered = function() {
@@ -39,48 +76,61 @@ Template.TaggingPage.events({
     },
 
     'click button.submitTag': function () {
-        if (newTag) {
+      console.log("pressed submit");
+        var newTag = $("#nextTag").val();
+        var createTag = true;
+        if (newTag != "") {
+          console.log("tag is not empty");
             Tags.find().forEach(function (post) {
                 if (newTag == post.tag) {
-                    newTag = null;
+                    createTag = false;
                 }
             });
+        } else {
+          console.log("tag is empty");
+          createTag = false; 
         }
+
 
         if (newTag) {
             //edit tags for ideas selected
-            console.log("inside newTag");
             var color = getRandomColor();
-            console.log("color: " + color);
-            //add tags in type
-            Tags.insert({tag: newTag, done: false, color: color});
+            var question = Session.get("currentPrompt");
+            if (createTag) {
+              //add tags in type
+              Tags.insert({tag: newTag, 
+                  done: false, 
+                  color: color,
+                  user: Session.get("currentUser"),
+                  question_id: question['_id'],
+                  question: question['prompt']
+              });
+            }
             Ideas.find().forEach(function (post) {
                 if (post.done) {
-                    console.log(post);
-                    console.log(post._id);
-                    Ideas.update(post._id, {$set: {done: false, tag: newTag, color: color}});
-                    console.log(newTag);
+                    Ideas.update(post._id, {$set: {done: false, 
+                        tag: newTag, 
+                        color: color}});
                 }
             });
 
             //console.log(newTag);
             //reset entry box
             newTag = null;
-            document.getElementById('nextTag').value = "";
+            $('#nextTag').val("");
         }
     },
 
      //when click tags, the ideas with this tag would show
     'click button.tag': function () {
-        console.log(this._id);
-        console.log(this.tag);
         var tagContent = this.tag;
+        //Set the current tagtext to the value of the tag
+        newTag = this.tag;
+        $("#nextTag").val(newTag);
 
+        
         Ideas.find().forEach(function (post) {
-            //console.log(post._id);
-            console.log(tagContent);
             if (post.tag == tagContent) {
-                console.log(post.done);
                 if (post.done){  
                     Ideas.update(post._id, {$set: {done: false}});
                 } else {
@@ -94,11 +144,14 @@ Template.TaggingPage.events({
         });
     },
 
+    //toggle the select status of the clicked div
+    'click div.clickable': function () {
+      toggleIdea(this);
+    },
+
+    //Go to next state in app
     'click button.nextPage': function () {
         Session.set("currentState", "JoinIdeasPage");
     },
 
-    'click button.tag-ideas': function() {
-        Ideas.update(this._id, {$set: {done: !this.done}});
-    }
 });

@@ -13,11 +13,10 @@ LoginUser = function loginUser(user) {
 /********************************************************************
  * Login Page event listeners 
  * *****************************************************************/
-var user;
 Template.LoginPage.events({
     'click button.nextPage': function () {
         //login user
-        user = {'name': $('input#name').val().trim()};
+        var user = {'name': $('input#name').val().trim()};
         LoginUser(user);
         //Go to next page
         Session.set("currentState", "PromptPage");

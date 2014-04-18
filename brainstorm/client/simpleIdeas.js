@@ -1,10 +1,18 @@
+Template.IdeationPage.rendered = function() {
+  window.scrollTo(0,0);
+};
 
 Template.IdeationPage.ideas = function () {
-    return Ideas.find();
+    return Ideas.find({user: Session.get('currentUser'),
+        question_id: Session.get("currentPrompt")['_id']});
 };
 
 Template.IdeationPage.prompt = function () {
-  return Session.get("currentPrompt");
+  if (!Session.get("currentPrompt")) {
+    Session.set("currentState", 'PromptPage');
+  } else {
+    return Session.get("currentPrompt")['prompt'];
+  }
 };
 
 // Keeps text input field until submit is pressed

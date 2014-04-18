@@ -1,5 +1,8 @@
 // Initialize state machine to login page
 Meteor.startup(function () {
+  if (!Session.get("currentPrompt")) {
+    Session.set("currentState", "PromptPage");
+  }
   //Set state if no existing user or app state already is set
   if (!Session.get("currentState")) {
     var user = Session.get("currentUser");

@@ -10,45 +10,41 @@
 </template>
 
 <template name="taggedIdea">
-  <div class="idea {{done_class}}">
-  <button class="col-lg-3 tag-ideas">
-    <div class="idea-text {{done_class}}">
-      <div class="row">
-        <div class="col-lg-1"><div class="circle" style="background: {{color}};"></div></div>
-        <div class="col-lg-2">{{ idea }}</div></div>
+  <div class="idea clickable list-item {{done_class}}">
+    <div class="circle" style="background: {{color}};"></div>
+    <div class="idea-text">
+      {{ idea }}
     </div>
-  </button>
   </div>
 </template>
 
 <template name="TaggingPage">
 <!-- timer -->
   <div class="row">
-  <!-- 
-    <div class="rectangle-timer">Time Left: 4:59
+    <div class="prompt-box">
+      <h1 class="heading">
+        {{ prompt }}
+      </h1>
     </div>
-  -->
+    <div>
+      <h2>Select items to tag</h2>
+    </div>
   </div>
   <div class="row">
-    <h2>Select items to tag</h2>
+    <div class=".col-md-6 idea-list">
+        {{#each ideas1}}
+          {{> taggedIdea}}
+        {{/each}}
+    </div>
   </div>
-
-
-  <div class="row">
-    {{#each ideas}}
-        {{> taggedIdea}}
-    {{/each}}
-  
-  </div> <br><br>
   <div class="row">
     <h3>Used Tags</h3>
   </div>
-
-  <div>
+  <div class="row">
     <ul class="tags">
-        {{#each tags}}
-                {{> tagIdea}}
-        {{/each}}
+      {{#each tags}}
+        {{> tagIdea}}
+      {{/each}}
     </ul>
   </div>   
  

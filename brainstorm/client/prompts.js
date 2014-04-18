@@ -11,7 +11,6 @@ Template.PromptPage.prompts = function() {
 Template.PromptPage.events({
     'click button.nextPage': function () {
         //Go to next page
-        Session.set("currentState", "IdeationPage");
     },
 
     'click button.new-bs': function () {
@@ -28,19 +27,18 @@ Template.PromptPage.events({
       Prompts.insert({'prompt': newQuestion,
           'status': 'Active',
           'members': [Session.get("currentUser")['name'],]});
-      $('#myModal').modal('toggle');
+      $('#newPromptModal').modal('hide');
     },
 
     'click div.clickable': function () {
       // Set the current prompt
       var question = Prompts.find({'_id': this._id}).fetch();
       if (question.length > 0) {
-        question = question[0]['prompt'];
-        Session.set("currentPrompt", question);
+        //question = question[0]['prompt'];
+        Session.set("currentPrompt", question[0]);
+        Prompts.update(this._id, {$set: {members: Session.get("currentUser")['name']}});
         Session.set("currentState", 'IdeationPage');
       }
-
-    
     },
 
 });
