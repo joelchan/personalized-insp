@@ -18,13 +18,14 @@
 }
 
 .idea-box .list-item {
+  display: inline;
   color: #fff;
   border: 3px;
   border-color: #000;
   background: #3276b1;
   border-radius: 10px;
-  width: 30%;
   min-width: 250px;
+  width: 30%;
   padding: 5px 10px; 
   margin: 10px;
   font-size: 14px;
