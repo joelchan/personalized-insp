@@ -175,45 +175,6 @@ body {
    border-left-color: crimson; 
 }
 
-/*.tag {
-    font-size: 14px;
-    font-family: Helvetica, Arial, sans-serif;
-    background: #588fe5;
-    display: inline-block;
-    color: #fff;
-    position: relative;
-    padding: 10px;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    margin: 30px 10px -5px 0px;
-    text-decoration: none;
-}
- 
- 
-.tag:before {
-    background: #fff;
-    width: 10px;
-    height: 10px;
-    content: "";
-    display: inline-block;
-    border-radius: 20px;
-    margin: 0 5px 0 0;
-}
- 
-.tag:after {
-    display: inline-block;
-    float: right;
-    border: 20px solid;
-    border-color: transparent transparent transparent #588fe5;
-    height: 0px;
-    width: 0;
-    right: -40px;
-    top: 0;
-    content: "";
-    position: absolute;
-}
-*/
-
 .circle {
   border-radius: 50%;
   width: 10px;

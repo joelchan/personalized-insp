@@ -10,6 +10,7 @@ Template.taggedIdea.done_class = function () {
   return this.done ? 'done' : '';
 };
 
+
 function getRandomColor() {
     var letters = '0123456789ABCDEF'.split('');
     var color = '#';
@@ -70,6 +71,21 @@ Template.TaggingPage.events({
         }
     },
 
+
+    // when double click a tag, then delete the tag
+    'dblclick button.tag': function() {
+        var answer = confirm ("Do you want to delete the tag?");
+        if (answer) {
+            Tags.remove(this._id);
+            var tagCon = this.tag;
+            Ideas.find().forEach(function (post) {
+                    if (post.tag == tagCon) {
+                        Ideas.update(post._id, {$set: {done: false, tag: "", color: ""}});
+                    }
+            });
+        }
+    },
+
      //when click tags, the ideas with this tag would show
     'click button.tag': function () {
         console.log(this._id);
@@ -93,6 +109,7 @@ Template.TaggingPage.events({
             }
         });
     },
+
 
     'click button.nextPage': function () {
         Session.set("currentState", "JoinIdeasPage");
