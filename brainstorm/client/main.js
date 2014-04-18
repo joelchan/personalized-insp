@@ -1,5 +1,6 @@
 // Initialize state machine to login page
 Meteor.startup(function () {
+  /*
   if (!Session.get("currentPrompt")) {
     Session.set("currentState", "PromptPage");
   }
@@ -12,7 +13,17 @@ Meteor.startup(function () {
       Session.set("currentState", "LoginPage");
       Session.set("currentUser", null);
     }
-  }
+  }*/
+      Session.set("currentState", "LoginPage");
+  /*if (!Session.get("currentState")) {
+    var user = Session.get("currentUser");
+    if (Session.get("currentUser") !== "") {
+      Session.set("currentState", "PromptPage");
+    } else { 
+      Session.set("currentState", "LoginPage");
+      Session.set("currentUser", null);
+    }
+  } */
 });
 
 // Defines a state machine using "currentState"
@@ -49,8 +60,9 @@ Template.IdeaGen.loggedIn = function() {
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
 Template.IdeaGen.currentUserName = function() {
-  if (Session.get("currentUser"))
+  if (Session.get("currentUser")) {
     return Session.get("currentUser")['name'];
+  }
 };
 
 /********************************************************************
@@ -59,14 +71,15 @@ Template.IdeaGen.currentUserName = function() {
 var user;
 Template.IdeaGen.events({
     'click button.submitLogin': function () {
-        user = {'name': $('#header input#userLogin').val().trim()};
+        var user = {'name': $('#header input#userLogin').val().trim()};
         LoginUser(user);
     },
+
     'keyup input#userLogin': function (evt) {
         $(document).ready(function(){
             $('#userLogin').keypress(function(e){
               if(e.keyCode==13)
-              $('#submitLogin').click();
+                $('#submitLogin').click();
             });
         });
     },
@@ -79,5 +92,3 @@ Template.IdeaGen.events({
 
 
 });
-
-

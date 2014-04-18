@@ -22,11 +22,17 @@ Template.PromptPage.events({
     'click button.createPrompt': function () {
       //Add a prompt to the database 
       var newQuestion = $("input#prompt-text").val();
-      console.log("Attempting to save new prompt: " + newQuestion);
-      console.log("current user " + Session.get("currentUser")['name'])
-      Prompts.insert({'prompt': newQuestion,
+      var user;
+      if (Session.get("currentUser")) {
+        user = [Session.get("currentUser")['name'],];
+      } else {
+        user = [];
+      }
+      var newPrompt = Prompts.insert({'prompt': newQuestion,
           'status': 'Active',
-          'members': [Session.get("currentUser")['name'],]});
+          'members': user});
+      Session.set("currentState", 'IdeationPage');
+      Session.set("currentPrompt", Prompts.find({'_id': newPrompt})[0]);
       $('#newPromptModal').modal('hide');
     },
 
@@ -36,7 +42,7 @@ Template.PromptPage.events({
       if (question.length > 0) {
         //question = question[0]['prompt'];
         Session.set("currentPrompt", question[0]);
-        Prompts.update(this._id, {$set: {members: Session.get("currentUser")['name']}});
+        Prompts.update(this._id, {$set: {members: this.members.concat(Session.get("currentUser")['name'])}});
         Session.set("currentState", 'IdeationPage');
       }
     },

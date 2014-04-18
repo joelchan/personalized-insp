@@ -1,5 +1,6 @@
 Template.TaggingPage.tags = function () {
-    return Tags.find({question_id: Session.get("currentPrompt")['_id']});
+    return Ideas.find({type: 'parent',
+      question_id: Session.get("currentPrompt")['_id']});
 };
 
 Template.TaggingPage.prompt = function () {
@@ -9,8 +10,9 @@ Template.TaggingPage.prompt = function () {
 Template.TaggingPage.ideas1 = function () {
     //Only show max of 10 ideas
     var allIdeas = Ideas.find(
-        {question_id: Session.get("currentPrompt")['_id']}).fetch();
-    return GetRandomSet(allIdeas, 7);
+        {type: 'child',
+          question_id: Session.get("currentPrompt")['_id']}).fetch();
+    return allIdeas;
 };
 
 Template.TaggingPage.ideas2 = function () {
@@ -19,7 +21,7 @@ Template.TaggingPage.ideas2 = function () {
         {question_id: Session.get("currentPrompt")['_id']}).fetch();
     var selectIdeas = GetRandomSet(allIdeas, 7);
     console.log("got " + selectIdeas.length + " ideas");
-    return selectIdeas;
+    return allIdeas;
 };
 
 Template.taggedIdea.done_class = function () {
@@ -46,7 +48,7 @@ getRandomColor = function getRandomColor() {
 };
 
 function toggleIdea(idea) {
-  console.log("toggling idea status " + idea.done);
+  //console.log("toggling idea status " + idea.done);
   if (idea.done) {
     Ideas.update(idea._id, {$set: {done: false}});
     $(idea).attr({'background': '#3276b1',
@@ -57,6 +59,18 @@ function toggleIdea(idea) {
   }
 };
 
+function hasTag(child, parnt) {
+  var tags = child.tags;
+  console.log(parnt._id);
+  for (var i=0; i<tags.length; i++) {
+    if (tags[i]._id === parnt._id) {
+      console.log("id matched: " + tags[i]._id);
+      return true;
+    }
+  }
+  return false;
+}
+
 
 Template.TaggingPage.rendered = function() {
 };
@@ -66,59 +80,65 @@ var newTag;
 Template.TaggingPage.events({
     //put tags
     'keyup input#nextTag': function (evt) {
-        newTag = $('#ideastorm input#nextTag').val().trim();
-        $(document).ready(function(){
-            $('#nextTag').keypress(function(e){
-              if(e.keyCode==13)
-              $('#submitTag').click();
-            });
-        });
+      newTag = $('#ideastorm input#nextTag').val().trim();
+      $(document).ready(function(){
+          $('#nextTag').keypress(function(e){
+            if(e.keyCode==13)
+            $('#submitTag').click();
+          });
+      });
     },
 
     'click button.submitTag': function () {
-      console.log("pressed submit");
-        var newTag = $("#nextTag").val();
-        var createTag = true;
-        if (newTag != "") {
-          console.log("tag is not empty");
-            Tags.find().forEach(function (post) {
-                if (newTag == post.tag) {
-                    createTag = false;
-                }
-            });
-        } else {
-          console.log("tag is empty");
-          createTag = false; 
-        }
-
-
-        if (newTag) {
-            //edit tags for ideas selected
-            var color = getRandomColor();
-            var question = Session.get("currentPrompt");
-            if (createTag) {
-              //add tags in type
-              Tags.insert({tag: newTag, 
-                  done: false, 
-                  color: color,
-                  user: Session.get("currentUser"),
-                  question_id: question['_id'],
-                  question: question['prompt']
-              });
+      var newTag = $("#nextTag").val();
+      var createTag = true;
+      var ideaTag;
+      if (newTag != "") {
+        //Check for duplicate tags
+        Ideas.find({type: 'parent'}).forEach(function (post) {
+            if (newTag == post.text) {
+                createTag = false;
+                ideaTag = post;
+                console.log(ideaTag.text);
             }
-            Ideas.find().forEach(function (post) {
-                if (post.done) {
-                    Ideas.update(post._id, {$set: {done: false, 
-                        tag: newTag, 
-                        color: color}});
-                }
-            });
+        });
+      } else {
+        return;
+      }
 
-            //console.log(newTag);
-            //reset entry box
-            newTag = null;
-            $('#nextTag').val("");
-        }
+
+      //edit tags for ideas selected
+      var color = getRandomColor();
+      var question = Session.get("currentPrompt");
+      //Add tag to ideas if not already there
+      if (createTag) {
+        ideaTag = {text: newTag,
+            type: "parent",
+            done: false, 
+            color: color,
+            user: Session.get("currentUser"),
+            question_id: question['_id'],
+            question: question['prompt']
+        };
+        ideaTag = Ideas.find({'_id': Ideas.insert(ideaTag)}).fetch()[0];
+        console.log(ideaTag.text);
+      }
+      //Add tag to all selected ideas
+      Ideas.find({type: 'child'}).forEach(function (post) {
+          if (post.done) {
+              if (!hasTag(post, ideaTag)) {
+                //console.log("idea doesn't already have tag: " + ideaTag.text);
+                Ideas.update(post._id, {$set: {done: false, 
+                  tags: post.tags.concat(ideaTag)}});
+              } else {
+                Ideas.update(post._id, {$set: {done: false}});
+              }
+          }
+      });
+      //console.log(newTag);
+      //reset entry box
+      newTag = null;
+        $('#nextTag').val("");
     },
 
 
@@ -126,35 +146,34 @@ Template.TaggingPage.events({
     'dblclick button.tag': function() {
         var answer = confirm ("Do you want to delete the tag?");
         if (answer) {
-            Tags.remove(this._id);
-            var tagCon = this.tag;
-            Ideas.find().forEach(function (post) {
-                    if (post.tag == tagCon) {
-                        Ideas.update(post._id, {$set: {done: false, tag: "", color: ""}});
-                    }
-            });
+          var tagCon = this.text;
+          Ideas.find().forEach(function (post) {
+              if (post.text == tagCon) {
+                var tags = post.tags;
+                for (var i=0; i<tags.length; i++) {
+                  if (tags[i] === tagCon) {
+                    tags.splice(i,1);
+                  }
+                }
+                Ideas.update(post._id, {$set: {done: false, tags: tags, color: ""}});
+              }
+          });
+          Ideas.remove(this._id);
         }
     },
 
      //when click tags, the ideas with this tag would show
     'click button.tag': function () {
-        var tagContent = this.tag;
+        var tag = this;
         //Set the current tagtext to the value of the tag
-        newTag = this.tag;
-        $("#nextTag").val(newTag);
-
-        
-        Ideas.find().forEach(function (post) {
-            if (post.tag == tagContent) {
-                if (post.done){  
-                    Ideas.update(post._id, {$set: {done: false}});
-                } else {
-                    Ideas.update(post._id, {$set: {done: true}});
-                }
+        newTag = this.text;
+        $("#nextTag").val(tag.text);
+        Ideas.find({type: 'child'}).forEach(function (post) {
+        console.log("checking tag: " + tag._id);
+            if (!hasTag(post, tag)) {
+              Ideas.update(post._id, {$set: {done: false}});
             } else {
-                if (post.done){
-                    Ideas.update(post._id, {$set: {done: false}});
-                }
+              Ideas.update(post._id, {$set: {done: true}});
             }
         });
     },
@@ -166,7 +185,7 @@ Template.TaggingPage.events({
 
     //Go to next state in app
     'click button.nextPage': function () {
-        Session.set("currentState", "JoinIdeasPage");
+      Session.set("currentState", "JoinIdeasPage");
     },
 
 });

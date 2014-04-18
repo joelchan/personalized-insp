@@ -1,5 +1,26 @@
 Template.JoinIdeasPage.ideas = function () {
-    return Ideas.find();
+    return Ideas.find({question_id: Session.get("currentPrompt")['_id']});
+    //var tags = Tags.find({question_id: Session.get("currentPrompt")['_id']});
+        
+    //var allitems = [];
+    //ideas.forEach(function (idea) {
+      //allitems = allitems.concat(idea.idea);
+      //console.log(allitems.length);
+    //});
+    //tags.forEach(function (tag) {
+      //allitems = allitems.concat(tag.tag);
+      //console.log(tag.tag);
+    //});
+
+    //return ideas; 
+};
+
+Template.JoinIdeasPage.prompt = function () {
+  if (Session.get("currentPrompt") !== null) {
+    Session.set("currentState", 'PromptPage');
+  } else {
+    return Session.get("currentPrompt")['prompt'];
+  }
 };
 
 Template.JoinIdeasPage.rendered = function() {
@@ -9,6 +30,6 @@ Template.JoinIdeasPage.rendered = function() {
 
 Template.JoinIdeasPage.events({
     'click button.nextPage': function () {
-        Session.set("currentState", "LoginPage");
+       Session.set("currentState", "LoginPage");
     },
 });

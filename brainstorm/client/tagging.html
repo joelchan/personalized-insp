@@ -1,19 +1,22 @@
 <template name="tagIdea">
   <li>
     <button class="tag" style="background: {{color}};">
-      {{tag}}
+      {{text}}
     </button>
   </li>
 </template>
 
 <template name="circleColor">
+    <div class="circle" style="background: {{color}};"></div>
 </template>
 
 <template name="taggedIdea">
-  <div class="idea clickable list-item {{done_class}}">
-    <div class="circle" style="background: {{color}};"></div>
+<div class="idea clickable list-item {{done_class}}">
+    {{#each tags}}
+      {{> circleColor}}
+    {{/each}}
     <div class="idea-text">
-      {{ idea }}
+      {{ text }}
     </div>
   </div>
 </template>
@@ -30,12 +33,10 @@
       <h2>Select items to tag</h2>
     </div>
   </div>
-  <div class="row">
-    <div class=".col-md-6 idea-list">
+  <div class="row idea-list">
         {{#each ideas1}}
           {{> taggedIdea}}
         {{/each}}
-    </div>
   </div>
   <div class="row">
     <h3>Used Tags</h3>

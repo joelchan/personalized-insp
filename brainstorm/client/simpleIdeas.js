@@ -1,14 +1,14 @@
-Template.IdeationPage.rendered = function() {
-  window.scrollTo(0,0);
-};
-
 Template.IdeationPage.ideas = function () {
-    return Ideas.find({user: Session.get('currentUser'),
-        question_id: Session.get("currentPrompt")['_id']});
+  if (Session.get("currentPrompt") !== undefined) {
+      return Ideas.find({user: Session.get('currentUser'),
+          question_id: Session.get("currentPrompt")['_id']});
+  } else {
+    return Ideas.find();
+  }
 };
 
 Template.IdeationPage.prompt = function () {
-  if (!Session.get("currentPrompt")) {
+  if (Session.get("currentPrompt") === undefined) {
     Session.set("currentState", 'PromptPage');
   } else {
     return Session.get("currentPrompt")['prompt'];
@@ -23,31 +23,31 @@ Template.IdeationPage.events({
         newIdea = $('#ideastorm input#nextIdea').val().trim();
         $(document).ready(function(){
             $('#nextIdea').keypress(function(e){
-              if(e.keyCode==13)
+              if(e.keyCode===13)
               $('#submitIdea').click();
             });
         });
     },
 
     'click button.submitIdea': function () {
-        if (newIdea) {
-            Ideas.find().forEach(function (post) {
-                if (newIdea == post.idea) {
-                    newIdea = null;
-                }
-            });
-        }
-        if (newIdea) {
+        var newIdea = $('#nextIdea').val();
+        //Check if idea already has been proposed
+        Ideas.find().forEach(function (post) {
+            if (newIdea == post.text) {
+                newIdea = "";
+            }
+        });
+        //Add idea to database
+        if (newIdea !== "") {
           var question = Session.get("currentPrompt");
-          Ideas.insert({idea: newIdea, 
+          Ideas.insert({text: newIdea, 
               done: false, 
-              tag: "", 
-              color: "",
+              type: "child",
+              tags: [], 
               user: Session.get("currentUser"),
               question_id: question['_id'],
               question: question['prompt']});
-            newIdea = null;
-            document.getElementById('nextIdea').value = ""
+          $('#nextIdea').val("");
         }
     },
 
