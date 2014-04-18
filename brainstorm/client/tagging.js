@@ -121,6 +121,21 @@ Template.TaggingPage.events({
         }
     },
 
+
+    // when double click a tag, then delete the tag
+    'dblclick button.tag': function() {
+        var answer = confirm ("Do you want to delete the tag?");
+        if (answer) {
+            Tags.remove(this._id);
+            var tagCon = this.tag;
+            Ideas.find().forEach(function (post) {
+                    if (post.tag == tagCon) {
+                        Ideas.update(post._id, {$set: {done: false, tag: "", color: ""}});
+                    }
+            });
+        }
+    },
+
      //when click tags, the ideas with this tag would show
     'click button.tag': function () {
         var tagContent = this.tag;
