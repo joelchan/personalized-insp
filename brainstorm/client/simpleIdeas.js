@@ -30,7 +30,14 @@ Template.IdeationPage.events({
             });
         }
         if (newIdea) {
-            Ideas.insert({idea: newIdea, done: false, tag: "", color: ""});
+          var question = Session.get("currentPrompt");
+          Ideas.insert({idea: newIdea, 
+              done: false, 
+              tag: "", 
+              color: "",
+              user: Session.get("currentUser"),
+              question_id: question['_id'],
+              question: question['prompt']});
             newIdea = null;
             document.getElementById('nextIdea').value = ""
         }

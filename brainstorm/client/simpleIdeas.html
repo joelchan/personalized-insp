@@ -1,27 +1,29 @@
 <template name="simpleIdea">
-    <li>{{idea}}</li>
+  <div class='list-item'>
+    {{ idea }}
+  </div>
 </template>
 
 <template name="IdeationPage">
     <div class="row">
       <div class="prompt-box">
-        {{ prompt }}
+        <h1 class="heading">
+          {{ prompt }}
+        </h1>
       </div>
     </div>
     <div class="row">
       <div class="idea-box">
-          <ul>
-              {{#each ideas}}
-                {{> simpleIdea}}
-              {{/each}}
-        </ul>
+        {{#each ideas}}
+          {{> simpleIdea}}
+        {{/each}}
       </div>
 
     </div>
 
     <div class="row">
       <div class="col-lg-10">
-        <input type="text" id="nextIdea" class="line" placeholder="What's your idea?">
+        <input type="text" id="nextIdea" class="idea-input" placeholder="What's your idea?">
       </div>
       <div class="col-lg-2">
           <button id="submitIdea" class="submitIdea btn-default btn-primary"> Submit </button>

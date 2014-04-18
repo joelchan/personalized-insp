@@ -57,16 +57,6 @@ button {
     margin-top: 50px;
 }
 
-.idea-box {
-    height:400px;
-    border:1px solid #ccc;
-    font-size: 28px;
-    padding-left: 15px;
-    padding-right: 15px;
-    font-family: 'HelveticaNeue-UltraLight';
-    overflow:auto;
-}
-
 .rectangle-timer {
    height: 80px;
    margin-bottom: 30px;
