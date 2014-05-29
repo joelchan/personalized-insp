@@ -19,7 +19,8 @@ Template.LoginPage.events({
         var user = {'name': $('input#name').val().trim()};
         LoginUser(user);
         //Go to next page
-        Session.set("currentState", "PromptPage");
+        //Session.set("currentState", "PromptPage");
+        Router.go('PromptPage')
     },
     'keyup input#name': function (evt) {
         $(document).ready(function(){

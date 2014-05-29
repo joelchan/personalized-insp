@@ -9,7 +9,8 @@ Template.IdeationPage.ideas = function () {
 
 Template.IdeationPage.prompt = function () {
   if (Session.get("currentPrompt") === undefined) {
-    Session.set("currentState", 'PromptPage');
+    //Session.set("currentState", 'PromptPage');
+    Router.go('PromptPage')
   } else {
     return Session.get("currentPrompt")['prompt'];
   }
@@ -53,7 +54,8 @@ Template.IdeationPage.events({
 
     //Transition to next page in state machine
     'click button.nextPage': function () {
-      Session.set("currentState", "TaggingPage");
+      Router.go('TaggingPage')
+      //Session.set("currentState", "TaggingPage");
     }
 });
 

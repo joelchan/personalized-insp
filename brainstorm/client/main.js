@@ -14,7 +14,7 @@ Meteor.startup(function () {
       Session.set("currentUser", null);
     }
   }*/
-      Session.set("currentState", "LoginPage");
+      //Session.set("currentState", "LoginPage");
   /*if (!Session.get("currentState")) {
     var user = Session.get("currentUser");
     if (Session.get("currentUser") !== "") {
@@ -28,7 +28,7 @@ Meteor.startup(function () {
 
 // Defines a state machine using "currentState"
 // Controls the site page flow
-Template.IdeaGen.currentPage = function () {
+/*Template.IdeaGen.currentPage = function () {
     var currentState =  Session.get('currentState');
     switch(currentState) {
         case "LoginPage":
@@ -44,7 +44,7 @@ Template.IdeaGen.currentPage = function () {
         default:
             return Template.IdeationPage;
     }
-};
+};*/
 
 
 Template.IdeaGen.loggedIn = function() {

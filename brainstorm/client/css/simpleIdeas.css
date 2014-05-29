@@ -18,7 +18,7 @@
 }
 
 .idea-box .list-item {
-  display: inline;
+  display: inline-flex;
   color: #fff;
   border: 3px;
   border-color: #000;

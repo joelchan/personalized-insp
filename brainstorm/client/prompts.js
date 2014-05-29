@@ -5,6 +5,12 @@ Template.PromptPage.prompts = function() {
   return Prompts.find();
 };
 
+/*function Prompt(newQuestion, status, user){
+  this.newQuestion = newQuestion;
+  this.status = status;
+  this.user = user;
+}*/
+
 /********************************************************************
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
@@ -28,22 +34,22 @@ Template.PromptPage.events({
       } else {
         user = [];
       }
-      var newPrompt = Prompts.insert({'prompt': newQuestion,
-          'status': 'Active',
-          'members': user});
-      Session.set("currentState", 'IdeationPage');
-      Session.set("currentPrompt", Prompts.find({'_id': newPrompt})[0]);
+      var newPrompt = new Prompt(newQuestion, 'Active', user)
+      Prompts.insert({'prompt': newPrompt});
+
+      var currentPrompt = Prompts.find({'_id': newPrompt});
+      Session.set("currentPrompt", currentPrompt[0]);
+      Router.go('IdeationPage', {'_id': currentPrompt[0]._id});
       $('#newPromptModal').modal('hide');
     },
 
     'click div.clickable': function () {
       // Set the current prompt
-      var question = Prompts.find({'_id': this._id}).fetch();
-      if (question.length > 0) {
-        //question = question[0]['prompt'];
-        Session.set("currentPrompt", question[0]);
-        Prompts.update(this._id, {$set: {members: this.members.concat(Session.get("currentUser")['name'])}});
-        Session.set("currentState", 'IdeationPage');
+      var prompt = Prompts.find({'_id': this._id}).fetch();
+      if (prompt.length > 0) {
+        Session.set("currentPrompt", prompt[0]);
+        //Prompts.update(this._id, {$set: {members: this.members.concat(Session.get("currentUser")['name'])}});
+        Router.go('IdeationPage', {'_id': prompt[0]._id});
       }
     },
 

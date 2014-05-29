@@ -185,7 +185,8 @@ Template.TaggingPage.events({
 
     //Go to next state in app
     'click button.nextPage': function () {
-      Session.set("currentState", "JoinIdeasPage");
+      //Session.set("currentState", "JoinIdeasPage");
+      Router.go('JoinIdeasPage');
     },
 
 });

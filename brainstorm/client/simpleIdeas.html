@@ -1,5 +1,5 @@
 <template name="simpleIdea">
-  <div class='list-item'>
+  <div class='list-item' draggable="true">
     {{ text }}
   </div>
 </template>
@@ -21,10 +21,10 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-10">
+      <div class="col-md-10">
         <input type="text" id="nextIdea" class="idea-input" placeholder="What's your idea?">
       </div>
-      <div class="col-lg-2">
+      <div class="col-md-2">
           <button id="submitIdea" class="submitIdea btn-default btn-primary"> Submit </button>
       </div>
     </div>

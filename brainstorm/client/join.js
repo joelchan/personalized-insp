@@ -17,7 +17,8 @@ Template.JoinIdeasPage.ideas = function () {
 
 Template.JoinIdeasPage.prompt = function () {
   if (Session.get("currentPrompt") !== null) {
-    Session.set("currentState", 'PromptPage');
+    //Session.set("currentState", 'PromptPage');
+    Router.go('PromptPage')
   } else {
     return Session.get("currentPrompt")['prompt'];
   }
@@ -30,6 +31,7 @@ Template.JoinIdeasPage.rendered = function() {
 
 Template.JoinIdeasPage.events({
     'click button.nextPage': function () {
-       Session.set("currentState", "LoginPage");
+       //Session.set("currentState", "LoginPage");
+       Router.go('PromptPage')
     },
 });
