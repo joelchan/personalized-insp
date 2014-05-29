@@ -9,10 +9,15 @@ Router.map(function () {
   this.route('IdeationPage', {
   	path: 'IdeationPage/:_id',
   	template: 'IdeationPage'
-  	//data: function() {return Prompts.findOne(this.params._id);}
   });
-  this.route('TaggingPage');
-  this.route('JoinIdeasPage');
+  this.route('TaggingPage', {
+    path: 'TaggingPage/:_id',
+    template: 'TaggingPage'
+  });
+  this.route('JoinIdeasPage', {
+    path: 'JoinIdeasPage/:_id',
+    template: 'JoinIdeasPage'
+  });
 });
 
 //Sets layout for all routes to IdeaGen template

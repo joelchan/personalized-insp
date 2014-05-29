@@ -16,11 +16,12 @@ Template.JoinIdeasPage.ideas = function () {
 };
 
 Template.JoinIdeasPage.prompt = function () {
-  if (Session.get("currentPrompt") !== null) {
-    //Session.set("currentState", 'PromptPage');
-    Router.go('PromptPage')
+  if (Session.get("currentPrompt") === undefined) {
+    console.log(Session.get("currentPrompt"));
+    Router.go('PromptPage');
   } else {
-    return Session.get("currentPrompt")['prompt'];
+    var currentPrompt = Session.get("currentPrompt").prompt;
+    return currentPrompt.question;
   }
 };
 

@@ -7,14 +7,14 @@
 <template name="brainstorm">
   <div id="prompt-{{_id}}" class="menu-box clickable panel panel-info">
     <div class="panel-heading">
-      {{ prompt }}
+      {{ prompt.question }}
     </div>
     <div class="panel-row">
-      <strong>Status: </strong>{{ status }}
+      <strong>Status: </strong>{{ prompt.status }}
     </div>
     <div class="panel-row">
     <strong>Participants: </strong>
-    {{#each members}}
+    {{#each prompt.users}}
       {{> namebox }}
     {{/each}}
     </div>

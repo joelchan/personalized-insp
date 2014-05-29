@@ -9,10 +9,10 @@ Template.IdeationPage.ideas = function () {
 
 Template.IdeationPage.prompt = function () {
   if (Session.get("currentPrompt") === undefined) {
-    //Session.set("currentState", 'PromptPage');
     Router.go('PromptPage')
   } else {
-    return Session.get("currentPrompt")['prompt'];
+    var currentPrompt = Session.get("currentPrompt").prompt;
+    return currentPrompt.question;
   }
 };
 
@@ -54,7 +54,8 @@ Template.IdeationPage.events({
 
     //Transition to next page in state machine
     'click button.nextPage': function () {
-      Router.go('TaggingPage')
+      var currentPrompt = Session.get("currentPrompt");
+      Router.go('TaggingPage', {'_id': currentPrompt._id});
       //Session.set("currentState", "TaggingPage");
     }
 });

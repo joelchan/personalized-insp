@@ -1,10 +1,10 @@
 // Setup a collection to contain all ideas
 
 //Prompt constructor function
-Prompt = function (newQuestion, status, user){
-	this.newQuestion = newQuestion;
+Prompt = function (question, status, users){
+	this.question = question;
 	this.status = status;
-	this.user = user;
+	this.users = [users];
 }
 
 Prompts = new Meteor.Collection("prompts");

@@ -4,7 +4,12 @@ Template.TaggingPage.tags = function () {
 };
 
 Template.TaggingPage.prompt = function () {
-  return Session.get("currentPrompt")['prompt'];
+  if (Session.get("currentPrompt") === undefined) {
+    Router.go('PromptPage')
+  } else {
+    var currentPrompt = Session.get("currentPrompt").prompt;
+    return currentPrompt.question;
+  }
 };
 
 Template.TaggingPage.ideas1 = function () {
@@ -185,8 +190,8 @@ Template.TaggingPage.events({
 
     //Go to next state in app
     'click button.nextPage': function () {
-      //Session.set("currentState", "JoinIdeasPage");
-      Router.go('JoinIdeasPage');
+      var currentPrompt = Session.get("currentPrompt");
+      Router.go('JoinIdeasPage', {'_id': currentPrompt._id});
     },
 
 });
