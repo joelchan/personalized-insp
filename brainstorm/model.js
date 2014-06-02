@@ -21,9 +21,12 @@ makeID = function(size) {
     return text;
 };
 
+Experiment = function(){
+	this.prompts = [];
 
+};
 
-// Setup a collection to contain all ideas
+//
 PromptFactory = {
 	
 	create : function(question, status, participant){
@@ -40,48 +43,52 @@ PromptFactory = {
 };
 
 //Prompt constructor function
-Prompt = function (question, status, users){
+/*Prompt = function (question, status, users){
 	this.question = question;
 	this.status = status;
 	this.participants = [];
 	var groupsize;
 
 	//define functions for users; add, remove, find
-};
+};*/
 
+//Predefined prompt for preliminary mechanical turk trials
 prelimPrompt = {
 	question : "What are alternate uses for a bowling pin?",
 	status : "Active",
 	participants : [],
-	_id : "7pMWSVEvAVz36ixXb10e" //randomly generated 20 char string
+	_id : "7pMWSVEvAVz36ixXb10e" //randomly generated 20 char string to use as unidque id
 };
 
-Prompt.prototype.addParticipant = function (name){
+//
+/*Prompt.prototype.addParticipant = function (name){
 		this.participants.push(name);
 		console.log("participant added");
+};*/
+
+//Class for groups - number of each role
+Group = function(){
+	this.groupSizeType,
+	this.groupSize,
+	this.infoShareType
+	this.workflow;
 };
 
-//Class for roles - one role = one screen
+//Class for roles - one role = one screen/interface
 Role = function(title){
 	this.title = title;
 };
 
 //Class for workflow - a set of role-screens
-Workflow = function(role1, role2, role3){
+Workflow = function(){
+	this.roles = [];
 
-};
-
-//Class for groups - number of each role
-Group = function(numRole1, numRole2, numRole3){
-	var groupSize;
 };
 
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
 User = function(userName){
 	this.userName = userName;
 	this.verifyCode = userName.hashCode();
-	//var role;
-	//var userUrl;
 };
 
 User.prototype.randomAssign = function(){

@@ -60,7 +60,7 @@ Template.IdeaGen.loggedIn = function() {
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
 Template.IdeaGen.currentUserName = function() {
-  if (Session.get("currentUser")) {
+  if (Session.get("currentUser") instanceof User) {
     return Session.get("currentUser").userName;
   }
 };
