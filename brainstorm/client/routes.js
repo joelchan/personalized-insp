@@ -18,6 +18,10 @@ Router.map(function () {
     path: 'JoinIdeasPage/:_id',
     template: 'JoinIdeasPage'
   });
+  this.route('FinalizePage', {
+    path: 'FinalizePage/:_id',
+    template: 'FinalizePage'
+  });
 });
 
 //Sets layout for all routes to IdeaGen template

@@ -61,7 +61,7 @@ Template.IdeaGen.loggedIn = function() {
  * *****************************************************************/
 Template.IdeaGen.currentUserName = function() {
   if (Session.get("currentUser")) {
-    return Session.get("currentUser")['name'];
+    return Session.get("currentUser").userName;
   }
 };
 

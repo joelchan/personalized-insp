@@ -11,7 +11,7 @@ Template.IdeationPage.prompt = function () {
   if (Session.get("currentPrompt") === undefined) {
     Router.go('PromptPage')
   } else {
-    var currentPrompt = Session.get("currentPrompt").prompt;
+    var currentPrompt = Session.get("currentPrompt");
     return currentPrompt.question;
   }
 };
@@ -55,7 +55,8 @@ Template.IdeationPage.events({
     //Transition to next page in state machine
     'click button.nextPage': function () {
       var currentPrompt = Session.get("currentPrompt");
-      Router.go('TaggingPage', {'_id': currentPrompt._id});
+      //Router.go('TaggingPage', {'_id': currentPrompt._id});
+      Router.go('FinalizePage', {'_id': currentPrompt._id});
       //Session.set("currentState", "TaggingPage");
     }
 });
