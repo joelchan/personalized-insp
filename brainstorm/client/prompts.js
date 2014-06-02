@@ -28,11 +28,13 @@ Template.PromptPage.events({
       } else {
         user = [];
       }
-      var newPrompt = new Prompt(newQuestion, 'Active', user)
+      //var newPrompt = new Prompt(newQuestion, 'Active', user)
+      newPrompt.addParticipant('test');
+      console.log(newPrompt);
       Prompts.insert({'prompt': newPrompt});
 
-      var currentPrompt = Prompts.find({'_id': newPrompt});
-      console.log(currentPrompt[0]);
+      var currentPrompt = Prompts.find({'prompt': newPrompt}).fetch();
+
       Session.set("currentPrompt", currentPrompt[0]);
       Router.go('IdeationPage', {'_id': currentPrompt[0]._id});
       $('#newPromptModal').modal('hide');
@@ -43,12 +45,10 @@ Template.PromptPage.events({
       var prompt = Prompts.find({'_id': this._id}).fetch();
       if (prompt.length > 0) {
         Session.set("currentPrompt", prompt[0]);
-
-        Prompts.update({'_id': prompt[0]._id}, {$addToSet: {users: Session.get("currentUser")['name']}});
-
+        //prompt[0].prompt.addParticipant("test");
         Router.go('IdeationPage', {'_id': prompt[0]._id});
 
-        console.log(prompt[0].users);
+        //console.log();
       }
     },
 
