@@ -56,7 +56,7 @@ Template.IdeationPage.events({
     'click button.nextPage': function () {
       var currentPrompt = Session.get("currentPrompt");
       //Router.go('TaggingPage', {'_id': currentPrompt._id});
-      Router.go('FinalizePage', {'_id': currentPrompt._id});
+      Router.go('SurveyPage', {'_id': currentPrompt._id});
       //Session.set("currentState", "TaggingPage");
     }
 });

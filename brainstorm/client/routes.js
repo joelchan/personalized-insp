@@ -22,6 +22,10 @@ Router.map(function () {
     path: 'FinalizePage/:_id',
     template: 'FinalizePage'
   });
+    this.route('SurveyPage', {
+    path: 'SurveyPage/:_id',
+    template: 'SurveyPage'
+  });
 });
 
 //Sets layout for all routes to IdeaGen template
