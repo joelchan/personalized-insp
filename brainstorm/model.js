@@ -11,15 +11,16 @@ Prompts = new Meteor.Collection("prompts");
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
 Names = new Meteor.Collection("names");
+Roles = new Meteor.Collection("roles");
 
-function Experiment(prompt) {
+Experiment = function (prompt) {
    /********************************************************************
    * Defines an brainstorming experiment
    *
    * @return {object} GroupTemplate object 
     ********************************************************************/
   
-  this.creationTime = getTime();
+  this.creationTime = new Date().getTime();
   //Question(s) to answer in the brainstorm
   this.prompt = prompt;
   //Description of the experiment
@@ -31,7 +32,7 @@ function Experiment(prompt) {
 
 };
 
-function Prompt(question){
+Prompt = function (question){
   /********************************************************************
    * Constructor that defines a brainstorming prompt/question
    *
@@ -50,7 +51,7 @@ Prompt.prototype.addParticipant = function (name){
 		console.log("participant added");
 };
 
-function GroupTemplate() {
+GroupTemplate = function () {
   /******************************************************************
   * Defines a template for membership of each group in a brainstorm
   *
@@ -64,13 +65,14 @@ function GroupTemplate() {
 
 };
 
-GroupTemplate.prototype.addRole = function (role){
+GroupTemplate.prototype.addRole = function (role, num){
   /******************************************************************
   * Adds a role to the set of roles in a group template
   *
   * @return null
   ******************************************************************/
   this.roles.push(role._id);
+  this.numRoles[role._id] = num;
 };
 
 

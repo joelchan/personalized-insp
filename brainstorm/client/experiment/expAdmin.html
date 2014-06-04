@@ -15,14 +15,35 @@
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title" id="newExpLabel">Create New Brainstorming Experiment</h4>
-          </div>
+          </div><!-- End modal-header -->
           <div class="modal-body">
-            <h5>Brainstorming prompt:</h5>
-            <input type="text" id="exp-prompt-text" class="modal-box" placeholder="New Question">
-          </div>
+            <div class="modal-form-elm">
+              <h5>Brainstorming prompt:</h5>
+              <textarea type="text" id="exp-prompt-text" class="modal-box" placeholder="New Question"></textarea>
+            </div>
+            <div class="modal-form-elm">
+              <h5>Description of experiment:</h5>
+              <textarea id="exp-desc-text" class="modal-form-textbox" rows="2" cols="80">
+              </textarea>
+            </div>
+            <div class="modal-form-elm">
+              <h5>Number of Groups:</h5>
+              <input id="exp-num-groups" type="number" min="1" step="1" value="1">
+            </div>
+            <div class="modal-form-elm">
+              <h5>Group Template:</h5>
+              Role: <select id="exp-role1" class="exp-role"> 
+                {{#each roles}}
+                  {{> EPRoleSelect }}
+                {{/each}}
+                </select>
+              Number in this Role(-1=unlimited): 
+              <input id="exp-num-role1" class="exp-num-role" type="number" min="-1" step="1" value="-1">
+            </div>
+          </div><!-- End Modal-body -->
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button id="createExperiment" type="button" class="createPrompt btn btn-primary" data-toggle="modal" data-target="#newExpModal">Save</button>
+            <button id="createExperiment" type="button" class="createExperiment btn btn-primary" data-toggle="modal" data-target="#newExpModal">Save</button>
           </div> <!-- End modal footer -->
         </div> <!-- End modal content -->
       </div> <!-- End modal dialog -->
@@ -35,6 +56,12 @@
         {{/each}}
       </div>
     </div>
+</template>
+
+<template name="EPRoleSelect">
+  <option value="{{ _id }}">
+    {{ title }}
+  </option>
 </template>
 
 <template name="EPExperiment">

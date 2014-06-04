@@ -11,14 +11,13 @@ Meteor.startup(function() {
     });
 
 
-
-    //Meteor.startup(function() {
-        //if (Tags.find().count() === 0) {
-            //var sampleTags = ["food", "sport"];
-            //for (var i=0; i<sampleTags.length; i++) 
-                //Tags.insert({tag: sampleTags[i]});
-        //}
-    //});
+//Initialize Roles
+Meteor.startup(function() {
+    if (Roles.find().count() === 0) {
+        var ideator = new Role("Ideator");
+        Roles.insert(ideator);
+    }
+});
 
     Meteor.startup(function() {
         if(Names.find().count()>0){

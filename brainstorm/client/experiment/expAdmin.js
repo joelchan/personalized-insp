@@ -5,6 +5,12 @@ Template.ExpAdminPage.experiments = function() {
   return Experiments.find();
 };
 
+Template.ExpAdminPage.roles = function() {
+    return Roles.find();
+}
+/********************************************************************
+ * Return the list of all prompts
+ * *****************************************************************/
 Template.ExpAdminPage.events({
   /********************************************************************
   * Template function returning a boolean if there is a logged in user
@@ -22,14 +28,17 @@ Template.ExpAdminPage.events({
 
     'click button.createExperiment': function () {
       //Add a prompt to the database 
-      var newQuestion = $("input#exp-prompt-text").val();
-      var user;
-      if (Session.get("currentUser")) {
-        user = [Session.get("currentUser")['name'],];
-      } else {
-        user = [];
-      }
+      console.log("saving experiment");
+      var newQuestion = $("textarea#exp-prompt-text").val();
       var newExp = new Experiment(newQuestion);
+      console.log($("textarea#exp-desc-text").val());
+      newExp.description = $("textarea#exp-desc-text").val();
+      console.log($("input#exp-num-groups").val());
+      newExp.numGroups = $("input#exp-num-groups").val();
+      var roles = new GroupTemplate();
+      var role = Roles.find({_id: $("select#exp-role1").val()});
+      roles.addRole(role, $("input#exp-num-role1").val())
+      newExp.groupTemplate = roles;
       //newPrompt.addParticipant('test');
       console.log(newExp);
       //Prompts.insert({'prompt': newPrompt});
@@ -38,7 +47,8 @@ Template.ExpAdminPage.events({
 
       //Session.set("currentPrompt", currentPrompt[0]);
       //Router.go('IdeationPage', {'_id': currentPrompt[0]._id});
-      $('#newExpModal').modal('hide');
+      //modal taoggled by bootstrap classes
+      //$('#newExpModal').modal('hide');
     },
 
     'click div.clickable': function () {
