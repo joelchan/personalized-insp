@@ -90,5 +90,4 @@ Template.IdeaGen.events({
         Meteor.logout();
     },
 
-
 });

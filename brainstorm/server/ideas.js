@@ -12,13 +12,13 @@ Meteor.startup(function() {
 
 
 
-    Meteor.startup(function() {
-        if (Tags.find().count() === 0) {
-            var sampleTags = ["food", "sport"];
-            for (var i=0; i<sampleTags.length; i++) 
-                Tags.insert({tag: sampleTags[i]});
-        }
-    });
+    //Meteor.startup(function() {
+        //if (Tags.find().count() === 0) {
+            //var sampleTags = ["food", "sport"];
+            //for (var i=0; i<sampleTags.length; i++) 
+                //Tags.insert({tag: sampleTags[i]});
+        //}
+    //});
 
     Meteor.startup(function() {
         if(Names.find().count()>0){

@@ -6,6 +6,10 @@ Router.map(function () {
   });
 
   this.route('PromptPage');
+  this.route('ExpAdminPage', {
+      path: 'ExpAdmin/',
+      template: 'ExpAdminPage'
+  });
   this.route('IdeationPage', {
   	path: 'IdeationPage/:_id',
   	template: 'IdeationPage'

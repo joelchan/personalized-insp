@@ -1,4 +1,92 @@
+/********************************************************************
+Group Brainstorming experiment related data models
+********************************************************************/
+
+//Holds list of experiments with metadata
+Experiments = new Meteor.Collection("experiments");
+/********************************************************************
+Brainstorming prompts data models 
+********************************************************************/
+Prompts = new Meteor.Collection("prompts");
 // Setup a collection to contain all ideas
+Ideas = new Meteor.Collection("ideas");
+Names = new Meteor.Collection("names");
+
+function Experiment(prompt) {
+   /********************************************************************
+   * Defines an brainstorming experiment
+   *
+   * @return {object} GroupTemplate object 
+    ********************************************************************/
+  
+  this.creationTime = getTime();
+  //Question(s) to answer in the brainstorm
+  this.prompt = prompt;
+  //Description of the experiment
+  this.description = null;
+  //Number of groups in the experiment
+  this.groupNum = 1;
+  //Define the make-up of each group
+  this.groupTemplate = new GroupTemplate();
+
+};
+
+function Prompt(question){
+  /********************************************************************
+   * Constructor that defines a brainstorming prompt/question
+   *
+   * @return {object} Prompt object 
+  ********************************************************************/
+
+	this.question = question;
+	this.participants = [];
+	var groupsize;
+
+	//define functions for users; add, remove, find
+};
+
+Prompt.prototype.addParticipant = function (name){
+		this.participants.push(name);
+		console.log("participant added");
+};
+
+function GroupTemplate() {
+  /******************************************************************
+  * Defines a template for membership of each group in a brainstorm
+  *
+  * @return {object} GroupTemplate object 
+  ******************************************************************/
+ 
+  // list of Role._id
+  this.roles = [];
+  // Dictionary where key=Role._id; value=number of people of that role
+  this.numRoles = {};
+
+};
+
+GroupTemplate.prototype.addRole = function (role){
+  /******************************************************************
+  * Adds a role to the set of roles in a group template
+  *
+  * @return null
+  ******************************************************************/
+  this.roles.push(role._id);
+};
+
+
+
+function Role(title) {
+  /********************************************************************
+  * defines a function or sequence of functions performed by an
+  * individual
+  *
+  * @return {object} GroupTemplate object 
+  ********************************************************************/
+
+  this.title = title;
+
+};
+
 
 /*PromptFactory = {
 	
@@ -15,35 +103,8 @@
 	}
 };*/
 
-//Prompt constructor function
-Prompt = function (question, status, users){
-	this.question = question;
-	this.status = status;
-	this.participants = [];
-	var groupsize;
 
-	//define functions for users; add, remove, find
-};
 
-Prompt.prototype.addParticipant = function (name){
-		this.participants.push(name);
-		console.log("participant added");
-};
-
-//Class for roles - one role = one screen
-Role = function(title){
-	this.title = title;
-};
-
-//Class for workflow - a set of role-screens
-Workflow = function(role1, role2, role3){
-
-};
-
-//Class for groups - number of each role
-Group = function(numRole1, numRole2, numRole3){
-	var groupSize;
-};
 
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
 User = function(name){
@@ -67,11 +128,6 @@ User.prototype.randomAssign = function(){
 //Random assignment and user management logic
 	//when user opens client they get randomly assigned to a role and/or workflow and paired unique url (hashed)
 //Need to track completion
-
-Prompts = new Meteor.Collection("prompts");
-Ideas = new Meteor.Collection("ideas");
-Tags = new Meteor.Collection("tags");
-Names = new Meteor.Collection("names");
 
 
 //Hash code function 
