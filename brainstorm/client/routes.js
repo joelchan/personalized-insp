@@ -18,9 +18,16 @@ Router.map(function () {
       return Experiments.findOne({_id: this.params._id});
     },
     onRun: function() {
-      var x = Experiments.findOne({_id: this.params._id});
-      Session.set("currentExp", x);
+      Session.set("currentExp", Experiments.findOne({_id: this.params._id}));
     }
+  });
+  this.route('FinalizePage', {
+    path: 'FinalizePage/:_id',
+    template: 'FinalizePage'
+  });
+    this.route('SurveyPage', {
+    path: 'SurveyPage/:_id',
+    template: 'SurveyPage'
   });
 });
 

@@ -15,10 +15,20 @@ Meteor.startup(function() {
 Meteor.startup(function() {
     if (Roles.find().count() === 0) {
         var ideator = new Role("Ideator");
+        ideator.workflow = ["LoginPage",
+          "ConsentPage",
+          "IdeationPage",
+          "SurveyPage",
+          "FinalizePage"];
         Roles.insert(ideator);
+
     }
 });
 
+Meteor.startup(function() {
+    
+
+});
     Meteor.startup(function() {
         if(Names.find().count()>0){
             Names.remove({});

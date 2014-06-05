@@ -57,14 +57,15 @@ Template.IdeationPage.events({
     //Transition to next page in state machine
     'click button.nextPage': function () {
       var currentPrompt = Session.get("currentPrompt");
-      Router.go('TaggingPage', {'_id': currentPrompt._id});
+      //Router.go('TaggingPage', {'_id': currentPrompt._id});
+      Router.go('SurveyPage', {'_id': currentPrompt._id});
       //Session.set("currentState", "TaggingPage");
     }
 });
 
 getUser = function() {
   /******************************************************************
-  * Grab the userid form MTurk
+  * Grab the userid from MTurk
   ******************************************************************/
 
 };

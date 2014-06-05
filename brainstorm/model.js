@@ -41,24 +41,21 @@ Experiment.prototype.getUrl = function() {
   return Meteor.absoluteUrl() + 'Ideation/' + this._id;
 };
 
-Prompt = function (question){
+//Prompt = function (question){
   /********************************************************************
    * Constructor that defines a brainstorming prompt/question
    *
    * @return {object} Prompt object 
   ********************************************************************/
 
-	this.question = question;
-	this.participants = [];
-	var groupsize;
-
-	//define functions for users; add, remove, find
+//Predefined prompt for preliminary mechanical turk trials
+prelimPrompt = {
+	question : "What are alternate uses for a bowling pin?",
+	status : "Active",
+	participants : [],
+	_id : "7pMWSVEvAVz36ixXb10e" //randomly generated 20 char string to use as unidque id
 };
 
-Prompt.prototype.addParticipant = function (name){
-		this.participants.push(name);
-		console.log("participant added");
-};
 
 GroupTemplate = function () {
   /******************************************************************
@@ -67,7 +64,7 @@ GroupTemplate = function () {
   * @return {object} GroupTemplate object 
   ******************************************************************/
  
-  // list of Role._id
+  // list of RoleTemplates
   this.roles = [];
 
   // Dictionary where key=Role._id; value=number of people of that role
@@ -83,7 +80,6 @@ GroupTemplate.prototype.addRole = function (role, num){
   ******************************************************************/
   var newRole = new RoleTemplate(role, num);
   this.roles.push(newRole);
-  //this.numRoles[role._id] = num;
 };
 
 RoleTemplate = function (role, num) {
@@ -102,6 +98,7 @@ Role = function (title) {
   ********************************************************************/
 
   this.title = title;
+  this.workflow = [];
 
 };
 
@@ -132,14 +129,10 @@ Idea = function (content, user) {
 	}
 };*/
 
-
-
-
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
-User = function(name){
-	this.name = name;
-	var role;
-	var userUrl;
+User = function(userName){
+	this.userName = userName;
+	this.verifyCode = userName.hashCode();
 };
 
 User.prototype.randomAssign = function(){
@@ -169,5 +162,28 @@ String.prototype.hashCode = function() {
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
+};
+
+//Javascript implementation of Java's hash code function 
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr, len;
+  if (this.length == 0) return hash;
+  for (i = 0, len = this.length; i < len; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+//Generates random alphanumeric string id
+makeID = function(size) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < size; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
 };
 
