@@ -23,8 +23,7 @@
             </div>
             <div class="modal-form-elm">
               <h5>Description of experiment:</h5>
-              <textarea id="exp-desc-text" class="modal-form-textbox" rows="2" cols="80">
-              </textarea>
+              <textarea id="exp-desc-text" class="modal-form-textbox" rows="2" cols="80" placeholder="Your description of experiment objectives"></textarea>
             </div>
             <div class="modal-form-elm">
               <h5>Number of Groups:</h5>
@@ -67,24 +66,34 @@
 <template name="EPExperiment">
   <div id="exp-{{_id}}" class="menu-box clickable panel panel-info">
     <div class="panel-heading">
-      {{ prompt }}
+      <strong>Prompt: </strong> {{ prompt }}
     </div>
     <div class="panel-row">
       <strong>Description: </strong>{{ description }}
     </div>
     <div class="panel-row">
-    <strong>Participants: </strong>
-    {{#each groupTemplate}}
+      <strong>Number of Groups: </strong>{{ groupNum }}
+    </div>
+    <div class="panel-row">
+      <strong>Group Member Roles: </strong>
       {{> EPGroupMakeup }}
-    {{/each}}
+    </div>
+    <div class="panel-row">
+      <strong>URL: </strong>
+      <a href="{{ formUrl }}">{{ formUrl }}</a>
     </div>
   </div>
 </template>
 
 <template name="EPGroupMakeup">
   <div class="label label-primary">
-    {{#each roles }}
-      {{ this }}
+    {{#each groupTemplate.roles }}
+    <span class="role-label">
+      {{ this.title }}
+    </span>
+    <span class="role-num-label">
+      ({{ num }} people)
+    </span>
     {{/each}}
   </div>
 </template>

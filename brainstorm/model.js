@@ -29,7 +29,16 @@ Experiment = function (prompt) {
   this.groupNum = 1;
   //Define the make-up of each group
   this.groupTemplate = new GroupTemplate();
+  //Url to pass to participants
+  this.url = Meteor.absoluteUrl() + 'Ideation/' + this._id;
 
+};
+
+Experiment.prototype.getUrl = function() {
+  this.url = Meteor.absoluteUrl() + 'Ideation2/' + this._id;
+  console.log(this.url);
+  console.log('getting url');
+  return Meteor.absoluteUrl() + 'Ideation/' + this._id;
 };
 
 Prompt = function (question){
@@ -60,8 +69,9 @@ GroupTemplate = function () {
  
   // list of Role._id
   this.roles = [];
+
   // Dictionary where key=Role._id; value=number of people of that role
-  this.numRoles = {};
+  //this.numRoles = {};
 
 };
 
@@ -71,13 +81,19 @@ GroupTemplate.prototype.addRole = function (role, num){
   *
   * @return null
   ******************************************************************/
-  this.roles.push(role._id);
-  this.numRoles[role._id] = num;
+  var newRole = new RoleTemplate(role, num);
+  this.roles.push(newRole);
+  //this.numRoles[role._id] = num;
 };
 
+RoleTemplate = function (role, num) {
+  this.role = role._id;
+  this.title = role.title;
+  this.num = num;
+}
 
 
-function Role(title) {
+Role = function (title) {
   /********************************************************************
   * defines a function or sequence of functions performed by an
   * individual
@@ -87,6 +103,17 @@ function Role(title) {
 
   this.title = title;
 
+};
+
+Idea = function (content, user) {
+  /********************************************************************
+  * Encapsulation of ideas recorded by the system
+  *
+  * @return {object} GroupTemplate object 
+  ********************************************************************/
+  this.time = new Date().getTime();
+  this.content = content;
+  this.user = user;
 };
 
 

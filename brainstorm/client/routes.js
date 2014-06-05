@@ -10,17 +10,17 @@ Router.map(function () {
       path: 'ExpAdmin/',
       template: 'ExpAdminPage'
   });
+  //Defines the beginning of a route for each experiment
   this.route('IdeationPage', {
-  	path: 'IdeationPage/:_id',
-  	template: 'IdeationPage'
-  });
-  this.route('TaggingPage', {
-    path: 'TaggingPage/:_id',
-    template: 'TaggingPage'
-  });
-  this.route('JoinIdeasPage', {
-    path: 'JoinIdeasPage/:_id',
-    template: 'JoinIdeasPage'
+  	path: 'Ideation/:_id',
+  	template: 'IdeationPage',
+    data: function() {
+      return Experiments.findOne({_id: this.params._id});
+    },
+    onRun: function() {
+      var x = Experiments.findOne({_id: this.params._id});
+      Session.set("currentExp", x);
+    }
   });
 });
 

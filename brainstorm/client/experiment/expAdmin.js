@@ -7,7 +7,26 @@ Template.ExpAdminPage.experiments = function() {
 
 Template.ExpAdminPage.roles = function() {
     return Roles.find();
-}
+};
+
+Template.EPGroupMakeup.role = function() {
+  return Roles.findOne({'_id': String(this)});
+};
+
+Template.EPExperiment.formUrl = function() {
+  console.log(Meteor.absoluteUrl() + 'Ideation/' + this._id);
+  return Meteor.absoluteUrl() + 'Ideation/' + this._id;
+};
+
+
+Template.EPGroupMakeup.num = function() {
+  if (this.num < 0) {
+    return "unlimited"
+  } else {
+    return this.num;
+  }
+};
+
 /********************************************************************
  * Return the list of all prompts
  * *****************************************************************/
@@ -36,12 +55,15 @@ Template.ExpAdminPage.events({
       console.log($("input#exp-num-groups").val());
       newExp.numGroups = $("input#exp-num-groups").val();
       var roles = new GroupTemplate();
-      var role = Roles.find({_id: $("select#exp-role1").val()});
+      var role = Roles.findOne({_id: $("select#exp-role1").val()});
+      console.log(role);
+      console.log(roles);
       roles.addRole(role, $("input#exp-num-role1").val())
       newExp.groupTemplate = roles;
       //newPrompt.addParticipant('test');
       console.log(newExp);
       //Prompts.insert({'prompt': newPrompt});
+      Experiments.insert(newExp);
 
       //var currentPrompt = Prompts.find({'prompt': newPrompt}).fetch();
 
