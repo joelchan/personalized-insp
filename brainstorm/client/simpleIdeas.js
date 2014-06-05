@@ -10,7 +10,6 @@ Template.IdeationPage.ideas = function () {
 
 Template.IdeationPage.prompt = function () {
     return Session.get("currentExp").prompt;
-  }
 };
 
 // Keeps text input field until submit is pressed
