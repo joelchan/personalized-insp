@@ -1,3 +1,9 @@
+Template.SurveyPage.rendered = function() {
+    $("#ss-submit").click(function() {
+        console.log("form submitted");
+    });
+};
+
 Template.SurveyPage.events({
 	/*'click input#ss-submit': function(){
 		console.log("hit");
@@ -6,7 +12,6 @@ Template.SurveyPage.events({
 	},*/
 
 	'click button.nextPage' : function(){
-		var currentPrompt = Session.get("currentPrompt");
-		Router.go('FinalizePage', {'_id': currentPrompt._id});
+    Router.goToNextPage("SurveyPage");
 	}
 })

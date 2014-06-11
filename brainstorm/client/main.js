@@ -1,5 +1,5 @@
 Template.IdeaGen.loggedIn = function() {
-  if (Session.get("currentUser") === null) {
+  if (!Session.get("currentUser")) {
     console.log('no user is logged in');
     return false;
   } else {
@@ -12,7 +12,7 @@ Template.IdeaGen.loggedIn = function() {
  * *****************************************************************/
 Template.IdeaGen.currentUserName = function() {
   if (Session.get("currentUser") instanceof User) {
-    return Session.get("currentUser").userName;
+    return Session.get("currentUser").name;
   }
 };
 

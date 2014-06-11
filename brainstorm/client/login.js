@@ -2,13 +2,8 @@
 /********************************************************************
  * Convenience function for logging in users
  * *****************************************************************/
-LoginUser = function loginUser(user) {
-  var users = Names.find({'name': user.userName});
+loginUser = function loginUser(user) {
   Session.set("currentUser", user);
-  Session.set("currentPrompt", prelimPrompt);
-  if (users == null) {
-    Names.insert({"name": username});
-  }
 };
 
 /********************************************************************
@@ -16,12 +11,24 @@ LoginUser = function loginUser(user) {
  * *****************************************************************/
 Template.LoginPage.events({
     'click button.nextPage': function () {
+        console.log("clicked continue");
         //login user
         var userName = $('input#name').val().trim();
         var myUser = new User(userName);
-        LoginUser(myUser);
+        myUser._id = Names.insert(myUser);
+        console.log(myUser);
+        loginUser(myUser);
+        //Perform random assignment
+        var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
+        var participant = exp.addParticipant(myUser);
+        //console.log(participant);
+        //Session.set("currentRole", par
         //Go to next page
-        Router.go('IdeationPage', {'_id': prelimPrompt._id});
+        var role = $.extend(new Role(), participant.role);
+        Session.set("currentRole", role);
+        Session.set("currentParticipant", participant);
+        Router.go(role.nextFunc("LoginPage"), 
+          {'_id': Session.get("currentExp")._id});
     },
     'keyup input#name': function (evt) {
         $(document).ready(function(){
@@ -32,3 +39,11 @@ Template.LoginPage.events({
         });
     },
 });
+
+
+/********************************************************************
+ * Login Page onRender
+ * *****************************************************************/
+//Template.LoginPage.rendered = function() {
+//  Session.get("currentExp");
+//};

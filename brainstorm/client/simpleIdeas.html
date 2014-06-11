@@ -1,6 +1,6 @@
 <template name="simpleIdea">
   <div class='list-item' draggable="true">
-    {{ text }}
+    {{ content }}
   </div>
 </template>
 
@@ -8,7 +8,71 @@
     <div class="row">
       <div class="prompt-box">
         <h1 class="heading">
-          {{ this.prompt }}
+          {{ prompt }}
+        </h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="idea-box">
+        {{#each ideas}}
+          {{> simpleIdea}}
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-10">
+        <input type="text" id="nextIdea" class="idea-input" placeholder="What's your idea?">
+      </div>
+      <div class="col-md-2">
+          <button id="submitIdea" class="submitIdea btn-default btn-primary"> Submit </button>
+      </div>
+    </div>
+    <center>
+      <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">
+        Continue
+      </button>
+    </center>
+    
+</template>
+
+<template name="IdeationPage1">
+    <div class="row">
+      <div class="prompt-box">
+        <h1 class="heading">
+          {{ prompt }}
+        </h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="idea-box">
+        {{#each ideas}}
+          {{> simpleIdea}}
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-10">
+        <input type="text" id="nextIdea" class="idea-input" placeholder="What's your idea?">
+      </div>
+      <div class="col-md-2">
+          <button id="submitIdea" class="submitIdea btn-default btn-primary"> Submit </button>
+      </div>
+    </div>
+    <center>
+      <button id="nextPage" class="nextPage btn-xlarge2 btn-default btn-primary">
+        Continue
+      </button>
+    </center>
+    
+</template>
+
+<template name="IdeationPage2">
+    <div class="row">
+      <div class="prompt-box">
+        <h1 class="heading">
+          {{ prompt }}
         </h1>
       </div>
     </div>

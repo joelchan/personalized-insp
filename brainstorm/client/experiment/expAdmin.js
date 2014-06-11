@@ -14,8 +14,10 @@ Template.EPGroupMakeup.role = function() {
 };
 
 Template.EPExperiment.formUrl = function() {
-  console.log(Meteor.absoluteUrl() + 'Ideation/' + this._id);
-  return Meteor.absoluteUrl() + 'Ideation/' + this._id;
+  //var startPage = Roles.findOne({'_id': this.groupTemplate.roles[0].role}).workflow[0]
+  var startPage = "LoginPage";
+  // Need to rewrite this to pull from Experiment.url
+  return Meteor.absoluteUrl() + startPage + '/' + this._id;
 };
 
 
