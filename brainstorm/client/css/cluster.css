@@ -1,0 +1,61 @@
+/* CSS declarations go here */
+#left{
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	background-color: #f5f5f5;
+	border-radius: 5px;
+	/*margin: 5px;*/
+}
+
+#right{
+	border-radius: 5px;
+}
+
+ul{
+	list-style: none;
+	list-style-type: none;
+}
+
+li{
+	border: solid 1px black;
+	margin: 5px;
+	padding: 5px;
+	background-color: #fff;
+	cursor: pointer;
+}
+
+li.new{
+	border: dashed 1px;
+}
+
+li.ui-sortable-helper{
+	cursor: move;
+}
+
+.sort-disabled{
+	border: none;
+	background-color: #f5f5f5;
+	height:0px;
+	padding:1px;
+}
+
+#clusterarea{
+	display: inline;
+}
+
+#clusterarea > ul{
+	background-color: #f5f5f5;
+	border: solid 1px black;
+}
+
+.ultext{
+	width:100%;
+}
+
+.unnamed{
+	color: red;
+}
+#finish{
+	margin-top: 10px;
+}

@@ -15,6 +15,14 @@ Roles = new Meteor.Collection("roles");
 Consents = new Meteor.Collection("consents");
 Participants = new Meteor.Collection("participants");
 Groups = new Meteor.Collection("groups");
+Clusters = new Meteor.Collection("clusters");
+
+Cluster = function(ideas){
+  this.ideas = ideas;
+  this.id; //should be the same as id of entry in mongo db collection (?)
+  this.name = "Not named yet"; //default name for unnamed clusters
+  this.position;
+}
 
 Experiment = function () {
    /********************************************************************
