@@ -33,9 +33,28 @@ var primingIdeas = {'common':
     "Load with a siren and use to scare off attackers. "]]
 };
 
+insertPrimingIdeas = function () {
+    var participant = Session.get("currentParticipant");
+    if (participant.condition.id == 1) {
+      console.log("Priming with rare ideas");
+      var ideas = getRandomElement(primingIdeas['rare']);
+      for (var i=0; i<ideas.length; i++) {
+          var idea = new Idea(ideas[i], participant);
+          Ideas.insert(idea);
+      }
+    } else {
+      console.log("Priming with common ideas");
+      var ideas = getRandomElement(primingIdeas['common']);
+      for (var i=0; i<ideas.length; i++) {
+          var idea = new Idea(ideas[i], participant);
+          Ideas.insert(idea);
+      }
+    }
+}
+
 Template.IdeationPage.ideas = function () {
-  return Ideas.find({experiment: Session.get("currentExp"),
-    user: Session.get("currentUser")
+
+  return Ideas.find({participant: Session.get("currentParticipant")
     });
   //if (Session.get("currentPrompt") !== undefined) {
       //return Ideas.find({user: Session.get('currentUser'),
@@ -64,11 +83,9 @@ Template.IdeationPage.rendered = function() {
   });
 
   //Insert ideas into database depnding on experimental condition
-
+  insertPrimingIdeas();
   //Set timer for page to transition after 15 minutes
-  Session.get("currentRole");
-  setTimeout('Router.goToNextPage("IdeationPage")', 10000);
-  //setTimeout('console.log("testing timeout");', 10000);
+  //setTimeout('Router.goToNextPage("IdeationPage")', 900000);
 };
 
 Template.IdeationPage.events({
@@ -84,10 +101,9 @@ Template.IdeationPage.events({
         //Add idea to database
         if (newIdea !== "") {
           var idea = new Idea(newIdea,
-              Session.get("currentUser"),
-              Session.get("currentExp")
+              Session.get("currentParticipant")
               );
-          console.log(idea); 
+          //console.log(idea); 
           Ideas.insert(idea);
           // Clear the text field
           $('#nextIdea').val("");

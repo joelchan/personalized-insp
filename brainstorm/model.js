@@ -102,15 +102,10 @@ Experiment.prototype.getGroup = function(condition) {
 
 Experiment.prototype.addParticipant = function(user) {
   var cond = this.getRandomCondition();
-  console.log(cond);
   var group = this.getGroup(cond);
-  console.log(group);
   var role = group.addUser(user);
-  console.log(role);
   var part = new Participant(this, user, cond, group, role);
-  console.log(part);
   part._id = Participants.insert(part);
-  console.log(part);
   this.participants.push(part);
   return part;
 }
@@ -297,7 +292,7 @@ Role.prototype.getRole = function(newRole) {
 }
 
 
-Idea = function (content, user, experiment) {
+Idea = function (content, participant) {
   /********************************************************************
   * Encapsulation of ideas recorded by the system
   *
@@ -305,8 +300,9 @@ Idea = function (content, user, experiment) {
   ********************************************************************/
   this.time = new Date().getTime();
   this.content = content;
-  this.user = user;
-  this.experiment = experiment;
+  this.participant = participant;
+  //this.user = user;
+  //this.experiment = experiment;
 };
 
 Consent = function (user, experiment) {
