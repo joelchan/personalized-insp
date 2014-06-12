@@ -20,15 +20,18 @@ Template.LoginPage.events({
         loginUser(myUser);
         //Perform random assignment
         var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
+        console.log(exp);
         var participant = exp.addParticipant(myUser);
-        //console.log(participant);
-        //Session.set("currentRole", par
+        console.log(participant.role);
         //Go to next page
-        var role = $.extend(new Role(), participant.role);
+        var role = $.extend(true, new Role(), participant.role);
+        console.log(role);
         Session.set("currentRole", role);
+        console.log("set role");
         Session.set("currentParticipant", participant);
+        console.log("set participant and role");
         Router.go(role.nextFunc("LoginPage"), 
-          {'_id': Session.get("currentExp")._id});
+          {'_id': exp._id});
     },
     'keyup input#name': function (evt) {
         $(document).ready(function(){

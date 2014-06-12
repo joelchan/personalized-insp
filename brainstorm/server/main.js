@@ -13,14 +13,14 @@ Meteor.startup(function() {
         var ideator = new Role("Common Ideator");
         ideator.workflow = ["LoginPage",
           "ConsentPage",
-          "IdeationPage1",
+          "IdeationPage",
           "SurveyPage",
           "FinalizePage"];
         Roles.insert(ideator);
         ideator = new Role("Rare Ideator");
         ideator.workflow = ["LoginPage",
           "ConsentPage",
-          "IdeationPage2",
+          "IdeationPage",
           "SurveyPage",
           "FinalizePage"];
         Roles.insert(ideator);

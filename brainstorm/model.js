@@ -102,10 +102,15 @@ Experiment.prototype.getGroup = function(condition) {
 
 Experiment.prototype.addParticipant = function(user) {
   var cond = this.getRandomCondition();
+  console.log(cond);
   var group = this.getGroup(cond);
+  console.log(group);
   var role = group.addUser(user);
+  console.log(role);
   var part = new Participant(this, user, cond, group, role);
+  console.log(part);
   part._id = Participants.insert(part);
+  console.log(part);
   this.participants.push(part);
   return part;
 }
@@ -120,6 +125,7 @@ ExpCondition = function(id, prompt, desc, groupNum) {
   this.id = id;
   //Question(s) to answer in the brainstorm
   this.prompt = new Prompt(prompt);
+  this.prompt._id = Prompts.insert(this.prompt);
   //Description of the experiment
   this.description = desc;
   //Number of groups in the experiment
@@ -194,11 +200,11 @@ Participant = function(exp, user, cond, group, role) {
     /****************************************************************
     * Initialize participant and perform complete random assignment
     ****************************************************************/
-    this.experiment = exp;
+    this.experiment = exp._id;
     this.user = user;
     // Assign Participant to condition
     this.condition = exp.getRandomCondition();
-    this.group = group;
+    this.group = group._id;
     this.role = Roles.findOne(role.role);
 };
 

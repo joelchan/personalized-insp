@@ -46,7 +46,9 @@ Template.IdeationPage.ideas = function () {
 };
 
 Template.IdeationPage.prompt = function () {
-    return Session.get("currentExp").prompt.question;
+    var condition = Session.get("currentParticipant").condition;
+    console.log(condition);
+    return condition.prompt.question;
 };
 
 Template.IdeationPage.rendered = function() {
@@ -62,6 +64,11 @@ Template.IdeationPage.rendered = function() {
   });
 
   //Insert ideas into database depnding on experimental condition
+
+  //Set timer for page to transition after 15 minutes
+  Session.get("currentRole");
+  setTimeout('Router.goToNextPage("IdeationPage")', 10000);
+  //setTimeout('console.log("testing timeout");', 10000);
 };
 
 Template.IdeationPage.events({
@@ -89,9 +96,10 @@ Template.IdeationPage.events({
 
     //Transition to next page in state machine
     'click button.nextPage': function () {
-      var role = $.extend(true, new Role(), Session.get("currentRole"));
-      Router.go(role.nextFunc("IdeationPage"), 
-          {'_id': Session.get("currentExp")._id});
+        Router.goToNextPage("IdeationPage");
+      //var role = $.extend(true, new Role(), Session.get("currentRole"));
+      //Router.go(role.nextFunc("IdeationPage"), 
+          //{'_id': Session.get("currentExp")._id});
     }
 });
 

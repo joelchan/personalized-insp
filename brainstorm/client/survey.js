@@ -2,6 +2,8 @@ Template.SurveyPage.rendered = function() {
     $("#ss-submit").click(function() {
         console.log("form submitted");
     });
+    //Scrool to top
+    window.scrollTo(0,0);
 };
 
 Template.SurveyPage.events({
