@@ -85,7 +85,7 @@ Template.IdeationPage.rendered = function() {
   //Insert ideas into database depnding on experimental condition
   insertPrimingIdeas();
   //Set timer for page to transition after 15 minutes
-  //setTimeout('Router.goToNextPage("IdeationPage")', 900000);
+  setTimeout('Router.goToNextPage("IdeationPage")', 900000);
 };
 
 Template.IdeationPage.events({
