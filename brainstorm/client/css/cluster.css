@@ -8,6 +8,11 @@
 	/*margin: 5px;*/
 }
 
+#idealist{
+	height: 350px;
+	overflow: scroll;
+}
+
 #right{
 	border-radius: 5px;
 }
@@ -15,6 +20,12 @@
 ul{
 	list-style: none;
 	list-style-type: none;
+}
+
+ul > input{
+	width: 100%;
+	margin-left: 0 auto;
+	margin-right: 0 auto;
 }
 
 li{
@@ -58,4 +69,9 @@ li.ui-sortable-helper{
 }
 #finish{
 	margin-top: 10px;
+	float: right;
+}
+
+#clusterprompt{
+	margin-top: 20px;
 }

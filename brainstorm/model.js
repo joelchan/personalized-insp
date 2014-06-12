@@ -309,6 +309,7 @@ Idea = function (content, participant) {
   this.time = new Date().getTime();
   this.content = content;
   this.participant = participant;
+  this.inCluster = false;
   //this.user = user;
   //this.experiment = experiment;
 };

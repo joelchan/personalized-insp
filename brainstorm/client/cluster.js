@@ -7,7 +7,11 @@
         if(ui.sender.hasClass('stack')){
           var myIdeaId = $(ui.item).attr('id');
           myIdea = processSender(ui, myIdeaId);
-          Ideas.insert({_id: myIdeaId, instance: myIdea.instance, isGamechanger: myIdea.isGamechanger});
+
+          Ideas.update({_id: myIdeaId}, 
+            {$set:
+              {inCluster: false}
+            });
           $(ui.item).remove(); 
         }
         createCluster(ui.item);
@@ -27,7 +31,11 @@
           alert("unknown sender"); //no way for this to happen
         }
         $(ui.item).remove(); //removes item so it only appears once, just database entry
-        Ideas.insert({_id: myIdeaId, instance: myIdea.instance, isGamechanger: myIdea.isGamechanger});
+
+        Ideas.update({_id: myIdeaId}, 
+          {$set:
+            {inCluster: false}
+          });
       }
     });
   }
@@ -38,8 +46,10 @@
     var ideas = [Ideas.findOne({_id: ideaId})];
     var cluster = new Cluster(ideas);
     Clusters.insert(cluster);
-    Ideas.remove({_id: ideaId}); //remove idea from Ideas collection if added to cluster
-    console.log(cluster);
+    Ideas.update({_id: ideaId}, 
+      {$set:
+        {inCluster: true}
+      });
   }
 
     function processSender(ui, ideaId){
@@ -75,6 +85,14 @@
 
   Template.Cluster.clusterideas = function(){
     return $(this)[0].ideas;
+  }
+
+  Template.Cluster.isClustered= function(){
+    if(this.inCluster){
+      return false;
+    } else {
+      return true;
+    }
   }
 
 
@@ -131,8 +149,12 @@
 
           //if idea is coming from the idealist
           if($(ui.sender).hasClass('deck')){
-            myIdea = Ideas.findOne({_id: myIdeaId}); //remove idea from idealist
-            Ideas.remove({_id: myIdeaId});
+            myIdea = Ideas.findOne({_id: myIdeaId});
+            //remove idea from idealist
+            Ideas.update({_id: myIdeaId}, 
+              {$set:
+                {inCluster: true}
+              });
           //if idea is coming from another cluster
           } else if ($(ui.sender).hasClass('stack')){
             myIdea = processSender(ui, myIdeaId);
