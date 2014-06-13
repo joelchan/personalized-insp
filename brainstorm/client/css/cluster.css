@@ -40,6 +40,10 @@ li{
 	cursor: pointer;
 }
 
+.cluster-item{
+	background-color: #fcf8e3;
+}
+
 li.new{
 	border: dashed 1px;
 }

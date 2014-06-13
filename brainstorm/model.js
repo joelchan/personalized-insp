@@ -22,6 +22,7 @@ Cluster = function(ideas){
   this.id; //should be the same as id of entry in mongo db collection (?)
   this.name = "Not named yet"; //default name for unnamed clusters
   this.position;
+  this.children = [];
 }
 
 Experiment = function () {
