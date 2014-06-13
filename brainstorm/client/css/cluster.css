@@ -17,6 +17,10 @@
 	border-radius: 5px;
 }
 
+.col-btn-label{
+	display: inline;
+}
+
 ul{
 	list-style: none;
 	list-style-type: none;
@@ -44,7 +48,7 @@ li.ui-sortable-helper{
 	cursor: move;
 }
 
-.sort-disabled{
+li.sort-disabled{
 	border: none;
 	background-color: #f5f5f5;
 	height:0px;

@@ -110,6 +110,10 @@
     clusters : function(){
       return Clusters.find();
     },
+
+    /*prompt : function(){
+      return Session.get("currentExp").conditions[0].prompt.question;
+    }*/
   });
 
   Template.Cluster.events({
@@ -137,9 +141,21 @@
       });
     },
 
+    'click .glyphicon' : function(){
+      if($(event.target).hasClass('glyphicon-collapse-up'))
+        $(event.target).switchClass('glyphicon-collapse-up', 'glyphicon-collapse-down');
+      else
+        $(event.target).switchClass('glyphicon-collapse-down', 'glyphicon-collapse-up');
+      
+      $(event.target).parent().children('li').slideToggle("fast");
+
+      return false;
+    },
+
     'mouseenter #clusterarea' : function(){
     // apply sortable to new stack
       $('ul.stack').sortable({
+        items: ":not(.sort-disabled)",
         connectWith : 'ul.deck, ul.newstack, ul.stack',
         receive : function(event, ui){
           //add idea to cluster in db when dropeed in it
@@ -181,6 +197,6 @@
         snap: "#clusterarea ul", 
         snapMode: "outer", 
         grid: [5, 5] 
-      }); 
+      });
     }
   });

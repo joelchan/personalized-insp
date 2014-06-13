@@ -1,6 +1,6 @@
 
 <template name="Cluster">
-	<h1 class="page-header" id="clusterprompt">Alternate uses for a bowling pin</h1>
+	<h1 class="page-header" id="clusterprompt">{{prompt}}</h1>
 	<div class="container-fluid">
 		<div class="row">
 			<div id="left" class="col-md-3">
@@ -31,8 +31,12 @@
 				</div>
 				<div class="stack ui-sortable" id="clusterarea">
 					{{#each clusters}}
-						<ul class="stack col-md-3" id={{_id}} style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
-							<label class="sort-disabled">Cluster Name: <span class="unnamed">{{name}}</span></label>
+						<ul class="stack col-md-3" id={{_id}} 
+						style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
+							<span class="glyphicon glyphicon-collapse-up sort-disabled"></span>
+							<label class="sort-disabled">Cluster Name:
+								<span class="unnamed sort-disabled">{{name}}</span>
+							</label>
 							<input type="text" class="clustername sort-disabled" 
 							id="newcluster" placeholder="Name this cluster">
 							{{#each clusterideas}}
