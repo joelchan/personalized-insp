@@ -15,6 +15,8 @@ Roles = new Meteor.Collection("roles");
 Consents = new Meteor.Collection("consents");
 Participants = new Meteor.Collection("participants");
 Groups = new Meteor.Collection("groups");
+ReplayIdeas = new Meteor.Collection("replayIdeas");
+UserTypes = new Meteor.Collection("userTypes");
 
 Experiment = function () {
    /********************************************************************
@@ -333,9 +335,10 @@ Consent = function (user, experiment) {
 };*/
 
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
-User = function(name){
+User = function(name, type){
 	this.name = name;
-	//this.verifyCode = name.hashCode();
+  //Currently only "admin" is significant
+  this.type = type;
 };
 
 //Random assignment and user management logic

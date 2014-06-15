@@ -1,6 +1,10 @@
 
 //Maps routes to templates
 Router.map(function () {
+  this.route("Home", {
+      path: '/',
+      template: 'LoginPage',
+  });
   this.route('LoginPage', {
   	path: '/LoginPage/:_id',
     template: 'LoginPage',
@@ -46,26 +50,6 @@ Router.map(function () {
   //Defines the beginning of a route for each experiment
   this.route('IdeationPage', {
   	path: 'Ideation/:_id',
-  	template: 'IdeationPage',
-    data: function() {
-      return Experiments.findOne({_id: this.params._id});
-    },
-    onRun: function() {
-      Session.set("currentExp", Experiments.findOne({_id: this.params._id}));
-    }
-  });
-  this.route('IdeationPage1', {
-  	path: 'IdeationPage/:_id',
-  	template: 'IdeationPage',
-    data: function() {
-      return Experiments.findOne({_id: this.params._id});
-    },
-    onRun: function() {
-      Session.set("currentExp", Experiments.findOne({_id: this.params._id}));
-    }
-  });
-  this.route('IdeationPage2', {
-  	path: 'IdeationPage/:_id',
   	template: 'IdeationPage',
     data: function() {
       return Experiments.findOne({_id: this.params._id});

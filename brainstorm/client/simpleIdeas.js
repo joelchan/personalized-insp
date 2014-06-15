@@ -50,7 +50,7 @@ insertPrimingIdeas = function () {
           Ideas.insert(idea);
       }
     }
-}
+};
 
 Template.IdeationPage.ideas = function () {
 

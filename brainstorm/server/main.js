@@ -10,21 +10,13 @@ Meteor.startup(function() {
 
     //Initialize roles
     if (Roles.find().count() === 0) {
-        var ideator = new Role("Common Ideator");
+        var ideator = new Role("Ideator");
         ideator.workflow = ["LoginPage",
           "ConsentPage",
           "IdeationPage",
           "SurveyPage",
           "FinalizePage"];
         Roles.insert(ideator);
-        ideator = new Role("Rare Ideator");
-        ideator.workflow = ["LoginPage",
-          "ConsentPage",
-          "IdeationPage",
-          "SurveyPage",
-          "FinalizePage"];
-        Roles.insert(ideator);
-
     }
     //Initialize experiment hardcoded on boot
     if (Experiments.find().count() === 0) {
@@ -51,4 +43,26 @@ Meteor.startup(function() {
       //console.log(Experiments.find().fetch());
     }
 });
+
+
+Meteor.startup(function() {
+    /****************************************************************
+    * Ensure basic admin user is in the database
+    ****************************************************************/
+    var adminName = "ProtoAdmin";
+    var adminUsers = Names.find({name: adminName});
+    if (adminUsers.count() > 0) {
+      if (adminUsers.count() > 1) {
+        Names.remove({name: adminName});
+        var admin = new User("ProtoAdmin", "admin");
+        Names.insert(admin);
+      }
+    } else {
+      var admin = new User("ProtoAdmin", "admin");
+      Names.insert(admin);
+    }
+});
+
+
+
 

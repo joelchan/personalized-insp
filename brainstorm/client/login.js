@@ -14,7 +14,13 @@ Template.LoginPage.events({
         console.log("clicked continue");
         //login user
         var userName = $('input#name').val().trim();
-        var myUser = new User(userName);
+        // Quick hack to login to admin interface
+        if (userName == "ProtoAdmin") {
+            loginUser(Names.findOne({name: "ProtoAdmin"}));
+            console.log("logged in admin User");
+            Router.go("ExpAdminPage");
+        };
+        var myUser = new User(userName, "Experiment Participant");
         myUser._id = Names.insert(myUser);
         console.log(myUser);
         loginUser(myUser);
@@ -30,8 +36,7 @@ Template.LoginPage.events({
         console.log("set role");
         Session.set("currentParticipant", participant);
         console.log("set participant and role");
-        Router.go(role.nextFunc("LoginPage"), 
-          {'_id': exp._id});
+        Router.goToNextPage("LoginPage");
     },
     'keyup input#name': function (evt) {
         $(document).ready(function(){
