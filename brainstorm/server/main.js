@@ -1,6 +1,30 @@
-//Initialize Roles
-//Meteor.startup(function() {
-//});
+Meteor.startup(function() {
+  /****************************************************************
+  * Ensure each screen is inserted into the database
+  ****************************************************************/
+  //Define all screens manually
+  var allScreens = [
+    new Screen("Screens Review Page",
+               "Review list of all app views",
+               "ScreensReviewPage"),
+    new Screen("Experiment Admin Page",
+               "Experiment admin",
+               "ExpAdminPage"),
+    new Screen("Login Page",
+               "Generic Login Page",
+               "LoginPage")
+  ];
+
+  //Add screen to db if not already present
+  for (var i=0; i<allScreens.length; i++) {
+    console.log(allScreens[i]);
+    if (Screens.find({url: allScreens[i].url}).count() == 0) {
+      Screens.insert(allScreens[i]);
+    }
+  }
+
+});
+
      
 Meteor.startup(function() {
     /****************************************************************

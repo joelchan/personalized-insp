@@ -2,7 +2,7 @@
 * Code to stream a data set into the ideas database according to
 * timestamp
 ********************************************************************/
-
+/*
 Meteor.startup(function() {
   //Ensure empty replay collection on reboot
   ReplayIdeas.remove();
@@ -19,6 +19,7 @@ Meteor.startup(function() {
     replayAsUser(new User("Steven"), sortedEvents);
   }
 });
+*/
 
 function compareEvents(a, b) {
     /****************************************************************

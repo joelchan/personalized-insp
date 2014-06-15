@@ -41,6 +41,10 @@ Router.map(function () {
       return Experiments.findOne({_id: this.params._id});
     },
   });
+  this.route('ScreensPage', {
+      path: 'Screens/',
+      template: 'ScreensReviewPage'
+  });
 
   this.route('PromptPage');
   this.route('ExpAdminPage', {
