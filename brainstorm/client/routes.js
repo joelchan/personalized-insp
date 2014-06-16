@@ -58,6 +58,9 @@ Router.map(function () {
     data: function() {
       return Experiments.findOne({_id: this.params._id});
     },
+    waitOn: function() {
+        return Meteor.subscribe('ideas');
+        },
     onRun: function() {
       Session.set("currentExp", Experiments.findOne({_id: this.params._id}));
     }
@@ -67,8 +70,11 @@ Router.map(function () {
       template: 'ConsentPage'
   });
   this.route('MTurkConsentPage', {
-      path: 'ConsentPage',
-      template: 'ConsentPage'
+      path: 'ConsentPage/:_id',
+      template: 'ConsentPage',
+      data: function() {
+        return Experiments.findOne({_id: this.params._id});
+      }
   });
   this.route('FinalizePage', {
     path: 'FinalizePage/:_id',

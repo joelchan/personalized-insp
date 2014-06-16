@@ -75,13 +75,13 @@ function replayAsUser(user, events) {
 }
 
 
-Event = function (obj, starttime, desc) {
-    //Start of time frame of all events
-    this.starttime = starttime;
-    //The object encapsulating the event
-    this.obj = obj;
-    //Time event takes place from start time
-    this.dtime = obj.time - this.starttime;
-    //Plain text description of the event type
-    this.description = desc;
-}
+//Event = function (obj, starttime, desc) {
+    ////Start of time frame of all events
+    //this.starttime = starttime;
+    ////The object encapsulating the event
+    //this.obj = obj;
+    ////Time event takes place from start time
+    //this.dtime = obj.time - this.starttime;
+    ////Plain text description of the event type
+    //this.description = desc;
+//}

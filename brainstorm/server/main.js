@@ -35,7 +35,7 @@ Meteor.startup(function() {
     if (Roles.find().count() === 0) {
         var ideator = new Role("Ideator");
         ideator.workflow = ["LoginPage",
-          "ConsentPage",
+          "MTurkConsentPage",
           "IdeationPage",
           "SurveyPage",
           "FinalizePage"];

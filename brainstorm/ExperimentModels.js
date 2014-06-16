@@ -124,7 +124,7 @@ Participant = function(exp, user, cond, group, role) {
     /****************************************************************
     * Initialize participant and perform complete random assignment
     ****************************************************************/
-    this.experiment = exp._id;
+    this.experimentID = exp._id;
     this.user = user;
     // Assign Participant to condition
     this.condition = exp.getRandomCondition();
@@ -132,13 +132,13 @@ Participant = function(exp, user, cond, group, role) {
     this.role = Roles.findOne(role.role);
 };
 
-Consent = function (user, experiment) {
+Consent = function (participant) {
   /********************************************************************
   * Personal information captured by consent form
   *
   * @return {object} Consent object 
   ********************************************************************/
-  this.user = user;
-  this.experiment = experiment;
-  this.datetime = new Date();
+  this.participantID = participant._id;
+  this.experimentID = participant.experimentID;
+  this.datetime = new Date().getTime();
 };

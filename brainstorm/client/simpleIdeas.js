@@ -33,21 +33,62 @@ var primingIdeas = {'common':
     "Load with a siren and use to scare off attackers. "]]
 };
 
+getRandomRares = function() {
+  var rare1 = primingIdeas['rare'][0];
+  var rare2 = primingIdeas['rare'][1];
+  var rare3 = primingIdeas['rare'][2];
+  var ideas = [];
+  ideas.push(getRandomElement(rare1));
+  ideas.push(getRandomElement(rare2));
+  ideas.push(getRandomElement(rare3));
+  while (ideas.length < 5) {
+    var randomRare = getRandomElement(primingIdeas['rare']);
+    var nextIdea = getRandomElement(randomRare);
+    var notDuplicate = true;
+    for (var i=0; i<ideas.length && notDuplicate; i++) {
+      if (ideas[i] == nextIdea) {
+        notDuplicate = false;
+      }
+    }
+    if (notDuplicate) {
+      ideas.push(nextIdea);
+    }
+  }
+  return ideas;
+};
+
 insertPrimingIdeas = function () {
     var participant = Session.get("currentParticipant");
-    if (participant.condition.id == 1) {
-      console.log("Priming with rare ideas");
-      var ideas = getRandomElement(primingIdeas['rare']);
-      for (var i=0; i<ideas.length; i++) {
-          var idea = new Idea(ideas[i], participant);
-          Ideas.insert(idea);
-      }
-    } else {
-      console.log("Priming with common ideas");
-      var ideas = getRandomElement(primingIdeas['common']);
-      for (var i=0; i<ideas.length; i++) {
-          var idea = new Idea(ideas[i], participant);
-          Ideas.insert(idea);
+    if (Ideas.find({'participant': participant}).count() == 0) {
+      console.log("inserting priming ideas");
+      if (participant.condition.id == 1) {
+        console.log("Priming with rare ideas");
+        //Grab 5 random rare ideas
+        var ideas = getRandomRares();
+        for (var i=0; i<ideas.length; i++) {
+            var idea = new Idea(ideas[i],
+                participant.user,
+                participant.condition.prompt,
+                participant
+                );
+            if (Ideas.find({content: idea.content}).count() == 0) {
+              Ideas.insert(idea);
+            }
+        }
+      } else {
+        console.log("Priming with common ideas");
+        var ideas = getRandomElement(primingIdeas['common']);
+        for (var i=0; i<ideas.length; i++) {
+            var idea = new Idea(ideas[i], 
+                participant.user,
+                participant.condition.prompt,
+                participant
+                );
+            if (Ideas.find({content: idea.content}).count() == 0) {
+              Ideas.insert(idea);
+            }
+  
+        }
       }
     }
 };
@@ -84,6 +125,7 @@ Template.IdeationPage.rendered = function() {
 
   //Insert ideas into database depnding on experimental condition
   insertPrimingIdeas();
+  logBeginIdeation(Session.get("currentParticipant"));
   //Set timer for page to transition after 15 minutes
   setTimeout('Router.goToNextPage("IdeationPage")', 900000);
 };
@@ -100,11 +142,15 @@ Template.IdeationPage.events({
         //});
         //Add idea to database
         if (newIdea !== "") {
+          var participant = Session.get("currentParticipant");
           var idea = new Idea(newIdea,
-              Session.get("currentParticipant")
+              participant.user,
+              participant.condition.prompt,
+              participant
               );
           //console.log(idea); 
           Ideas.insert(idea);
+          logIdeaSubmission(participant, idea);
           // Clear the text field
           $('#nextIdea').val("");
         }
@@ -112,7 +158,8 @@ Template.IdeationPage.events({
 
     //Transition to next page in state machine
     'click button.nextPage': function () {
-        Router.goToNextPage("IdeationPage");
+      logEndIdeation(Session.get("currentParticipant"));
+      Router.goToNextPage("IdeationPage");
       //var role = $.extend(true, new Role(), Session.get("currentRole"));
       //Router.go(role.nextFunc("IdeationPage"), 
           //{'_id': Session.get("currentExp")._id});

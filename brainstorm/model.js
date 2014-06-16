@@ -14,7 +14,6 @@ Roles = new Meteor.Collection("roles");
 Groups = new Meteor.Collection("groups");
 UserTypes = new Meteor.Collection("userTypes");
 
-
 Prompt = function(question) {
   /********************************************************************
    * Constructor that defines a brainstorming prompt/question
@@ -78,9 +77,6 @@ Group.prototype.addUser = function(user) {
     this.assignments[role._id] = user;
     return role;
 }
-
-};
-
 
 GroupTemplate = function () {
   /******************************************************************
@@ -149,7 +145,7 @@ Role.prototype.getRole = function(newRole) {
 }
 
 
-Idea = function (content, participant, prompt) {
+Idea = function (content, user, prompt, participant) {
   /********************************************************************
   * Encapsulation of ideas recorded by the system
   *
@@ -157,10 +153,10 @@ Idea = function (content, participant, prompt) {
   ********************************************************************/
   this.time = new Date().getTime();
   this.content = content;
+  this.user = user;
+  this.prompt = prompt;
+  //Optional field not logged during non-experiments
   this.participant = participant;
-  this.prompt = prompt._id;
-  //this.user = user._id;
-  //this.experiment = experiment._id;
 };
 
 //Class that encapsulates prompt and workflow/role + url to each and url to the set

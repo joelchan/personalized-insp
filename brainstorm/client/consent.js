@@ -6,13 +6,11 @@ Template.ConsentPage.events({
         //var userName = $('input#name').val().trim();
         //var myUser = new User(userName);
         //loginUser(myUser);
-        Consents.insert(new Consent(
-            Session.get("currentUser"), 
-            Session.get("currentExp")
-            ));
+        var part = Session.get("currentParticipant")
+        Consents.insert(new Consent(part));
+        logConsent(part);
+
         //Go to next page
-        var role = $.extend(true, new Role(), Session.get("currentRole"));
-        Router.go(role.nextFunc("ConsentPage"), 
-          {'_id': Session.get("currentExp")._id});
+        Router.goToNextPage("MTurkConsentPage");
     }
 });
