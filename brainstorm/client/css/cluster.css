@@ -17,10 +17,6 @@
 	border-radius: 5px;
 }
 
-.col-btn-label{
-	display: inline;
-}
-
 ul{
 	list-style: none;
 	list-style-type: none;
@@ -66,6 +62,15 @@ li.sort-disabled{
 #clusterarea > ul{
 	background-color: #f5f5f5;
 	border: solid 1px black;
+}
+
+.glyphicon{
+
+}
+
+.label{
+	position: relative;
+	padding-left: 200px;
 }
 
 .ultext{

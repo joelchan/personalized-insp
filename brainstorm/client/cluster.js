@@ -1,7 +1,6 @@
 /********************************************************************
-*
+* Attaches sortable to idea and cluster lists, new stack area.
 ********************************************************************/
-
 Template.Cluster.rendered = function(){
   //Attach sortable to the new stack creation drop area
   $('ul.newstack').sortable({
@@ -40,15 +39,16 @@ Template.Cluster.rendered = function(){
     items: ">*:not(.sort-disabled)",
     connectWith: 'ul.stack',
     receive: function(event,ui){
-      if(ui.sender.hasClass('stack'))
+      if(ui.sender.hasClass('stack')){
         ui.item.remove();
+      }
       return false;
     }
   });
 }
 
 /********************************************************************
-*
+* Creates new cluster, adds it to collection, and updates Ideas list*
 ********************************************************************/
 function createCluster(item) {
   var ideaId = item.attr('id');
@@ -59,7 +59,8 @@ function createCluster(item) {
 }
 
 /********************************************************************
-*
+* Takes a ui and id of idea being moved. Returns an idea and updates
+* the sender.  
 ********************************************************************/
 function processIdeaSender(ui, ideaId){
   var myIdea;
@@ -75,6 +76,7 @@ function processIdeaSender(ui, ideaId){
     {$pull:
       {ideas: {_id: ideaId}}
   });
+
   //if sending cluster now has no ideas, get rid of it
   var ideasLength = Clusters.findOne({_id: senderId}).ideas.length;
   if(ideasLength === 0){
@@ -83,15 +85,15 @@ function processIdeaSender(ui, ideaId){
   return myIdea;
 }
 
-  /*function getCenterPos(element){ //not sure if this is necessary anymore, ask Joel
-    var offset = element.offset();
-    var width = element.width();
-    var height = element.height();
+/*function getCenterPos(element){ //not sure if this is necessary anymore, ask Joel
+  var offset = element.offset();
+  var width = element.width();
+  var height = element.height();
 
-    var centerX = offset.left + width / 2;
-    var centerY = offset.top + height / 2;
-    return [centerX, centerY];
-  }*/
+  var centerX = offset.left + width / 2;
+  var centerY = offset.top + height / 2;
+  return [centerX, centerY];
+}*/
 
 /********************************************************************
 * Convenince function used to update items in the Ideas Collection  *
@@ -139,15 +141,16 @@ Template.Cluster.helpers({
     } else {
       return true;
     }
-  }
+  },
     
-  /*prompt : function(){
-    return Session.get("currentExp").conditions[0].prompt.question;
-  }*/
+  prompt : function(){
+    return "Alternative uses for old ipods";//Session.get("currentExp").conditions[0].prompt.question;
+  }
 });
 
 /********************************************************************
-* 
+* Template event functions. Much of the heavy lifting in the interface*
+* is done by the mouseover event.
 ********************************************************************/
 Template.Cluster.events({
   //checks that a name has been provided for all clusters
@@ -192,13 +195,6 @@ Template.Cluster.events({
     $('ul.stack').sortable({
       items: ":not(.sort-disabled)",
       connectWith : 'ul.deck, ul.newstack, ul.stack, ul.clusterdeck',
-      cancel: function(event, ui){
-        if(myClusterId === $(ui.item).attr('id')){ //if item being added has ID of cluster being added to
-            alert("A cluster cannot be a member of itself. Sorry!");
-            ui.item.remove();
-            //return false;
-          }
-        },
       receive : function(event, ui){
         var myIdeaId = $(ui.item).attr('id');
         var myIdea;
@@ -206,11 +202,12 @@ Template.Cluster.events({
 
         //if item is coming from cluster list
         if ($(ui.sender).hasClass('clusterdeck')){
-          /*if(myClusterId === $(ui.item).attr('id')){ //if item being added has ID of cluster being added to
+          if(myClusterId === $(ui.item).attr('id')){ //if item being added has ID of cluster being added to
             alert("A cluster cannot be a member of itself. Sorry!");
-            ui.item.remove();
+            $(ui.sender).sortable('cancel');
+            //ui.item.remove();
             return false;
-          } else {*/
+          } else {
             Clusters.update({_id: myClusterId}, 
               {$addToSet:
                 {children: $(ui.item).attr('id')} 
@@ -221,7 +218,7 @@ Template.Cluster.events({
                 {$pull: 
                   {children: $(ui.item).attr('id')}
               });
-            //}
+            }
           return false;
           }
         //if item is coming from the idealist
