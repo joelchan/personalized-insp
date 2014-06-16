@@ -17,7 +17,6 @@ Meteor.startup(function() {
 
   //Add screen to db if not already present
   for (var i=0; i<allScreens.length; i++) {
-    console.log(allScreens[i]);
     if (Screens.find({url: allScreens[i].url}).count() == 0) {
       Screens.insert(allScreens[i]);
     }
@@ -53,14 +52,14 @@ Meteor.startup(function() {
           30
           );
       cond1.groupTemplate.addRole(
-          Roles.findOne({'title': "Common Ideator"}), 1)
+          Roles.findOne({'title': "Ideator"}), 1)
       var cond2 = new ExpCondition(2, 
           question,
           "individual brainstorming primed with common ideas",
           30
           );
       cond2.groupTemplate.addRole(
-          Roles.findOne({'title': "Rare Ideator"}), 1)
+          Roles.findOne({'title': "Ideator"}), 1)
       exp.conditions = [cond1, cond2];
       exp.setNumGroups(1);
       Experiments.insert(exp);
@@ -86,7 +85,4 @@ Meteor.startup(function() {
       Names.insert(admin);
     }
 });
-
-
-
 

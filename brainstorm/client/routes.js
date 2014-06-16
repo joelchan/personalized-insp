@@ -62,8 +62,12 @@ Router.map(function () {
       Session.set("currentExp", Experiments.findOne({_id: this.params._id}));
     }
   });
-  this.route('ConsentPage', {
+  this.route('CustomConsentPage', {
       path: 'ConsentPage/:_id',
+      template: 'ConsentPage'
+  });
+  this.route('MTurkConsentPage', {
+      path: 'ConsentPage',
       template: 'ConsentPage'
   });
   this.route('FinalizePage', {
