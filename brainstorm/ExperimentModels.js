@@ -133,7 +133,7 @@ Participant = function(exp, user, cond, group, role) {
     this.group = group._id;
     this.role = Roles.findOne(role.role);
     this.verifyCode = this.user._id.hashCode();
-    console.log("Participant verify code is: " + this.verifyCode);
+    //console.log("Participant verify code is: " + this.verifyCode);
 };
 
 Consent = function (participant) {

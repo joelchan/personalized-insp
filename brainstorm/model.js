@@ -127,15 +127,15 @@ Role.prototype.nextFunc = function (current) {
   for (var i=0; i<this.workflow.length; i++) {
       var workflowPage = this.workflow[i]; 
       if (workflowPage == current) {
-          console.log("current function is: " + this.workflow[i]);
+          //console.log("current function is: " + this.workflow[i]);
           var workflowIndex = i;
       }
   }
   if (workflowIndex + 1 < this.workflow.length) {
-      console.log("next function is: " + this.workflow[workflowIndex + 1]);
+      //console.log("next function is: " + this.workflow[workflowIndex + 1]);
       return this.workflow[workflowIndex+1];
   } else {
-      console.log("No next function found");
+      //console.log("No next function found");
     return null;
   }
 };

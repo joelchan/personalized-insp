@@ -60,12 +60,13 @@ getRandomRares = function() {
 insertPrimingIdeas = function () {
     var participant = Session.get("currentParticipant");
     if (Ideas.find({'participant': participant}).count() == 0) {
-      console.log("inserting priming ideas");
+      //console.log("inserting priming ideas");
       if (participant.condition.id == 1) {
-        console.log("Priming with rare ideas");
+        //console.log("Priming with rare ideas");
         //Grab 5 random rare ideas
         var ideas = getRandomRares();
         for (var i=0; i<ideas.length; i++) {
+          //console.log(ideas[i]);
             var idea = new Idea(ideas[i],
                 participant.user,
                 participant.condition.prompt,
@@ -76,7 +77,7 @@ insertPrimingIdeas = function () {
             }
         }
       } else {
-        console.log("Priming with common ideas");
+        //console.log("Priming with common ideas");
         var ideas = getRandomElement(primingIdeas['common']);
         for (var i=0; i<ideas.length; i++) {
             var idea = new Idea(ideas[i], 
@@ -107,13 +108,13 @@ Template.IdeationPage.ideas = function () {
 
 Template.IdeationPage.prompt = function () {
     var condition = Session.get("currentParticipant").condition;
-    console.log(condition);
+    //console.log(condition);
     return condition.prompt.question;
 };
 
 Template.IdeationPage.rendered = function() {
   //Debug statements
-  console.log("rendered");
+  //console.log("rendered");
   //console.log(Session.get('currentExp'));
   // Scroll window back to top
   window.scrollTo(0,0);
@@ -156,17 +157,22 @@ Template.IdeationPage.events({
           // Clear the text field
           $('#nextIdea').val("");
         }
-    },
+    }
 
+});
+
+
+//Placing the button in the navbar means I have to add event listeners
+//to the toplevel template
+Template.IdeaGen.events({
     //Transition to next page in state machine
     'click button.exitStudy': function () {
       logEndIdeation(Session.get("currentParticipant"));
+      $('.exitStudy').addClass("hidden");
       Router.goToNextPage("IdeationPage");
-      //var role = $.extend(true, new Role(), Session.get("currentRole"));
-      //Router.go(role.nextFunc("IdeationPage"), 
-          //{'_id': Session.get("currentExp")._id});
     }
 });
+
 
 getUser = function() {
   /******************************************************************

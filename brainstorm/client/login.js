@@ -11,7 +11,7 @@ loginUser = function loginUser(user) {
  * *****************************************************************/
 Template.LoginPage.events({
     'click button.nextPage': function () {
-        console.log("clicked continue");
+        //console.log("clicked continue");
         //login user
         var userName = $('input#name').val().trim();
         // Quick hack to login to admin interface
