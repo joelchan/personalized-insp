@@ -122,6 +122,8 @@ Template.IdeationPage.rendered = function() {
   if(e.keyCode===13)
     $('#submitIdea').click();
   });
+  //Add Exit study button to top right
+  $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
 
   //Insert ideas into database depnding on experimental condition
   insertPrimingIdeas();
@@ -157,7 +159,7 @@ Template.IdeationPage.events({
     },
 
     //Transition to next page in state machine
-    'click button.nextPage': function () {
+    'click button.exitStudy': function () {
       logEndIdeation(Session.get("currentParticipant"));
       Router.goToNextPage("IdeationPage");
       //var role = $.extend(true, new Role(), Session.get("currentRole"));

@@ -7,6 +7,8 @@ Experiments = new Meteor.Collection("experiments");
 Consents = new Meteor.Collection("consents");
 // Logs all participants in experiments
 Participants = new Meteor.Collection("participants");
+// Holds response to a experiment surveys
+SurveyResponses = new Meteor.Collection("surveyResponses");
 
 Experiment = function () {
    /********************************************************************
@@ -130,6 +132,8 @@ Participant = function(exp, user, cond, group, role) {
     this.condition = exp.getRandomCondition();
     this.group = group._id;
     this.role = Roles.findOne(role.role);
+    this.verifyCode = this.user._id.hashCode();
+    console.log("Participant verify code is: " + this.verifyCode);
 };
 
 Consent = function (participant) {
@@ -141,4 +145,14 @@ Consent = function (participant) {
   this.participantID = participant._id;
   this.experimentID = participant.experimentID;
   this.datetime = new Date().getTime();
+};
+
+SurveyResponse = function(responses, participant) {
+  this.responses = responses;
+  this.participant = participant;
+};
+
+QuestionResponse = function(question, answer) {
+  this.question = question;
+  this.answer = answer;
 };
