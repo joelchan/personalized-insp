@@ -86,7 +86,8 @@ Router.map(function () {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
   });
-    this.route('Cluster');
+  this.route('Cluster');
+  this.route('Forest');
 });
 
 //Sets layout for all routes to IdeaGen template

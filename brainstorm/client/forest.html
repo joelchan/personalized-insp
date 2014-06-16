@@ -1,0 +1,39 @@
+<template name="Forest">
+	<h1 class="page-header" id="clusterprompt">{{prompt}}</h1>
+	<div class="container-fluid">
+		<div class="row">
+			<div id="ideas" class="col-md-3">
+				<h3>Create New Cluster</h3>
+				<ul class="newstack">
+					<li class="new">Drag idea here to create a new cluster</li>
+				</ul>
+				<h3>Idea List</h3>
+				<ul id="idealist" class="deck">
+					<li class="sort-disabled"></li>
+					{{#each ideas}}
+						{{#if isClustered}}
+						<li id={{_id}} class="instance">{{content}}</li>
+						{{/if}}
+					{{/each}}
+				</ul>
+			</div>
+			<div id="cluster" class="col-md-3">
+				<ul id={{currentNode}} class="stack">
+					<span class="glyphicon glyphicon-collapse-up sort-disabled"></span>
+					<label class="sort-disabled">Cluster Name:
+						<span class="unnamed sort-disabled">{{name}}</span>
+					</label>
+					<input type="text" class="clustername sort-disabled" 
+							id="newcluster" placeholder="Name this cluster">
+					{{#each currentNodeIdeas}}
+						<li id={{_id}} class="idea-item">{{content}}</li>
+					{{/each}}
+				</ul>
+		
+			</div>
+			<div id="tree" class="col-md-6">
+
+			</div>
+		</div>
+	</div>
+</template>
