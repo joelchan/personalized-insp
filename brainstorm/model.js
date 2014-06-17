@@ -87,7 +87,8 @@ GroupTemplate = function () {
  
   // list of RoleTemplates
   this.roles = [];
-
+  // The number of members in the group where -1 is unlimited
+  this.size = 0;
   // Dictionary where key=Role._id; value=number of people of that role
   //this.numRoles = {};
 
@@ -100,6 +101,7 @@ GroupTemplate.prototype.addRole = function (role, num){
   * @return null
   ******************************************************************/
   var newRole = new RoleTemplate(role, num);
+  this.size += num;
   this.roles.push(newRole);
 };
 

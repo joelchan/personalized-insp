@@ -3,7 +3,7 @@
 
 Template.ConsentPage.events({
     'click button.nextPage': function () {
-        console.log("**** clicked continue ****");
+        //console.log("**** clicked continue ****");
         //login user
         //var userName = $('input#name').val().trim();
         //var myUser = new User(userName);

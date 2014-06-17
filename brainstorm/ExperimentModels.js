@@ -50,41 +50,51 @@ Experiment.prototype.setNumGroups = function(num) {
     //INitialize empty groups for each condition
     var groups = [];
     for (var j=0; j<num; j++) {
-        var newGroup = new Group(this.conditions[j].groupTemplate);
+        var newGroup = new Group(this.conditions[i].groupTemplate);
         Groups.insert(newGroup);
       groups.push(newGroup);
     }
-    this.groups[this.conditions[i].id] = groups
+    this.groups[this.conditions[i]._id] = groups
   }
 };
 
 Experiment.prototype.getRandomCondition = function() {
-    return getRandomElement(this.conditions);
-  ////Get Random Number
-	//var myRand = Math.floor(Math.random()*1024);
-  ////Divide range of 1024 evenly between number of condidions
-  //var interval = Math.floor(1024/this.conditions.length); 
-  //for (var i=0; i<this.conditions.length; i++) {
-    //if ((myRand >= interval * i) && (myRand < interval * (i + 1))) {
-      //return this.condition[i];
-    //} 
-  //}
-  ////If exiting without a return, then myRand was in the small rounding
-  //// error margin at the top of the range
-  //return this.conditions[this.conditions.length-1];
+    /****************************************************************
+    * Create an array with length queal to number of slots reamining
+    * in the experiment and the value of the slot equal to the 
+    * index of its associated condition
+    ****************************************************************/
+    //Create an array with length = number of slot
+    var slots = [];
+    for (var i=0; i<this.conditions.length; i++) {
+      //For now I'm assuming a groupsize of 1
+      //Determin number of participants expected - number already assigned
+      var numPart = this.conditions[i].groupNum -
+          Participants.find({experimentID: this._id, 
+              condition: this.conditions[i]}).count();
+      for (var j=0; j<numPart; j++) {
+          slots.push(i);
+      }
+    }
+    //Randomly assign to any condition if experiment is full
+    if (slots.length == 0) {
+        return getRandomElement(this.conditions);
+    }
+    var condIndex = getRandomElement(slots);
+    return this.conditions[condIndex];
 };
 
 Experiment.prototype.getGroup = function(condition) {
     var openGroups = [];
     var numSlots = 0;
     //Find all groups with open slots
-    for (var i=0; i<this.groups[condition.id].length; i++) {
+    for (var i=0; i<this.groups[condition._id].length; i++) {
         var group = $.extend(new Group(), 
-            this.groups[condition.id][i]
+            this.groups[condition._id][i]
             );
         var groupOpenSlots = group.numSlots();
         if (groupOpenSlots > 0) {
-            openGroups.push(this.groups[condition.id][i]);
+            openGroups.push(this.groups[condition._id][i]);
             numSlots += groupOpenSlots;
         }
     }
@@ -120,6 +130,8 @@ ExpCondition = function(id, prompt, desc, groupNum) {
   }
   //Define the make-up of each group
   this.groupTemplate = new GroupTemplate();
+  //Miscellaneous data associated with assignmnt
+  this.misc;
 };
 
 Participant = function(exp, user, cond, group, role) {

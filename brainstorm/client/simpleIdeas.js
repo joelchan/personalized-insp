@@ -57,9 +57,9 @@ getRandomRares = function() {
   return ideas;
 };
 
-insertPrimingIdeas = function () {
+getPrimingIdeas = function () {
     var participant = Session.get("currentParticipant");
-    if (Ideas.find({'participant': participant}).count() == 0) {
+    var newIdeas = [];
       //console.log("inserting priming ideas");
       if (participant.condition.id == 1) {
         //console.log("Priming with rare ideas");
@@ -67,14 +67,16 @@ insertPrimingIdeas = function () {
         var ideas = getRandomRares();
         for (var i=0; i<ideas.length; i++) {
           //console.log(ideas[i]);
+          //console.log("creating rare idea: " + ideas[i]);
             var idea = new Idea(ideas[i],
                 participant.user,
                 participant.condition.prompt,
                 participant
                 );
-            if (Ideas.find({content: idea.content}).count() == 0) {
-              Ideas.insert(idea);
-            }
+            newIdeas.push(idea);
+            //if (Ideas.find({content: idea.content}).count() == 0) {
+              ////Ideas.insert(idea);
+            //}
         }
       } else {
         //console.log("Priming with common ideas");
@@ -85,26 +87,43 @@ insertPrimingIdeas = function () {
                 participant.condition.prompt,
                 participant
                 );
-            if (Ideas.find({content: idea.content}).count() == 0) {
-              Ideas.insert(idea);
-            }
+            newIdeas.push(idea);
+            //if (Ideas.find({content: idea.content}).count() == 0) {
+              ////Ideas.insert(idea);
+            //}
   
         }
       }
-    }
+
+      return newIdeas;
 };
 
-Template.IdeationPage.ideas = function () {
+Template.IdeationPage.helpers({
+    ideas: function() {
+      return Ideas.find({participant: Session.get("currentParticipant")});
+    },
 
-  return Ideas.find({participant: Session.get("currentParticipant")
-    });
+    primeIdeas: function() {
+        //console.log("getting prime ideas");
+        var part = Session.get("currentParticipant");
+        var primes = part.misc;
+        //console.log(part);
+        //console.log(primes);
+        return primes;
+    }
+});
+    
+
+
+//Template.IdeationPage.ideas = function () {
+
   //if (Session.get("currentPrompt") !== undefined) {
       //return Ideas.find({user: Session.get('currentUser'),
           //question_id: Session.get("currentPrompt")['_id']});
   //} else {
     //return Ideas.find();
   //}
-};
+//};
 
 Template.IdeationPage.prompt = function () {
     var condition = Session.get("currentParticipant").condition;
@@ -127,8 +146,14 @@ Template.IdeationPage.rendered = function() {
   $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
 
   //Insert ideas into database depnding on experimental condition
-  insertPrimingIdeas();
-  logBeginIdeation(Session.get("currentParticipant"));
+  var primes = getPrimingIdeas();
+  var participant = Session.get("currentParticipant");
+  //participant.misc = primes;
+  Participants.update({_id: participant._id}, {$set: {misc: primes}});
+  Session.set("currentParticipant", Participants.findOne({_id: participant._id}));
+  var participant = Session.get("currentParticipant");
+  console.log(participant);
+  logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
   setTimeout('Router.goToNextPage("IdeationPage")', 900000);
 };

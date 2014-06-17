@@ -17,13 +17,13 @@ Router.map(function () {
         if (this.data()) {
           //console.log(Experiments.find().fetch().length);
           var x = Experiments.findOne({_id: this.params._id});
-          console.log(x);
+          //console.log(x);
           //var role = Roles.findOne({_id: x.groupTemplate.roles[0].role});
           //console.log(role);
           if (x) {
-              console.log("setting experiment session var");
-              //x.__proto__ = Experiment.prototype;
-          Session.set("currentExp", x);
+            //console.log("setting experiment session var");
+            //x.__proto__ = Experiment.prototype;
+            Session.set("currentExp", x);
           }
           //if (role) {
               //role.__proto__ = Role.prototype;

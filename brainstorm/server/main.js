@@ -61,7 +61,8 @@ Meteor.startup(function() {
       cond2.groupTemplate.addRole(
           Roles.findOne({'title': "Ideator"}), 1)
       exp.conditions = [cond1, cond2];
-      exp.setNumGroups(1);
+      //Each condition has 30 participants
+      exp.setNumGroups(30);
       Experiments.insert(exp);
       //console.log(Experiments.find().fetch());
     }
@@ -86,3 +87,11 @@ Meteor.startup(function() {
     }
 });
 
+Meteor.startup(function () {
+    //console.log(CryptoJS.SHA256("test"));
+    //var crypto = require('crypto');
+    //var hash = crypto.createHash("sha224");
+    //hash.update("test");
+    //var results = hash.digest("hex");
+    //console.log(result);
+});

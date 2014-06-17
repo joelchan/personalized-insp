@@ -29,9 +29,9 @@ Template.LoginPage.events({
         //Go to next page
         var role = $.extend(true, new Role(), participant.role);
         Session.set("currentRole", role);
-        console.log("set role");
+        //console.log("set role");
         Session.set("currentParticipant", participant);
-        console.log("set participant and role");
+        //console.log("set participant and role");
         //Log login event
         logParticipantLogin(participant);
         Router.goToNextPage("LoginPage");
