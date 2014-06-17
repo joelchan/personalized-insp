@@ -37,14 +37,23 @@ Template.Forest.rendered = function(){
 		receive : function(event, ui){
 			var currClusId = createCluster(ui.item);
       Session.set("ideaNode", currClusId);
-      //activeCluster = true; //change back to false after node is inserted
       $('#createnode').slideToggle();
       ui.item.remove();
 		},
 	});
 
 	$('#idealist').sortable({
-		connectWith:'ul.newstack, ul.stack'
+		connectWith:'ul.newstack, ul.stack',
+		receive: function(event, ui){
+      var myIdeaId = $(ui.item).attr('id');
+      if(ui.sender.hasClass('stack')){
+        myIdea = processIdeaSender(ui, myIdeaId); 
+      } else {
+        alert("unknown sender"); //no way for this to happen
+        return false;
+      }
+      updateIdeas(myIdeaId, false);
+    }
 	});
 
 	$('ul.stack').sortable({
@@ -53,7 +62,7 @@ Template.Forest.rendered = function(){
 			var ideaId = $(ui.item).attr('id');
 			var clusterId = $(this).attr('id');
 			addToCluster(ideaId, clusterId);
-		}
+		},
 	});
 }
 
@@ -127,8 +136,10 @@ Template.Forest.helpers({
   bestMatchChildren : function(){
   	var currNodeID = Session.get('bestMatchNode');
   	var currCluster = Clusters.findOne({_id: currNodeID});
-  	if(currCluster === undefined) 
+  	if(currCluster === undefined){ 
   		console.log("best match children undefined");
+  		return false;
+  	}
 		return currCluster.children;
   },
 
@@ -183,9 +194,11 @@ Template.Forest.events({
   		} else { //else continue to next state
   			Session.set("currentState", States.BESTMATCH);
   			console.log("switched to: " + Session.get("currentState").name);
-  			$('#buildcluster').animate({width: 'toggle'}, function(){
+
+  			$('#ideas').animate({width: 'toggle'}, function(){
   				$('#nodestatus').animate({width: 'toggle'});
   			});
+
   		}
   	}
   },
@@ -207,6 +220,7 @@ Template.Forest.events({
     return false;
   },
 
+  //select best match
   'dblclick .child' : function(){
   	//don't do anyhting if not in best match state
   	if(Session.get("currentState").val !== 1) 
@@ -214,8 +228,8 @@ Template.Forest.events({
 
   	Session.set("bestMatchNode", this.toString());
 
-		//if best match has no children, add idea node as child to best match, exit do
-  	if(Clusters.findOne({_id : this.toString()}).children.length === 0){
+		//if current node has no children, add idea node as child of current node, exit do
+  	if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0){
   		addChild(this.toString());
   		exitDo();
   	} else {
@@ -225,6 +239,29 @@ Template.Forest.events({
   			});
   		Session.set("currentState", States.GENERALIZE);
   	}
+  },
+
+  //click to merge
+  'click button#both' : function(){
+  	//get name and ideas form idea node
+  	var ideaNode = Clusters.findOne(Session.get("ideaNode"));
+
+  	//update best match node by pushing its ideas and name to best match
+  	var bestMatchNode = Clusters.findOne(Session.get("bestMatchNode"));;
+  	Clusters.update({_id: Session.get("bestMatchNode")}, 
+  		{$addToSet: {ideas: ideaNode.ideas}});
+
+  	var newName = bestMatchNode.name + " + " + ideaNode.name;
+  	Clusters.update({_id: Session.get("bestMatchNode")}, 
+  		{$set: {name: newName}});
+
+  	Clusters.remove(Session.get("ideaNode"));
+
+  	$('#generalize').animate({width: 'toggle'}, function(){
+  			$('#tree').animate({width: 'toggle'});
+  		});
+
+  	exitDo();
   }
 });
 
@@ -265,14 +302,38 @@ function updateIdeas(ideaId, inCluster){
 
 function exitDo(){
 	if(Session.get("currentState").val !== 0){
-		$('#nodestatus').animate({width: 'toggle'}, function(){
-  					$('#buildcluster').animate({width: 'toggle'});
-  				});
+		$('#ideas').animate({width: 'toggle'}, function(){
+  		$('#nodestatus').animate({width: 'toggle'});
+  	});
 	}
 	$('#createnode').slideToggle();
 	Session.set("currentNode", "1");
 	Session.set("ideaNode", "0");
 	Session.set("bestMatchNode", "1");
 	Session.set("currentState", States.NODECREATION);
-	//activeCluster = false;
+}
+
+//imported form clusters.js
+function processIdeaSender(ui, ideaId){
+  var myIdea;
+  var senderId = $(ui.sender).attr('id');
+  var sender = Clusters.findOne({_id: senderId});//remove that idea from sending cluster
+    
+  //find all ideas in clusters idea list with matching id (should be one)>need error check here
+  myIdea = $.grep(sender.ideas, function(idea){
+    return idea._id === ideaId;
+  })[0];
+
+  Clusters.update({_id: senderId},
+    {$pull:
+      {ideas: {_id: ideaId}}
+  });
+
+  //if sending cluster now has no ideas, get rid of it
+  var ideasLength = Clusters.findOne({_id: senderId}).ideas.length;
+  if(ideasLength === 0){
+    Clusters.remove(senderId);
+    $('#createnode').slideToggle();
+  }
+  return myIdea;
 }

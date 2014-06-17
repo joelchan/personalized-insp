@@ -2,7 +2,8 @@
 	<h1 class="page-header" id="clusterprompt">Alternate uses for a whatchamacallit</h1>
 	<div class="container-fluid">
 		<div class="row">
-			<div id="ideas" class="col-md-3">
+			<div id="ideas">
+			<div class="col-md-3">
 				<div id="createnode"><h3>Start New Cluster</h3>
 					<ul class="newstack">
 						<li class="new">Drag idea here to create a new cluster</li>
@@ -32,7 +33,8 @@
 				</ul>
 				<button id='finish' class='btn btn-large btn-primary'>Finished</button>
 			</div>
-			<div id="nodestatus" class="col-md-3">
+		</div>
+			<div id="nodestatus" class="col-md-6">
 				<h3>Working Nodes</h3>
 				<h4>Node to be Inserted</h4>
 				<ul id={{ideaNode}} class="ideanode donestack">
@@ -70,11 +72,16 @@
 					<button id="nomatch" class='btn btn-large btn-primary'>No Good Matches</button>
 				{{/if}}
 			</div>
-			<div id="generalize">
+			<div id="generalize" class="col-md-6">
+				<h3>{{userPrompt}}</h3>
 					<button id="both" class='btn btn-large btn-primary'>Merge</button>
+					<p>If both nodes generalize each other, click 'Merge'. This creates one node out of the two, with a name</p>
 					<button id="neither" class='btn btn-large btn-primary'>Create Artificial Node</button>
-					<button id="ideamore" class='btn btn-large btn-primary'>Idea node is parent</button>
-					<button id="bestmore" class='btn btn-large btn-primary'>Best Match is parent</button>
+					<p>If the nodes are related, but neither generalizes the other, click 'Create Artificial Node'. This will become the parent of both nodes, and you will be asked to provide a name that captures the missing semantic content</p>
+					<button id="ideanode" class='btn btn-large btn-primary'>Idea node is parent</button>
+					<p>If the idea node is more general than the best match node, click 'Idea Node is Parent'. This sets the idea node as the parent of the best match node.</p>
+					<button id="bestnode" class='btn btn-large btn-primary'>Best Match Node is Parent</button>
+					<p>If the idea node is more general than the best match node, click 'Best Match Node is Parent'. This sets the the best match node as the parent of the idea node.</p>
 			</div>
 		</div>
 	</div>
