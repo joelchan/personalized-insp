@@ -18,21 +18,28 @@
 				</ul>
 			</div>
 			<div id="cluster" class="col-md-3">
-				<ul id={{currentNode}} class="stack">
-					<span class="glyphicon glyphicon-collapse-up sort-disabled"></span>
+				<ul id={{ideaNode}} class="stack">
 					<label class="sort-disabled">Cluster Name:
-						<span class="unnamed sort-disabled">{{name}}</span>
+						<span class="unnamed sort-disabled">{{ideaNodeName}}</span>
 					</label>
 					<input type="text" class="clustername sort-disabled" 
 							id="newcluster" placeholder="Name this cluster">
-					{{#each currentNodeIdeas}}
+					{{#each ideaNodeIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
 					{{/each}}
 				</ul>
-		
+				<button id='finish' class='btn btn-large btn-primary'>Finished</button>
 			</div>
 			<div id="tree" class="col-md-6">
-
+				{{#each currentChildren}}
+					<ul class="child" id={{this}}>
+						<span class="glyphicon glyphicon-collapse-down sort-disabled"></span>
+						<span><label class="sort-disabled">Cluster Name:{{myName}}</label></span>
+						{{#each clusterideas}}
+							<li id={{_id}} class="idea-item">{{content}}</li>
+						{{/each}}
+						</ul>
+				{{/each}}
 			</div>
 		</div>
 	</div>

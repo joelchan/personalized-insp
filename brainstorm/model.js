@@ -1,3 +1,5 @@
+
+
 /********************************************************************
 Group Brainstorming experiment related data models
 ********************************************************************/
@@ -24,6 +26,14 @@ Cluster = function(ideas){
   this.position;
   this.children = [];
 }
+
+root = {
+  _id : "1",
+  isRoot : true,
+  children : []
+}
+if(Clusters.findOne({_id: "1"}) === undefined) Clusters.insert(root);
+
 
 Experiment = function () {
    /********************************************************************
