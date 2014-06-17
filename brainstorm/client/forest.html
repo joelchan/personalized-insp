@@ -1,12 +1,13 @@
 <template name="Forest">
-	<h1 class="page-header" id="clusterprompt">{{prompt}}</h1>
+	<h1 class="page-header" id="clusterprompt">Alternate uses for a whatchamacallit</h1>
 	<div class="container-fluid">
 		<div class="row">
 			<div id="ideas" class="col-md-3">
-				<h3>Create New Cluster</h3>
-				<ul class="newstack">
-					<li class="new">Drag idea here to create a new cluster</li>
-				</ul>
+				<div id="createnode"><h3>Start New Cluster</h3>
+					<ul class="newstack">
+						<li class="new">Drag idea here to create a new cluster</li>
+					</ul>
+				</div>
 				<h3>Idea List</h3>
 				<ul id="idealist" class="deck">
 					<li class="sort-disabled"></li>
@@ -17,7 +18,8 @@
 					{{/each}}
 				</ul>
 			</div>
-			<div id="cluster" class="col-md-3">
+			<div id="buildcluster" class="col-md-3">
+				<h3>Add to Cluster</h3>
 				<ul id={{ideaNode}} class="stack">
 					<label class="sort-disabled">Cluster Name:
 						<span class="unnamed sort-disabled">{{ideaNodeName}}</span>
@@ -30,16 +32,49 @@
 				</ul>
 				<button id='finish' class='btn btn-large btn-primary'>Finished</button>
 			</div>
+			<div id="nodestatus" class="col-md-3">
+				<h3>Working Nodes</h3>
+				<h4>Node to be Inserted</h4>
+				<ul id={{ideaNode}} class="ideanode donestack">
+					<span class="glyphicon glyphicon-collapse-down sort-disabled"></span>
+					<label class="sort-disabled">
+						<span class="named sort-disabled">{{ideaNodeName}}</span>
+					</label>
+					{{#each ideaNodeIdeas}}
+						<li id={{_id}} class="idea-item">{{content}}</li>
+					{{/each}}
+				</ul>
+				<h4>Best Match Node</h4>
+				<ul id={{bestMatchNode}} class="bestmatch donestack">
+					<span class="glyphicon glyphicon-collapse-down sort-disabled"></span>
+					<label class="sort-disabled">
+						<span class="named sort-disabled">{{bestMatchName}}</span>
+					</label>
+					{{#each bestMatchIdeas}}
+						<li id={{_id}} class="idea-item">{{content}}</li>
+					{{/each}}
+				</ul>
+			</div>
 			<div id="tree" class="col-md-6">
-				{{#each currentChildren}}
-					<ul class="child" id={{this}}>
+				<h3>{{userPrompt}}</h3>
+				{{#each bestMatchChildren}}
+					<ul class="donestack child" id={{this}}>
 						<span class="glyphicon glyphicon-collapse-down sort-disabled"></span>
-						<span><label class="sort-disabled">Cluster Name:{{myName}}</label></span>
-						{{#each clusterideas}}
+						<label class="sort-disabled">{{myName}}</label>
+						{{#each clusterIdeas}}
 							<li id={{_id}} class="idea-item">{{content}}</li>
 						{{/each}}
 						</ul>
 				{{/each}}
+				{{#if isBestMatch}}
+					<button id="nomatch" class='btn btn-large btn-primary'>No Good Matches</button>
+				{{/if}}
+			</div>
+			<div id="generalize">
+					<button id="both" class='btn btn-large btn-primary'>Merge</button>
+					<button id="neither" class='btn btn-large btn-primary'>Create Artificial Node</button>
+					<button id="ideamore" class='btn btn-large btn-primary'>Idea node is parent</button>
+					<button id="bestmore" class='btn btn-large btn-primary'>Best Match is parent</button>
 			</div>
 		</div>
 	</div>

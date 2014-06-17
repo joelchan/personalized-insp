@@ -114,6 +114,12 @@ Template.Cluster.helpers({
     return Clusters.find().fetch();
   },
 
+  isNotRoot : function(){
+    if($(this)[0].isRoot)
+      return false;
+    return true;
+  },
+
   ideas : function(){
     return Ideas.find();
   },

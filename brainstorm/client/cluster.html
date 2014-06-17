@@ -33,6 +33,7 @@
 				</div>
 				<div class="stack ui-sortable" id="clusterarea">
 					{{#each clusters}}
+					{{#if isNotRoot}}
 						<ul class="stack col-md-3" id={{_id}} 
 						style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
 							<span class="glyphicon glyphicon-collapse-up sort-disabled"></span>
@@ -48,6 +49,7 @@
 								<li id={{this}} class="cluster-item">{{clustername}}</li>
 							{{/each}}
 						</ul>
+						{{/if}}
 						<!--=============-->
 					{{/each}}
 				</div>

@@ -1,0 +1,8 @@
+.donestack > .idea-item{
+	display: none;
+}
+
+#nodestatus, #generalize{
+	display:none;
+}
+
