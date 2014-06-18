@@ -11,7 +11,7 @@ loginUser = function loginUser(user) {
  * *****************************************************************/
 Template.LoginPage.events({
     'click button.nextPage': function () {
-        console.log("clicked continue");
+        //console.log("clicked continue");
         //login user
         var userName = $('input#name').val().trim();
         // Quick hack to login to admin interface
@@ -22,20 +22,18 @@ Template.LoginPage.events({
         };
         var myUser = new User(userName, "Experiment Participant");
         myUser._id = Names.insert(myUser);
-        console.log(myUser);
         loginUser(myUser);
         //Perform random assignment
         var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
-        console.log(exp);
         var participant = exp.addParticipant(myUser);
-        console.log(participant.role);
         //Go to next page
         var role = $.extend(true, new Role(), participant.role);
-        console.log(role);
         Session.set("currentRole", role);
-        console.log("set role");
+        //console.log("set role");
         Session.set("currentParticipant", participant);
-        console.log("set participant and role");
+        //console.log("set participant and role");
+        //Log login event
+        logParticipantLogin(participant);
         Router.goToNextPage("LoginPage");
     },
     'keyup input#name': function (evt) {
