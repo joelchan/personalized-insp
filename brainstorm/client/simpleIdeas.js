@@ -7,7 +7,7 @@ var primingIdeas = {'common':
     "music player to listen to while in the shower"],
  ["give to charity",
     "give it as a gift (for real)",
-    "Uniform them for highschool spanish class",
+    "donate to the troops",
     "Give to homeless",
     "give it to a person in need"],
  ["Coin case",
