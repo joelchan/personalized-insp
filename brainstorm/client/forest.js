@@ -13,6 +13,12 @@
 //ideaNode; node being inserted
 //bestMatchNode; node with highest similarity to ideaNode
 
+
+//ui things to add:
+	//slide down input and label when new cluster is started
+	//fix so that "not named" is red whenever a new cluster is created and not yet named
+	//relabel tree area
+	//improve general style
 var States = {
 	NODECREATION: {val: 0, name: "IdeaNodeCreation", 
 		prompt: "Create a new cluster"},
@@ -47,7 +53,7 @@ Template.Forest.rendered = function(){
 		receive: function(event, ui){
       var myIdeaId = $(ui.item).attr('id');
       if(ui.sender.hasClass('stack')){
-        myIdea = processIdeaSender(ui, myIdeaId); 
+        processIdeaSender(ui, myIdeaId); 
       } else {
         alert("unknown sender"); //no way for this to happen
         return false;
@@ -291,6 +297,54 @@ Template.Forest.events({
   	});
 
   	exitDo();
+  },
+
+  'click button#ideanode' : function(){
+  	//replace bestatchnode with ideanode in tree
+  		//this is just the same as switching values of all fields except _id
+
+  	//copy data and remove nodes
+  	var bestMatchNode = Clusters.findOne({_id: Session.get("bestMatchNode")});
+  	var bestName = bestMatchNode.name;
+  	var bestIdeas = bestMatchNode.ideas;
+  	var bestChildren = bestMatchNode.children;
+  	Clusters.remove(Session.get("bestMatchNode"));
+
+  	var ideaNode = Clusters.findOne({_id: Session.get("ideaNode")});
+  	var ideaNodeName = ideaNode.name;
+  	var ideaNodeIdeas = ideaNode.ideas;
+  	var ideaChildren = ideaNode.children;
+  	Clusters.remove(Session.get("ideaNode"));
+
+  	//insert ideaNode content at bestMatch id
+  	Clusters.insert({
+  		_id: Session.get("bestMatchNode"),
+  		name: ideaNodeName,
+  		ideas: ideaNodeIdeas,
+  		children: ideaChildren
+  	});
+
+  	//insert bestMatch content at ideaNode id
+  	Clusters.insert({
+  		_id: Session.get("ideaNode"),
+  		name: bestName,
+  		ideas: bestIdeas,
+  		children: bestChildren
+  	});
+
+  	Session.set("currentNode", Session.get("bestMatchNode"));
+  	Session.set("currentState", States.BESTMATCH);
+  	$('#generalize').animate({width: 'toggle'}, function(){
+  			$('#tree').animate({width: 'toggle'});
+  		});
+  },
+
+  'click button#bestnode' : function(){
+  	Session.set("currentNode", Session.get("bestMatchNode"));
+  	Session.set("currentState", States.BESTMATCH);
+  	$('#generalize').animate({width: 'toggle'}, function(){
+  			$('#tree').animate({width: 'toggle'});
+  		});
   }
 });
 
@@ -351,9 +405,8 @@ function exitDo(){
 	Session.set("currentState", States.NODECREATION);
 }
 
-//imported form clusters.js
+//modified from clusters.js
 function processIdeaSender(ui, ideaId){
-  var myIdea;
   var senderId = $(ui.sender).attr('id');
   var sender = Clusters.findOne({_id: senderId});//remove that idea from sending cluster
     
@@ -373,5 +426,4 @@ function processIdeaSender(ui, ideaId){
     Clusters.remove(senderId);
     $('#createnode').slideToggle();
   }
-  return myIdea;
 }
