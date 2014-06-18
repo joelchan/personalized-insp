@@ -4,9 +4,9 @@
 		<div class="row">
 			<div id="ideas">
 			<div class="col-md-3">
-				<div id="createnode"><h3>Start New Cluster</h3>
+				<div id="createnode"><h3>Create a New Cluster</h3>
 					<ul class="newstack">
-						<li class="new">Drag idea here to create a new cluster</li>
+						Drag idea here to create a new cluster
 					</ul>
 				</div>
 				<h3>Idea List</h3>
@@ -14,7 +14,7 @@
 					<li class="sort-disabled"></li>
 					{{#each ideas}}
 						{{#if isClustered}}
-						<li id={{_id}} class="instance">{{content}}</li>
+						<li id={{_id}} class="idea-item">{{content}}</li>
 						{{/if}}
 					{{/each}}
 				</ul>
@@ -23,10 +23,10 @@
 				<h3>Add to Cluster</h3>
 				<ul id={{ideaNode}} class="stack">
 					<label class="sort-disabled">Cluster Name:
-						<span class="unnamed sort-disabled">{{ideaNodeName}}</span>
+						<span id="clusterlabel" class="unnamed sort-disabled">{{ideaNodeName}}</span>
 					</label>
 					<input type="text" class="clustername sort-disabled form-control" 
-							id="newcluster" placeholder="Name this cluster">
+							id="namecluster" placeholder="Name this cluster">
 					{{#each ideaNodeIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
 					{{/each}}
@@ -45,6 +45,9 @@
 					{{#each ideaNodeIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
 					{{/each}}
+					{{#each clusterchildren}}
+						<li id={{this}} class="cluster-item">{{clustername}}</li>
+					{{/each}}
 				</ul>
 				<h4>Best Match Node</h4>
 				<ul id={{bestMatchNode}} class="bestmatch donestack">
@@ -55,34 +58,42 @@
 					{{#each bestMatchIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
 					{{/each}}
+					{{#each clusterchildren}}
+						<li id={{this}} class="cluster-item">{{clustername}}</li>
+					{{/each}}
 				</ul>
 			</div>
 			<div id="tree" class="col-md-6">
 				<h3>{{userPrompt}}</h3>
 				{{#each bestMatchChildren}}
-					<ul class="donestack child" id={{this}}>
+					<ul class="donestack " id={{this}}>
 						<span class="glyphicon glyphicon-collapse-down sort-disabled"></span>
 						<label class="sort-disabled">{{myName}}</label>
 						{{#each clusterIdeas}}
 							<li id={{_id}} class="idea-item">{{content}}</li>
 						{{/each}}
+						{{#each clusterchildren}}
+							<li id={{this}} class="cluster-item">{{clustername}}</li>
+						{{/each}}
 						</ul>
 				{{/each}}
 				{{#if isBestMatch}}
-					<button id="nomatch" class='btn btn-large btn-primary'>No Good Matches</button>
+					<button id="bmback" class='btn btn-large btn-primary'>Back</button>
+					<a href="#" id="nomatch" class='btn btn-large btn-success' data-toggle="modal" data-target="#smallModal">No Good Matches</a>
 				{{/if}}
 			</div>
 			<div id="generalize" class="col-md-6">
 				<h3>{{userPrompt}}</h3>
-				<button id="both" class='btn btn-large btn-primary'>Merge</button>
+				<a href="#" id="both" class='btn btn-large btn-success' data-toggle="modal" data-target="#smallModal">Merge</a>
 				<p>If both nodes generalize each other, click 'Merge'. This creates one node out of the two, with a name</p>
-				<a href="#" id="neither" class='btn btn-large btn-primary'
+				<a href="#" id="neither" class='btn btn-large btn-success'
 					data-toggle="modal" data-target="#basicModal">Create Artificial Node</a>
 				<p>If the nodes are related, but neither generalizes the other, click 'Create Artificial Node'. This will become the parent of both nodes, and you will be asked to provide a name that captures the missing semantic content</p>
-				<button id="ideanode" class='btn btn-large btn-primary'>Idea node is parent</button>
+				<button id="ideanode" class='btn btn-large btn-success'>Idea node is parent</button>
 				<p>If the idea node is more general than the best match node, click 'Idea Node is Parent'. This sets the idea node as the parent of the best match node.</p>
-				<button id="bestnode" class='btn btn-large btn-primary'>Best Match Node is Parent</button>
+				<button id="bestnode" class='btn btn-large btn-success'>Best Match Node is Parent</button>
 				<p>If the idea node is more general than the best match node, click 'Best Match Node is Parent'. This sets the the best match node as the parent of the idea node.</p>
+				<button id="genback" class='btn btn-large btn-primary'>Back</button>
 				<div class="modal fade" id="basicModal" 
 					tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     				<div class="modal-dialog">
@@ -100,12 +111,29 @@
            					<div class="modal-footer">
                					<button type="button" class="btn btn-default" 
                						data-dismiss="modal">Close</button>
-             			 		<button type="button" class="btn btn-primary" id="save-name">Save changes</button>
+             			 		<button type="button" class="btn btn-primary" id="save-name" data-dismiss="modal">Save changes</button>
        						</div>
     					</div>
   					</div>
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="modal fade" id="smallModal" tabindex="-1" role="dialog" aria-labelledby="smallModal" aria-hidden="true">
+		<div class="modal-dialog modal-sm">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	       			 <h4 class="modal-title" id="myModalLabel">Small Modal</h4>
+    	  		</div>
+     		 	<div class="modal-body">
+        			<h3>Are you sure?</h3>
+	      		</div>
+    	  		<div class="modal-footer">
+        			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        			<button id="yes" type="button" class="btn btn-primary" data-dismiss="modal">Yes, I'm Sure</button>
+	      		</div>
+    		</div>
+  		</div>
 	</div>
 </template>

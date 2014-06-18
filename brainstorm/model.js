@@ -18,6 +18,13 @@ Consents = new Meteor.Collection("consents");
 Participants = new Meteor.Collection("participants");
 Groups = new Meteor.Collection("groups");
 Clusters = new Meteor.Collection("clusters");
+IdeasToProcess = new Meteor.Collection("ideasToProcess");
+
+IdeaToProcess = function(content, participant){
+  this.content = content;
+  this.participantID = participant._id;
+  this.inCluster = false;
+}
 
 Cluster = function(ideas){
   this.ideas = ideas;

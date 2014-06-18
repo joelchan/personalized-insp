@@ -87,7 +87,11 @@ Router.map(function () {
     template: 'SurveyPage'
   });
   this.route('Cluster');
-  this.route('Forest');
+  this.route('Forest', {
+    path: 'Forest/:_id',
+    template: 'Forest',
+    
+  });
 });
 
 //Sets layout for all routes to IdeaGen template

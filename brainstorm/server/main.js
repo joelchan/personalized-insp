@@ -24,6 +24,10 @@ Meteor.startup(function() {
           "SurveyPage",
           "FinalizePage"];
         Roles.insert(ideator);
+        ideator = new Role("Forest Synthesizer");
+        ideator.workflow = ["LoginPage",
+          "Forest"];
+        Roles.insert(ideator);
 
     }
     //Initialize experiment hardcoded on boot
@@ -46,6 +50,23 @@ Meteor.startup(function() {
       cond2.groupTemplate.addRole(
           Roles.findOne({'title': "Rare Ideator"}), 1)
       exp.conditions = [cond1, cond2];
+      exp.setNumGroups(1);
+      Experiments.insert(exp);
+      //console.log(Experiments.find().fetch());
+    }
+
+    if (Experiments.find().count() === 1) {
+      var question = "Many people have old iPods or MP3 players that they no longer use. Please brainstorm 50 uses for old iPods/MP3 players. Assume that the devices' batteries no longer work, though they can be powered via external power sources. Also be aware that devices may <em>not</em> have displays. Be as specific as possible in your descriptions."
+      var exp = new Experiment();
+      exp.description = "Testing idea forest synthesis"; 
+      var cond1 = new ExpCondition(1,
+          question,
+          "Synthesizing",
+          30
+          );
+      cond1.groupTemplate.addRole(
+          Roles.findOne({'title': "Forest Synthesizer"}), 1)
+      exp.conditions = [cond1];
       exp.setNumGroups(1);
       Experiments.insert(exp);
       //console.log(Experiments.find().fetch());

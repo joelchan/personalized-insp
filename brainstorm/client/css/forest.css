@@ -1,9 +1,26 @@
-.donestack > .idea-item{
+.donestack > .idea-item, .cluster-item{
 	display: none;
 }
 
-#nodestatus, #generalize{
+.idea-item, .cluster-item, .donestack{
+	border: solid 1px black;
+	border-radius: 4px;
+}
+.newstack{
+	border: dashed 1px black;
+	border-radius: 4px;
+}
+
+.donestack{
+	background-color: #f5f5f5;
+}
+
+#nodestatus, #generalize, #buildcluster{
 	display:none;
+}
+
+#nomatch{
+	margin-top: 50px;
 }
 
 #generalize > button{
