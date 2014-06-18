@@ -54,7 +54,7 @@ Experiment.prototype.setNumGroups = function(num) {
         Groups.insert(newGroup);
       groups.push(newGroup);
     }
-    this.groups[this.conditions[i]._id] = groups
+    this.groups[this.conditions[i].id] = groups
   }
 };
 
