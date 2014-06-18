@@ -40,14 +40,10 @@ Meteor.startup(function() {
           "SurveyPage",
           "FinalizePage"];
         Roles.insert(ideator);
-<<<<<<< HEAD
         ideator = new Role("Forest Synthesizer");
         ideator.workflow = ["LoginPage",
           "Forest"];
         Roles.insert(ideator);
-
-=======
->>>>>>> dacd256643d36239ec8e3bbfec9faecc91d06ee6
     }
     //Initialize experiment hardcoded on boot
     if (Experiments.find().count() === 0) {
@@ -85,7 +81,7 @@ Meteor.startup(function() {
           30
           );
       cond1.groupTemplate.addRole(
-          Roles.findOne({'title': "Forest Synthesizer"}), 1)
+          Roles.findOne({'title': "Forest Synthesizer"}), 1);
       exp.conditions = [cond1];
       exp.setNumGroups(1);
       Experiments.insert(exp);
@@ -112,11 +108,11 @@ Meteor.startup(function() {
     }
 });
 
-Meteor.startup(function () {
+//Meteor.startup(function () {
     //console.log(CryptoJS.SHA256("test"));
     //var crypto = require('crypto');
     //var hash = crypto.createHash("sha224");
     //hash.update("test");
     //var results = hash.digest("hex");
     //console.log(result);
-});
+//});

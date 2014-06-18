@@ -25,6 +25,16 @@
 	//relabel tree area?
 	//improve general style
 	//possibly change some .animate()s to .hide()s as the animation can look strange
+
+insertIdeas = function(){
+  var idea = new Idea("asdfasdf");
+  IdeasToProcess.insert(idea);
+  IdeasToProcess.insert(idea);
+  IdeasToProcess.insert(idea);
+  IdeasToProcess.insert(idea);
+  IdeasToProcess.insert(idea);
+}
+
 var States = {
 	NODECREATION: {val: 0, name: "IdeaNodeCreation", 
 		prompt: "Subtrees of Root"},
@@ -224,15 +234,12 @@ Template.Forest.events({
   		var currNodeID = Session.get("currentNode");
   		if(Clusters.findOne({_id: currNodeID}).children.length === 0){
   			addChild(currNodeID);
-  			$('#buildcluster').slideToggle();
   			exitDo(); //go back to start of idea node creation
   		} else { //else continue to next state
   			Session.set("currentState", States.BESTMATCH);
-
   			$('#ideas').hide(function(){
   				$('#nodestatus').animate({width: 'toggle'});
   			});
-
   		}
   	}
   },
@@ -382,7 +389,7 @@ Template.Forest.events({
 * Convenience funtions
 *********************************************************************/
 function addToCluster(ideaId, clusterId){
-	var idea = Ideas.findOne({_id: ideaId});
+	var idea = IdeasToProcess.findOne({_id: ideaId});
 	Clusters.update({_id: clusterId}, {$push: {ideas: idea}});
 	updateIdeas(ideaId, true);
 }
@@ -398,7 +405,7 @@ function addChild(nodeID){
 //modified from cluster.js
 function createCluster(item) {
   var ideaId = item.attr('id');
-  var ideas = [Ideas.findOne({_id: ideaId})];
+  var ideas = [IdeasToProcess.findOne({_id: ideaId})];
   var cluster = new Cluster(ideas);
   var id = Clusters.insert(cluster);
   updateIdeas(ideaId, true);
@@ -407,7 +414,7 @@ function createCluster(item) {
 
 //imported from cluster.js
 function updateIdeas(ideaId, inCluster){
-  Ideas.update({_id: ideaId}, 
+  IdeasToProcess.update({_id: ideaId}, 
     {$set:
       {inCluster: inCluster}
   });
