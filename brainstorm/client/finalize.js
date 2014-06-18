@@ -1,5 +1,8 @@
+Template.FinalizePage.rendered = function() {
+  window.scrollTo(0,0);
+};
 
 Template.FinalizePage.code = function(){
-	var myUser = Session.get("currentUser");
+	var myUser = Session.get("currentParticipant");
 	return myUser.verifyCode;
-}
+};

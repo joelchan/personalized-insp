@@ -1,0 +1,27 @@
+<template name="ScreensReviewPage">
+    <div class="row"> 
+      <div name="screens-list">
+        {{#each screens}}
+          {{> SRScreen }}
+        {{/each}}
+      </div>
+    </div>
+</template>
+
+
+<template name="SRScreen">
+  <div id="screen-{{_id}}" class="menu-box clickable panel panel-info">
+    <div class="panel-heading">
+      <strong>Screen Name: </strong> {{ name }}
+    </div>
+    <div class="panel-row">
+      <strong>Description: </strong>{{ description }}
+    </div>
+    <div class="panel-row">
+      <strong>URL: </strong>
+      <a href="{{ formUrl }}">{{ formUrl }}</a>
+    </div>
+  </div>
+</template>
+
+
