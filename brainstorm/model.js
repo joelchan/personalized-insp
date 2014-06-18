@@ -1,79 +1,179 @@
+
+/********************************************************************
+Brainstorming prompts data models 
+********************************************************************/
+Prompts = new Meteor.Collection("prompts");
 // Setup a collection to contain all ideas
+Ideas = new Meteor.Collection("ideas");
+ReplayIdeas = new Meteor.Collection("replayIdeas");
+// All system users
+Names = new Meteor.Collection("names");
+// All roles
+Roles = new Meteor.Collection("roles");
+// Logs all formed groups
+Groups = new Meteor.Collection("groups");
+UserTypes = new Meteor.Collection("userTypes");
 
-/*PromptFactory = {
-	
-	create : function(question, status, participant){
-		return {
-			question : question,
-			status : status,
-			participants : [participant],
-			
-			addParticipant : function(name){
-				return participants.push(name);
-			}
-		};
-	}
-};*/
-
-//Prompt constructor function
-Prompt = function (question, status, users){
-	this.question = question;
-	this.status = status;
-	this.participants = [];
-	var groupsize;
-
-	//define functions for users; add, remove, find
+Prompt = function(question) {
+  /********************************************************************
+   * Constructor that defines a brainstorming prompt/question
+   *
+   * @return {object} Prompt object 
+  ********************************************************************/
+  this.question = question;
 };
 
-Prompt.prototype.addParticipant = function (name){
-		this.participants.push(name);
-		console.log("participant added");
+Group = function(template) {
+    this.template = template;
+    //Users held in the namesc oollection. Maps users to roles
+    this.users = {};
+    // Key: Role._id. Value: array of users
+    this.assignments = {};
+    if (template) {
+      for (var i=0; i<this.template.roles.length; i++) {
+          this.assignments[this.template.roles[i].role] = [];
+      } 
+    }
+
+    this. getRandomRole = function () {
+        return getRandomElement(this.template.roles);
+      ////Get Random Number
+	    //var myRand = Math.floor(Math.random()*1024);
+      //var roles = this.template.roles;
+      ////Divide range of 1024 evenly between number of condidions
+      //var interval = Math.floor(1024/roles.length); 
+      //for (var i=0; i<roles.length; i++) {
+        //if ((myRand >= interval * i) && (myRand < interval * (i + 1))) {
+          //return roles[i];
+        //} 
+      //}
+      ////If exiting without a return, then myRand was in the small rounding
+      //// error margin at the top of the range
+      //return roles[roles.length - 1];
+
+    };
+
+}
+
+Group.prototype.numSlots = function() {
+    /****************************************************************
+    * Determine if the group can accept more members according to 
+    * the template definition 
+    ****************************************************************/
+    var numOpen = 0;
+    var roles = this.template.roles;
+    for (var i=0; i<roles.length; i++) {
+        var numUsers = this.assignments[roles[i].role].length;
+        var numSlots = roles[i].num;
+        numOpen += numSlots - numUsers;
+    }
+    return numOpen;
 };
 
-//Class for roles - one role = one screen
-Role = function(title){
-	this.title = title;
+
+Group.prototype.addUser = function(user) {
+    var role = this.getRandomRole();
+    this.users[user._id] = role;
+    this.assignments[role._id] = user;
+    return role;
+}
+
+GroupTemplate = function () {
+  /******************************************************************
+  * Defines a template for membership of each group in a brainstorm
+  *
+  * @return {object} GroupTemplate object 
+  ******************************************************************/
+ 
+  // list of RoleTemplates
+  this.roles = [];
+  // The number of members in the group where -1 is unlimited
+  this.size = 0;
+  // Dictionary where key=Role._id; value=number of people of that role
+  //this.numRoles = {};
+
 };
 
-//Class for workflow - a set of role-screens
-Workflow = function(role1, role2, role3){
+GroupTemplate.prototype.addRole = function (role, num){
+  /******************************************************************
+  * Adds a role to the set of roles in a group template
+  *
+  * @return null
+  ******************************************************************/
+  var newRole = new RoleTemplate(role, num);
+  this.size += num;
+  this.roles.push(newRole);
+};
+
+RoleTemplate = function (role, num) {
+  this.role = role._id;
+  this.title = role.title;
+  this.num = num;
+}
+
+
+Role = function (title) {
+  /********************************************************************
+  * defines a function or sequence of functions performed by an
+  * individual
+  *
+  * @return {object} GroupTemplate object 
+  ********************************************************************/
+
+  this.title = title;
+  this.workflow = [];
 
 };
 
-//Class for groups - number of each role
-Group = function(numRole1, numRole2, numRole3){
-	var groupSize;
+Role.prototype.nextFunc = function (current) {
+  for (var i=0; i<this.workflow.length; i++) {
+      var workflowPage = this.workflow[i]; 
+      if (workflowPage == current) {
+          //console.log("current function is: " + this.workflow[i]);
+          var workflowIndex = i;
+      }
+  }
+  if (workflowIndex + 1 < this.workflow.length) {
+      //console.log("next function is: " + this.workflow[workflowIndex + 1]);
+      return this.workflow[workflowIndex+1];
+  } else {
+      //console.log("No next function found");
+    return null;
+  }
+};
+
+Role.prototype.getRole = function(newRole) {
+  return $.extend(true, new Role(), newRole);
+}
+
+
+Idea = function (content, user, prompt, participant) {
+  /********************************************************************
+  * Encapsulation of ideas recorded by the system
+  *
+  * @return {object} GroupTemplate object 
+  ********************************************************************/
+  this.time = new Date().getTime();
+  this.content = content;
+  this.user = user;
+  this.prompt = prompt;
+  //Optional field not logged during non-experiments
+  this.participant = participant;
 };
 
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
-User = function(name){
+User = function(name, type){
 	this.name = name;
-	var role;
-	var userUrl;
-};
-
-User.prototype.randomAssign = function(){
-	var myRand = Math.floor(Math.random()*100);
-	if (myRand<33){
-
-	} else if (myRand<66 && myRand>=33){
-
-	} else if (myRand>=66){
-
-	}
-
+  //Currently only "admin" is significant
+  this.type = type;
 };
 
 //Random assignment and user management logic
 	//when user opens client they get randomly assigned to a role and/or workflow and paired unique url (hashed)
 //Need to track completion
 
-Prompts = new Meteor.Collection("prompts");
-Ideas = new Meteor.Collection("ideas");
-Tags = new Meteor.Collection("tags");
-Names = new Meteor.Collection("names");
 
-
+//Javascript implementation of Java's hash code function 
 //Hash code function 
 String.prototype.hashCode = function() {
   var hash = 0, i, chr, len;

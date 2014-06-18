@@ -2,12 +2,8 @@
 /********************************************************************
  * Convenience function for logging in users
  * *****************************************************************/
-LoginUser = function loginUser(user) {
-  var users = Names.find({'name': user['name']});
+loginUser = function loginUser(user) {
   Session.set("currentUser", user);
-  if (users == null) {
-    Names.insert({"name": username});
-  }
 };
 
 /********************************************************************
@@ -15,11 +11,30 @@ LoginUser = function loginUser(user) {
  * *****************************************************************/
 Template.LoginPage.events({
     'click button.nextPage': function () {
+        //console.log("clicked continue");
         //login user
-        var user = {'name': $('input#name').val().trim()};
-        LoginUser(user);
+        var userName = $('input#name').val().trim();
+        // Quick hack to login to admin interface
+        if (userName == "ProtoAdmin") {
+            loginUser(Names.findOne({name: "ProtoAdmin"}));
+            console.log("logged in admin User");
+            Router.go("ExpAdminPage");
+        };
+        var myUser = new User(userName, "Experiment Participant");
+        myUser._id = Names.insert(myUser);
+        loginUser(myUser);
+        //Perform random assignment
+        var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
+        var participant = exp.addParticipant(myUser);
         //Go to next page
-        Router.go('PromptPage')
+        var role = $.extend(true, new Role(), participant.role);
+        Session.set("currentRole", role);
+        //console.log("set role");
+        Session.set("currentParticipant", participant);
+        //console.log("set participant and role");
+        //Log login event
+        logParticipantLogin(participant);
+        Router.goToNextPage("LoginPage");
     },
     'keyup input#name': function (evt) {
         $(document).ready(function(){
@@ -30,3 +45,11 @@ Template.LoginPage.events({
         });
     },
 });
+
+
+/********************************************************************
+ * Login Page onRender
+ * *****************************************************************/
+//Template.LoginPage.rendered = function() {
+//  Session.get("currentExp");
+//};
