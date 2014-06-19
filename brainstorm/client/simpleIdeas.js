@@ -7,7 +7,7 @@ var primingIdeas = {'common':
     "music player to listen to while in the shower"],
  ["give to charity",
     "give it as a gift (for real)",
-    "Uniform them for highschool spanish class",
+    "donate to the troops",
     "Give to homeless",
     "give it to a person in need"],
  ["Coin case",
@@ -33,46 +33,107 @@ var primingIdeas = {'common':
     "Load with a siren and use to scare off attackers. "]]
 };
 
-insertPrimingIdeas = function () {
-    var participant = Session.get("currentParticipant");
-    if (participant.condition.id == 1) {
-      console.log("Priming with rare ideas");
-      var ideas = getRandomElement(primingIdeas['rare']);
-      for (var i=0; i<ideas.length; i++) {
-          var idea = new Idea(ideas[i], participant);
-          Ideas.insert(idea);
-      }
-    } else {
-      console.log("Priming with common ideas");
-      var ideas = getRandomElement(primingIdeas['common']);
-      for (var i=0; i<ideas.length; i++) {
-          var idea = new Idea(ideas[i], participant);
-          Ideas.insert(idea);
+getRandomRares = function() {
+  var rare1 = primingIdeas['rare'][0];
+  var rare2 = primingIdeas['rare'][1];
+  var rare3 = primingIdeas['rare'][2];
+  var ideas = [];
+  ideas.push(getRandomElement(rare1));
+  ideas.push(getRandomElement(rare2));
+  ideas.push(getRandomElement(rare3));
+  while (ideas.length < 5) {
+    var randomRare = getRandomElement(primingIdeas['rare']);
+    var nextIdea = getRandomElement(randomRare);
+    var notDuplicate = true;
+    for (var i=0; i<ideas.length && notDuplicate; i++) {
+      if (ideas[i] == nextIdea) {
+        notDuplicate = false;
       }
     }
-}
+    if (notDuplicate) {
+      ideas.push(nextIdea);
+    }
+  }
+  return ideas;
+};
 
-Template.IdeationPage.ideas = function () {
+getPrimingIdeas = function () {
+    var participant = Session.get("currentParticipant");
+    var newIdeas = [];
+      //console.log("inserting priming ideas");
+      if (participant.condition.id == 1) {
+        //console.log("Priming with rare ideas");
+        //Grab 5 random rare ideas
+        var ideas = getRandomRares();
+        for (var i=0; i<ideas.length; i++) {
+          //console.log(ideas[i]);
+          //console.log("creating rare idea: " + ideas[i]);
+            var idea = new Idea(ideas[i],
+                participant.user,
+                participant.condition.prompt,
+                participant
+                );
+            newIdeas.push(idea);
+            //if (Ideas.find({content: idea.content}).count() == 0) {
+              ////Ideas.insert(idea);
+            //}
+        }
+      } else {
+        //console.log("Priming with common ideas");
+        var ideas = getRandomElement(primingIdeas['common']);
+        for (var i=0; i<ideas.length; i++) {
+            var idea = new Idea(ideas[i], 
+                participant.user,
+                participant.condition.prompt,
+                participant
+                );
+            newIdeas.push(idea);
+            //if (Ideas.find({content: idea.content}).count() == 0) {
+              ////Ideas.insert(idea);
+            //}
+  
+        }
+      }
 
-  return Ideas.find({participant: Session.get("currentParticipant")
-    });
+      return newIdeas;
+};
+
+Template.IdeationPage.helpers({
+    ideas: function() {
+      return Ideas.find({participant: Session.get("currentParticipant")});
+    },
+
+    primeIdeas: function() {
+        //console.log("getting prime ideas");
+        var part = Session.get("currentParticipant");
+        var primes = part.misc;
+        //console.log(part);
+        //console.log(primes);
+        return primes;
+    }
+});
+    
+
+
+//Template.IdeationPage.ideas = function () {
+
   //if (Session.get("currentPrompt") !== undefined) {
       //return Ideas.find({user: Session.get('currentUser'),
           //question_id: Session.get("currentPrompt")['_id']});
   //} else {
     //return Ideas.find();
   //}
-};
+//};
 
 Template.IdeationPage.prompt = function () {
     var condition = Session.get("currentParticipant").condition;
-    console.log(condition);
+    //console.log(condition);
     return condition.prompt.question;
 };
 
 Template.IdeationPage.rendered = function() {
   //Debug statements
-  console.log("rendered");
+  //console.log("rendered");
   //console.log(Session.get('currentExp'));
   // Scroll window back to top
   window.scrollTo(0,0);
@@ -81,9 +142,18 @@ Template.IdeationPage.rendered = function() {
   if(e.keyCode===13)
     $('#submitIdea').click();
   });
+  //Add Exit study button to top right
+  $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
 
   //Insert ideas into database depnding on experimental condition
-  insertPrimingIdeas();
+  var primes = getPrimingIdeas();
+  var participant = Session.get("currentParticipant");
+  //participant.misc = primes;
+  Participants.update({_id: participant._id}, {$set: {misc: primes}});
+  Session.set("currentParticipant", Participants.findOne({_id: participant._id}));
+  var participant = Session.get("currentParticipant");
+  console.log(participant);
+  logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
   setTimeout('Router.goToNextPage("IdeationPage")', 900000);
 };
@@ -100,24 +170,34 @@ Template.IdeationPage.events({
         //});
         //Add idea to database
         if (newIdea !== "") {
+          var participant = Session.get("currentParticipant");
           var idea = new Idea(newIdea,
-              Session.get("currentParticipant")
+              participant.user,
+              participant.condition.prompt,
+              participant
               );
           //console.log(idea); 
           Ideas.insert(idea);
+          logIdeaSubmission(participant, idea);
           // Clear the text field
           $('#nextIdea').val("");
         }
-    },
+    }
 
+});
+
+
+//Placing the button in the navbar means I have to add event listeners
+//to the toplevel template
+Template.IdeaGen.events({
     //Transition to next page in state machine
-    'click button.nextPage': function () {
-        Router.goToNextPage("IdeationPage");
-      //var role = $.extend(true, new Role(), Session.get("currentRole"));
-      //Router.go(role.nextFunc("IdeationPage"), 
-          //{'_id': Session.get("currentExp")._id});
+    'click button.exitStudy': function () {
+      logEndIdeation(Session.get("currentParticipant"));
+      $('.exitStudy').addClass("hidden");
+      Router.goToNextPage("IdeationPage");
     }
 });
+
 
 getUser = function() {
   /******************************************************************
