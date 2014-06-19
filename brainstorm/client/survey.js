@@ -89,7 +89,7 @@ Template.SurveyPage.events({
       var resp = getResponse();
       resp._id = SurveyResponses.insert(resp);
       logSubmittedSurvey(Session.get("currentParticipant"), resp);
-      console.log("formsubmitted");
+      //console.log("formsubmitted");
       Router.goToNextPage("SurveyPage");
     } catch (err) {
       console.log(err);

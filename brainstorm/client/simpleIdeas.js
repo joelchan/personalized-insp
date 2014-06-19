@@ -152,7 +152,7 @@ Template.IdeationPage.rendered = function() {
   Participants.update({_id: participant._id}, {$set: {misc: primes}});
   Session.set("currentParticipant", Participants.findOne({_id: participant._id}));
   var participant = Session.get("currentParticipant");
-  console.log(participant);
+  //console.log(participant);
   logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
   setTimeout('Router.goToNextPage("IdeationPage")', 900000);
@@ -160,7 +160,7 @@ Template.IdeationPage.rendered = function() {
 
 Template.IdeationPage.events({
     'click button.submitIdea': function () {
-        console.log("event submitted");
+        //console.log("event submitted");
         var newIdea = $('#nextIdea').val();
         //Check if idea already has been proposed
         //Ideas.find().forEach(function (idea) {
