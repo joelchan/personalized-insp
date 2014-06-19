@@ -88,13 +88,13 @@ Experiment.prototype.getGroup = function(condition) {
     var openGroups = [];
     var numSlots = 0;
     //Find all groups with open slots
-    for (var i=0; i<this.groups[condition._id].length; i++) {
+    for (var i=0; i<this.groups[condition.id].length; i++) {
         var group = $.extend(new Group(), 
-            this.groups[condition._id][i]
+            this.groups[condition.id][i]
             );
         var groupOpenSlots = group.numSlots();
         if (groupOpenSlots > 0) {
-            openGroups.push(this.groups[condition._id][i]);
+            openGroups.push(this.groups[condition.id][i]);
             numSlots += groupOpenSlots;
         }
     }

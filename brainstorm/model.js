@@ -1,4 +1,3 @@
-
 /********************************************************************
 Brainstorming prompts data models 
 ********************************************************************/
@@ -12,7 +11,32 @@ Names = new Meteor.Collection("names");
 Roles = new Meteor.Collection("roles");
 // Logs all formed groups
 Groups = new Meteor.Collection("groups");
+Clusters = new Meteor.Collection("clusters");
+IdeasToProcess = new Meteor.Collection("ideasToProcess");
+
+IdeaToProcess = function(content, participant){
+  this.content = content;
+  this.participantID = participant._id;
+  this.inCluster = false;
+}
+
+Cluster = function(ideas){
+  this.ideas = ideas;
+  this.id; //should be the same as id of entry in mongo db collection (?)
+  this.name = "Not named yet"; //default name for unnamed clusters
+  this.position;
+  this.children = [];
+}
+
+root = {
+  _id : "1",
+  isRoot : true,
+  children : []
+}
+if(Clusters.findOne({_id: "1"}) === undefined) Clusters.insert(root);
+
 UserTypes = new Meteor.Collection("userTypes");
+
 
 Prompt = function(question) {
   /********************************************************************

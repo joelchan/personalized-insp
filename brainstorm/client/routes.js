@@ -80,9 +80,15 @@ Router.map(function () {
     path: 'FinalizePage/:_id',
     template: 'FinalizePage'
   });
-    this.route('SurveyPage', {
+  this.route('SurveyPage', {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
+  });
+  this.route('Cluster');
+  this.route('Forest', {
+    path: 'Forest/:_id',
+    template: 'Forest',
+    
   });
 });
 
