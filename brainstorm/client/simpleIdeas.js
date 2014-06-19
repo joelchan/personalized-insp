@@ -158,7 +158,7 @@ Template.IdeationPage.rendered = function() {
   setTimeout('Router.goToNextPage("IdeationPage")', 900000);
   //Setup timer for decrementing onscreen timer
   Session.set("timeLeft", 15);
-  setTimeout('decrementTimer()', 6000);
+  setTimeout('decrementTimer()', 60000);
 };
 
 Template.IdeationPage.events({
