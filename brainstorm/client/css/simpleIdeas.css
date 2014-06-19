@@ -12,11 +12,32 @@
     color: #666666;
 }
 .prompt-box {
-  width: 100%;
   background: #eee;
   padding: 10px;
 }
 
+.header .sample-ideas {
+  background: #eee;
+  padding: 10px;
+
+}
+
+.header .timer {
+  background: #eee;
+  padding: 5px;
+  text-align: center;
+  
+}
+
+.header .timer span {
+  font-size: 2em;
+  color: #000;
+  background: #eee;
+}
+
+#time {
+  margin-top: -10px;
+}
 
 .sidebar {
   padding: 0 15px 0 15px;

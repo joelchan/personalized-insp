@@ -156,6 +156,9 @@ Template.IdeationPage.rendered = function() {
   logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
   setTimeout('Router.goToNextPage("IdeationPage")', 900000);
+  //Setup timer for decrementing onscreen timer
+  Session.set("timeLeft", 15);
+  setTimeout('decrementTimer()', 6000);
 };
 
 Template.IdeationPage.events({
@@ -204,4 +207,16 @@ getUser = function() {
   * Grab the userid from MTurk
   ******************************************************************/
 
+};
+
+decrementTimer = function decrementTimer() {
+  /******************************************************************
+  * Decrement the onscreen timer
+  ******************************************************************/
+  var nextTime = Session.get("timeLeft") - 1;
+  Session.set("timeLeft", nextTime);
+  var time = $('#time').text(nextTime + " mins");
+  if (nextTime != 0) {
+    setTimeout('decrementTimer()', 60000);
+  }
 };

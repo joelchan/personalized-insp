@@ -17,14 +17,14 @@
           <li>Combinations of ideas count as new ideas.</li>
         </ol>
         <p>Keep in mind if at any point you must exit the study early, you can click the button in the top right corner of the screen. You will be compensated on a pro-rated basis according to your participation time.</p>
-        <p>To get you started, here are some ideas others have generated for this problem. You do not have to constrain your ideas to be similar to those ideas: they are simply there for your inspiration, if you need it. Feel free to ignore them, build on them, or combine them as you see fit.</p>
-        <ul>
-          {{#each primeIdeas}}
-            <li>
-              {{ content }}
-            </li>
-          {{/each}}
-        </ul>
+         <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
+         <ul>
+         {{#each primeIdeas}}
+             <li>
+             {{ content }}
+             </li>
+         {{/each}}
+         </ul>
       </div>
     </div>
 
@@ -37,6 +37,12 @@
             </h1>
           </div>
         </div>
+        <div class="row">
+          <div class="timer">
+              <span id="time">15</span><span> minutes remaining</span>
+          </div> 
+        </div>
+            
       </div>
       <div class="row">
           {{#each ideas}}
