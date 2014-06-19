@@ -37,7 +37,7 @@ insertIdeas = function(){
 
 var States = {
 	NODECREATION: {val: 0, name: "IdeaNodeCreation", 
-		prompt: "Subtrees of Root"},
+		prompt: "Subtree Roots"},
 	BESTMATCH: {val: 1, name: "FindBestMatch", 
 		prompt: "Double click on the best match among the current nodes" },
 	GENERALIZE: {val: 2, name: "Generalization", 
@@ -73,7 +73,6 @@ Template.Forest.rendered = function(){
       var myIdeaId = $(ui.item).attr('id');
       if(ui.sender.hasClass('stack')){
         processIdeaSender(ui, myIdeaId);
-        $('#buildcluster').slideToggle();
       } else {
         alert("unknown sender"); //no way for this to happen
         return false;
@@ -148,10 +147,11 @@ Template.Forest.helpers({
   bestMatchName : function(){
   	var currNodeID = Session.get('bestMatchNode');
   	var currCluster = Clusters.findOne({_id: currNodeID});
-  	//console.log(currNodeID);
-		if(currCluster !== undefined){
+		if(currCluster.name !== undefined){
 			return currCluster.name;
-		}
+		} else {
+      return "No Match Picked";
+    }
   },
 
   myName : function(){
@@ -238,7 +238,7 @@ Template.Forest.events({
   		} else { //else continue to next state
   			Session.set("currentState", States.BESTMATCH);
   			$('#ideas').hide(function(){
-  				$('#nodestatus').animate({width: 'toggle'});
+  				$('#nodestatus').show('slow');
   			});
   		}
   	}
@@ -279,7 +279,7 @@ Template.Forest.events({
   	} else {
   		//move to next state
   		$('#tree').hide(function(){
-  			$('#generalize').animate({width: 'toggle'});
+  			$('#generalize').show('slow');
   			});
   		Session.set("currentState", States.GENERALIZE);
   	}
@@ -340,8 +340,8 @@ Template.Forest.events({
   	swapNodes();
   	Session.set("currentNode", Session.get("bestMatchNode"));
   	Session.set("currentState", States.BESTMATCH);
-  	$('#generalize').animate({width: 'toggle'}, function(){
-  			$('#tree').animate({width: 'toggle'});
+  	$('#generalize').hide(function(){
+  			$('#tree').slideToggle();
   		});
   	Session.set("swapped", true);
   },
@@ -349,8 +349,8 @@ Template.Forest.events({
   'click button#bestnode' : function(){
   	Session.set("currentNode", Session.get("bestMatchNode"));
   	Session.set("currentState", States.BESTMATCH);
-  	$('#generalize').animate({width: 'toggle'}, function(){
-  			$('#tree').animate({width: 'toggle'});
+  	$('#generalize').hide(function(){
+  			$('#tree').slideToggle();
   		});
   },
 
@@ -359,8 +359,8 @@ Template.Forest.events({
   	path.pop();
   	console.log(path);
   	Session.set("bestMatchNode", path[path.length-1].toString());
-  	$('#generalize').animate({width: 'toggle'}, function(){
-  			$('#tree').animate({width: 'toggle'});
+  	$('#generalize').hide(function(){
+  			$('#tree').slideToggle();
   		});
   },
 
@@ -372,13 +372,13 @@ Template.Forest.events({
 
   	if(path.length > 1){
   		Session.set("currentState", States.GENERALIZE);
-  		$('#tree').animate({width: 'toggle'}, function(){
-  			$('#generalize').animate({width: 'toggle'});
+  		$('#tree').hide(function(){
+  			$('#generalize').slideToggle();
   			});
   	} else {
   		Session.set("currentState", States.NODECREATION);
-  		$('#nodestatus').animate({width: 'toggle'}, function(){
-  				$('#ideas').animate({width: 'toggle'});
+  		$('#nodestatus').hide(function(){
+  				$('#ideas').slideToggle();
   			});
   	}
 
@@ -454,15 +454,15 @@ function swapNodes(){
 function exitDo(){
 	//if in any state other than node creation, hide nodestatus, show idealist + clusterbuilder
 	if(Session.get("currentState").val !== 0){
-		$('#nodestatus').animate({width: 'toggle'}, function(){
-  		$('#ideas').animate({width: 'toggle'});
+		$('#nodestatus').hide(function(){
+  		$('#ideas').slideToggle();
   	});
 	}
 
 	//if current state is Generalization, hide generalize and show tree
 	if(Session.get("currentState").val === 2){
-		$('#generalize').animate({width: 'toggle'}, function(){
-  			$('#tree').animate({width: 'toggle'});
+		$('#generalize').hide(function(){
+  			$('#tree').slideToggle();
   		});
 	}
 
@@ -496,5 +496,6 @@ function processIdeaSender(ui, ideaId){
   if(ideasLength === 0){
     Clusters.remove(senderId);
     $('#createnode').slideToggle();
+    $('#buildcluster').slideToggle();
   }
 }

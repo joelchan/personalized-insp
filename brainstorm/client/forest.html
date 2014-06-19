@@ -5,7 +5,7 @@
 			<div id="ideas">
 			<div class="col-md-3">
 				<div id="createnode"><h3>Create a New Cluster</h3>
-					<ul class="newstack">
+					<ul class="newstack" id="node-drag-target">
 						Drag idea here to create a new cluster
 					</ul>
 				</div>
@@ -25,7 +25,7 @@
 					<label class="sort-disabled">Cluster Name:
 						<span id="clusterlabel" class="unnamed sort-disabled">{{ideaNodeName}}</span>
 					</label>
-					<input type="text" class="clustername sort-disabled form-control" 
+					<input type="text" class="clustername sort-disabled" 
 							id="namecluster" placeholder="Name this cluster">
 					{{#each ideaNodeIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
