@@ -215,7 +215,7 @@ decrementTimer = function decrementTimer() {
   ******************************************************************/
   var nextTime = Session.get("timeLeft") - 1;
   Session.set("timeLeft", nextTime);
-  var time = $('#time').text(nextTime + " mins");
+  var time = $('#time').text(nextTime);
   if (nextTime != 0) {
     setTimeout('decrementTimer()', 60000);
   }
