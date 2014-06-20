@@ -5,10 +5,10 @@ more columns of data can be added to the csv file if needed.
 each row in the csv file is for a different "idea"
 column headings are as follows:
 
-idea_label - the label of the idea
-parent_label - name of the parent of the current idea
-size - the size of the node (this is used for certain vizs. this can be changed to different data that is necessary)
-strength - the strength of the link between parent and child between 0-9.
++ idea_label - the label of the idea
++ parent_label - name of the parent of the current idea
++ size - the size of the node (this is used for certain vizs. this can be changed to different data that is necessary) anything that gets mapped to size at the moment must be a nonnegative integer
++ strength - the strength of the link between parent and child between 0-9.
 
 The Vizs
 ========
