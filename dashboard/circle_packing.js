@@ -1,8 +1,11 @@
 /* javascript for the circle packing viz */
 
+// file path for data file
+var dataFile = "MT_ipod.csv"
+
 // use this variable to specify the name of the column
 // that has the node attribute you want to size by
-var sizeParam = "size";
+var sizeParam = "idea_oscore";
 
 var w = 1280, //width of the svg
 h = 800, //height of the svg
@@ -25,7 +28,7 @@ var vis = d3.select("body")
   .attr("transform", "translate(" + (w - r) / 4 + "," + (h - r) / 4 + ")");
 
 //this code reads the csv file and then puts it into the viz
-d3.text("flare.csv", function(error, unparsedData) {
+d3.text(dataFile, function(error, unparsedData) {
 
   //parses the data into object array
   var data = d3.csv.parse(unparsedData);
