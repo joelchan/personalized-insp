@@ -1,5 +1,9 @@
 /* javascript for the circle packing viz */
 
+// use this variable to specify the name of the column
+// that has the node attribute you want to size by
+var sizeParam = "size";
+
 var w = 1280, //width of the svg
 h = 800, //height of the svg
 r = 750, //size of the layout
@@ -38,7 +42,7 @@ d3.text("flare.csv", function(error, unparsedData) {
     //variables that pull the necessary data
     var parent_label = data[x].parent_label;
     var child = data[x].idea_label;
-    var size = parseInt(data[x].size);
+    var size = parseInt(data[x][sizeParam]); 
 
     //these if/else statements check if the parent is already in the tree and if not, adds it in.
     var parent_node;
