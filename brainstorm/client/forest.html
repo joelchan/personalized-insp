@@ -2,11 +2,12 @@
 	<h1 class="page-header" id="clusterprompt">Alternate uses for a whatchamacallit</h1>
 	<div class="container-fluid">
 		<div class="row">
-			<div id="ideas">
+			<!--IdeaList and Node Starter-->
+		  <div id="ideas">
 			<div class="col-md-3">
 				<div id="createnode"><h3>Create a New Cluster</h3>
 					<ul class="newstack" id="node-drag-target">
-						Drag idea here to create a new cluster
+					Drag idea here to create a new cluster
 					</ul>
 				</div>
 				<h3>Idea List</h3>
@@ -19,13 +20,16 @@
 					{{/each}}
 				</ul>
 			</div>
+			<!--End-->
+
+			<!--Node Builder-->
 			<div id="buildcluster" class="col-md-3">
 				<h3>Add to Cluster</h3>
 				<ul id={{ideaNode}} class="stack">
 					<label class="sort-disabled">Cluster Name:
-						<span id="clusterlabel" class="unnamed sort-disabled">{{ideaNodeName}}</span>
+						<span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
 					</label>
-					<input type="text" class="clustername sort-disabled" 
+					<input type="text" class="clusternodename sort-disabled" 
 							id="namecluster" placeholder="Name this cluster">
 					{{#each ideaNodeIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
@@ -33,27 +37,30 @@
 				</ul>
 				<button id='finish' class='btn btn-large btn-primary'>Finished</button>
 			</div>
-		</div>
+			<!--End-->
+		  </div>
+
+			<!--Idea Node and Best Match Node Status-->
 			<div id="nodestatus" class="col-md-6">
 				<h3>Working Nodes</h3>
 				<h4>Node to be Inserted</h4>
 				<ul id={{ideaNode}} class="ideanode donestack">
-					<span class="glyphicon glyphicon-collapse-down sort-disabled"></span>
+					<i class="fa fa-angle-double-down sort-disabled"></i>
 					<label class="sort-disabled">
 						<span class="named sort-disabled">{{ideaNodeName}}</span>
 					</label>
 					{{#each ideaNodeIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
 					{{/each}}
-					{{#each clusterchildren}}
-						<li id={{this}} class="cluster-item">{{clustername}}</li>
+					{{#each clusterChildren}}
+						<li id={{this}} class="cluster-item">{{clusterName}}</li>
 					{{/each}}
 				</ul>
 				<h4>Best Match Node</h4>
 				<ul id={{bestMatchNode}} class="bestmatch donestack">
-					<span class="glyphicon glyphicon-collapse-down sort-disabled"></span>
+					<i class="fa fa-angle-double-down sort-disabled"></i>
 					<label class="sort-disabled">
-						<span class="named sort-disabled">{{bestMatchName}}</span>
+						<span id="bmname" class="sort-disabled">{{bestMatchName}}</span>
 					</label>
 					{{#each bestMatchIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
@@ -63,11 +70,14 @@
 					{{/each}}
 				</ul>
 			</div>
+			<!--End-->
+
+			<!--Children of Best Match Node-->
 			<div id="tree" class="col-md-6">
 				<h3>{{userPrompt}}</h3>
 				{{#each bestMatchChildren}}
 					<ul class="donestack " id={{this}}>
-						<span class="glyphicon glyphicon-collapse-down sort-disabled"></span>
+						<i class="fa fa-angle-double-down sort-disabled"></i>
 						<label class="sort-disabled">{{myName}}</label>
 						{{#each clusterIdeas}}
 							<li id={{_id}} class="idea-item">{{content}}</li>
@@ -78,53 +88,66 @@
 						</ul>
 				{{/each}}
 				{{#if isBestMatch}}
-					<button id="bmback" class='btn btn-large btn-primary'>Back</button>
-					<a href="#" id="nomatch" class='btn btn-large btn-success' data-toggle="modal" data-target="#smallModal">No Good Matches</a>
+					<button id="bmback" class='btn btn-large btn-default'>Back</button>
+					<a href="#" id="nomatch" class='btn btn-large btn-primary' data-toggle="modal" data-target="#confirmModal">No Good Matches</a>
 				{{/if}}
 			</div>
+			<!--End-->
+
+			<!--Generalization Option Buttons-->
 			<div id="generalize" class="col-md-6">
 				<h3>{{userPrompt}}</h3>
-				<a href="#" id="both" class='btn btn-large btn-success' data-toggle="modal" data-target="#smallModal">Merge</a>
-				<p>If both nodes generalize each other, click 'Merge'. This creates one node out of the two, with a name</p>
-				<a href="#" id="neither" class='btn btn-large btn-success'
-					data-toggle="modal" data-target="#basicModal">Create Artificial Node</a>
+				<a href="#" id="both" class='btn btn-large btn-primary' 
+					data-toggle="modal" data-target="#confirmModal">Merge</a>
+				<p>If both nodes generalize each other, click 'Merge'. This creates one node out of the idea node and the best match node at the location of the best match node. The new name will be [Name of Best Match]+[Name of Node to be Inserted].</p>
+				<a href="#" id="neither" class='btn btn-large btn-primary'
+					data-toggle="modal" data-target="#nameModal">Create Artificial Node</a>
 				<p>If the nodes are related, but neither generalizes the other, click 'Create Artificial Node'. This will become the parent of both nodes, and you will be asked to provide a name that captures the missing semantic content</p>
-				<button id="ideanode" class='btn btn-large btn-success'>Idea node is parent</button>
+				<button id="ideanode" class='btn btn-large btn-primary'>Idea node is parent</button>
 				<p>If the idea node is more general than the best match node, click 'Idea Node is Parent'. This sets the idea node as the parent of the best match node.</p>
-				<button id="bestnode" class='btn btn-large btn-success'>Best Match Node is Parent</button>
+				<button id="bestnode" class='btn btn-large btn-primary'>Best Match Node is Parent</button>
 				<p>If the idea node is more general than the best match node, click 'Best Match Node is Parent'. This sets the the best match node as the parent of the idea node.</p>
-				<button id="genback" class='btn btn-large btn-primary'>Back</button>
-				<div class="modal fade" id="basicModal" 
-					tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-    				<div class="modal-dialog">
-       					<div class="modal-content">
-           					<div class="modal-header">
-           						<h4 class="modal-title" id="myModalLabel">Name Artificial Node</h4>
-           					</div>
-           					<div class="modal-body">
-              					<div class="input-group">
-              						<span class="input-group-addon">Name of Articial Node</span>
-              						<input type="text" class="form-control" id="artificial-name">
-              					</div>
-              					<h4>Be sure to try and capture the semantic content of both clusters with your new name. There is no maximum length.</h4>
-              				</div>
-           					<div class="modal-footer">
-               					<button type="button" class="btn btn-default" 
-               						data-dismiss="modal">Close</button>
-             			 		<button type="button" class="btn btn-primary" id="save-name" data-dismiss="modal">Save changes</button>
-       						</div>
-    					</div>
-  					</div>
-				</div>
+				<button id="genback" class='btn btn-large btn-default'>Back</button>
 			</div>
+			<!--End-->
 		</div>
 	</div>
-	<div class="modal fade" id="smallModal" tabindex="-1" role="dialog" aria-labelledby="smallModal" aria-hidden="true">
-		<div class="modal-dialog modal-sm">
-    		<div class="modal-content">
-      			<div class="modal-header">
-        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	       			 <h4 class="modal-title" id="myModalLabel">Small Modal</h4>
+	<!--End Container-->
+
+	<!--Artificial Node Naming Modal-->
+	<div class="modal fade" id="nameModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    	<div class="modal-dialog">
+        	<div class="modal-content"> 
+          		<div class="modal-header">
+            		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+           			<h4 class="modal-title" id="myModalLabel">Name Artificial Node</h4>
+           		</div>
+           		<div class="modal-body">
+              		<div class="input-group">
+              			<span class="input-group-addon">Name of Articial Node</span>
+              			<input type="text" class="form-control" id="artificial-name">
+              		</div>
+              		<h4>Be sure to try and capture the semantic content of both clusters with your new name. There is no maximum length.</h4>
+              		<div id="nameWarning"></div>
+              	</div>
+           		<div class="modal-footer">
+               		<button type="button" class="btn btn-default" 
+               			data-dismiss="modal">Close</button>
+             		<button type="button" class="btn btn-primary" 
+             			id="save-name" data-dismiss="modal">Make Node</button>
+       			</div>
+    		</div>
+  		</div>
+	</div>
+	<!--End-->
+
+	<!--Confirm Action Modal-->
+	<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    	<div class="modal-dialog">
+        	<div class="modal-content"> 
+          		<div class="modal-header">
+            		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	       			<h4 class="modal-title" id="myModalLabel">Confirm</h4>
     	  		</div>
      		 	<div class="modal-body">
         			<h3>Are you sure?</h3>
