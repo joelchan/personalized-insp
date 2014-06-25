@@ -5,22 +5,26 @@
 		<div class="row">
 			<div id="left" class="col-md-3">
 				<h3>Create New Cluster</h3>
-				<ul class="newstack ui-sortable">
-					<li class="new">Drag idea here to create a new cluster</li>
+				<ul class="newstack ui-sortable" id="node-drag-target">
+					Drag idea here to create a new cluster
 				</ul>
 				<h3>Idea List</h3>
 				<ul id="idealist" class="deck ui-sortable">
 					<li class="sort-disabled"></li>
 					{{#each ideas}}
 						{{#if isClustered}}
-						<li id={{_id}} class="instance">{{content}}</li>
+						<li id={{_id}} class="idea-item">{{content}}</li>
 						{{/if}}
 					{{/each}}
 				</ul>
 				<h3>Cluster List</h3>
-				<ul id="clusterlist" class="clusterdeck">
+				<ul id="clusterlist" class="deck clusterdeck">
 					{{#each clusters}}
-					<li id={{_id}} class="cluster-item">{{name}}</li>
+					{{#if isRoot}}
+						<li class="sort-disabled"></li>
+					{{else}}
+						<li id={{_id}} class="idea-item">{{name}}</li>
+					{{/if}}
 					{{/each}}
 				</ul>
 			</div>
@@ -31,17 +35,17 @@
 						<button id='finish' class='btn btn-large btn-primary'>Finished</button>
 					</div>
 				</div>
-				<div class="stack ui-sortable" id="clusterarea">
+				<div  id="clusterarea">
 					{{#each clusters}}
 					{{#if isNotRoot}}
 						<ul class="stack col-md-3" id={{_id}} 
 						style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
-							<span class="glyphicon glyphicon-collapse-up sort-disabled"></span>
-							<span><label class="sort-disabled">Cluster Name:
-								<span class="unnamed sort-disabled">{{name}}</span>
-							</label></span>
-							<input type="text" class="clustername sort-disabled" 
-							id="newcluster" placeholder="Name this cluster">
+							<i class="fa fa-angle-double-down sort-disabled"></i>
+							<label class="sort-disabled">Cluster Name:
+								<span id="clusterlabel" class="sort-disabled text-danger">{{this.name}}</span>
+							</label>
+							<input type="text" class="namecluster sort-disabled" 
+							placeholder="Name this cluster">
 							{{#each clusterideas}}
 								<li id={{_id}} class="idea-item">{{content}}</li>
 							{{/each}}

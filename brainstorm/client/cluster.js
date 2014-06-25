@@ -52,7 +52,7 @@ Template.Cluster.rendered = function(){
 ********************************************************************/
 function createCluster(item) {
   var ideaId = item.attr('id');
-  var ideas = [Ideas.findOne({_id: ideaId})];
+  var ideas = [IdeasToProcess.findOne({_id: ideaId})];
   var cluster = new Cluster(ideas);
   Clusters.insert(cluster);
   updateIdeas(ideaId, true);
@@ -99,7 +99,7 @@ function processIdeaSender(ui, ideaId){
 * Convenince function used to update items in the Ideas Collection  *
 ********************************************************************/
 function updateIdeas(ideaId, inCluster){
-  Ideas.update({_id: ideaId}, 
+  IdeasToProcess.update({_id: ideaId}, 
     {$set:
       {inCluster: inCluster}
   });
@@ -121,7 +121,7 @@ Template.Cluster.helpers({
   },
 
   ideas : function(){
-    return Ideas.find();
+    return IdeasToProcess.find();
   },
 
   clusterideas : function(){
@@ -173,9 +173,9 @@ Template.Cluster.events({
   },
 
   //updates name field in cluster as user types
-  'keyup .clustername' : function(event, template){
+  'keyup .namecluster' : function(event, template){
     var $myCluster = $(event.target).parent();
-    $myCluster.children().children('span').removeClass("unnamed");
+    $myCluster.children().children('#clusterlabel').removeClass('text-danger');
 
     Clusters.update({_id:$myCluster.attr('id')},
       {$set: {name: $(event.target).val()}
@@ -183,13 +183,13 @@ Template.Cluster.events({
   },
 
   //Collapse clusters and makes them unsortable until expanded
-  'click .glyphicon' : function(){
-    if($(event.target).hasClass('glyphicon-collapse-up')){
-      $(event.target).switchClass('glyphicon-collapse-up', 'glyphicon-collapse-down');
-      $(event.target).parent().sortable("disable");
+  'click .fa' : function(){
+    if($(event.target).hasClass('fa-angle-double-up')){
+      $(event.target).switchClass('fa-angle-double-up', 
+        'fa-angle-double-down');
     } else {
-      $(event.target).switchClass('glyphicon-collapse-down', 'glyphicon-collapse-up');
-      $(event.target).parent().sortable("enable");
+      $(event.target).switchClass('fa-angle-double-down', 
+        'fa-angle-double-up');
     }
     $(event.target).parent().children('li').slideToggle("fast");
     return false;
@@ -229,7 +229,7 @@ Template.Cluster.events({
           }
         //if item is coming from the idealist
         } else if ($(ui.sender).hasClass('deck')){
-          myIdea = Ideas.findOne({_id: myIdeaId});
+          myIdea = IdeasToProcess.findOne({_id: myIdeaId});
           updateIdeas(myIdeaId, true);
 
         //if item is idea coming from another cluster

@@ -33,7 +33,6 @@ root = {
   isRoot : true,
   children : []
 }
-if(Clusters.findOne({_id: "1"}) === undefined) Clusters.insert(root);
 
 UserTypes = new Meteor.Collection("userTypes");
 

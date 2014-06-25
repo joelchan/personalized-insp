@@ -180,8 +180,8 @@ Template.IdeationPage.events({
               participant
               );
           //console.log(idea); 
-          Ideas.insert(idea);
-          logIdeaSubmission(participant, idea);
+          var ideaID = Ideas.insert(idea); //returns _id of Idea after it is inserted
+          logIdeaSubmission(participant, ideaID); 
           // Clear the text field
           $('#nextIdea').val("");
         }
