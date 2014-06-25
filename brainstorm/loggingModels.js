@@ -30,11 +30,11 @@ logBeginIdeation = function(participant) {
   Events.insert(event);
 };
 
-logIdeaSubmission = function(participant, idea) {
+logIdeaSubmission = function(participant, ideaID) {
   event = new Event("Participant submitted idea",
       participant.user);
   event.participant = participant;
-  event.ideaID = idea._id;
+  event.ideaID = ideaID;
   Events.insert(event);
 };
 
