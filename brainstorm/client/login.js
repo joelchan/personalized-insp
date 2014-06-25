@@ -2,8 +2,17 @@
 /********************************************************************
  * Convenience function for logging in users
  * *****************************************************************/
-loginUser = function loginUser(user) {
-  Session.set("currentUser", user);
+loginUser = function loginUser(userName) {
+  var matches = Names.find({name: userName});
+  if (matches.count() > 0) {
+    var myUser = matches.fetch()[0]
+    Session.set("currentUser", myUser)
+  } else {
+    myUser = new User(userName, "Experiment Participant");
+    myUser._id = Names.insert(myUser);
+    Session.set("currentUser", myUser);
+  }
+  return myUser
 };
 
 /********************************************************************
@@ -20,12 +29,14 @@ Template.LoginPage.events({
             console.log("logged in admin User");
             Router.go("ExpAdminPage");
         };
-        var myUser = new User(userName, "Experiment Participant");
-        myUser._id = Names.insert(myUser);
-        loginUser(myUser);
+        var myUser = loginUser(userName);
         //Perform random assignment
         var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
-        var participant = exp.addParticipant(myUser);
+        //Ensure user can participate
+        if (!canParticipate(exp, myUser)) {
+          Router.go("CantParticipate");
+        }
+        var participant = addExperimentParticipant(exp, myUser);
         //Go to next page
         var role = $.extend(true, new Role(), participant.role);
         Session.set("currentRole", role);

@@ -59,6 +59,9 @@ getRandomRares = function() {
 
 getPrimingIdeas = function () {
     var participant = Session.get("currentParticipant");
+    if (participant.misc != undefined) {
+      return participant.misc
+    }
     var newIdeas = [];
       //console.log("inserting priming ideas");
       if (participant.condition.id == 1) {
@@ -69,7 +72,7 @@ getPrimingIdeas = function () {
           //console.log(ideas[i]);
           //console.log("creating rare idea: " + ideas[i]);
             var idea = new Idea(ideas[i],
-                participant.user,
+                participant.userID,
                 participant.condition.prompt,
                 participant
                 );
@@ -100,37 +103,25 @@ getPrimingIdeas = function () {
 
 Template.IdeationPage.helpers({
     ideas: function() {
-      return Ideas.find({participant: Session.get("currentParticipant")});
+      return Ideas.find({participantID: Session.get("currentParticipant")._id});
     },
 
     primeIdeas: function() {
-        //console.log("getting prime ideas");
-        var part = Session.get("currentParticipant");
-        var primes = part.misc;
-        //console.log(part);
-        //console.log(primes);
-        return primes;
+      //console.log("getting prime ideas");
+      var part = Session.get("currentParticipant");
+      var primes = part.misc;
+      //console.log(part);
+      //console.log(primes);
+      return primes;
+    },
+
+    prompt: function() {
+      var condition = Session.get("currentParticipant").condition;
+      //console.log(condition);
+      return condition.prompt.question;
     }
 });
     
-
-
-//Template.IdeationPage.ideas = function () {
-
-  //if (Session.get("currentPrompt") !== undefined) {
-      //return Ideas.find({user: Session.get('currentUser'),
-          //question_id: Session.get("currentPrompt")['_id']});
-  //} else {
-    //return Ideas.find();
-  //}
-//};
-
-Template.IdeationPage.prompt = function () {
-    var condition = Session.get("currentParticipant").condition;
-    //console.log(condition);
-    return condition.prompt.question;
-};
-
 Template.IdeationPage.rendered = function() {
   //Debug statements
   //console.log("rendered");
@@ -142,8 +133,14 @@ Template.IdeationPage.rendered = function() {
   if(e.keyCode===13)
     $('#submitIdea').click();
   });
+  
   //Add Exit study button to top right
-  $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
+  if ($('.exitStudy').length == 0) {
+      
+    $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
+  } else {
+      $('.exitStudy').removeClass('hidden');
+  }
 
   //Insert ideas into database depnding on experimental condition
   var primes = getPrimingIdeas();
@@ -155,10 +152,10 @@ Template.IdeationPage.rendered = function() {
   //console.log(participant);
   logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
-  setTimeout('Router.goToNextPage("IdeationPage")', 900000);
+  setTimeout('exitIdeation()', 900000);
   //Setup timer for decrementing onscreen timer
   Session.set("timeLeft", 15);
-  setTimeout('decrementTimer()', 6000);
+  setTimeout('decrementTimer()', 60000);
 };
 
 Template.IdeationPage.events({
@@ -194,10 +191,9 @@ Template.IdeationPage.events({
 //to the toplevel template
 Template.IdeaGen.events({
     //Transition to next page in state machine
-    'click button.exitStudy': function () {
-      logEndIdeation(Session.get("currentParticipant"));
-      $('.exitStudy').addClass("hidden");
-      Router.goToNextPage("IdeationPage");
+    'click button.exitStudy': function() {
+        logExitStudy();
+        exitIdeation();
     }
 });
 
@@ -206,6 +202,16 @@ getUser = function() {
   /******************************************************************
   * Grab the userid from MTurk
   ******************************************************************/
+
+};
+
+exitIdeation = function exitIdeation() {
+  /******************************************************************
+  * switch to next view to end ideation
+  ******************************************************************/
+  logEndIdeation(Session.get("currentParticipant"));
+  $('.exitStudy').addClass("hidden");
+  Router.goToNextPage("IdeationPage");
 
 };
 

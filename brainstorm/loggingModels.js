@@ -46,8 +46,14 @@ logEndIdeation = function(participant) {
   Events.insert(event);
 };
 
+logExitStudy = function(participant) {
+  event = new Event("Participant exited study early",
+      participant.user);
+  event.participant = participant;
+};
+
 logSubmittedSurvey = function(participant, response) {
-  event = new Event("Participant submitted idea",
+  event = new Event("Participant submitted survey",
       participant.user);
   event.participant = participant;
   event.responseID = response._id;
