@@ -8,6 +8,7 @@ import itertools as it
 import numpy as np
 from pymongo import MongoClient
 from nltk.stem.snowball import SnowballStemmer
+from nltk.corpus import wordnet as wn
 from gensim import corpora, models, similarities, matutils
 from operator import itemgetter
 
@@ -34,42 +35,61 @@ def read_data(filename):
 		data = s.split('\n')
 	return data
 
-def expand_text(tokens):
+def get_wordnet_pos(treebank_tag):
+	"""
+	helper method to convert treebank tags
+	into wordnet pos tags for query expansion
+	"""
+	if treebank_tag.startswith('J'):
+		return wn.ADJ
+	elif treebank_tag.startswith('V'):
+		return wn.VERB
+	elif treebank_tag.startswith('N'):
+		return wn.NOUN
+	elif treebank_tag.startswith('R'):
+		return wn.ADV
+	else:
+		return ''
+
+def expand_text(pos_tokens):
 	"""
 	interface with wordnet to recursively add
-	all synonyms and hypernyms for each token in input list of tokens
+	all synonyms and hypernyms for each token in input list of token-posTag tuples
 	return expanded list of tokens that includes synonyms and hypernyms
 	"""
-	bow = set(tokens) 
-	nextStack = set(bow) # initialize stack
-	# while(len(nextStack)):
-	for i in xrange(1): 
-	# do it just once for now, we've got HUGE expansion going on
-	# tested with ['test','string'], and it goes from 2 to 420 to 8045!
+	
+	# first expand with synonyms
+	synonyms = set()
+	for item in pos_tokens:
+		synsets = wn.synsets(item[0],get_wordnet_pos(item[1]))
+		for synset in synsets:
+			synonyms.add(synset)
+
+	# start making the list of tokens to be output
+	# initialize with lemmas of the synonyms
+	bowTokens = set([t[0] for t in pos_tokens])
+	for synonym in synonyms:
+		for lemma in synonym.lemmas:
+			bowTokens.add(lemma.name)
+
+	# now recursively add hypernyms
+	nextStack = set(synonyms) # initialize stack
+	while(len(nextStack)):
+
 		currentStack = set(nextStack)
 		nextStack.clear()
-		
-		# get synonyms
-		synonyms = set()
-		for item in currentStack:
-			synsets = wn.synsets(item)
-			for synset in synsets:
-				for lemma in synset.lemmas:
-					l = lemma.name
-					synonyms.add(l)
-		bow.update(synonyms)
-		
-		# get hypernyms
-		hypernyms = set()
-		for s in synonyms:
-			sSynsets = wn.synsets(s)
-			for sSynset in sSynsets:
-				for hypernym in sSynset.hypernyms():
-					for lemma in hypernym.lemmas:
-						hypernyms.add(lemma.name)
-		bow.update(hypernyms)
-		nextStack = set(hypernyms)
-	return sorted(list(bow))
+
+		# get all hypernyms, put in nextStack
+		for s in currentStack:
+			for hypernym in s.hypernyms():
+				nextStack.add(hypernym)
+
+		# add lemmas from the current level of hypernyms to the master bag of tokens
+		for hypernym in nextStack:
+			for lemma in hypernym.lemmas:
+				bowTokens.add(lemma.name)
+
+	return sorted(list(bowTokens))
 
 # read data from mongoDB
 client = MongoClient("mongodb://experimenter:%s@kahana.mongohq.com:10075/IdeaGens" %(passWord))
@@ -91,33 +111,34 @@ for d in data:
 	# split into sentences (PunktSentenceTokenizer)
 	sentences = nltk.sent_tokenize(text)
 	
-	# tokenize words (TreeBank)
-	tokens = []
+	# tokenize and pos tag words (TreeBank)
+	pos_tokens = []
 	for sentence in sentences:
-		tokens += [token for token in nltk.word_tokenize(sentence)]
-	
+		tokens = [token.lower() for token in nltk.word_tokenize(sentence)] #tokenize
+		pos_tokens += nltk.pos_tag(tokens) #pos tag
+
 	# remove stopwords
-	tokens = [t.lower() for t in tokens if t.lower() not in stopWords]
+	pos_tokens = [t for t in pos_tokens if t[0] not in stopWords]
 	
-	# stem it
-	stemmer = SnowballStemmer("english")
-	stems = [stemmer.stem(t).encode('utf-8','ignore') for t in tokens]
+	# # stem it
+	# stemmer = SnowballStemmer("english")
+	# stems = [stemmer.stem(t).encode('utf-8','ignore') for t in tokens]
 
 	# query expansion
-	expandedTokens = expand_text(stems)
+	expandedTokens = expand_text(pos_tokens)
 
 	# add the enriched bag of words as value to current d
-	d['bow'] = ' '.join(expandedTokens)
+	d['expandedBOW'] = ' '.join(expandedTokens)
 
 ################################
 # cosines 
 ################################
 
 # prepare dictionary
-dictionary = corpora.Dictionary([d['bow'] for d in data])
+dictionary = corpora.Dictionary([d['expandedBOW'] for d in data])
 
 # convert tokenized documents to a corpus of vectors
-corpus = [dictionary.doc2bow(d['bow']) for d in data]
+corpus = [dictionary.doc2bow(d['expandedBOW']) for d in data]
 
 # convert raw vectors to tfidf vectors
 tfidf = models.TfidfModel(corpus) #initialize model
