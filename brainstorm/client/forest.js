@@ -212,7 +212,7 @@ Template.Forest.helpers({
 *********************************************************************/
 Template.Forest.events({
   //update cluster name as user types
-	'keyup .clustername' : function(event, template){
+	'keyup #namecluster' : function(event, template){
     var $myCluster = $(event.target).parent();
     $myCluster.children().children('span').removeClass("unnamed");
 
