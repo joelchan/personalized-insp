@@ -4,16 +4,18 @@
 # Author: Joel Chan joelchan.me
 
 import pymongo, nltk, sys
+import itertools as it
+import numpy as np
 from pymongo import MongoClient
 from nltk.stem.snowball import SnowballStemmer
 from gensim import corpora, models, similarities, matutils
 from operator import itemgetter
-import itertools as it
-import numpy as np
 
 """
 Output should be:
-1) A networkx graph G, composed of N (a list of nodes), and E (a list of edges)
+A networkx graph G, composed of 
+	N (a list of nodes), and 
+	E (a list of edges)
 """
 
 passWord = sys.argv[1]
@@ -38,11 +40,36 @@ def expand_text(tokens):
 	all synonyms and hypernyms for each token in input list of tokens
 	return expanded list of tokens that includes synonyms and hypernyms
 	"""
-	expanded = []
-	for t in tokens:
-		# grab synonyms
-		# grab hypernyms
-	return expanded
+	bow = set(tokens) 
+	nextStack = set(bow) # initialize stack
+	# while(len(nextStack)):
+	for i in xrange(1): 
+	# do it just once for now, we've got HUGE expansion going on
+	# tested with ['test','string'], and it goes from 2 to 420 to 8045!
+		currentStack = set(nextStack)
+		nextStack.clear()
+		
+		# get synonyms
+		synonyms = set()
+		for item in currentStack:
+			synsets = wn.synsets(item)
+			for synset in synsets:
+				for lemma in synset.lemmas:
+					l = lemma.name
+					synonyms.add(l)
+		bow.update(synonyms)
+		
+		# get hypernyms
+		hypernyms = set()
+		for s in synonyms:
+			sSynsets = wn.synsets(s)
+			for sSynset in sSynsets:
+				for hypernym in sSynset.hypernyms():
+					for lemma in hypernym.lemmas:
+						hypernyms.add(lemma.name)
+		bow.update(hypernyms)
+		nextStack = set(hypernyms)
+	return sorted(list(bow))
 
 # read data from mongoDB
 client = MongoClient("mongodb://experimenter:%s@kahana.mongohq.com:10075/IdeaGens" %(passWord))
@@ -117,3 +144,4 @@ for pair in pairs:
 ################################
 # turn into networkx graph 
 ################################
+
