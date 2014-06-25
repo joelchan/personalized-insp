@@ -1,12 +1,15 @@
-.glyphicon {
-   font-family:'Glyphicons Halflings' !important;
-}
-
-#idealist{
+#idealist, #clusterlist{
 	border: 1px solid #ddd;
 	border-radius: 5px;
 	background-color: #f5f5f5;
 	margin-left: 0px;
+}
+
+#confirmModal, #nameModal {
+  top: 15%;
+  left: 50%;
+  height: 1px;
+  width: 600px;
 }
 
 #node-drag-target, .stack, .donestack{
@@ -26,12 +29,12 @@
 	border-radius: 5px;
 	padding: 5px;
 }
-.clustername{
+.clusternodename{
 	width: 242px;
 	margin: 5px;
 }
 
-label, .glyphicon{
+label, .fa{
 	padding-left: 5px;
 	padding-top: 5px;
 }
@@ -50,4 +53,9 @@ label, .glyphicon{
 
 #generalize > button{
 	margin-top: 10px;
+}
+
+input#artificial-name, span.input-group-addon {
+    box-sizing: content-box;
+    -moz-box-sizing: content-box;
 }

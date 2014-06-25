@@ -106,6 +106,10 @@ Meteor.startup(function() {
       var admin = new User("ProtoAdmin", "admin");
       Names.insert(admin);
     }
+
+    if(Clusters.findOne({_id: "1"})===undefined){
+      Clusters.insert(root);
+    }
 });
 
 //Meteor.startup(function () {
