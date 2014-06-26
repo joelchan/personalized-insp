@@ -3,7 +3,7 @@
 #
 # Author: Joel Chan joelchan.me
 
-import pymongo, nltk, sys
+import pymongo, nltk, sys, csv
 import itertools as it
 import numpy as np
 from pymongo import MongoClient
@@ -21,6 +21,17 @@ A networkx graph G, composed of
 
 passWord = sys.argv[1]
 THRESHOLD = 0.5
+
+def cosine(doc1, doc2, doc_topic_weights):
+    weights1 = doc_topic_weights[doc1]
+    weights2 = doc_topic_weights[doc2]
+    dotProduct = np.dot(weights1,weights2)
+    mag1 = np.sqrt(sum([np.square(weight) for weight in weights1]))
+    mag2 = np.sqrt(sum([np.square(weight) for weight in weights2]))
+    if mag1 and mag2:
+    	return dotProduct/(mag1*mag2)
+    else:
+    	return 0.0
 
 def read_data(filename):
 	"""
@@ -103,6 +114,7 @@ for idea in db.ideas.find():
 
 #### tokenize ####
 stopWords = read_data("englishstopwords-jc.txt")
+expandedText = []
 for d in data:
 	
 	# read the text
@@ -119,7 +131,10 @@ for d in data:
 
 	# remove stopwords
 	pos_tokens = [t for t in pos_tokens if t[0] not in stopWords]
-	
+
+	# remove "words" with no letters in them!
+	pos_tokens = [t for t in pos_tokens if any(c.isalpha() for c in t[0])]
+
 	# # stem it
 	# stemmer = SnowballStemmer("english")
 	# stems = [stemmer.stem(t).encode('utf-8','ignore') for t in tokens]
@@ -128,23 +143,29 @@ for d in data:
 	expandedTokens = expand_text(pos_tokens)
 
 	# add the enriched bag of words as value to current d
+	expandedText.append(expandedTokens)
 	d['expandedBOW'] = ' '.join(expandedTokens)
+
 
 ################################
 # cosines 
 ################################
 
 # prepare dictionary
-dictionary = corpora.Dictionary([d['expandedBOW'] for d in data])
+dictionary = corpora.Dictionary(expandedText)
 
 # convert tokenized documents to a corpus of vectors
-corpus = [dictionary.doc2bow(d['expandedBOW']) for d in data]
+corpus = [dictionary.doc2bow(text) for text in expandedText]
 
 # convert raw vectors to tfidf vectors
 tfidf = models.TfidfModel(corpus) #initialize model
 corpus_tfidf = tfidf[corpus] #apply tfidf model to whole corpus
 
-# make lsa space, use max dimensions for now
+# make lsa space
+if len(data) > 300:
+	dim = 300 # default is 300 dimensions
+else:
+	dim = len(data) # default to 300
 lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=dim) #create the space
 
 # output the matrix V so we can use it to get pairwise cosines
@@ -155,12 +176,41 @@ vMatrix = matutils.corpus2dense(lsi[corpus_tfidf],len(lsi.projection.s)).T / lsi
 indices = [i for i in xrange(len(data))]
 pairs = [p for p in it.combinations(indices,2)]
 edges = []
+sims = []
 for pair in pairs:
-	node1 = data[pair['id']]
-	node2 = data[pair['id']]
+	node1 = data[pair[0]]['id']
+	node2 = data[pair[1]]['id']
+	# print len(vMatrix[pair[0]]), len(vMatrix[pair[1]])
+	# print node1
+	# print node2
 	sim = cosine(pair[0],pair[1],vMatrix)
+	sims.append(sim)
+	# print sim
 	if sim > THRESHOLD:
 		edges.append((node1,node2))
+
+# testout = open("/Users/jchan/Desktop/edges.txt",'w')
+# for edge in edges:
+# 	contents = filter(lambda x: x.get('id') == edge[0],data)
+# 	contents +=  filter(lambda x: x.get('id') == edge[1],data)
+# 	testout.write("%s\n%s\n%s\n\n" %(contents[0]['content'],contents[1]['content'],"-"*25))
+# testout.close()
+
+# testout = open("/Users/jchan/Desktop/test.txt",'w')
+# for d in data:
+# 	testout.write("%s\n%s\n\n" %(d['content'],d['expandedBOW']))
+# testout.close()
+
+# outfile2 = open("/Users/jchan/Desktop/vMatrix.csv",'w')
+# testout2csv = csv.writer(outfile2)
+# for row in vMatrix:
+# 	testout2csv.writerow(row)
+# outfile2.close()
+
+# simout = open("/Users/jchan/Desktop/sims.txt",'w')
+# for sim in sims:
+# 	simout.write("%.4f\n" %sim)
+# simout.close()
 
 ################################
 # turn into networkx graph 
