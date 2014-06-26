@@ -6,11 +6,13 @@
 import pymongo, nltk, sys, csv
 import itertools as it
 import numpy as np
+import networkx as nx
 from pymongo import MongoClient
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import wordnet as wn
 from gensim import corpora, models, similarities, matutils
 from operator import itemgetter
+from py_correlation_clustering import solver
 
 """
 Output should be:
@@ -215,4 +217,13 @@ for pair in pairs:
 ################################
 # turn into networkx graph 
 ################################
+G = nx.Graph()
 
+#nodes = [d['id'] for d in data]
+G.add_edges_from(edges)
+print "nodes: %d" % G.number_of_nodes()
+print "edges: %d" % G.number_of_edges()
+
+solve = solver(G)
+clusters = solver.run(solve)
+print clusters
