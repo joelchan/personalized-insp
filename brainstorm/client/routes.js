@@ -90,6 +90,10 @@ Router.map(function () {
     template: 'Forest',
     
   });
+  this.route('NoParticipation', {
+    path: 'participation/:_id', 
+    template: 'NoParticipationPage',
+  });
 });
 
 //Sets layout for all routes to IdeaGen template

@@ -34,7 +34,7 @@ Template.LoginPage.events({
         var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
         //Ensure user can participate
         if (!canParticipate(exp, myUser)) {
-          Router.go("CantParticipate");
+          Router.go("NoParticipation");
         }
         var participant = addExperimentParticipant(exp, myUser);
         //Go to next page

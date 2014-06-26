@@ -16,6 +16,12 @@ logParticipantLogin = function (participant) {
   Events.insert(event);
 };
 
+logDenyParticipation = function(user) {
+  event = new Event("User was denied participation in experiment",
+      user);
+  Events.insert(event);
+};
+
 logConsent = function (participant) {
   event = new Event("Participant consented to experiment",
       participant.user);
