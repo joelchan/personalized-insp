@@ -226,4 +226,5 @@ print "edges: %d" % G.number_of_edges()
 
 solve = solver(G)
 clusters = solver.run(solve)
+clusters.sort(key=len, reverse=True)
 print clusters
