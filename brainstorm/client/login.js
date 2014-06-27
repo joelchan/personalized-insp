@@ -15,6 +15,11 @@ loginUser = function loginUser(userName) {
   return myUser
 };
 
+Template.LoginPage.rendered = function() {
+  // Ensure scroll to top of window
+  window.scrollTo(0,0);
+}
+
 /********************************************************************
  * Login Page event listeners 
  * *****************************************************************/
@@ -33,7 +38,8 @@ Template.LoginPage.events({
         //Perform random assignment
         var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
         //Ensure user can participate
-        if (!canParticipate(exp, myUser)) {
+        if (!canParticipate(exp, myUser.name)) {
+          console.log("Denied participation")
           Router.go("NoParticipation");
         }
         var participant = addExperimentParticipant(exp, myUser);

@@ -126,13 +126,13 @@ addExperimentParticipant = function (exp, user) {
   return part;
 }
 
-canParticipate = function (exp, user) {
+canParticipate = function (exp, userName) {
   if (exp.excludeUsers === undefined) {
     return true;
   }
   //checks if user is on list of prohibitied users
   for (var i=0; i<exp.excludeUsers.length; i++) {
-    if (exp.excludeUsers[i]._id == user._id) {
+    if (exp.excludeUsers[i] == userName) {
         return false
     }
   }

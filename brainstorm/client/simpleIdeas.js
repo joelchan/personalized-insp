@@ -101,11 +101,7 @@ getPrimingIdeas = function () {
       return newIdeas;
 };
 
-Template.IdeationPage.helpers({
-    ideas: function() {
-      return Ideas.find({participantID: Session.get("currentParticipant")._id});
-    },
-
+Template.Priming.helpers({
     primeIdeas: function() {
       //console.log("getting prime ideas");
       var part = Session.get("currentParticipant");
@@ -114,25 +110,34 @@ Template.IdeationPage.helpers({
       //console.log(primes);
       return primes;
     },
+});
 
+Template.Prompt.helpers({
     prompt: function() {
       var condition = Session.get("currentParticipant").condition;
       //console.log(condition);
       return condition.prompt.question;
     }
 });
+
+Template.IdeaBox.helpers({
+    ideas: function() {
+      return Ideas.find({participantID: Session.get("currentParticipant")._id});
+    },
+});
     
 Template.IdeationPage.rendered = function() {
-  //Debug statements
-  //console.log("rendered");
-  //console.log(Session.get('currentExp'));
   // Scroll window back to top
   window.scrollTo(0,0);
+
   // Register event listenr to click submit button when enter is pressed
   $('#nextIdea').keypress(function(e){
-  if(e.keyCode===13)
-    $('#submitIdea').click();
+    if(e.keyCode===13) {
+      console.log("enter pressed")
+      $('#submitIdea').click();
+    }
   });
+
   
   //Add Exit study button to top right
   if ($('.exitStudy').length == 0) {
@@ -141,6 +146,11 @@ Template.IdeationPage.rendered = function() {
   } else {
       $('.exitStudy').removeClass('hidden');
   }
+  //Add event handler for the exit study button
+  $('.exitStudy').click(function() {
+    logExitStudy(Session.get("currentParticipant"));
+    exitIdeation();
+  });
 
   //Insert ideas into database depnding on experimental condition
   var primes = getPrimingIdeas();
@@ -169,7 +179,7 @@ Template.IdeationPage.events({
             //}
         //});
         //Add idea to database
-        if (newIdea !== "") {
+        if (newIdea.trim() != "") {
           var participant = Session.get("currentParticipant");
           var idea = new Idea(newIdea,
               participant.user,
@@ -180,7 +190,7 @@ Template.IdeationPage.events({
           var ideaID = Ideas.insert(idea); //returns _id of Idea after it is inserted
           logIdeaSubmission(participant, ideaID); 
           // Clear the text field
-          $('#nextIdea').val("");
+          $('#nextIdea').val('');
         }
     }
 
@@ -189,13 +199,6 @@ Template.IdeationPage.events({
 
 //Placing the button in the navbar means I have to add event listeners
 //to the toplevel template
-Template.IdeaGen.events({
-    //Transition to next page in state machine
-    'click button.exitStudy': function() {
-        logExitStudy();
-        exitIdeation();
-    }
-});
 
 
 getUser = function() {
@@ -209,10 +212,11 @@ exitIdeation = function exitIdeation() {
   /******************************************************************
   * switch to next view to end ideation
   ******************************************************************/
+  //Logs a partial idea if user hasn't submitted it
+  $('#submitIdea').click();
   logEndIdeation(Session.get("currentParticipant"));
   $('.exitStudy').addClass("hidden");
   Router.goToNextPage("IdeationPage");
-
 };
 
 decrementTimer = function decrementTimer() {

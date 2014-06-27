@@ -91,7 +91,7 @@ Router.map(function () {
     
   });
   this.route('NoParticipation', {
-    path: 'participation/:_id', 
+    path: 'participation/', 
     template: 'NoParticipationPage',
   });
 });
