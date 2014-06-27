@@ -148,6 +148,7 @@ Template.IdeationPage.rendered = function() {
   }
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
+      console.log("exitign study")
     logExitStudy(Session.get("currentParticipant"));
     exitIdeation();
   });

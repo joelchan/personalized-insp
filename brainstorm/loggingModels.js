@@ -56,6 +56,7 @@ logExitStudy = function(participant) {
   event = new Event("Participant exited study early",
       participant.user);
   event.participant = participant;
+  Events.insert(event);
 };
 
 logSubmittedSurvey = function(participant, response) {

@@ -79,6 +79,12 @@ getResponse = function() {
   answer = $("#exampleIdeaSurvey").val();
   checkResponse(answer)
   responses.push(new QuestionResponse("What was one of the example ideas given", answer));
+  answer = $("#activityLikeSurvey").val();
+  responses.push(new QuestionResponse("Is there anything about the activity that you found particularly challenging", answer));
+  answer = $("#intLikeSurvey").val();
+  responses.push(new QuestionResponse("Is there anything about the brainstorming interface that you liked", answer));
+  answer = $("#intDislikeSurvey").val();
+  responses.push(new QuestionResponse("Is there anything about the brainstorming interface that you didn't like", answer));
   var part = Session.get("currentParticipant");
   return new SurveyResponse(responses, part);
 }

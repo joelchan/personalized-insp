@@ -6,45 +6,45 @@
   </div>
   <form class="surveyForm">
     <div class="row formQuestion">
-      <div class="question">Gender:</div><br/>
+      <div class="question">Gender:*</div><br/>
       <input type="radio" class="radioButton" name="gender" value="male">Male<br/>
       <input type="radio" class="radioButton" name="gender" value="female">Female
     </div>
     <div class="row formQuestion">
-      <div class="question">Age:</div><br/>
+      <div class="question">Age: *</div><br/>
       <input type="number" class="surveyNumBox" 
       name="age" min="1" max="200" step="1" value="18">
     </div>
     <div class="row formQuestion">
-      <div class="question">Is English your first language?:</div><br/>
+      <div class="question">Is English your first language?: *</div><br/>
       <input type="radio" class="radioButton" name="lang1" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="lang1" value="false">No
     </div>
     <div id="lang2Question" class="row formQuestion hidden">
-      <div class="question">Do you speak a second language?:</div><br/>
+      <div class="question">Do you speak a second language?: *</div><br/>
       <input type="radio" class="radioButton" name="lang2" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="lang2" value="false">No
     </div>
     <div id="lang2Text" class="row formQuestion hidden">
-      <div class="question">List another language in which you are fluent(besides English):</div><br/>
+      <div class="question">List another language in which you are fluent(besides English): *</div><br/>
       <input type="text" class="shortText" name="lang2text">
     </div>
     <div class="row formQuestion">
-      <div class="question">What country do you call home?:</div><br/>
+      <div class="question">What country do you call home?: *</div><br/>
       <input type="text" class="shortText" name="ethnicity">
     </div>
     <div class="row formQuestion">
-      <div class="question">Do you currently or have you ever owned either an ipod or an mp3 player of any sort?:</div><br/>
+      <div class="question">Do you currently or have you ever owned either an ipod or an mp3 player of any sort?: *</div><br/>
       <input type="radio" class="radioButton" name="ipod" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="ipod" value="false">No
     </div>
     <div class="row formQuestion">
-      <div class="question">Do you currently or have you ever owned a smartphone?:</div><br/>
+      <div class="question">Do you currently or have you ever owned a smartphone?: *</div><br/>
       <input type="radio" class="radioButton" name="smartphone" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="smartphone" value="false">No
     </div>
     <div class="row formQuestion">
-      <div class="question">How often do you do brainstorming-type activities at your work?:</div><br/>
+      <div class="question">How often do you do brainstorming-type activities at your work?: *</div><br/>
       <select id="brainstorming">
         <option value="5">Very Frequently</option>
         <option value="4">Frequently</option>
@@ -54,13 +54,25 @@
       </select>
     </div>
     <div class="row formQuestion">
-      <div class="question">Did you find any of the suggested ideas helpful?:</div><br/>
+      <div class="question">Did you find any of the suggested ideas helpful?: *</div><br/>
       <input type="radio" class="radioButton" name="ideaRecall" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="ideaRecall" value="false">No
     </div>
     <div class="row formQuestion">
-      <div class="question">What was one of the example ideas given?:</div><br/>
+      <div class="question">What was one of the example ideas given?:*</div><br/>
       <textArea id="exampleIdeaSurvey" class="survey-textbox"></textarea>
+    </div>
+    <div class="row formQuestion">
+      <div class="question">Is there anything about the activity that you found particularly challenging?:</div><br/>
+      <textArea id="activityLikeSurvey" class="survey-textbox"></textarea>
+    </div>
+    <div class="row formQuestion">
+      <div class="question">Is there anything about the brainstorming interface that you liked?:</div><br/>
+      <textArea id="intLikeSurvey" class="survey-textbox"></textarea>
+    </div>
+    <div class="row formQuestion">
+      <div class="question">Is there anything about the brainstorming interface that you didn't like?:</div><br/>
+      <textArea id="intDislikeSurvey" class="survey-textbox"></textarea>
     </div>
   </form>
 
