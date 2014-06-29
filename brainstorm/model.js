@@ -22,14 +22,14 @@ IdeaToProcess = function(content, participant){
 
 Cluster = function(ideas){
   this.ideas = ideas;
-  this.id; //should be the same as id of entry in mongo db collection (?)
+  //this.id;
   this.name = "Not named yet"; //default name for unnamed clusters
   this.position;
   this.children = [];
 }
 
 root = {
-  _id : "1",
+  _id : "-1",
   isRoot : true,
   children : []
 }
@@ -183,6 +183,19 @@ Idea = function (content, user, prompt, participant) {
   //Optional field not logged during non-experiments
   this.participant = participant;
 };
+
+insertIdeas = function(){
+  var idea = new Idea("asdfasdf");
+  Ideas.insert(idea);
+  Ideas.insert(idea);
+  Ideas.insert(idea);
+  Ideas.insert(idea);
+  Ideas.insert(idea);
+}
+
+insertIdeas();
+insertIdeas();
+
 
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
 User = function(name, type){

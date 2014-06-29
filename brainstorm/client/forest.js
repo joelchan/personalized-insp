@@ -36,12 +36,12 @@ var States = {
 }
 Object.freeze(States);
 
-Session.set("currentNode", "1"); 
+Session.set("currentNode", "-1"); 
 Session.set("ideaNode", "0"); //node to be inserted
-Session.set("bestMatchNode", "1"); //node most similar to node being inserted
+Session.set("bestMatchNode", "-1"); //node most similar to node being inserted
 Session.set("currentState", States.NODECREATION);
 Session.set("swapped", false);
-var path = [1]; //tracks path starting from root. Used by back button.
+var path = [-1]; //tracks path starting from root. Used by back button.
 
 
 /********************************************************************
@@ -478,12 +478,12 @@ function exitDo(){
   $('#nameWarning').empty();
 	$('#buildcluster').slideToggle();
 	$('#createnode').slideToggle();
-	Session.set("currentNode", "1");
+	Session.set("currentNode", "-1");
 	Session.set("ideaNode", "0");
-	Session.set("bestMatchNode", "1");
+	Session.set("bestMatchNode", "-1");
 	Session.set("currentState", States.NODECREATION);
 	Session.set("swapped",false);
-	path = [1];
+	path = [-1];
 }
 
 //modified from clusters.js
@@ -510,7 +510,7 @@ function processIdeaSender(ui, ideaId){
   }
 }
 
-insertIdeas = function(){
+insertIdeasToProc = function(){
   var idea = new Idea("asdfasdf");
   IdeasToProcess.insert(idea);
   IdeasToProcess.insert(idea);

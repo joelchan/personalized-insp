@@ -20,7 +20,7 @@
 	display: none;
 }
 
-.idea-item, .cluster-item, .donestack, .stack{
+.idea-item, .donestack, .stack{
 	border: solid 1px #ddd;
 	border-radius: 5px;
 }
@@ -41,6 +41,11 @@ label, .fa{
 
 .donestack{
 	background-color: #f5f5f5;
+}
+
+#tree{
+	height: 675px;
+	overflow: auto;
 }
 
 #nodestatus, #generalize, #buildcluster{

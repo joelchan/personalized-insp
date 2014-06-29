@@ -9,6 +9,5 @@ insecure
 accounts-ui
 accounts-password
 jquery
-bootstrap
 iron-router
 fontawesome4

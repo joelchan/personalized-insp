@@ -107,7 +107,7 @@ Meteor.startup(function() {
       Names.insert(admin);
     }
 
-    if(Clusters.findOne({_id: "1"})===undefined){
+    if(Clusters.findOne({_id: "-1"})===undefined){
       Clusters.insert(root);
     }
 });

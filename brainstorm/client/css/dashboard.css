@@ -1,0 +1,77 @@
+/*.dashboard > .row {
+    display: table;
+}
+
+.dashboard > [class*="col-"] {
+    float: none;
+    display: table-cell;
+    vertical-align: top;
+}*/
+
+html,body {
+    height:100%;
+}
+
+.vizes, .time-series, .ideas, .leverbox{
+	border: solid 1px #ddd;
+	border-radius: 5px;
+	height: 400px;
+	margin-bottom: 5px;
+}
+
+.db-title{
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+.dashboard-panel-6 {
+   width: 49.75%;
+}
+
+.dashboard h3{
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+.idealist{
+	list-style: none;
+	overflow: auto;
+	margin-left: 0px;
+	height: 345px;
+}
+
+.dashboard .idea{
+	border: solid 1px #ddd;
+	border-radius: 5px;
+	padding: 5px;
+	margin:1.5px;
+}
+
+.changeprompt{
+	height: 40%;
+}
+
+.dashboard button{
+	margin-top: 10px;
+}
+
+.viz-menu{
+	margin-top: 5px;
+}
+
+
+#new-prompt{
+	margin-top: 20px
+}
+
+hr{
+	margin-top: 4px;
+	margin-bottom: 5px;
+}
+
+#examples {
+	border: solid 1px #ddd;	
+	border-radius: 5px;
+	height: 130px;
+	overflow: auto;
+}
