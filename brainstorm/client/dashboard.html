@@ -1,0 +1,115 @@
+<template name="Dashboard">
+	<h1 class="page-header db-title">Dashboard</h1>
+	<div class="container-fluid dashboard">
+		<div class="row">
+			<!--Synthesis Visualizations-->
+			<div class="vizes col-md-6 dashboard-panel-6">
+				<!--Viz Selector-->
+				<ul class="viz-menu nav nav-tabs nav-justified" role="tablist">
+					<li class="active"><a href="#" data-toggle="tab">Tag Cloud</a></li>
+  					<li><a href="#" data-toggle="tab">Chord</a></li>
+  					<li><a href="#" data-toggle="tab">Circle Pack</a></li>
+				</ul>
+
+				<!--Tag Cloud Viz-->
+				<div class="tagcloud">
+					{{#each participants}}
+						<label>{{participant}}</label>
+
+					{{/each}}
+				</div>
+
+				<!--Chord Viz-->
+				<div class="chord">
+
+				</div>
+
+				<!--Circle Packing Viz-->
+				<div class="cirlcepack">
+
+				</div>
+			</div>
+			<!--End Synthesis Vizualization-->
+
+			<!--Ideator Time Series-->
+			<div class="time-series col-md-6 dashboard-panel-6 pull-right">
+				<h3>Time Series</h3>
+
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="ideas col-md-6 dashboard-panel-6">
+				<div class="row">
+				<!--List of Ideas-->
+				<div class="col-md-6 dashboard-panel-6">
+					<h3>Ideas</h3>
+					<div class="idealist">
+						{{#each ideas}}
+							<div id={{_id}} class="idea">{{content}}</div>
+						{{/each}}	
+					</div>
+				</div>
+
+				<!--Gamechanger Idea List-->
+				<div class="gamechangers col-md-6 dashboard-panel-6 pull-right">
+					<h3>Gamechangers</h3>
+					<div class="idealist">
+						{{#each gamechangers}}
+							<div id={{_id}} class="idea">{{content}}</div>
+						{{/each}}	
+					</div>
+				</div>
+			</div>
+		</div>
+
+			<!--Facilitator Levers-->
+			<div class="container leverbox col-md-6 dashboard-panel-6 pull-right">
+				<!--Changeprompt Lever-->
+				<div class="row changeprompt">
+					<div class="col-md-12">
+						<h3>Change the Prompt</h3>
+						<form role="form">
+							<div class="form-group">
+								<input type="text" class="form-control" id="new-prompt" placeholder="Enter New Prompt">
+							</div>
+							<div class="dropdown col-md-9">
+								<button class="btn btn-default dropdown-toggle pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown">Send To: <span class="caret"></span></button>
+  								<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    								<li role="presentation"><a role="menuitem" tabindex="-1" href="#">All</a></li>
+    								<li role="presentation" class="divider"></li>
+							    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 1</a></li>
+							    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 2</a></li>
+							    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 3</a></li>
+								</ul>
+							</div>
+							<button class="btn btn-primary pull-right">Send New Prompt</button>
+						</form>
+					</div>
+				</div>
+				<hr>
+				<!--Send Examples Lever-->
+				<div class="row sendexamples">
+					<div class="col-md-12">
+						<h3>Send Examples</h3>
+						<div id="examples">
+
+						</div>
+						<div class="dropdown col-md-9">
+							<button class="btn btn-default dropdown-toggle pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown">Send To: <span class="caret"></span></button>
+  							<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    							<li role="presentation"><a role="menuitem" tabindex="-1" href="#">All</a></li>
+    							<li role="presentation" class="divider"></li>
+						    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 1</a></li>
+						    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 2</a></li>
+						    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 3</a></li>
+							</ul>
+						</div>
+						<button class="btn btn-primary pull-right">Send Examples</button>
+					</div>
+				</div>
+			</div>
+			<!--End of Lever Box-->
+		</div>
+	</div>
+</template>

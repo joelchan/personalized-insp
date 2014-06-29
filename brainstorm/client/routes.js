@@ -88,7 +88,10 @@ Router.map(function () {
   this.route('Forest', {
     path: 'Forest/:_id',
     template: 'Forest',
-    
+  });
+  this.route('Dashboard', {
+    path: 'Dashboard',
+    template: 'Dashboard'
   });
 });
 

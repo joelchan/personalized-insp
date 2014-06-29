@@ -17,7 +17,7 @@
 }
 
 
-.forest li{
+li.idea-item{
 	border: solid 1px black;
 	margin: 5px;
 	padding: 5px;
@@ -25,8 +25,13 @@
 	cursor: pointer;
 }
 
-.cluster-item{
+li.cluster-item{
 	background-color: #fcf8e3;
+	border: solid 1px black;
+	margin: 5px;
+	padding: 5px;
+	background-color: #fff;
+	cursor: pointer;
 }
 
 .newstack{
