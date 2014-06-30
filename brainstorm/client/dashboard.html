@@ -6,34 +6,37 @@
 			<div class="vizes col-md-6 dashboard-panel-6">
 				<!--Viz Selector-->
 				<ul class="viz-menu nav nav-tabs nav-justified" role="tablist">
-					<li class="active"><a href="#" data-toggle="tab">Tag Cloud</a></li>
-  					<li><a href="#" data-toggle="tab">Chord</a></li>
-  					<li><a href="#" data-toggle="tab">Circle Pack</a></li>
+					<li class="active"><a href="#tagcloud" data-toggle="tab">Tag Cloud</a></li>
+  					<li><a href="#chord" data-toggle="tab">Chord</a></li>
+  					<li><a href="#circlepack" data-toggle="tab">Circle Pack</a></li>
 				</ul>
+				<div class="tab-content">
+					<!--Tag Cloud Viz-->
+					<div class="viz tab-pane active" id="tagcloud">
+						{{#each clusters}}
+							<label>{{name}}</label>
+						{{/each}}
+					</div>
 
-				<!--Tag Cloud Viz-->
-				<div class="tagcloud">
-					{{#each participants}}
-						<label>{{participant}}</label>
+					<!--Chord Viz-->
+					<div class="tab-pane" id="chord">
 
-					{{/each}}
-				</div>
+					</div>
 
-				<!--Chord Viz-->
-				<div class="chord">
+					<!--Circle Packing Viz-->
+					<div class="tab-pane" id="cirlcepack">
 
-				</div>
-
-				<!--Circle Packing Viz-->
-				<div class="cirlcepack">
-
+					</div>
 				</div>
 			</div>
 			<!--End Synthesis Vizualization-->
 
 			<!--Ideator Time Series-->
-			<div class="time-series col-md-6 dashboard-panel-6 pull-right">
+			<div id="time-series" class="col-md-6 dashboard-panel-6 pull-right">
 				<h3>Time Series</h3>
+				<div class="series">
+
+				</div>
 
 			</div>
 		</div>
@@ -75,7 +78,7 @@
 							</div>
 							<div class="dropdown col-md-9">
 								<button class="btn btn-default dropdown-toggle pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown">Send To: <span class="caret"></span></button>
-  								<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+  								<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
     								<li role="presentation"><a role="menuitem" tabindex="-1" href="#">All</a></li>
     								<li role="presentation" class="divider"></li>
 							    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 1</a></li>
@@ -97,7 +100,7 @@
 						</div>
 						<div class="dropdown col-md-9">
 							<button class="btn btn-default dropdown-toggle pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown">Send To: <span class="caret"></span></button>
-  							<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+  							<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
     							<li role="presentation"><a role="menuitem" tabindex="-1" href="#">All</a></li>
     							<li role="presentation" class="divider"></li>
 						    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 1</a></li>

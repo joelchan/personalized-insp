@@ -12,11 +12,15 @@ html,body {
     height:100%;
 }
 
-.vizes, .time-series, .ideas, .leverbox{
+.vizes, #time-series, .ideas, .leverbox{
 	border: solid 1px #ddd;
 	border-radius: 5px;
 	height: 400px;
 	margin-bottom: 5px;
+}
+
+.viz{
+	margin: 10px;
 }
 
 .db-title{
