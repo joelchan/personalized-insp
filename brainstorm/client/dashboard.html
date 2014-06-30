@@ -6,16 +6,14 @@
 			<div class="vizes col-md-6 dashboard-panel-6">
 				<!--Viz Selector-->
 				<ul class="viz-menu nav nav-tabs nav-justified" role="tablist">
-					<li class="active"><a href="#tagcloud" data-toggle="tab">Tag Cloud</a></li>
+					<li class="active"><a href="#tagcloudwrapper" data-toggle="tab">Tag Cloud</a></li>
   					<li><a href="#chord" data-toggle="tab">Chord</a></li>
   					<li><a href="#circlepack" data-toggle="tab">Circle Pack</a></li>
 				</ul>
 				<div class="tab-content">
 					<!--Tag Cloud Viz-->
-					<div class="viz tab-pane active" id="tagcloud">
-						{{#each clusters}}
-							<label>{{name}}</label>
-						{{/each}}
+					<div class="viz tab-pane active" id="tagcloudwrapper">
+						{{> tagcloud}}
 					</div>
 
 					<!--Chord Viz-->
@@ -34,9 +32,9 @@
 			<!--Ideator Time Series-->
 			<div id="time-series" class="col-md-6 dashboard-panel-6 pull-right">
 				<h3>Time Series</h3>
-				<div class="series">
-
-				</div>
+				<!--{{#each users}}-->
+					{{> userseries}}
+				<!--{{/each}}-->
 
 			</div>
 		</div>
@@ -114,5 +112,15 @@
 			</div>
 			<!--End of Lever Box-->
 		</div>
+	</div>
+</template>
+
+<template name="tagcloud">
+	<div id="tagcloud"></div>
+</template>
+
+<template name="userseries">
+	<div id={{_id}} class="series">
+
 	</div>
 </template>

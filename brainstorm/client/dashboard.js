@@ -1,3 +1,5 @@
+Meteor.subscribe("clusters");
+
 Template.Dashboard.rendered = function(){
 
 	var w = 400;
@@ -31,6 +33,50 @@ Template.Dashboard.rendered = function(){
 
 }
 
+Template.tagcloud.rendered = function(){
+	var self = this;
+	self.node = self.find("svg");
+	var w = 525;
+	var h = 325;
+	var pad = 20;
+	var svg = d3.select("#tagcloud")
+				.append("svg")
+				.attr("height", h)
+				.attr("width", w);
+
+	Deps.autorun(function () {
+    	var clusters = Clusters.find().fetch();
+
+    	var xScale = d3.scale.linear()
+						.domain([0, d3.max(clusters, function(d) {
+							if(d.position !== undefined) return d.position.left; 
+						})])
+						.range([pad, w - pad*4]);
+
+		var yScale = d3.scale.linear()
+						.domain([0, d3.max(clusters, function(d) {
+							if(d.position !== undefined) return d.position.top;
+						})])
+						.range([pad, h - pad]);
+    // Data join
+    	var tags = svg.selectAll("text")
+    				.data(clusters)
+    				.enter()
+    				.append("text")
+    				.attr("x", function(d){
+    					if(d.position !== undefined)
+    					return xScale(d.position.left);
+    				})
+    				.attr("y", function(d){
+    					if(d.position !== undefined)
+    					return yScale(d.position.top);
+    				})
+			    	.text(function(d){
+			    		return d.name;
+			    	})
+
+	});
+}
 /********************************************************************
 * Template Helpers
 *********************************************************************/
@@ -45,6 +91,10 @@ Template.Dashboard.helpers({
 
   	clusters : function(){
     	return Clusters.find().fetch();
+  	},
+
+  	users : function(){
+  		return Participants.find().fetch();
   	},
 });
 

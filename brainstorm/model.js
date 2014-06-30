@@ -184,19 +184,6 @@ Idea = function (content, user, prompt, participant) {
   this.participant = participant;
 };
 
-insertIdeas = function(){
-  var idea = new Idea("asdfasdf");
-  Ideas.insert(idea);
-  Ideas.insert(idea);
-  Ideas.insert(idea);
-  Ideas.insert(idea);
-  Ideas.insert(idea);
-}
-
-insertIdeas();
-insertIdeas();
-
-
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
 User = function(name, type){
 	this.name = name;
