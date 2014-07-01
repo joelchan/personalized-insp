@@ -33,25 +33,27 @@ Template.LoginPage.events({
             loginUser(Names.findOne({name: "ProtoAdmin"}));
             console.log("logged in admin User");
             Router.go("ExpAdminPage");
-        };
-        var myUser = loginUser(userName);
-        //Perform random assignment
-        var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
-        //Ensure user can participate
-        if (!canParticipate(exp, myUser.name)) {
-          console.log("Denied participation")
-          Router.go("NoParticipation");
+        } else {
+            var myUser = loginUser(userName);
+            //Perform random assignment
+            var exp = $.extend(true, new Experiment(), Session.get("currentExp"));
+            //Ensure user can participate
+            if (!canParticipate(exp, myUser.name)) {
+                console.log("Denied participation")
+                Router.go("NoParticipation");
+            } else {
+                var participant = addExperimentParticipant(exp, myUser);
+                //Go to next page
+                var role = $.extend(true, new Role(), participant.role);
+                Session.set("currentRole", role);
+                //console.log("set role");
+                Session.set("currentParticipant", participant);
+                //console.log("set participant and role");
+                //Log login event
+                logParticipantLogin(participant);
+                Router.goToNextPage("LoginPage");
+            }
         }
-        var participant = addExperimentParticipant(exp, myUser);
-        //Go to next page
-        var role = $.extend(true, new Role(), participant.role);
-        Session.set("currentRole", role);
-        //console.log("set role");
-        Session.set("currentParticipant", participant);
-        //console.log("set participant and role");
-        //Log login event
-        logParticipantLogin(participant);
-        Router.goToNextPage("LoginPage");
     },
     'keyup input#name': function (evt) {
         $(document).ready(function(){
