@@ -176,8 +176,9 @@ Template.Cluster.events({
 
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
-    var $myCluster = $(event.target).parent();
-    $myCluster.children().children('#clusterlabel').removeClass('text-danger');
+    var $myCluster = $(event.target).parent().parent();
+    console.log($(event.target).val());
+    $myCluster.children().children().children('#clusterlabel').removeClass('text-danger');
 
     Clusters.update({_id:$myCluster.attr('id')},
       {$set: {name: $(event.target).val()}
@@ -193,7 +194,7 @@ Template.Cluster.events({
       $(event.target).switchClass('fa-angle-double-down', 
         'fa-angle-double-up');
     }
-    $(event.target).parent().children('li').slideToggle("fast");
+    $(event.target).parent().parent().children('li').slideToggle("fast");
     return false;
   },
 
