@@ -4,7 +4,8 @@
     "basePackages": {
       "iron-router": {},
       "fontawesome4": {},
-      "nvd3js": {}
+      "nvd3js": {},
+      "moment": {}
     },
     "packages": {
       "iron-router": {
@@ -21,6 +22,11 @@
         "git": "https://github.com/ouuyeah/nvd3js.git",
         "tag": "v0.1.0",
         "commit": "89a8c66bb3b35d25900d31195ae0b318e4176ddb"
+      },
+      "moment": {
+        "git": "https://github.com/acreeger/meteor-moment.git",
+        "tag": "v2.6.0",
+        "commit": "26156df681750fd6e6ed77043eef32b6653ebbdf"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

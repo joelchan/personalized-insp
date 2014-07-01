@@ -78,6 +78,7 @@ Template.tagcloud.rendered = function(){
     					if(d.position !== undefined)
     						return yScale(d.position.top);
     				})
+    				.attr("text-anchor", "middle")
     				.style("font-size", function(d){
     					if(d.ideas !== undefined){
     						console.log(wsScale(d.ideas.length));
@@ -91,26 +92,57 @@ Template.tagcloud.rendered = function(){
 
 Template.userseries.rendered = function(){
 	var self = this;
-	//console.log(this.data._id);
 	var part_ID = self.data._id;
 	var node = self.find(".series");
 	var svg = d3.select(node).append("svg");
+	svg.style("border", "1px solid #ddd");
 
 	var h = 70;
-	var w = 546;
+	var w = 535;
+	var pad = 20;
+	//var tFormat = d3.time.format("%H:%M:%S%L");
 
-	Deps.autorun(function() {
-		data = Ideas.find({"participantID": part_ID}).fetch();
-		console.log(data);
-		//data = processIdeas();
-		
-	});
+	var x = d3.scale.linear()
+					.domain([0,15])
+					.range([0, 535]);
 
-	/*processIdeas = function(ideas){
-		for (var i = 0; i < Things.length; i++) {
-			Things[i]
+	var xAxis = d3.svg.axis()
+					.scale(x)
+					.orient("bottom")
+					.ticks(5);
+
+	var xAxisGroup = svg.append("g")
+						.attr("class", "axis")
+						.attr("transform", "translate(0," + (h - pad) + ")")
+						.call(xAxis);
+
+	/*var x = d3.time.scale();
+	var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient('bottom')
+			.ticks(d3.time.minutes, 1)
+			.tickFormat(d3.time.format('%M:%S'));
+
+	console.log(xAxis);*/
+	//Deps.autorun(function() {});
+	//data = Ideas.find({"participantID": part_ID}).fetch();
+	//console.log(data);
+	//data = processIdeas(data);
+
+	/*svg.selectAll("text")
+		.data(data)
+		.enter()
+		.append("text")
+		.text(function(d){
+			return d.time;
+		});*/
+
+	processIdeas = function(ideas){
+		var bins = []
+		for (var i = 0; i < ideas.length; i++) {
+			ideas[i]
 		};
-	}*/
+	}
 
 
 }
