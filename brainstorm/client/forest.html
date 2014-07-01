@@ -26,11 +26,13 @@
 			<div id="buildcluster" class="col-md-3">
 				<h3>Add to Cluster</h3>
 				<ul id={{ideaNode}} class="stack">
-					<label class="sort-disabled">Cluster Name:
-						<span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
-					</label>
-					<input type="text" class="clusternodename sort-disabled" 
+					<div class="form-group">
+						<label class="sort-disabled">Cluster Name:
+							<span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
+						</label>
+						<input type="text" class="clusternodename form-control input-sm sort-disabled" 
 							id="namecluster" placeholder="Name this cluster">
+					</div>
 					{{#each ideaNodeIdeas}}
 						<li id={{_id}} class="idea-item">{{content}}</li>
 					{{/each}}

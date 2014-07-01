@@ -130,6 +130,8 @@ Template.Cluster.helpers({
 
   clusterchildren : function(){
     var children = $(this)[0].children;
+    if (children === undefined)
+      return false;
     if(children.length > 0)
       return $(this)[0].children;
     else return false;

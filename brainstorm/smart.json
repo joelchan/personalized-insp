@@ -1,6 +1,7 @@
 {
   "packages": {
     "iron-router": {},
-    "fontawesome4": {}
+    "fontawesome4": {},
+    "nvd3js": {}
   }
 }

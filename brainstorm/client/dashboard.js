@@ -1,8 +1,8 @@
-Meteor.subscribe("clusters");
+handle = Meteor.subscribe("clusters");
 
 Template.Dashboard.rendered = function(){
 
-	var w = 400;
+	/*var w = 400;
 	var h = 50;
 	var ideasFreq = [2, 5, 3, 1, 2, 0, 2, 1, 2, 0, 1];
 
@@ -29,7 +29,7 @@ Template.Dashboard.rendered = function(){
 		})
 		.attr("fill", function(d){
 			return "rgb("+ (50-10*d) +","+ (118-10*d) +","+ (177-10*d)+")";
-		});
+		});*/
 
 }
 
@@ -38,26 +38,33 @@ Template.tagcloud.rendered = function(){
 	self.node = self.find("svg");
 	var w = 525;
 	var h = 325;
-	var pad = 20;
+	var pad = 30;
 	var svg = d3.select("#tagcloud")
 				.append("svg")
 				.attr("height", h)
 				.attr("width", w);
 
 	Deps.autorun(function () {
+		console.log('Inside autorun, Deps.active = ', Deps.active);
     	var clusters = Clusters.find().fetch();
 
     	var xScale = d3.scale.linear()
 						.domain([0, d3.max(clusters, function(d) {
 							if(d.position !== undefined) return d.position.left; 
 						})])
-						.range([pad, w - pad*4]);
+						.range([0, w - pad*5]);
 
 		var yScale = d3.scale.linear()
 						.domain([0, d3.max(clusters, function(d) {
 							if(d.position !== undefined) return d.position.top;
 						})])
 						.range([pad, h - pad]);
+
+		var wsScale = d3.scale.linear()
+						.domain([0, d3.max(clusters, function(d){
+							if(d.ideas !== undefined) return d.ideas.length;
+						})])
+						.range([10, 30]);
     // Data join
     	var tags = svg.selectAll("text")
     				.data(clusters)
@@ -65,17 +72,47 @@ Template.tagcloud.rendered = function(){
     				.append("text")
     				.attr("x", function(d){
     					if(d.position !== undefined)
-    					return xScale(d.position.left);
+    						return xScale(d.position.left);
     				})
     				.attr("y", function(d){
     					if(d.position !== undefined)
-    					return yScale(d.position.top);
+    						return yScale(d.position.top);
+    				})
+    				.style("font-size", function(d){
+    					if(d.ideas !== undefined){
+    						console.log(wsScale(d.ideas.length));
+    						return wsScale(d.ideas.length);}
     				})
 			    	.text(function(d){
 			    		return d.name;
 			    	})
-
 	});
+}
+
+Template.userseries.rendered = function(){
+	var self = this;
+	//console.log(this.data._id);
+	var part_ID = self.data._id;
+	var node = self.find(".series");
+	var svg = d3.select(node).append("svg");
+
+	var h = 70;
+	var w = 546;
+
+	Deps.autorun(function() {
+		data = Ideas.find({"participantID": part_ID}).fetch();
+		console.log(data);
+		//data = processIdeas();
+		
+	});
+
+	/*processIdeas = function(ideas){
+		for (var i = 0; i < Things.length; i++) {
+			Things[i]
+		};
+	}*/
+
+
 }
 /********************************************************************
 * Template Helpers
@@ -83,6 +120,10 @@ Template.tagcloud.rendered = function(){
 Template.Dashboard.helpers({
 	ideas : function(){
    		return Ideas.find();
+  	},
+
+  	numIdeas : function(){
+  		return Ideas.find().fetch().length
   	},
 
   	gamechangers : function(){
@@ -93,7 +134,7 @@ Template.Dashboard.helpers({
     	return Clusters.find().fetch();
   	},
 
-  	users : function(){
+  	participants : function(){
   		return Participants.find().fetch();
   	},
 });
