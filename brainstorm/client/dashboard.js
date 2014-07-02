@@ -1,11 +1,9 @@
-handle = Meteor.subscribe("clusters");
+Session.set("partFilters", []);
 MS_PER_MINUTE = 60000;
 start = Date.now;
 
 Template.Dashboard.rendered = function(){
 	Session.set("currentPrompt", "Alternate uses for an iPod");
-	Session.set("participant", null);
-
 }
 
 Template.tagcloud.rendered = function(){
@@ -81,7 +79,7 @@ Template.userseries.rendered = function(){
 	var svg = d3.select(node).append("svg");
 
 	var h = 70;
-	var w = 535;
+	var w = 540;
 	var pad = 20;
 
 	Deps.autorun(function() {
@@ -90,11 +88,12 @@ Template.userseries.rendered = function(){
 		var minAgo = new Date(now - 15*MS_PER_MINUTE);
 		var x = d3.time.scale()
 						.domain([minAgo, now])
+						.nice(d3.time.minute)
 						.range([w-pad, pad]);
 
 		var xAxis = d3.svg.axis()
 							.scale(x)
-							.ticks(2)
+							.ticks(4)
 							.tickFormat(function(d){
 								return moment(d).fromNow();
 							})
@@ -112,6 +111,7 @@ Template.userseries.rendered = function(){
 			.append("rect")
 			.attr("height", "50px")
 			.attr("width", "1.5px")
+			.attr("class", "bar")
 			.attr("id", function(d){
 				return d._id;
 			})
@@ -122,7 +122,7 @@ Template.userseries.rendered = function(){
 				return x(ideaTime);
 			})
 			.attr("y", 0)
-			.attr("fill", "red")
+			.attr("fill", "#d43f3a")
 			.append("svg:title")
    			.text(function(d) { return d.content; });
 	});
@@ -133,11 +133,19 @@ Template.userseries.rendered = function(){
 *********************************************************************/
 Template.Dashboard.helpers({
 	ideas : function(){
-   		return Ideas.find();
+		var filters = Session.get("partFilters");
+		if(filters.length > 0){
+			return Ideas.find({participantID: {$in: filters}});
+		} else
+   			return Ideas.find();
   	},
 
   	numIdeas : function(){
-  		return Ideas.find().fetch().length
+  		var filters = Session.get("partFilters");
+		if(filters.length > 0){
+			return Ideas.find({participantID: {$in: filters}}).fetch().length;
+		} else
+   			return Ideas.find().fetch().length;
   	},
 
   	gamechangers : function(){
@@ -164,12 +172,33 @@ Template.Dashboard.events({
 
 	'click .idealist .idea' : function(){
 		var id = $(event.target).attr('id');
-		console.log(id);
 	},
 
-	'dblclick .profile' : function(){
-		var id = $(this).attr('id');
-		console.log(id);
+	'dblclick .profile' : function(e){
+		var id = e.currentTarget.id;
+		var parts = Session.get("partFilters");
+
+		for (var i = 0; i < parts.length; i++) {
+			if(parts[i] === id) 
+				return false;
+		};
+
+		parts.push(id);
+		Session.set("partFilters", parts);
+		$('#filters').append('<div><span class="label label-default"><i class="fa fa-minus-circle"></i>'+ id +'</span></div>');
+	},
+
+	'click .fa-minus-circle' : function(){
+		var filter = $(event.target).parent();
+		var id = filter.text();
+		var partFilters = Session.get("partFilters");
+		filter.remove();
+		for (var i = 0; i < partFilters.length; i++) {
+			if (partFilters[i] === id){
+				partFilters.splice(i,1);
+				return Session.set("partFilters", partFilters);
+			}
+		};
 	},
 
 	'dblclick #examples .idea' : function(){
