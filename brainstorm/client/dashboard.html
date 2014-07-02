@@ -58,9 +58,9 @@
 
 			<!--People View-->
 			<div id="people-view" class="col-md-7 dashboard-panel-7 pull-right">
-				<!--<h3>People</h3>-->
-				<div class="btn-group">
-					<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+				<h3>
+				<span class="btn-group">
+					<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
 						Action
 				    	<span class="caret"></span>
 				    	<span class="sr-only">Toggle Dropdown</span>
@@ -70,7 +70,8 @@
 				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#sendmodal">Send Examples</a></li>
 				    	<li><a href="#" class="show-modal">Something else here</a></li>
 				  	</ul>
-				</div>
+				</span>
+				People</h3>
 				<hr>
 				<div id="people">
 				{{#each participants}}
@@ -81,6 +82,7 @@
 		</div>
 	</div>
 
+	<!--Change Prompt Modal-->
 	<div class="modal fade" id="changemodal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     	<div class="modal-dialog ">
         	<div class="modal-content">
@@ -108,6 +110,7 @@
   		</div>
 	</div>
 
+	<!--Send Examples Modal-->
 	<div class="modal fade" id="sendmodal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     	<div class="modal-dialog modal-lg">
         	<div class="modal-content">
@@ -165,51 +168,3 @@
 	<div class="series">
 	</div>
 </template>
-
-			<!--Facilitator Levers-->
-			<!--<div class="container leverbox col-md-6 dashboard-panel-6 pull-right">
-				<!Changeprompt Lever
-				<div class="row changeprompt">
-					<div class="col-md-12">
-						<h3>Change the Prompt</h3>
-						<form role="form">
-							<div class="form-group">
-								<input type="text" class="form-control" id="new-prompt" placeholder="Enter New Prompt">
-							</div>
-							<div class="dropdown col-md-9">
-								<button class="btn btn-default dropdown-toggle pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown">Send To: <span class="caret"></span></button>
-  								<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
-    								<li role="presentation"><a role="menuitem" tabindex="-1" href="#">All</a></li>
-    								<li role="presentation" class="divider"></li>
-							    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 1</a></li>
-							    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 2</a></li>
-							    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 3</a></li>
-								</ul>
-							</div>
-							<button class="btn btn-primary pull-right">Send New Prompt</button>
-						</form>
-					</div>
-				</div>
-				<hr>
-				<!Send Examples Lever
-				<div class="row sendexamples">
-					<div class="col-md-12">
-						<h3>Send Examples</h3>
-						<div id="examples">
-
-						</div>
-						<div class="dropdown col-md-9">
-							<button class="btn btn-default dropdown-toggle pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown">Send To: <span class="caret"></span></button>
-  							<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
-    							<li role="presentation"><a role="menuitem" tabindex="-1" href="#">All</a></li>
-    							<li role="presentation" class="divider"></li>
-						    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 1</a></li>
-						    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 2</a></li>
-						    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ideator 3</a></li>
-							</ul>
-						</div>
-						<button class="btn btn-primary pull-right">Send Examples</button>
-					</div>
-				</div>
-			</div>
-			<!End of Lever Box-->

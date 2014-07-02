@@ -20,9 +20,13 @@ Template.tagcloud.rendered = function(){
 				.attr("height", h)
 				.attr("width", w);
 
-	Deps.autorun(function () {
+	setInterval(function () {
 		console.log('Inside autorun, Deps.active = ', Deps.active);
-    	var clusters = Clusters.find().fetch();
+		var cursor = Clusters.find();
+		var clusters = [];
+		cursor.forEach(function(item){
+			clusters.push(item);
+		});
 
     	var xScale = d3.scale.linear()
 						.domain([d3.min(clusters, function(d){
@@ -71,7 +75,7 @@ Template.tagcloud.rendered = function(){
 
 		tags.exit()
 			.remove();
-	});
+	}, 5000);
 }
 
 Template.userseries.rendered = function(){
@@ -233,6 +237,10 @@ Template.Dashboard.events({
    		});
 
    		Session.set("selectedParts", array);
+	},
+
+	'click .modal .idea' : function(){
+		$(event.target).toggleClass("selected");
 	},
 
 	'dblclick #examples .idea' : function(){

@@ -54,6 +54,7 @@ function createCluster(item) {
   var ideaId = item.attr('id');
   var ideas = [IdeasToProcess.findOne({_id: ideaId})];
   var cluster = new Cluster(ideas);
+  cluster.position = {top: 50, left:0};
   Clusters.insert(cluster);
   updateIdeas(ideaId, true);
 }
