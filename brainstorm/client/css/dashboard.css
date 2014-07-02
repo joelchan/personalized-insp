@@ -56,16 +56,18 @@ html,body {
 	height: 345px;
 }
 
-
-#filters > div > span{
+#filters{
+	padding-left: 0px !important;
+}
+.part-label, .filter-label{
 	padding-left: 0em;
 }
 
-#filters > div > span > i{
+.part-label > i, .filter-label > i{
 	padding-right: 5px;
 }
 
-.dashboard .idea{
+.dashboard .idea, .modal .idea{
 	border: solid 1px #ddd;
 	border-radius: 5px;
 	padding: 5px;
@@ -82,7 +84,7 @@ html,body {
 
 
 #new-prompt{
-	margin-top: 20px
+
 }
 
 hr{
@@ -107,7 +109,6 @@ hr{
 .series{
 	width:540px;
 	height:100%;
-	margin-left: 6px;
 }
 
 
@@ -125,6 +126,10 @@ hr{
 
 .dashboard input[type=checkbox]{
 	margin-top: 29px;
+}
+
+.fa-minus-circle{
+	cursor: pointer;
 }
 
 

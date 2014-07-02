@@ -45,6 +45,11 @@
 					</div>
 					<div id="filters" class="col-md-4">
 						<h3>Filters</h3>
+						{{#each filters}}
+						<div>
+							<span class="filter-label label label-default"><i class="fa fa-minus-circle"></i>{{this}}</span>
+						</div>
+						{{/each}}
 					</div>
 				</div>
 				<!--End Ideas-->
@@ -55,15 +60,15 @@
 			<div id="people-view" class="col-md-7 dashboard-panel-7 pull-right">
 				<!--<h3>People</h3>-->
 				<div class="btn-group">
-					<button type="button" class="btn btn-primary btn-sm">Action</button>
 					<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+						Action
 				    	<span class="caret"></span>
 				    	<span class="sr-only">Toggle Dropdown</span>
 				  	</button>
 				  	<ul class="dropdown-menu" role="menu">
-				    	<li><a href="#">Change Prompt</a></li>
-				    	<li><a href="#">Send Examples</a></li>
-				    	<li><a href="#">Something else here</a></li>
+				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#changemodal">Change Prompt</a></li>
+				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#sendmodal">Send Examples</a></li>
+				    	<li><a href="#" class="show-modal">Something else here</a></li>
 				  	</ul>
 				</div>
 				<hr>
@@ -74,6 +79,92 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<div class="modal fade" id="changemodal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    	<div class="modal-dialog ">
+        	<div class="modal-content">
+            	<div class="modal-header">
+            		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            		<h4 class="modal-title" id="myModalLabel">Change Prompt</h4>
+            	</div>
+            	<div class="modal-body">
+                	<h3>Send a new prompt, spin of the current prompt, or hint to the selected participants</h3>
+                	<div class="form-group">
+						<input type="text" class="form-control" id="new-prompt" placeholder="Enter New Prompt">
+					</div>
+					<div id="selectedparts">
+						<label>Selected Participants: </label>
+						{{#each selectedparts}}
+							<span class="part-label label label-primary"><i class="fa fa-minus-circle"></i>{{this}}</span>
+						{{/each}}
+					</div>
+            	</div>
+            	<div class="modal-footer">
+                	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                	<button type="button" class="btn btn-primary">Send</button>
+        		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<div class="modal fade" id="sendmodal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    	<div class="modal-dialog modal-lg">
+        	<div class="modal-content">
+            	<div class="modal-header">
+            		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            		<h4 class="modal-title" id="myModalLabel">Send Examples</h4>
+            	</div>
+            	<div class="modal-body">
+                	<h3>Choose examples to send to the selected participants</h3>
+                	<div>
+                		<label>Filtering by participant(s): </label>
+                		{{#each filters}}
+                			<span class="filter-label label label-default"><i class="fa fa-minus-circle"></i>{{this}}</span>
+                		{{/each}}
+                	</div>
+
+					<div class="idealist">
+						{{#each ideas}}
+							<div id={{_id}} class="idea">{{content}}</div>
+						{{/each}}	
+					</div>
+					<div id="selectedparts">
+						<label>Selected Participants: </label>
+						{{#each selectedparts}}
+							<span class="part-label label label-primary"><i class="fa fa-minus-circle"></i>{{this}}</span>
+						{{/each}}
+					</div>
+            	</div>
+            	<div class="modal-footer">
+                	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                	<button type="button" class="btn btn-primary">Send</button>
+        		</div>
+    		</div>
+  		</div>
+	</div>
+</template>
+
+<template name="tagcloud">
+	<div id="tagcloud"></div>
+</template>
+
+<template name="userprofile">
+	<div class="profile" id={{_id}}>
+		<form class="form-inline" role="form">
+  			<div class="checkbox">
+      			<input class="selectpart" type="checkbox" value={{_id}}>
+  			</div>
+  			<label><i class="fa fa-user fa-2x"></i></label>
+  		</form>
+		{{> userseries this}}
+	</div>
+</template>
+
+<template name="userseries">
+	<div class="series">
+	</div>
+</template>
 
 			<!--Facilitator Levers-->
 			<!--<div class="container leverbox col-md-6 dashboard-panel-6 pull-right">
@@ -122,26 +213,3 @@
 				</div>
 			</div>
 			<!End of Lever Box-->
-	</div>
-</template>
-
-<template name="tagcloud">
-	<div id="tagcloud"></div>
-</template>
-
-<template name="userprofile">
-	<div class="profile" id={{_id}}>
-		<form class="form-inline" role="form">
-  			<div class="checkbox">
-      			<input type="checkbox" value={{_id}}>
-  			</div>
-  			<label><i class="fa fa-user fa-2x"></i></label>
-  		</form>
-		{{> userseries this}}
-	</div>
-</template>
-
-<template name="userseries">
-	<div class="series">
-	</div>
-</template>

@@ -1,4 +1,6 @@
 Session.set("partFilters", []);
+Session.set("selectedParts", []);
+Session.set("selectedIdeas", []);
 MS_PER_MINUTE = 60000;
 start = Date.now;
 
@@ -79,7 +81,7 @@ Template.userseries.rendered = function(){
 	var svg = d3.select(node).append("svg");
 
 	var h = 70;
-	var w = 540;
+	var w = 546;
 	var pad = 20;
 
 	Deps.autorun(function() {
@@ -159,6 +161,14 @@ Template.Dashboard.helpers({
   	participants : function(){
   		return Participants.find().fetch();
   	},
+
+  	selectedparts : function(){
+  		return Session.get("selectedParts");
+  	},
+
+  	filters : function(){
+  		return Session.get("partFilters");
+  	}
 });
 
 /********************************************************************
@@ -185,20 +195,44 @@ Template.Dashboard.events({
 
 		parts.push(id);
 		Session.set("partFilters", parts);
-		$('#filters').append('<div><span class="label label-default"><i class="fa fa-minus-circle"></i>'+ id +'</span></div>');
 	},
 
 	'click .fa-minus-circle' : function(){
-		var filter = $(event.target).parent();
-		var id = filter.text();
-		var partFilters = Session.get("partFilters");
-		filter.remove();
-		for (var i = 0; i < partFilters.length; i++) {
-			if (partFilters[i] === id){
-				partFilters.splice(i,1);
-				return Session.set("partFilters", partFilters);
-			}
-		};
+		var label = $(event.target).parent();
+		var id = label.text();
+		console.log(id);
+		if(label.hasClass("filter-label")){
+			console.log("removeing filter label");
+			var partFilters = Session.get("partFilters");
+			for (var i = 0; i < partFilters.length; i++) {
+				if (partFilters[i] === id){
+					partFilters.splice(i,1);
+					console.log("removed");
+					return Session.set("partFilters", partFilters);
+				}
+			};
+		} else if (label.hasClass("part-label")) {
+			var selectedParts = Session.get("selectedParts");
+			for (var i = 0; i < selectedParts.length; i++) {
+				if (selectedParts[i] === id){
+					selectedParts.splice(i,1);
+					$("input:checkbox[value="+id+"]").attr("checked", false);
+					return Session.set("selectedParts", selectedParts);
+				}
+			};
+		}
+	},
+
+	'click .show-modal' : function(event, template){
+		event.preventDefault();
+
+ 		var selected = template.findAll( "input[type=checkbox]:checked");
+
+   		var array = _.map(selected, function(item) {
+     		return item.defaultValue;
+   		});
+
+   		Session.set("selectedParts", array);
 	},
 
 	'dblclick #examples .idea' : function(){
