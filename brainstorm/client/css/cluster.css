@@ -19,12 +19,16 @@
 	cursor: move;
 }
 
-.cluster ul{
+i {
+	cursor: pointer;
+}
+
+.clusterul{
+	height: 100%;
 	list-style: none;
 	list-style-type: none;
 	padding-left: 0px;
 }
-
 li.idea-item{
 	border: solid 1px black;
 	margin: 5px;

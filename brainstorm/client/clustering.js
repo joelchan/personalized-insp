@@ -48,7 +48,7 @@ Template.Clustering.rendered = function(){
 }
 
 Template.clusterarea.rendered = function(){
-      
+     
 }
 
 Template.cluster.rendered = function(){
@@ -112,11 +112,6 @@ Template.cluster.rendered = function(){
     //snap: "#clusterarea ul", 
     //snapMode: "outer", 
     grid: [5, 5] 
-  });
-
-  Deps.autorun(function(){
-    var ic = this.isCollapsed;
-    console.log(ic);
   });
 }
 
@@ -185,6 +180,10 @@ Template.cluster.helpers({
     if(children.length > 0)
       return $(this)[0].children;
     else return false;
+  },
+
+  isCollapsed : function(){
+    return $(this)[0].isCollapsed;
   }
 
 });
@@ -220,9 +219,10 @@ Template.Clustering.events({
   //Collapse clusters and makes them unsortable until expanded
   'click .fa' : function(){
     var id = $(event.target).parent().parent().attr('id');
-    cluster = Clusters.find({_id: id});
-    console.log(id);
-    console.log(cluster);
+    var cluster = Clusters.findOne({_id: id});
+    var state = !cluster.isCollapsed;
+
+    Clusters.update({_id: id}, {$set: {isCollapsed: state}});
     /*if($(event.target).hasClass('fa-angle-double-up')){
       $(event.target).switchClass('fa-angle-double-up', 
         'fa-angle-double-down');
@@ -231,7 +231,6 @@ Template.Clustering.events({
         'fa-angle-double-up');
     }
     $(event.target).parent().parent().children('li').slideToggle("fast");*/
-    return false;
   },
 
   //Attaches sortable and draggable to clusters when mouse moves into cluster area
@@ -245,7 +244,7 @@ function createCluster(item) {
   var ideaId = item.attr('id');
   var ideas = [IdeasToProcess.findOne({_id: ideaId})];
   var cluster = new Cluster(ideas);
-  cluster.position = {top: 50, left:0};
+  cluster.position = {top: 55, left:0};
   Clusters.insert(cluster);
   updateIdeas(ideaId, true);
 }
