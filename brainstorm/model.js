@@ -22,7 +22,6 @@ IdeaToProcess = function(content, participant){
 
 Cluster = function(ideas){
   this.ideas = ideas;
-  //this.id;
   this.name = "Not named yet"; //default name for unnamed clusters
   this.position;
   this.children = [];
@@ -182,20 +181,8 @@ Idea = function (content, user, prompt, participant) {
   this.prompt = prompt;
   //Optional field not logged during non-experiments
   this.participant = participant;
+  this.isGamechanger = false;
 };
-
-insertIdeas = function(){
-  var idea = new Idea("asdfasdf");
-  Ideas.insert(idea);
-  Ideas.insert(idea);
-  Ideas.insert(idea);
-  Ideas.insert(idea);
-  Ideas.insert(idea);
-}
-
-insertIdeas();
-insertIdeas();
-
 
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
 User = function(name, type){

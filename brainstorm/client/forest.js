@@ -213,8 +213,8 @@ Template.Forest.helpers({
 Template.Forest.events({
   //update cluster name as user types
 	'keyup #namecluster' : function(event, template){
-    var $myCluster = $(event.target).parent();
-    $myCluster.children().children('span').removeClass("unnamed");
+    var $myCluster = $(event.target).parent().parent();
+    $myCluster.children().children().children('span').removeClass("unnamed");
 
     Clusters.update({_id:$myCluster.attr('id')},
       {$set: {name: $(event.target).val()}

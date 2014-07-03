@@ -54,6 +54,7 @@ function createCluster(item) {
   var ideaId = item.attr('id');
   var ideas = [IdeasToProcess.findOne({_id: ideaId})];
   var cluster = new Cluster(ideas);
+  cluster.position = {top: 50, left:0};
   Clusters.insert(cluster);
   updateIdeas(ideaId, true);
 }
@@ -130,6 +131,8 @@ Template.Cluster.helpers({
 
   clusterchildren : function(){
     var children = $(this)[0].children;
+    if (children === undefined)
+      return false;
     if(children.length > 0)
       return $(this)[0].children;
     else return false;
@@ -174,8 +177,9 @@ Template.Cluster.events({
 
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
-    var $myCluster = $(event.target).parent();
-    $myCluster.children().children('#clusterlabel').removeClass('text-danger');
+    var $myCluster = $(event.target).parent().parent();
+    console.log($(event.target).val());
+    $myCluster.children().children().children('#clusterlabel').removeClass('text-danger');
 
     Clusters.update({_id:$myCluster.attr('id')},
       {$set: {name: $(event.target).val()}
@@ -191,7 +195,7 @@ Template.Cluster.events({
       $(event.target).switchClass('fa-angle-double-down', 
         'fa-angle-double-up');
     }
-    $(event.target).parent().children('li').slideToggle("fast");
+    $(event.target).parent().parent().children('li').slideToggle("fast");
     return false;
   },
 

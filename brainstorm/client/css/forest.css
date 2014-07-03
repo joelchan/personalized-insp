@@ -23,6 +23,8 @@
 .idea-item, .donestack, .stack{
 	border: solid 1px #ddd;
 	border-radius: 5px;
+	list-style: none;
+	list-style-type: none;
 }
 .newstack{
 	border: dashed 1px #ddd;
@@ -58,9 +60,4 @@ label, .fa{
 
 #generalize > button{
 	margin-top: 10px;
-}
-
-input#artificial-name, span.input-group-addon {
-    box-sizing: content-box;
-    -moz-box-sizing: content-box;
 }

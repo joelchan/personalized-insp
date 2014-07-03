@@ -1,7 +1,7 @@
 
 <template name="Cluster">
 	<h1 class="page-header" id="clusterprompt">{{prompt}}</h1>
-	<div class="container-fluid">
+	<div class="container-fluid cluster">
 		<div class="row">
 			<div id="left" class="col-md-3">
 				<h3>Create New Cluster</h3>
@@ -40,12 +40,14 @@
 					{{#if isNotRoot}}
 						<ul class="stack col-md-3" id={{_id}} 
 						style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
+						<div class="form-group sort-disabled">
 							<i class="fa fa-angle-double-down sort-disabled"></i>
 							<label class="sort-disabled">Cluster Name:
 								<span id="clusterlabel" class="sort-disabled text-danger">{{this.name}}</span>
 							</label>
-							<input type="text" class="namecluster sort-disabled" 
+							<input type="text" class="namecluster form-control input-sm sort-disabled" 
 							placeholder="Name this cluster">
+						</div>
 							{{#each clusterideas}}
 								<li id={{_id}} class="idea-item">{{content}}</li>
 							{{/each}}
