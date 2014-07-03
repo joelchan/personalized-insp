@@ -10,15 +10,20 @@
 	padding-left: 0px;
 }
 
-#right{
+.cluster{
+	border: 1px solid black;
 	border-radius: 5px;
+	background-color: #f5f5f5;
+	padding-left: 5px;
+	padding-right: 5px;
+	cursor: move;
 }
 
-.forest .cluster ul{
+.cluster ul{
 	list-style: none;
 	list-style-type: none;
+	padding-left: 0px;
 }
-
 
 li.idea-item{
 	border: solid 1px black;
@@ -37,47 +42,16 @@ li.cluster-item{
 	cursor: pointer;
 }
 
-.newstack{
+.newcluster{
 	border: dashed 1px;
-}
-
-.forest li.ui-sortable-helper{
-	cursor: move;
-}
-
-.forest li.sort-disabled{
-	border: none;
-	background-color: #f5f5f5;
-	height:0px;
-	padding:1px;
-}
-
-#clusterarea{
-	display: inline;
-}
-
-#clusterarea > ul, .child{
-	background-color: #f5f5f5;
-		list-style: none;
-	list-style-type: none;
+	border-radius: 5px;
+	padding: 10px;
 }
 
 .namecluster{
 	width: 100%;
 }
 
-.label{
-	position: relative;
-	/*padding-left: 200px;*/
-}
-
-.ultext{
-	width:100%;
-}
-
-.unnamed{
-	color: #d9534f;
-}
 #finish{
 	margin-top: 10px;
 	float: right;

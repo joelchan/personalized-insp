@@ -84,7 +84,7 @@ Router.map(function () {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
   });
-  this.route('Cluster');
+  this.route('Clustering');
   this.route('Forest', {
     path: 'Forest/:_id',
     template: 'Forest',

@@ -26,6 +26,11 @@
 	list-style: none;
 	list-style-type: none;
 }
+
+.forest ul {
+	list-style: none;
+	list-style-type: none;
+}
 .newstack{
 	border: dashed 1px #ddd;
 	border-radius: 5px;

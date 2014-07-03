@@ -23,8 +23,9 @@ IdeaToProcess = function(content, participant){
 Cluster = function(ideas){
   this.ideas = ideas;
   this.name = "Not named yet"; //default name for unnamed clusters
-  this.position;
+  this.position; //used only for clustering interface and tag cloud
   this.children = [];
+  this.isCollapsed = false; //used only for clustering interface
 }
 
 root = {
