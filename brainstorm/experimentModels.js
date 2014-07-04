@@ -136,19 +136,17 @@ canParticipate = function (exp, userName) {
         return false
     }
   }
+  //checks if user is on list of current participants marked as finished
+  for (var i=0; i<exp.participants.length; i++) {
+      if (exp.participants[i].userName == userName) {
+          if (exp.participants[i].isFinished) {
+            console.log("repeat participant has finished already");
+            return false;
+          }
+      }
+  }
   return true;
 }
-
-Experiment.prototype.addParticipant = function(user) {
-  var cond = this.getRandomCondition();
-  var group = this.getGroup(cond);
-  var role = group.addUser(user);
-  var part = new Participant(this, user, cond, group, role);
-  part._id = Participants.insert(part);
-  this.participants.push(part);
-  return part;
-}
-
 
 
 ExpCondition = function(id, prompt, desc, groupNum) {
@@ -184,6 +182,8 @@ Participant = function(exp, user, cond, group, role) {
     this.role = Roles.findOne(role.role);
     this.verifyCode = this.userID.hashCode();
     //console.log("Participant verify code is: " + this.verifyCode);
+    //Participants have not finished by default
+    this.hasFinished = false;
 };
 
 Consent = function (participant) {
