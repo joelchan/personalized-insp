@@ -5,6 +5,15 @@
 </template>
 
 <template name="IdeationPage">
+  <nav id="menu" class="panel" role="navigation">
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">The Ballad of El Goodo</a></li>
+        <li><a href="#">Thirteen</a></li>
+        <li><a href="#">September Gurls</a></li>
+        <li><a href="#">What's Going Ahn</a></li>
+    </ul>
+  </nav>
   <div class="row">
     <div class="col-md-3">
       <div class="row sidebar">
@@ -52,11 +61,16 @@
   
       <div class="footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
         <div class="row">
-          <div class="col-md-10">
+          <div class="col-md-9">
             <textArea id="nextIdea" class="idea-input" placeholder="What's your idea?"></textarea>
           </div>
           <div class="col-md-2">
               <button id="submitIdea" class="submitIdea btn-default btn-primary"> Submit </button>
+          </div>
+          <div class="col-md-1">
+            <a href="#menu" class="menu-link">
+              <i id="notify-bulb" class="fa fa-lightbulb-o fa-5x"></i>
+            </a>
           </div>
         </div>
       </div>

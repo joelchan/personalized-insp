@@ -132,6 +132,7 @@ Template.IdeationPage.prompt = function () {
 };
 
 Template.IdeationPage.rendered = function() {
+  $('.menu-link').bigSlide();
   //Debug statements
   //console.log("rendered");
   //console.log(Session.get('currentExp'));
