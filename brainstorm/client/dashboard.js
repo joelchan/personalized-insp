@@ -21,7 +21,7 @@ Template.tagcloud.rendered = function(){
 				.attr("width", w);
 
 	setInterval(function () {
-		console.log('Inside autorun, Deps.active = ', Deps.active);
+		//console.log('Inside autorun, Deps.active = ', Deps.active);
 		var cursor = Clusters.find();
 		var clusters = [];
 		cursor.forEach(function(item){
@@ -49,7 +49,6 @@ Template.tagcloud.rendered = function(){
 							if(d.ideas !== undefined) return d.ideas.length;
 						})])
 						.range([10, 25]);
-    // Data join
 
     	var tags = svg.selectAll("text")
     				.data(clusters);
@@ -243,7 +242,29 @@ Template.Dashboard.events({
 		$(event.target).toggleClass("selected");
 	},
 
-	'dblclick #examples .idea' : function(){
-		event.target.remove()
+	'click #changemodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
+		var recipients = Session.get("selectedParts");
+		var prompt = $('#new-prompt').val();
+		var sender = Session.get("currentUser");
+
+		for (var i = 0; i < recipients.length; i++) {
+			changePromptNotify(sender, recipients[i], prompt);
+		};
+	},
+
+	'click #sendmodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
+		var recipients = Session.get("selectedParts");
+		var examples = [];
+
+		var sender = Session.get("currentUser");
+
+		$('#sendmodal-idealist .idea.selected').each(function(i){
+			var idea = {_id: $(this).attr('id'), content: $(this).text()}
+			examples.push(idea);
+		});
+
+		for (var i = 0; i < recipients.length; i++) {
+			sendExamplesNotify(sender, recipients[i], examples);
+		};
 	}
 });

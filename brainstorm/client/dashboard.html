@@ -104,7 +104,7 @@
             	</div>
             	<div class="modal-footer">
                 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                	<button type="button" class="btn btn-primary">Send</button>
+                	<button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
         		</div>
     		</div>
   		</div>
@@ -127,7 +127,7 @@
                 		{{/each}}
                 	</div>
 
-					<div class="idealist">
+					<div id="sendmodal-idealist" class="idealist">
 						{{#each ideas}}
 							<div id={{_id}} class="idea">{{content}}</div>
 						{{/each}}	
@@ -141,7 +141,7 @@
             	</div>
             	<div class="modal-footer">
                 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                	<button type="button" class="btn btn-primary">Send</button>
+                	<button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
         		</div>
     		</div>
   		</div>
