@@ -59,6 +59,9 @@ getRandomRares = function() {
 
 getPrimingIdeas = function () {
     var participant = Session.get("currentParticipant");
+    if (participant.misc != undefined) {
+      return participant.misc
+    }
     var newIdeas = [];
       //console.log("inserting priming ideas");
       if (participant.condition.id == 1) {
@@ -69,7 +72,7 @@ getPrimingIdeas = function () {
           //console.log(ideas[i]);
           //console.log("creating rare idea: " + ideas[i]);
             var idea = new Idea(ideas[i],
-                participant.user,
+                participant.userID,
                 participant.condition.prompt,
                 participant
                 );
@@ -98,53 +101,62 @@ getPrimingIdeas = function () {
       return newIdeas;
 };
 
-Template.IdeationPage.helpers({
-    ideas: function() {
-      return Ideas.find({participant: Session.get("currentParticipant")});
-    },
-
+Template.Priming.helpers({
     primeIdeas: function() {
-        //console.log("getting prime ideas");
-        var part = Session.get("currentParticipant");
-        var primes = part.misc;
-        //console.log(part);
-        //console.log(primes);
-        return primes;
+      //console.log("getting prime ideas");
+      var part = Session.get("currentParticipant");
+      var primes = part.misc;
+      //console.log(part);
+      //console.log(primes);
+      return primes;
+    },
+});
+
+Template.Prompt.helpers({
+    prompt: function() {
+      var condition = Session.get("currentParticipant").condition;
+      //console.log(condition);
+      return condition.prompt.question;
     }
 });
+
+Template.IdeaBox.helpers({
+    ideas: function() {
+      return Ideas.find({participantID: Session.get("currentParticipant")._id});
+    },
+});
     
-
-
-//Template.IdeationPage.ideas = function () {
-
-  //if (Session.get("currentPrompt") !== undefined) {
-      //return Ideas.find({user: Session.get('currentUser'),
-          //question_id: Session.get("currentPrompt")['_id']});
-  //} else {
-    //return Ideas.find();
-  //}
-//};
-
-Template.IdeationPage.prompt = function () {
-    var condition = Session.get("currentParticipant").condition;
-    //console.log(condition);
-    return condition.prompt.question;
-};
-
 Template.IdeationPage.rendered = function() {
+
   $('.menu-link').bigSlide();
   //Debug statements
   //console.log("rendered");
   //console.log(Session.get('currentExp'));
   // Scroll window back to top
   window.scrollTo(0,0);
+
   // Register event listenr to click submit button when enter is pressed
   $('#nextIdea').keypress(function(e){
-  if(e.keyCode===13)
-    $('#submitIdea').click();
+    if(e.keyCode===13) {
+      console.log("enter pressed")
+      $('#submitIdea').click();
+    }
   });
+
+  
   //Add Exit study button to top right
-  $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
+  if ($('.exitStudy').length == 0) {
+      
+    $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
+  } else {
+      $('.exitStudy').removeClass('hidden');
+  }
+  //Add event handler for the exit study button
+  $('.exitStudy').click(function() {
+      console.log("exitign study")
+    logExitStudy(Session.get("currentParticipant"));
+    exitIdeation();
+  });
 
   //Insert ideas into database depnding on experimental condition
   var primes = getPrimingIdeas();
@@ -156,10 +168,10 @@ Template.IdeationPage.rendered = function() {
   //console.log(participant);
   logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
-  setTimeout('Router.goToNextPage("IdeationPage")', 900000);
+  setTimeout('exitIdeation()', 900000);
   //Setup timer for decrementing onscreen timer
   Session.set("timeLeft", 15);
-  setTimeout('decrementTimer()', 6000);
+  setTimeout('decrementTimer()', 60000);
 };
 
 Template.IdeationPage.events({
@@ -173,7 +185,7 @@ Template.IdeationPage.events({
             //}
         //});
         //Add idea to database
-        if (newIdea !== "") {
+        if (newIdea.trim() != "") {
           var participant = Session.get("currentParticipant");
           var idea = new Idea(newIdea,
               participant.user,
@@ -184,7 +196,7 @@ Template.IdeationPage.events({
           var ideaID = Ideas.insert(idea); //returns _id of Idea after it is inserted
           logIdeaSubmission(participant, ideaID); 
           // Clear the text field
-          $('#nextIdea').val("");
+          $('#nextIdea').val('');
         }
     }
 
@@ -193,14 +205,6 @@ Template.IdeationPage.events({
 
 //Placing the button in the navbar means I have to add event listeners
 //to the toplevel template
-Template.IdeaGen.events({
-    //Transition to next page in state machine
-    'click button.exitStudy': function () {
-      logEndIdeation(Session.get("currentParticipant"));
-      $('.exitStudy').addClass("hidden");
-      Router.goToNextPage("IdeationPage");
-    }
-});
 
 
 getUser = function() {
@@ -210,13 +214,24 @@ getUser = function() {
 
 };
 
+exitIdeation = function exitIdeation() {
+  /******************************************************************
+  * switch to next view to end ideation
+  ******************************************************************/
+  //Logs a partial idea if user hasn't submitted it
+  $('#submitIdea').click();
+  logEndIdeation(Session.get("currentParticipant"));
+  $('.exitStudy').addClass("hidden");
+  Router.goToNextPage("IdeationPage");
+};
+
 decrementTimer = function decrementTimer() {
   /******************************************************************
   * Decrement the onscreen timer
   ******************************************************************/
   var nextTime = Session.get("timeLeft") - 1;
   Session.set("timeLeft", nextTime);
-  var time = $('#time').text(nextTime + " mins");
+  var time = $('#time').text(nextTime);
   if (nextTime != 0) {
     setTimeout('decrementTimer()', 60000);
   }

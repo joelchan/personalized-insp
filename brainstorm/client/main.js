@@ -1,6 +1,6 @@
 Template.IdeaGen.loggedIn = function() {
   if (!Session.get("currentUser")) {
-    console.log('no user is logged in');
+    //console.log('no user is logged in');
     return false;
   } else {
     return true; 

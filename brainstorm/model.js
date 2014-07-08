@@ -60,20 +60,6 @@ Group = function(template) {
 
     this. getRandomRole = function () {
         return getRandomElement(this.template.roles);
-      ////Get Random Number
-	    //var myRand = Math.floor(Math.random()*1024);
-      //var roles = this.template.roles;
-      ////Divide range of 1024 evenly between number of condidions
-      //var interval = Math.floor(1024/roles.length); 
-      //for (var i=0; i<roles.length; i++) {
-        //if ((myRand >= interval * i) && (myRand < interval * (i + 1))) {
-          //return roles[i];
-        //} 
-      //}
-      ////If exiting without a return, then myRand was in the small rounding
-      //// error margin at the top of the range
-      //return roles[roles.length - 1];
-
     };
 
 }
@@ -170,18 +156,18 @@ Role.prototype.getRole = function(newRole) {
 }
 
 
-Idea = function (content, user, prompt, participant) {
+Idea = function (content, userID, prompt, participant) {
   /********************************************************************
   * Encapsulation of ideas recorded by the system
   *
   * @return {object} GroupTemplate object 
   ********************************************************************/
-  this.time = new Date().getTime();
+  this.time = new Date();
   this.content = content;
-  this.user = user;
+  this.userID = userID;
   this.prompt = prompt;
-  //Optional field not logged during non-experiments
-  this.participant = participant;
+  //Optional fields not logged during non-experiments
+  this.participantID = participant._id;
   this.isGamechanger = false;
 };
 
