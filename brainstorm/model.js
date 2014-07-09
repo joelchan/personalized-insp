@@ -5,6 +5,7 @@ Prompts = new Meteor.Collection("prompts");
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
 ReplayIdeas = new Meteor.Collection("replayIdeas");
+IdeasToProcess = new Meteor.Collection("ideasToProcess");
 // All system users
 Names = new Meteor.Collection("names");
 // All roles
@@ -12,7 +13,6 @@ Roles = new Meteor.Collection("roles");
 // Logs all formed groups
 Groups = new Meteor.Collection("groups");
 Clusters = new Meteor.Collection("clusters");
-IdeasToProcess = new Meteor.Collection("ideasToProcess");
 
 IdeaToProcess = function(content, participant){
   this.content = content;
