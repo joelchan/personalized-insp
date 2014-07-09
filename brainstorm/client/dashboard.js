@@ -20,9 +20,9 @@ Template.tagcloud.rendered = function(){
 				.attr("height", h)
 				.attr("width", w);
 
-	setInterval(function () {
-		//console.log('Inside autorun, Deps.active = ', Deps.active);
+	Deps.autorun(function () {
 		var cursor = Clusters.find();
+		console.log('Inside autorun, Deps.active = ', Deps.active);
 		var clusters = [];
 		cursor.forEach(function(item){
 			clusters.push(item);
@@ -74,7 +74,7 @@ Template.tagcloud.rendered = function(){
 
 		tags.exit()
 			.remove();
-	}, 5000);
+	});
 }
 
 Template.userseries.rendered = function(){

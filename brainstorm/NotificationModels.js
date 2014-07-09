@@ -1,8 +1,8 @@
 Notifications = new Meteor.Collection("notifications"); //collection for messaging from facilitators to ideators
 
 var Types = {
-	SEND_EXMAPLES: {val: 0, desc: "Send exmaples to ideators"},
-	CHANGE_PROMPT: {val: 0, desc: "Change ideator"},
+	SEND_EXMAPLES: {val: 0, title: "You've been sent examples!"},
+	CHANGE_PROMPT: {val: 1, title: "You're prompt has been changed!"},
 }
 
 Object.freeze(Types);
@@ -13,15 +13,16 @@ Notification = function(sender, recipient){
 	this.recipient = recipient; //imagine both will be some kind of id
 	this.time = new Date();
 	this.type;
+	this.handled = false;
 }
 
 /*Directions = new Notification("ideagens", "all");
 Directions.content = */
 
-sendExamplesNotify = function(sender, recipient, exmaples){
+sendExamplesNotify = function(sender, recipient, examples){
 	notificaiton = new Notification(sender, recipient);
 	notificaiton.type = Types.SEND_EXMAPLES;
-	notificaiton.exmaples = exmaples;
+	notificaiton.examples = examples;
 	Notifications.insert(notificaiton);
 }
 

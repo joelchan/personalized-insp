@@ -125,10 +125,56 @@ Template.IdeaBox.helpers({
       return Ideas.find({participantID: Session.get("currentParticipant")._id});
     },
 });
+
+Template.NotificationDrawer.helpers({
+  notifications : function(){
+    //console.log(Notifications.find());
+    return Notifications.find();
+  }
+});
+
+var timeDep = new Deps.Dependency();
+getTime = function(t){
+  var time = moment(t);
+  time = time.fromNow();
+  return time;
+}
+
+Template.NotifyItem.helpers({
+  title : function(){
+    return this.type.title;
+  }, 
+
+  isExamples : function(){
+    if(this.type.val === 0)
+      return true;
+    else
+      return false;
+  },
+
+  examples : function(){
+    return this.examples;
+  },
+
+  time : function(){
+    timeDep.depend();
+    return getTime(this.time);
+  }
+});
+
+Template.SubmitIdeas.helpers({
+  number : function(){
+    return Notifications.find({handled: false}).count(); //return count unhandled 
+  }
+});
+
+Template.NotifyItem.rendered = function(){
+  timeInterval = Meteor.setInterval(function(){
+    timeDep.changed();
+  }, 60000);
+}
     
 Template.IdeationPage.rendered = function() {
-
-  $('.menu-link').bigSlide();
   //Debug statements
   //console.log("rendered");
   //console.log(Session.get('currentExp'));
@@ -174,7 +220,21 @@ Template.IdeationPage.rendered = function() {
   setTimeout('decrementTimer()', 60000);
 };
 
-Template.IdeationPage.events({
+Template.NotificationDrawer.rendered = function(){
+  $('.menu-link').bigSlide();
+}
+
+Template.NotifyItem.events({
+  'click a' : function(){
+    var $notification = $(event.target).parents('.unhandled');
+    $notification.removeClass("unhandled");
+
+    var id = $notification.find('.panel-collapse').attr('id');
+    Notifications.update({_id: id}, {$set: {handled: true}});
+  }
+});
+
+Template.SubmitIdeas.events({
     'click button.submitIdea': function () {
         //console.log("event submitted");
         var newIdea = $('#nextIdea').val();
@@ -198,8 +258,11 @@ Template.IdeationPage.events({
           // Clear the text field
           $('#nextIdea').val('');
         }
-    }
+    },
 
+    /*'click #notify-bulb' : function(){
+      //$('#ideation-pane').toggleClass('col-md-10');
+    }*/
 });
 
 

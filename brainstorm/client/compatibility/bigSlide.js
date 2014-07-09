@@ -7,10 +7,10 @@
 
   $.fn.bigSlide = function(options) {
     var settings = $.extend({
-      'menu': ('#menu'),
+      'menu': ('#notifications'),
       'push': ('.push'),
-      'side': 'left',
-      'menuWidth': '15.625em',
+      'side': 'right',
+      'menuWidth': '30em',
       'speed': '300'
     }, options);
 

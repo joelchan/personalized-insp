@@ -121,12 +121,79 @@
   -webkit-transition: color 0.5s ease;
   -moz-transition: color 0.5s ease;
   -o-transition: color 0.5s ease;
-  padding: 25px;
+  padding-top: 20px;
+  padding-left: 15px;
   color: #A1A1A1;
 }
 
 #notify-bulb:hover{
   color: #666666;
+}
+
+.badge{
+    background: #f0ad4e;
+    border: 1px solid #eea236;
+    width: auto;
+    height: auto;
+    margin: 0;
+    border-radius: 50%;
+    position:absolute;
+    top: 20px;
+    left: 52px;
+}
+
+#notifications{
+  -webkit-box-shadow: -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
+  -moz-box-shadow:    -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
+  box-shadow:         -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
+  padding-top: 51px;
+  overflow: auto;
+  /*font-size: 10px;*/
+  z-index: 1;
+  /*background-color:#A1A1A1;*/
+}
+/*#notifications>ul{
+  list-style: none;
+  list-style-type: none;
+  padding-left: 5px;
+}*/
+
+#notifications .notification-item{
+  border-radius: 0px;
+  padding-bottom: 0px !important;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+.notification-item .panel-heading{
+  color: #666666;
+  background-image: none !important;
+  background-color: white; 
+  transition: background-color 0.75s ease;
+  -webkit-transition: background-color 0.75s ease;
+  -moz-transition: background-color 0.75s ease;
+  -o-transition: background-color 0.75s ease;
+}
+
+.notification-item.unhandled .panel-heading{
+  background-color: #F0C890;
+}
+
+#notifications .time-label{
+  font-size: 10px;
+}
+
+.notification-item .panel-body{
+  -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.1);
+  -moz-box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.1);
+  box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.1);
+}
+
+#notifications .idea{
+  border: 1px solid #ddd;
+  padding: 5px;
+  margin-bottom: 5px;
 }
 
 .affix {

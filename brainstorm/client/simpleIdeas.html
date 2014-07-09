@@ -4,6 +4,61 @@
   </div>
 </template>
 
+<template name="NotificationDrawer">
+  <nav id="notifications" class="panel" role="navigation">
+    <div class="panel-group" id="accordion">
+      <div class="panel panel-default notification-item">
+        <div class="panel-heading">
+          <h5 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#directions">
+              Directions
+            </a>
+          </h5>
+        </div>
+        <div id="directions" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
+            <ol>
+              <li>There are no bad Ideas. Defer judgement on your ideas.</li>
+              <li>Wild ideas and building off of old ideas are okay</li>
+              <li>Quantity of ideas is prioritized</li>
+              <li>Combinations of ideas count as new ideas.</li>
+            </ol>
+            <p>Keep in mind if at any point you must exit the study early, you can click the button in the top right corner of the screen. You will be compensated on a pro-rated basis according to your participation time.</p>
+          </div>
+        </div>
+      </div>
+      {{#each notifications}}
+        {{> NotifyItem}}
+      {{/each}}
+    </div>
+  </nav>
+</template>
+
+<template name="NotifyItem">
+  <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#{{_id}}">
+          {{title}}
+        </a>
+      </h4>
+      <label class="time-label">{{time}}</label>
+    </div>
+    <div id="{{_id}}" class="panel-collapse collapse">
+      <div class="panel-body">
+        {{#if isExamples}}
+          {{#each examples}}
+            <div id={{this._id}} class="idea">{{this.content}}</div>
+          {{/each}}
+        {{else}}
+          {{prompt}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</template>
+
 <template name="Directions">
   <div class="row directions">
     <h2>Directions:</h2>
@@ -56,7 +111,7 @@
   </div>
 </template>
 
-<template name="SubmitIdeas">
+<!--<template name="SubmitIdeas">
   <div class="row">
     <div class="col-md-10">
         <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
@@ -67,18 +122,30 @@ complete idea)"></textarea>
         <button id="submitIdea" class="submitIdea btn-default btn-primary"> Enter Idea </button>
     </div>
   </div>
+</template>-->
+
+<template name="SubmitIdeas">
+  <div class="row">
+    <div class="col-md-9">
+        <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
+(press the &lt;Enter&gt; key or the &quot;Enter Idea&quot; button to the right after each 
+complete idea)"></textarea>
+    </div>
+    <div class="col-md-2">
+        <button id="submitIdea" class="submitIdea btn-default btn-primary"> Enter Idea </button>
+    </div>
+    <div class="col-md-1">
+      <a href="#notifications" class="menu-link">
+        <i id="notify-bulb" class="fa fa-lightbulb-o fa-5x"></i>
+        {{#if number}}
+          <span class="badge">{{number}}</span>
+        {{/if}}
+      </a>
+    </div>
+  </div>
 </template>
 
-<template name="IdeationPage">
-  <nav id="menu" class="panel" role="navigation">
-    <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">The Ballad of El Goodo</a></li>
-        <li><a href="#">Thirteen</a></li>
-        <li><a href="#">September Gurls</a></li>
-        <li><a href="#">What's Going Ahn</a></li>
-    </ul>
-  </nav>
+<!--<template name="IdeationPage">
   <div class="row">
     <div class="col-md-3">
       <div class="sidebar">
@@ -95,7 +162,33 @@ complete idea)"></textarea>
         <div class="row">
           {{> Priming }}
         </div>
-      </div> <!-- close header -->
+      </div> <!- - close header - ->
+      <div class="row">
+        {{> IdeaBox}}
+      </div>
+  
+      <div class="footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
+        {{> SubmitIdeas }}
+      </div>
+    </div>
+  </div>
+</template>-->
+
+<template name="IdeationPage">
+  <div class="sidebar">
+        {{> NotificationDrawer}}
+  </div>
+  <div class="row">
+    <div id="ideation-pane" class="col-md-10 col-md-offset-1">
+      <div class="header" data-spy="affix" data-offset-top="50"> 
+        <div class="row">
+          {{> Prompt}}
+        </div>
+        <div class="row">
+          {{> Priming }}
+        </div>
+      </div> 
+      <!-- close header -->
       <div class="row">
         {{> IdeaBox}}
       </div>
