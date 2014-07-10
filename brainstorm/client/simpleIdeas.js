@@ -127,19 +127,15 @@ Template.IdeaBox.helpers({
 });
 
 
-
-
+/********************************************************************
+* NotifyItem Template
+********************************************************************/
 var timeDep = new Deps.Dependency();
 getTime = function(t){
   var time = moment(t);
   time = time.fromNow();
   return time;
 }
-
-
-/********************************************************************
-* NotifyItem Template
-********************************************************************/
 //Rendered callback
 Template.NotifyItem.rendered = function(){
   timeInterval = Meteor.setInterval(function(){
@@ -231,17 +227,35 @@ Template.IdeationPage.events({
 /********************************************************************
 * NotificationDrawer Template
 ********************************************************************/
-var isTyping; //boolean switch trakcing whether user is typing
+var newNotify = null; //stores a new notification
+
+//defines isTyping as object that executes function when value is changed
+(function() {
+    var val = true;
+    
+    Object.defineProperty(window, "isTyping", {
+        get: function() {
+            return val;
+        },
+        set: function(v) {
+            val = !!v;
+            if(newNotify !== null && val === false){
+              alert(newNotify);
+              newNotify = null;
+              val = true;
+            }
+        }
+    });
+})();
+
 //Rendered Callback
 Template.NotificationDrawer.rendered = function(){
   $('.menu-link').bigSlide();
 
-  isTyping = true; //remains true until user starts working
-  Deps.autorun(function(){
-    Notifications.find({});
-    console.log("notification recieved");
-    if(!isTyping)
-      console.log("new notificaiton");
+  Notifications.find({handled: false}).observeChanges({
+    added : function(doc){
+      newNotify = Notifications.findOne({_id: doc}); //holds new notification
+    }
   });
 }
 
@@ -316,11 +330,9 @@ Template.SubmitIdeas.events({
 
     //waits 3 seconds after user stops typing to change typing flag to false
     'keyup textarea' : function(){;
-      isTyping = true;
       window.clearTimeout(timer);
       timer = window.setTimeout(function(){
         isTyping = false;
-        console.log("is not longer working");
       }, 3000);
     }
 });
