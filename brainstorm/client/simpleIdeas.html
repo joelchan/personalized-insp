@@ -7,11 +7,11 @@
 <template name="NotificationDrawer">
   <nav id="notifications" class="panel" role="navigation">
     <div class="panel-group" id="accordion">
-      <div class="panel panel-default notification-item">
+      <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
         <div class="panel-heading">
           <h5 class="panel-title">
             <a data-toggle="collapse" data-parent="#accordion" href="#directions">
-              Directions
+              <i class="fa fa-info-circle"></i> Directions
             </a>
           </h5>
         </div>
@@ -29,7 +29,9 @@
         </div>
       </div>
       {{#each notifications}}
-        {{> NotifyItem}}
+        {{#unless directions}}
+          {{> NotifyItem}}
+        {{/unless}}
       {{/each}}
     </div>
   </nav>
@@ -40,19 +42,21 @@
     <div class="panel-heading">
       <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#{{_id}}">
-          {{title}}
+          <i class="fa fa-chevron-circle-right"></i> {{title}}
+          <label class="time-label">{{time}}</label>
         </a>
       </h4>
-      <label class="time-label">{{time}}</label>
     </div>
     <div id="{{_id}}" class="panel-collapse collapse">
       <div class="panel-body">
         {{#if isExamples}}
+          <h5 class="notify-label">Consider these ideas: </h5>
           {{#each examples}}
-            <div id={{this._id}} class="idea">{{this.content}}</div>
+            <div id={{this._id}} class="idea"><i class="fa fa-lightbulb-o"></i> {{this.content}} </div>
           {{/each}}
         {{else}}
-          {{prompt}}
+          <h5 class="notify-label">Consider the following: </h5>
+          <div class="notify-prompt"><i class="fa fa-question-circle"></i> {{prompt}} </div>
         {{/if}}
       </div>
     </div>
@@ -178,6 +182,13 @@ complete idea)"></textarea>
   <div class="sidebar">
         {{> NotificationDrawer}}
   </div>
+
+  <div id="notifications-handle">
+    <a href="#notifications" class="menu-link">
+      <i id="" class="fa fa-lightbulb-o fa-2x"></i>
+    </a>
+  </div>
+
   <div class="row">
     <div id="ideation-pane" class="col-md-10 col-md-offset-1">
       <div class="header" data-spy="affix" data-offset-top="50"> 

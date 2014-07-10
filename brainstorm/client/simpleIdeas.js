@@ -126,12 +126,8 @@ Template.IdeaBox.helpers({
     },
 });
 
-Template.NotificationDrawer.helpers({
-  notifications : function(){
-    //console.log(Notifications.find());
-    return Notifications.find();
-  }
-});
+
+
 
 var timeDep = new Deps.Dependency();
 getTime = function(t){
@@ -140,6 +136,18 @@ getTime = function(t){
   return time;
 }
 
+
+/********************************************************************
+* NotifyItem Template
+********************************************************************/
+//Rendered callback
+Template.NotifyItem.rendered = function(){
+  timeInterval = Meteor.setInterval(function(){
+    timeDep.changed();
+  }, 60000);
+}
+
+//Helpers
 Template.NotifyItem.helpers({
   title : function(){
     return this.type.title;
@@ -161,20 +169,12 @@ Template.NotifyItem.helpers({
     return getTime(this.time);
   }
 });
-
-Template.SubmitIdeas.helpers({
-  number : function(){
-    return Notifications.find({handled: false}).count(); //return count unhandled 
-  }
-});
-
-Template.NotifyItem.rendered = function(){
-  timeInterval = Meteor.setInterval(function(){
-    timeDep.changed();
-  }, 60000);
-}
-    
+/********************************************************************
+* IdeationPage Template
+********************************************************************/
+//Rendered Callback    
 Template.IdeationPage.rendered = function() {
+  $('.menu-link').bigSlide();
   //Debug statements
   //console.log("rendered");
   //console.log(Session.get('currentExp'));
@@ -220,12 +220,51 @@ Template.IdeationPage.rendered = function() {
   setTimeout('decrementTimer()', 60000);
 };
 
+
+//Events
+Template.IdeationPage.events({
+  'click #notifications-handle' : function(){
+    $('#notifications-handle').toggleClass('moved');
+  }
+});
+
+/********************************************************************
+* NotificationDrawer Template
+********************************************************************/
+var isTyping; //boolean switch trakcing whether user is typing
+//Rendered Callback
 Template.NotificationDrawer.rendered = function(){
   $('.menu-link').bigSlide();
+
+  isTyping = true; //remains true until user starts working
+  Deps.autorun(function(){
+    Notifications.find({});
+    console.log("notification recieved");
+    if(!isTyping)
+      console.log("new notificaiton");
+  });
 }
 
-Template.NotifyItem.events({
+//Helpers
+Template.NotificationDrawer.helpers({
+  notifications : function(){
+    return Notifications.find();
+  },
+  directions : function(){
+    return this.type.val === -1;
+  }
+});
+
+//Events
+Template.NotificationDrawer.events({
   'click a' : function(){
+    var $icon = $(event.target).children('i');
+    if($icon.hasClass('fa-chevron-circle-right')){
+      $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
+    } else if($icon.hasClass('fa-chevron-circle-down')){
+      $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
+    }
+
     var $notification = $(event.target).parents('.unhandled');
     $notification.removeClass("unhandled");
 
@@ -234,6 +273,17 @@ Template.NotifyItem.events({
   }
 });
 
+/********************************************************************
+* SubmitIdeas Template
+********************************************************************/
+//Helpers
+Template.SubmitIdeas.helpers({
+  number : function(){
+    return Notifications.find({handled: false}).count(); //return count unhandled 
+  }
+});
+//Events
+var timer;
 Template.SubmitIdeas.events({
     'click button.submitIdea': function () {
         //console.log("event submitted");
@@ -260,10 +310,21 @@ Template.SubmitIdeas.events({
         }
     },
 
-    /*'click #notify-bulb' : function(){
-      //$('#ideation-pane').toggleClass('col-md-10');
-    }*/
+    'click #notify-bulb' : function(){
+      $('#notifications-handle').toggleClass('moved');
+    },
+
+    //waits 3 seconds after user stops typing to change typing flag to false
+    'keyup textarea' : function(){;
+      isTyping = true;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(function(){
+        isTyping = false;
+        console.log("is not longer working");
+      }, 3000);
+    }
 });
+
 
 
 //Placing the button in the navbar means I have to add event listeners

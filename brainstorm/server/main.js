@@ -133,79 +133,10 @@ Meteor.startup(function() {
     if(Clusters.findOne({_id: "-1"})===undefined){
       Clusters.insert(root);
     }
-});
 
-
-/*******************************************************************
-* Publish Meteor Collections
-********************************************************************/
-Meteor.startup(function(){
-  /*****************************************************************
-  * Publish models.js collections
-  ******************************************************************/
-  Meteor.publish("ideas", function(){
-    return Ideas.find();
-  });
-  Meteor.publish("replayIdeas", function(){
-    return ReplayIdeas.find();
-  });
-  Meteor.publish("ideasToProcess", function(){
-    return IdeasToProcess.find();
-  });
-  Meteor.publish("clusters", function(){
-    return Clusters.find();
-  });
-  Meteor.publish("prompts", function(){
-    return Prompts.find();
-  });
-  Meteor.publish("names", function(){
-    return Names.find();
-  });
-  Meteor.publish("roles", function(){
-    return Roles.find();
-  });
-  Meteor.publish("groups", function(){
-    return Groups.find();
-  });
-  Meteor.publish("userTypes", function(){
-    return UserTypes.find();
-  });
-  /*****************************************************************
-  * Publish experimentModels.js collections
-  ******************************************************************/
-  Meteor.publish("experiments", function(){
-    return Experiments.find();
-  });
-  Meteor.publish("consents", function(){
-    return Constents.find();
-  });
-  Meteor.publish("participants", function(){
-    return Participants.find();
-  });
-  Meteor.publish("SurveyResponses", function(){
-    return SurveyResponses.find();
-  });
-  /*****************************************************************
-  * Publish contentModels.js collections
-  ******************************************************************/
-  Meteor.publish("screens", function(){
-    return Screens.find();
-  });
-  Meteor.publish("textBlocks", function(){
-    return TextBlocks.find();
-  });
-  /*****************************************************************
-  * Publish loggingModels.js collection
-  ******************************************************************/
-  Meteor.publish("events", function(){
-    return events.find();
-  });
-  /*****************************************************************
-  * Publish notificationModels.js collection
-  ******************************************************************/
-  Meteor.publish("notifications", function(){
-    return Notifications.find();
-  });
+    if(Notifications.findOne({_id: "directions"})===undefined){
+      Notifications.insert(directions);
+    }
 });
 
 //Meteor.startup(function () {

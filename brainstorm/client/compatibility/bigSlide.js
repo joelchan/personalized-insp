@@ -10,7 +10,7 @@
       'menu': ('#notifications'),
       'push': ('.push'),
       'side': 'right',
-      'menuWidth': '30em',
+      'menuWidth': '35%',
       'speed': '300'
     }, options);
 
