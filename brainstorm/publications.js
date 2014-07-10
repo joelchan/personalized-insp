@@ -45,7 +45,7 @@ Meteor.startup(function(){
 			return Experiments.find();
 		});
 		Meteor.publish("consents", function(){
-			return Constents.find();
+			return Consents.find();
 		});
 		Meteor.publish("participants", function(){
 			return Participants.find();
@@ -66,13 +66,13 @@ Meteor.startup(function(){
 		* Publish loggingModels.js collection
 		******************************************************************/
 		Meteor.publish("events", function(){
-			return events.find();
+			return Events.find();
 		});
 		/*****************************************************************
 		* Publish notificationModels.js collection
 		******************************************************************/
 		Meteor.publish("notifications", function(){
-			return Notificationss.find();
+			return Notifications.find();
 		});				
 	}
 });
