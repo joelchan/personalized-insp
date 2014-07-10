@@ -29,6 +29,8 @@ Experiment = function () {
   this.groups = {};
   //Tracks all participants in the experiment
   this.participants = [];
+  //Optional set of users not allowed to participate
+  this.excludeUsers = [];
 
 };
 
@@ -58,7 +60,7 @@ Experiment.prototype.setNumGroups = function(num) {
   }
 };
 
-Experiment.prototype.getRandomCondition = function() {
+getRandomCondition = function(exp) {
     /****************************************************************
     * Create an array with length queal to number of slots reamining
     * in the experiment and the value of the slot equal to the 
@@ -66,35 +68,35 @@ Experiment.prototype.getRandomCondition = function() {
     ****************************************************************/
     //Create an array with length = number of slot
     var slots = [];
-    for (var i=0; i<this.conditions.length; i++) {
+    for (var i=0; i<exp.conditions.length; i++) {
       //For now I'm assuming a groupsize of 1
       //Determin number of participants expected - number already assigned
-      var numPart = this.conditions[i].groupNum -
-          Participants.find({experimentID: this._id, 
-              condition: this.conditions[i]}).count();
+      var numPart = exp.conditions[i].groupNum -
+          Participants.find({experimentID: exp._id, 
+              condition: exp.conditions[i]}).count();
       for (var j=0; j<numPart; j++) {
           slots.push(i);
       }
     }
     //Randomly assign to any condition if experiment is full
     if (slots.length == 0) {
-        return getRandomElement(this.conditions);
+        return getRandomElement(exp.conditions);
     }
     var condIndex = getRandomElement(slots);
-    return this.conditions[condIndex];
+    return exp.conditions[condIndex];
 };
 
-Experiment.prototype.getGroup = function(condition) {
+getExpGroup = function(exp, condition) {
     var openGroups = [];
     var numSlots = 0;
     //Find all groups with open slots
-    for (var i=0; i<this.groups[condition.id].length; i++) {
+    for (var i=0; i<exp.groups[condition.id].length; i++) {
         var group = $.extend(new Group(), 
-            this.groups[condition.id][i]
+            exp.groups[condition.id][i]
             );
         var groupOpenSlots = group.numSlots();
         if (groupOpenSlots > 0) {
-            openGroups.push(this.groups[condition.id][i]);
+            openGroups.push(exp.groups[condition.id][i]);
             numSlots += groupOpenSlots;
         }
     }
@@ -104,15 +106,48 @@ Experiment.prototype.getGroup = function(condition) {
     return $.extend(true, new Group(), result);
 };
 
-Experiment.prototype.addParticipant = function(user) {
-  var cond = this.getRandomCondition();
-  var group = this.getGroup(cond);
+addExperimentParticipant = function (exp, user) {
+  //Check for duplicate users in list of current participants
+  for (var i=0; i<exp.participants.length; i++) {
+      if (exp.participants[i].userID == user._id) {
+          console.log("repeat participant");
+          return exp.participants[i]
+      }
+  }
+  //Create new participant if no duplicates found
+  var cond = getRandomCondition(exp);
+  var group = getExpGroup(exp, cond);
   var role = group.addUser(user);
-  var part = new Participant(this, user, cond, group, role);
+  var part = new Participant(exp, user, cond, group, role);
   part._id = Participants.insert(part);
-  this.participants.push(part);
+  exp.participants.push(part);
+  Experiments.update({_id: exp._id}, {$push: {participants: part}});
+  console.log("# participants: " + exp.participants.length)
   return part;
 }
+
+canParticipate = function (exp, userName) {
+  if (exp.excludeUsers === undefined) {
+    return true;
+  }
+  //checks if user is on list of prohibitied users
+  for (var i=0; i<exp.excludeUsers.length; i++) {
+    if (exp.excludeUsers[i] == userName) {
+        return false
+    }
+  }
+  //checks if user is on list of current participants marked as finished
+  for (var i=0; i<exp.participants.length; i++) {
+      if (exp.participants[i].userName == userName) {
+          if (exp.participants[i].isFinished) {
+            console.log("repeat participant has finished already");
+            return false;
+          }
+      }
+  }
+  return true;
+}
+
 
 ExpCondition = function(id, prompt, desc, groupNum) {
   //Unique ID (with respect to the experiment)
@@ -139,13 +174,16 @@ Participant = function(exp, user, cond, group, role) {
     * Initialize participant and perform complete random assignment
     ****************************************************************/
     this.experimentID = exp._id;
-    this.user = user;
+    this.userID = user._id;
+    this.userName = user.name;
     // Assign Participant to condition
-    this.condition = exp.getRandomCondition();
+    this.condition = cond;
     this.group = group._id;
     this.role = Roles.findOne(role.role);
-    this.verifyCode = this.user._id.hashCode();
+    this.verifyCode = this.userID.hashCode();
     //console.log("Participant verify code is: " + this.verifyCode);
+    //Participants have not finished by default
+    this.hasFinished = false;
 };
 
 Consent = function (participant) {
@@ -156,7 +194,7 @@ Consent = function (participant) {
   ********************************************************************/
   this.participantID = participant._id;
   this.experimentID = participant.experimentID;
-  this.datetime = new Date().getTime();
+  this.datetime = new Date();
 };
 
 SurveyResponse = function(responses, participant) {

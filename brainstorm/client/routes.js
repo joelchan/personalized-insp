@@ -93,6 +93,10 @@ Router.map(function () {
     path: 'Dashboard',
     template: 'Dashboard'
   });
+  this.route('NoParticipation', {
+    path: 'participation/', 
+    template: 'NoParticipationPage',
+  });
 });
 
 //Sets layout for all routes to IdeaGen template

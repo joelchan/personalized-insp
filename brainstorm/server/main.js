@@ -87,6 +87,29 @@ Meteor.startup(function() {
       Experiments.insert(exp);
       //console.log(Experiments.find().fetch());
     }
+    if (Experiments.find().count() == 2) {
+      var question = "Many people have old iPods or MP3 players that they no longer use. In the next 15 minutes, please brainstorm as many uses as you can for old iPods/MP3 players. Assume that the devices' batteries no longer work, though they can be powered via external power sources. Also be aware that devices may <em>not</em> have displays. Be as specific as possible in your descriptions."
+      var exp = new Experiment();
+      exp.description = "Replicating the effect of priming with common vs rare ideas in individual brainstorming with revised interface"; 
+      var cond1 = new ExpCondition(1,
+          question,
+          "individual brainstorming primed with rare ideas",
+          30
+          );
+      cond1.groupTemplate.addRole(
+          Roles.findOne({'title': "Ideator"}), 1)
+      var cond2 = new ExpCondition(2, 
+          question,
+          "individual brainstorming primed with common ideas",
+          30
+          );
+      cond2.groupTemplate.addRole(
+          Roles.findOne({'title': "Ideator"}), 1)
+      exp.conditions = [cond1, cond2];
+      //Each condition has 30 participants
+      exp.setNumGroups(30);
+      Experiments.insert(exp);
+    }
 });
 
 

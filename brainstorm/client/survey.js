@@ -73,6 +73,18 @@ getResponse = function() {
   answer = $("select option:selected").val();
   checkResponse(answer)
   responses.push(new QuestionResponse("How Frequently do you brainstorm", answer));
+  answer = $("input[name='ideaRecall']:checked").val();
+  checkResponse(answer)
+  responses.push(new QuestionResponse("Did you find any of the suggested ideas helpful", answer));
+  answer = $("#exampleIdeaSurvey").val();
+  checkResponse(answer)
+  responses.push(new QuestionResponse("What was one of the example ideas given", answer));
+  answer = $("#activityLikeSurvey").val();
+  responses.push(new QuestionResponse("Is there anything about the activity that you found particularly challenging", answer));
+  answer = $("#intLikeSurvey").val();
+  responses.push(new QuestionResponse("Is there anything about the brainstorming interface that you liked", answer));
+  answer = $("#intDislikeSurvey").val();
+  responses.push(new QuestionResponse("Is there anything about the brainstorming interface that you didn't like", answer));
   var part = Session.get("currentParticipant");
   return new SurveyResponse(responses, part);
 }
