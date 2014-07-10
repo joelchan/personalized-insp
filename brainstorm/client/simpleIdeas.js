@@ -229,7 +229,8 @@ Template.IdeationPage.events({
 ********************************************************************/
 var newNotify = null; //stores a new notification
 
-//defines isTyping as object that executes function when value is changed
+//defines isTyping as object that executes function when value is 
+//changed to false and there is a new notfication waiting
 (function() {
     var val = true;
     
@@ -240,7 +241,7 @@ var newNotify = null; //stores a new notification
         set: function(v) {
             val = !!v;
             if(newNotify !== null && val === false){
-              alert(newNotify);
+              alert(newNotify); //or some other function
               newNotify = null;
               val = true;
             }
@@ -328,7 +329,7 @@ Template.SubmitIdeas.events({
       $('#notifications-handle').toggleClass('moved');
     },
 
-    //waits 3 seconds after user stops typing to change typing flag to false
+    //waits 3 seconds after user stops typing to change isTyping flag to false
     'keyup textarea' : function(){;
       window.clearTimeout(timer);
       timer = window.setTimeout(function(){
