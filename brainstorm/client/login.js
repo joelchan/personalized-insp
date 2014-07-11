@@ -3,13 +3,13 @@
  * Convenience function for logging in users
  * *****************************************************************/
 loginUser = function loginUser(userName) {
-  var matches = Names.find({name: userName});
+  var matches = MyUsers.find({name: userName});
   if (matches.count() > 0) {
     var myUser = matches.fetch()[0]
     Session.set("currentUser", myUser)
   } else {
     myUser = new User(userName, "Experiment Participant");
-    myUser._id = Names.insert(myUser);
+    myUser._id = MyUsers.insert(myUser);
     Session.set("currentUser", myUser);
   }
   return myUser
@@ -30,7 +30,7 @@ Template.LoginPage.events({
         var userName = $('input#name').val().trim();
         // Quick hack to login to admin interface
         if (userName == "ProtoAdmin") {
-            loginUser(Names.findOne({name: "ProtoAdmin"}));
+            loginUser(MyUsers.findOne({name: "ProtoAdmin"}));
             console.log("logged in admin User");
             Router.go("ExpAdminPage");
         } else {

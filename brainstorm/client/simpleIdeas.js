@@ -136,6 +136,7 @@ getTime = function(t){
   time = time.fromNow();
   return time;
 }
+
 //Rendered callback
 Template.NotifyItem.rendered = function(){
   timeInterval = Meteor.setInterval(function(){
@@ -215,7 +216,6 @@ Template.IdeationPage.rendered = function() {
   Session.set("timeLeft", 15);
   setTimeout('decrementTimer()', 60000);
 };
-
 
 //Events
 Template.IdeationPage.events({
@@ -338,10 +338,6 @@ Template.SubmitIdeas.events({
     }
 });
 
-
-
-//Placing the button in the navbar means I have to add event listeners
-//to the toplevel template
 
 
 getUser = function() {

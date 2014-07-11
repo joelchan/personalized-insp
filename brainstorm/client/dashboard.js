@@ -20,13 +20,10 @@ Template.tagcloud.rendered = function(){
 				.attr("height", h)
 				.attr("width", w);
 
+	var timeDep = new Deps.Dependency();
 	Deps.autorun(function () {
-		var cursor = Clusters.find();
-		console.log('Inside autorun, Deps.active = ', Deps.active);
-		var clusters = [];
-		cursor.forEach(function(item){
-			clusters.push(item);
-		});
+		timeDep.depend();
+		var clusters = Clusters.find.fetch();
 
     	var xScale = d3.scale.linear()
 						.domain([d3.min(clusters, function(d){
@@ -75,6 +72,11 @@ Template.tagcloud.rendered = function(){
 		tags.exit()
 			.remove();
 	});
+
+	timeDep.changed(); //run once at beginning
+	setInterval(function(){
+		timeDep.changed();
+	}, 5000);
 }
 
 Template.userseries.rendered = function(){
@@ -88,7 +90,8 @@ Template.userseries.rendered = function(){
 	var pad = 20;
 
 	Deps.autorun(function() {
-		data = Ideas.find({"participantID": part_ID}).fetch();
+		data = Ideas.find({"participantID": part_ID}).fetch(); //from data context of template
+		//^change data to point towards events collection
 		var now = new Date(Date.now());
 		var minAgo = new Date(now - 15*MS_PER_MINUTE);
 		var x = d3.time.scale()

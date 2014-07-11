@@ -7,7 +7,7 @@ Ideas = new Meteor.Collection("ideas");
 ReplayIdeas = new Meteor.Collection("replayIdeas");
 IdeasToProcess = new Meteor.Collection("ideasToProcess");
 // All system users
-Names = new Meteor.Collection("names");
+MyUsers = new Meteor.Collection("myUsers");
 // All roles
 Roles = new Meteor.Collection("roles");
 // Logs all formed groups

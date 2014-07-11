@@ -17,7 +17,7 @@ Meteor.startup(function(){
 		Meteor.subscribe("ideasToProcess");
 		Meteor.subscribe("clusters");
 		Meteor.subscribe("prompts");
-		Meteor.subscribe("names");
+		Meteor.subscribe("myUsers");
 		Meteor.subscribe("roles");
 		Meteor.subscribe("groups");
 		Meteor.subscribe("userTypes");

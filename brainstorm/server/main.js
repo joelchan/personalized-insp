@@ -118,16 +118,16 @@ Meteor.startup(function() {
     * Ensure basic admin user is in the database
     ****************************************************************/
     var adminName = "ProtoAdmin";
-    var adminUsers = Names.find({name: adminName});
+    var adminUsers = MyUsers.find({name: adminName});
     if (adminUsers.count() > 0) {
       if (adminUsers.count() > 1) {
-        Names.remove({name: adminName});
+        MyUsers.remove({name: adminName});
         var admin = new User("ProtoAdmin", "admin");
-        Names.insert(admin);
+        MyUsers.insert(admin);
       }
     } else {
       var admin = new User("ProtoAdmin", "admin");
-      Names.insert(admin);
+      MyUsers.insert(admin);
     }
 
     if(Clusters.findOne({_id: "-1"})===undefined){
