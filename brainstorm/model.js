@@ -156,7 +156,7 @@ Role.prototype.getRole = function(newRole) {
 }
 
 
-Idea = function (content, userID, prompt, participant) {
+Idea = function (content, user, prompt, participant) {
   /********************************************************************
   * Encapsulation of ideas recorded by the system
   *
@@ -164,7 +164,8 @@ Idea = function (content, userID, prompt, participant) {
   ********************************************************************/
   this.time = new Date();
   this.content = content;
-  this.userID = userID;
+  this.userID = user._id;
+  this.userName = user.name;
   this.prompt = prompt;
   //Optional fields not logged during non-experiments
   this.participantID = participant._id;

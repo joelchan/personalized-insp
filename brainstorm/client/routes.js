@@ -91,7 +91,10 @@ Router.map(function () {
   });
   this.route('Dashboard', {
     path: 'Dashboard',
-    template: 'Dashboard'
+    template: 'Dashboard',
+    waitOn: function() {
+        return Meteor.subscribe('events');
+    }
   });
   this.route('NoParticipation', {
     path: 'participation/', 

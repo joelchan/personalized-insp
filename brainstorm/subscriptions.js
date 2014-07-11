@@ -36,7 +36,7 @@ Meteor.startup(function(){
 		/************************************************************
 		* Subscribe to loggingModels.js collection
 		************************************************************/
-		Meteor.subscribe("events");
+		//Meteor.subscribe("events");
 		/************************************************************
 		* Subscribe to notificationModels.js collection
 		************************************************************/

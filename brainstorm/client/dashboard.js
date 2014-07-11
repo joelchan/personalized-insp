@@ -2,7 +2,6 @@ Session.set("partFilters", []);
 Session.set("selectedParts", []);
 Session.set("selectedIdeas", []);
 MS_PER_MINUTE = 60000;
-start = Date.now;
 
 Template.Dashboard.rendered = function(){
 	Session.set("currentPrompt", "Alternate uses for an iPod");
@@ -23,7 +22,7 @@ Template.tagcloud.rendered = function(){
 	var timeDep = new Deps.Dependency();
 	Deps.autorun(function () {
 		timeDep.depend();
-		var clusters = Clusters.find.fetch();
+		var clusters = Clusters.find().fetch();
 
     	var xScale = d3.scale.linear()
 						.domain([d3.min(clusters, function(d){
@@ -80,8 +79,11 @@ Template.tagcloud.rendered = function(){
 }
 
 Template.userseries.rendered = function(){
+	//var start = Date.now;
+	//console.log(this);
 	var self = this;
-	var part_ID = self.data._id;
+	var userID = self.data._id;
+	//var part_ID = self.data.
 	var node = self.find(".series");
 	var svg = d3.select(node).append("svg");
 
@@ -89,33 +91,63 @@ Template.userseries.rendered = function(){
 	var w = 546;
 	var pad = 20;
 
-	Deps.autorun(function() {
-		data = Ideas.find({"participantID": part_ID}).fetch(); //from data context of template
-		//^change data to point towards events collection
-		var now = new Date(Date.now());
-		var minAgo = new Date(now - 15*MS_PER_MINUTE);
-		var x = d3.time.scale()
-						.domain([minAgo, now])
-						.nice(d3.time.minute)
-						.range([w-pad, pad]);
+	var data = Events.find({userID: userID, description: "Participant submitted idea"}).fetch(); //
+	//data = Ideas.find({"participantID": part_ID}).fetch(); //change to events
+	var now = new Date(Date.now());
+	var minAgo = new Date(now - 15*MS_PER_MINUTE);
+	var x = d3.time.scale()
+					.domain([minAgo, now])
+					.nice(d3.time.minute)
+					.range([w-pad, pad]);
 
-		var xAxis = d3.svg.axis()
-							.scale(x)
-							.ticks(4)
-							.tickFormat(function(d){
-								return moment(d).fromNow();
-							})
-							.orient("bottom")
+	var xAxis = d3.svg.axis()
+						.scale(x)
+						.ticks(4)
+						.tickFormat(function(d){
+							return moment(d).fromNow();
+						})
+						.orient("bottom")
 
-		var xAxisGroup = svg.append("g")
-							.attr("class", "axis")
-							.attr("transform", "translate(0," + (h - pad) + ")")
-							.call(xAxis);
+	var xAxisGroup = svg.append("g")
+						.attr("class", "axis")
+						.attr("transform", "translate(0," + (h - pad) + ")")
+						.call(xAxis);
 
-		var marks = svg.append("g")
-						.selectAll("rect")
-						.data(data)
-		marks.enter()
+	var marks = svg.append("g")
+					.selectAll("rect")
+
+	//var timeDep = new Deps.Dependency();
+	function refresh(){
+		console.log("refresh");
+		//timeDep.depend();
+		data = Events.find({userID: userID, description: "Participant submitted idea"/*, time: {$lt: Date(now - 15*MS_PER_MINUTE)}*/}).fetch();
+		console.log(data.length);
+		// data = Events.find({userID: userID, description: "Participant submitted idea"}).fetch(); //
+		// //data = Ideas.find({"participantID": part_ID}).fetch(); //change to events
+		// var now = new Date(Date.now());
+		// var minAgo = new Date(now - 15*MS_PER_MINUTE);
+		// var x = d3.time.scale()
+		// 				.domain([minAgo, now])
+		// 				.nice(d3.time.minute)
+		// 				.range([w-pad, pad]);
+
+		// var xAxis = d3.svg.axis()
+		// 					.scale(x)
+		// 					.ticks(4)
+		// 					.tickFormat(function(d){
+		// 						return moment(d).fromNow();
+		// 					})
+		// 					.orient("bottom")
+
+		// var xAxisGroup = svg.append("g")
+		// 					.attr("class", "axis")
+		// 					.attr("transform", "translate(0," + (h - pad) + ")")
+		// 					.call(xAxis);
+		//marks.remove();
+		marks.attr("transform", "translate("+x(new Date(Date.now()+1000))+")")
+
+		marks.data(data)
+			.enter()
 			.append("rect")
 			.attr("height", "50px")
 			.attr("width", "1.5px")
@@ -125,15 +157,33 @@ Template.userseries.rendered = function(){
 			})
 			.attr("x", function(d){
 				//console.log(now)
-				var durToIdea = moment.duration(d.time, "hh:mm:ss.SSS");
-				var ideaTime = moment(minAgo).add(durToIdea);
-				return x(ideaTime);
+				// var durToIdea = moment.duration(d.time);
+				// var ideaTime = moment(minAgo).add(durToIdea);
+				// return x(ideaTime);
+				console.log("x");
+				return x(d.time);
 			})
 			.attr("y", 0)
 			.attr("fill", "#d43f3a")
 			.append("svg:title")
    			.text(function(d) { return d.content; });
-	});
+
+   	}
+
+   	//drawSeries();
+
+	// var timeDep = new Deps.Dependency();
+	// Deps.autorun(function() {
+	// 	//data = Ideas.find({"participantID": part_ID}).fetch(); //from data context of template
+	// 	//^change data to point towards events collection
+	// 	timeDep.depend();
+
+	// });
+	
+	//timeDep.changed();
+	Meteor.setInterval(function(){
+		refresh()
+	}, 1000);
 }
 
 /********************************************************************
@@ -143,7 +193,7 @@ Template.Dashboard.helpers({
 	ideas : function(){
 		var filters = Session.get("partFilters");
 		if(filters.length > 0){
-			return Ideas.find({participantID: {$in: filters}});
+			return Ideas.find({userName: {$in: filters}});
 		} else
    			return Ideas.find();
   	},
@@ -151,9 +201,9 @@ Template.Dashboard.helpers({
   	numIdeas : function(){
   		var filters = Session.get("partFilters");
 		if(filters.length > 0){
-			return Ideas.find({participantID: {$in: filters}}).fetch().length;
+			return Ideas.find({userName: {$in: filters}}).count();
 		} else
-   			return Ideas.find().fetch().length;
+   			return Ideas.find().count();
   	},
 
   	gamechangers : function(){
@@ -161,11 +211,11 @@ Template.Dashboard.helpers({
   	},
 
   	clusters : function(){
-    	return Clusters.find().fetch();
+    	return Clusters.find();
   	},
 
-  	participants : function(){
-  		return Participants.find().fetch();
+  	users : function(){
+  		return MyUsers.find({name: {$ne: "ProtoAdmin"}});
   	},
 
   	selectedparts : function(){
@@ -192,6 +242,8 @@ Template.Dashboard.events({
 
 	'dblclick .profile' : function(e){
 		var id = e.currentTarget.id;
+		id = id.split("-")[1];
+		var userName = MyUsers.findOne({_id: id}).name;
 		var parts = Session.get("partFilters");
 
 		for (var i = 0; i < parts.length; i++) {
@@ -199,7 +251,7 @@ Template.Dashboard.events({
 				return false;
 		};
 
-		parts.push(id);
+		parts.push(userName);
 		Session.set("partFilters", parts);
 	},
 

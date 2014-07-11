@@ -82,6 +82,9 @@ html,body {
 	margin-top: 0px;
 }
 
+.profile .name-icon{
+	display: inline-block;
+}
 
 #new-prompt{
 

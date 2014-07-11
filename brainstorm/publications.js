@@ -27,7 +27,7 @@ Meteor.startup(function(){
 			return Prompts.find();
 		});
 		Meteor.publish("myUsers", function(){
-			return myUsers.find();
+			return MyUsers.find();
 		});
 		Meteor.publish("roles", function(){
 			return Roles.find();

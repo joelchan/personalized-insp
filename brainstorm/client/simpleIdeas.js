@@ -59,6 +59,7 @@ getRandomRares = function() {
 
 getPrimingIdeas = function () {
     var participant = Session.get("currentParticipant");
+    var user = Session.get("currentUser");
     if (participant.misc != undefined) {
       return participant.misc
     }
@@ -72,7 +73,7 @@ getPrimingIdeas = function () {
           //console.log(ideas[i]);
           //console.log("creating rare idea: " + ideas[i]);
             var idea = new Idea(ideas[i],
-                participant.userID,
+                user,
                 participant.condition.prompt,
                 participant
                 );
@@ -86,7 +87,7 @@ getPrimingIdeas = function () {
         var ideas = getRandomElement(primingIdeas['common']);
         for (var i=0; i<ideas.length; i++) {
             var idea = new Idea(ideas[i], 
-                participant.user,
+                user,
                 participant.condition.prompt,
                 participant
                 );
@@ -241,9 +242,9 @@ var newNotify = null; //stores a new notification
         set: function(v) {
             val = !!v;
             if(newNotify !== null && val === false){
-              alert(newNotify); //or some other function
-              newNotify = null;
-              val = true;
+              //alert(newNotify); //or some other function
+              //newNotify = null;
+              //val = true;
             }
         }
     });
@@ -312,8 +313,9 @@ Template.SubmitIdeas.events({
         //Add idea to database
         if (newIdea.trim() != "") {
           var participant = Session.get("currentParticipant");
+          var user = Session.get("currentUser");
           var idea = new Idea(newIdea,
-              participant.user,
+              user,
               participant.condition.prompt,
               participant
               );
