@@ -253,7 +253,7 @@ var newNotify = null; //stores a new notification
 Template.NotificationDrawer.rendered = function(){
   $('.menu-link').bigSlide();
 
-  Notifications.find({handled: false}).observeChanges({
+  Notifications.find({recipient: Session.get("currentUser"), handled: false}).observeChanges({
     added : function(doc){
       newNotify = Notifications.findOne({_id: doc}); //holds new notification
     }
@@ -263,7 +263,7 @@ Template.NotificationDrawer.rendered = function(){
 //Helpers
 Template.NotificationDrawer.helpers({
   notifications : function(){
-    return Notifications.find();
+    return Notifications.find({recipient: Session.get("currentUser")._id, handled: false});
   },
   directions : function(){
     return this.type.val === -1;
@@ -294,7 +294,7 @@ Template.NotificationDrawer.events({
 //Helpers
 Template.SubmitIdeas.helpers({
   number : function(){
-    return Notifications.find({handled: false}).count(); //return count unhandled 
+    return Notifications.find({recipient: Session.get("currentUser")._id, handled: false}).count(); 
   }
 });
 //Events
