@@ -3,6 +3,8 @@ Group Brainstorming experiment related data models
 ********************************************************************/
 //Holds list of experiments with metadata
 Experiments = new Meteor.Collection("experiments");
+//Holds references to all conditions of all experiments
+Conditions = new Meteor.Collection("exp-conditions");
 // Logs user experiment consent
 Consents = new Meteor.Collection("consents");
 // Logs all participants in experiments
@@ -50,15 +52,141 @@ Experiment.prototype.setNumGroups = function(num) {
     //console.log("adding group for condition:");
     //console.log(this.conditions[i]);
     //INitialize empty groups for each condition
-    var groups = [];
-    for (var j=0; j<num; j++) {
-        var newGroup = new Group(this.conditions[i].groupTemplate);
-        Groups.insert(newGroup);
-      groups.push(newGroup);
-    }
-    this.groups[this.conditions[i].id] = groups
+    //var groups = [];
+    //for (var i=0; i<; j++) {
+        //var newGroup = new Group(this.conditions[i].groupTemplate);
+        //Groups.insert(newGroup);
+      //groups.push(newGroup);
+    //}
+    //this.groups[this.conditions[i].id] = groups
   }
 };
+
+ExperimentManager = (function () {
+  /****************************************************************
+  * Object that allows for most experiment manipulations including 
+  *   assignment, creation, and modification
+  ****************************************************************/
+  return {
+
+    initGroupRefs: function(exp) {
+      for (var i=0; i<exp.conditions.length; i++) {
+        exp.groups[exp.conditions[i].id] = [];
+      }
+      //Update initialized groups to db
+      Experiments.update({_id: exp._id},
+          {$set: {groups: exp.groups}});
+    },
+
+    setNumGroups: function(exp, num) {
+      /******************************************************************
+      * sets all experimental conditions to have the same number of groups
+      ******************************************************************/
+      for (var i=0; i<exp.conditions.length; i++) {
+        exp.conditions[i].groupNum = num;
+        //console.log("adding group for condition:");
+        //console.log(this.conditions[i]);
+        //INitialize empty groups for each condition
+        //var groups = [];
+        //for (var i=0; i<; j++) {
+            //var newGroup = new Group(this.conditions[i].groupTemplate);
+            //Groups.insert(newGroup);
+          //groups.push(newGroup);
+        //}
+        //this.groups[this.conditions[i].id] = groups
+      }
+    },
+
+    getRandomCondition: function(exp) {
+        /****************************************************************
+        * Create an array with length queal to number of slots reamining
+        * in the experiment and the value of the slot equal to the 
+        * index of its associated condition
+        ****************************************************************/
+        //Create an array with length = number of slot
+        var slots = [];
+        for (var i=0; i<exp.conditions.length; i++) {
+          //For now I'm assuming a groupsize of 1
+          //Determin number of participants expected - number already assigned
+          var numPart = exp.conditions[i].groupNum -
+              Participants.find({experimentID: exp._id, 
+                  condition: exp.conditions[i]}).count();
+          for (var j=0; j<numPart; j++) {
+              slots.push(i);
+          }
+        }
+        //Randomly assign to any condition if experiment is full
+        if (slots.length == 0) {
+            return getRandomElement(exp.conditions);
+        }
+        var condIndex = getRandomElement(slots);
+        return exp.conditions[condIndex];
+    },
+
+    getExpGroup: function(exp, condition) {
+        var openGroups = [];
+        var numSlots = 0;
+        //Find all groups with open slots
+        for (var i=0; i<exp.groups[condition.id].length; i++) {
+            var group = $.extend(new Group(), 
+                exp.groups[condition.id][i]
+                );
+            var groupOpenSlots = group.numSlots();
+            if (groupOpenSlots > 0) {
+                openGroups.push(exp.groups[condition.id][i]);
+                numSlots += groupOpenSlots;
+            }
+        }
+        //Ignore open slots for now
+        var result = getRandomElement(openGroups);
+   
+        return $.extend(true, new Group(), result);
+    },
+
+    addExperimentParticipant: function (exp, user) {
+      //Check for duplicate users in list of current participants
+      for (var i=0; i<exp.participants.length; i++) {
+          if (exp.participants[i].userID == user._id) {
+              console.log("repeat participant");
+              return exp.participants[i]
+          }
+      }
+      //Create new participant if no duplicates found
+      var cond = getRandomCondition(exp);
+      var group = getExpGroup(exp, cond);
+      var role = group.addUser(user);
+      var part = new Participant(exp, user, cond, group, role);
+      part._id = Participants.insert(part);
+      exp.participants.push(part);
+      Experiments.update({_id: exp._id}, {$push: {participants: part}});
+      console.log("# participants: " + exp.participants.length)
+      return part;
+    },
+   
+    canParticipate: function (exp, userName) {
+      if (exp.excludeUsers === undefined) {
+        return true;
+      }
+      //checks if user is on list of prohibitied users
+      for (var i=0; i<exp.excludeUsers.length; i++) {
+        if (exp.excludeUsers[i] == userName) {
+            return false
+        }
+      }
+      //checks if user is on list of current participants marked as finished
+      for (var i=0; i<exp.participants.length; i++) {
+          if (exp.participants[i].userName == userName) {
+              if (exp.participants[i].isFinished) {
+                console.log("repeat participant has finished already");
+                return false;
+              }
+          }
+      }
+      return true;
+    }
+
+  };
+}());
 
 getRandomCondition = function(exp) {
     /****************************************************************
@@ -149,19 +277,21 @@ canParticipate = function (exp, userName) {
 }
 
 
-ExpCondition = function(id, prompt, desc, groupNum) {
+ExpCondition = function(id, expID, prompt, desc, groupNum) {
   //Unique ID (with respect to the experiment)
   this.id = id;
+  this.expID = expID;
   //Question(s) to answer in the brainstorm
   this.prompt = new Prompt(prompt);
   this.prompt._id = Prompts.insert(this.prompt);
   //Description of the experiment
   this.description = desc;
-  //Number of groups in the experiment
+  //Number of groups in the experiment condition
   if (groupNum) {
       this.groupNum = groupNum;
   } else {
-      this.groupNum = 1;
+      //If no number is given, then -1 marks recruitment based size
+      this.groupNum = -1;
   }
   //Define the make-up of each group
   this.groupTemplate = new GroupTemplate();

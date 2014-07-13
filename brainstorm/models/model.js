@@ -11,6 +11,7 @@ Names = new Meteor.Collection("names");
 Roles = new Meteor.Collection("roles");
 // Logs all formed groups
 Groups = new Meteor.Collection("groups");
+GroupTemplates = new Meteor.Collection("groupTemplates");
 Clusters = new Meteor.Collection("clusters");
 IdeasToProcess = new Meteor.Collection("ideasToProcess");
 
@@ -47,45 +48,141 @@ Prompt = function(question) {
 
 Group = function(template) {
     this.template = template;
-    //Users held in the namesc oollection. Maps users to roles
-    this.users = {};
-    // Key: Role._id. Value: array of users
-    this.assignments = {};
+    //Users assigned to the group
+    this.users = [];
+    // set of objects where roleID is the field name and
+    //    each object stored there has a roleTitle, and array
+    //    of users assigned to that role
+    //this.assignments = []
+    this.assignments = {}
     // flag for whether the group is accepting new members
     this.isOpen = true;
     if (template) {
       for (var i=0; i<this.template.roles.length; i++) {
-          this.assignments[this.template.roles[i].role] = [];
+        //Use roleID as the key toe the object containing assignments
+        var roleID = this.template.roles[i].roleID;
+        console.log(this.template.roles[i].roleID);
+        //var newRoleAssign = {'roleID': roleID};
+        this.assignments[roleID] = [];
+        //The title of the role associated with these assignments
+        //newRoleAssign['roleTitle'] = this.template.roles[i].title;
+        //this.assignments[roleID]['roleTitle'] = this.template.roles[i].title;
+        //This is the array of users that are assigned to this role
+        //newRoleAssign['roleAssignments'] = [];
+        //this.assignments[roleID]['roleAssignments'] = [];
+        //Add groupAssignment to group
+        //this.assignments.push(newRoleAssign);
       } 
     }
-
-    this. getRandomRole = function () {
-        return getRandomElement(this.template.roles);
-    };
-
 }
 
-GroupManager = function() {
+//GroupAssignment = function(user, role) {
+    ///****************************************************************
+    //* Encapsulates the assignment of a user in a group to a role
+    //* @Params
+    //*   user - the user that is being assign
+    //*   role - the role the user is being assign to
+    //****************************************************************/
+    //this.userID = user._id;
+    //this.userName = user.name;
+    //this.roleID = role._id;
+    //this.roletitle = role.title;
+//};
+
+GroupManager = (function () {
+  return {
     /****************************************************************
     * Object that allows for most group manipulations including 
     *   assignment, creation, and modification
     ****************************************************************/
-    this.numOpenSlots = function(group) {
+    numOpenSlots: function(group) {
       /****************************************************************
       * Determine if the group can accept more members according to 
       * the template definition 
       ****************************************************************/
-      var numOpen = 0;
-      var roles = this.template.roles;
-      for (var i=0; i<roles.length; i++) {
-          var numUsers = this.assignments[roles[i].role].length;
-          var numSlots = roles[i].num;
-          numOpen += numSlots - numUsers;
+      var numSlots = 0;
+      var numAssigned = 0;
+      //Sum all the assignemnts for each role
+      //for (var i=0; i<group.assignments.length; i++) {
+        //numAssigned += group.assignments[i].roleAssignments.length;
+      //}
+      for (var role in group.assignments) {
+        if (group.assignments.hasOwnProperty(role)) {
+          //numAssigned += group.assignements[role].roleAssignments.length;
+          numAssigned += group.assignments[role].length;
+        }
       }
-      return numOpen;
-    }
+      //Sum all the potential slots for each role
+      var roles = group.template.roles;
+      for (var i=0; i<roles.length; i++) {
+        numSlots += roles[i].num;
+      }
+      //Return the difference
+      return numSlots - numAssigned;
+    },
+  
+    addUser: function(group, user) {
+      /**************************************************************
+      * Adds a user to the group assumes group has capacity unless
+      *   isOpen flag is set to false
+      * @Params
+      *   user - user to be added to the group
+      * @Return
+      *   role - the role that the user was assigned or undefined if 
+      *       no assignment was successfully made
+      **************************************************************/
+      var role;
+      if (group.isOpen) {
+        //Get role and add user and assignment info
+        role = this.getRandomRole(group);
+        group.users.push(user)
+        //Add User to the list of users assigned to a specific fole
+        group.assignments[role.roleID].push(user);
+        //group.assignments[role.roleID].roleAssignments.push(user);
+        // Mark closed if no more slots are open after assignment
+        if (this.numOpenSlots(group) == 0) {
+          group.isOpen = false;
+        }
+        //Update group in group collection
+        Groups.update({_id: group._id},
+            {$set: {isOpen: group.isOpen},
+              $push: {users: user},
+              $set: {assignments: group.assignments}
+            }
+        );
+      }
+      return role;
+    },
 
-}
+    getRandomRole: function (group) {
+      /**************************************************************
+      * Returns from the group a random role that has open slots
+      **************************************************************/
+      var roleTemplates = group.template.roles;
+      var openRoles = []
+      for (var i=0; i<roleTemplates.length; i++) {
+        var numSlots = roleTemplates[i].num;
+        var numAssign = group.assignments[roleTemplates[i].roleID].length
+        var diff = numSlots - numAssign;
+        if (diff > 0) {
+          openRoles.push(roleTemplates[i]);
+        }
+      };
+      return getRandomElement(openRoles);
+    },
+
+    addRole: function (grpTemplate, role, num) {
+      /******************************************************************
+      * Adds a role to the set of roles in a group template
+      *
+      * @return null
+      ******************************************************************/
+      var newRole = new RoleTemplate(role, num);
+      grpTemplate.size += num;
+      grpTemplate.roles.push(newRole);
+    }
+  }; 
+}());
 
 Group.prototype.numSlots = function() {
     /****************************************************************
@@ -95,7 +192,7 @@ Group.prototype.numSlots = function() {
     var numOpen = 0;
     var roles = this.template.roles;
     for (var i=0; i<roles.length; i++) {
-        var numUsers = this.assignments[roles[i].role].length;
+        var numUsers = this.assignments[roles[i].roleID].length;
         var numSlots = roles[i].num;
         numOpen += numSlots - numUsers;
     }
@@ -138,7 +235,7 @@ GroupTemplate.prototype.addRole = function (role, num){
 };
 
 RoleTemplate = function (role, num) {
-  this.role = role._id;
+  this.roleID = role._id;
   this.title = role.title;
   this.num = num;
 }
