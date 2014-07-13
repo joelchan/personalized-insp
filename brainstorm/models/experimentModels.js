@@ -178,7 +178,7 @@ Participant = function(exp, user, cond, group, role) {
     this.userName = user.name;
     // Assign Participant to condition
     this.condition = cond;
-    this.group = group._id;
+    this.groupID = group._id;
     this.role = Roles.findOne(role.role);
     this.verifyCode = this.userID.hashCode();
     //console.log("Participant verify code is: " + this.verifyCode);

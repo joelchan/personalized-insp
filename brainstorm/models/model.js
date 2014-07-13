@@ -51,6 +51,8 @@ Group = function(template) {
     this.users = {};
     // Key: Role._id. Value: array of users
     this.assignments = {};
+    // flag for whether the group is accepting new members
+    this.isOpen = true;
     if (template) {
       for (var i=0; i<this.template.roles.length; i++) {
           this.assignments[this.template.roles[i].role] = [];
@@ -60,6 +62,28 @@ Group = function(template) {
     this. getRandomRole = function () {
         return getRandomElement(this.template.roles);
     };
+
+}
+
+GroupManager = function() {
+    /****************************************************************
+    * Object that allows for most group manipulations including 
+    *   assignment, creation, and modification
+    ****************************************************************/
+    this.numOpenSlots = function(group) {
+      /****************************************************************
+      * Determine if the group can accept more members according to 
+      * the template definition 
+      ****************************************************************/
+      var numOpen = 0;
+      var roles = this.template.roles;
+      for (var i=0; i<roles.length; i++) {
+          var numUsers = this.assignments[roles[i].role].length;
+          var numSlots = roles[i].num;
+          numOpen += numSlots - numUsers;
+      }
+      return numOpen;
+    }
 
 }
 
