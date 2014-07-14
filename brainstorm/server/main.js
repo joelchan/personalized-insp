@@ -182,3 +182,16 @@ Meteor.startup(function() {
 //Meteor.startup(function() {
   //testExperimentManager();
 //});
+
+Meteor.startup(function() {
+  /****************************************************************
+  * Keep IdeasToProcess and Ideas collections synchronized
+  ****************************************************************/
+  Ideas.find().observe({
+    added: function(doc) {
+      IdeasToProcess.insert(doc);
+    },
+  });
+});
+
+
