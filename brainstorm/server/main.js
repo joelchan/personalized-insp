@@ -1,3 +1,4 @@
+
 Meteor.startup(function() {
   /****************************************************************
   * Ensure each screen is inserted into the database
@@ -129,8 +130,21 @@ Meteor.startup(function() {
       exp.conditions = [cond1, cond2];
       //Each condition has 30 participants
       ExperimentManager.setNumGroups(exp, 30);
+      var excludeList = ["A4EF1F3YS1LZ6", "A4CX7I79NKBQA", 
+          "A28N4YR1LYTKOC", "A27LGC4MU1R7PQ", "A1RYC2OETJVEG7", 
+          "A2F79GFUWU5O96", "A21Y22J7Q0KSGN", "A0017268R9SKD8U2Y3F",
+          "A1H95TGQZSN1P1", "A1Z048705962W6", "A2V3P1XE33NYC3",
+          "A39M1U0GJ1YWBD", "A6WK319U256SM",  "A69KEZJP0BY6B",
+          "A1R8A1ZKR80MRA", "A2DNWDHMMBSHWT", "A2CZGKI3K6ZT7R",
+          "A1Y8BAQ5RYDUEN", "A38ZV8LBZ034IZ", "A68EM6DOP6D80", 
+          "A19KF02ULCISTQ", "A3V4RQCV749KKJ", "AKLV0WIZZ356X",
+          "A3FJE9AUW0O41D", "A2TPIS2HB11T7R", "AVHC83KXLJUOW", 
+          "AX6JQ37WUHFSH"
+      ];
+      exp.excludeUsers.concat(excludeList);
       Experiments.update({_id: exp._id},
-          {$set: {conditions: exp.conditions}});
+          {$set: {conditions: exp.conditions},
+           $push: {excludeUsers: {$each: excludeList}}});
       ExperimentManager.initGroupRefs(exp);
     }
 });
