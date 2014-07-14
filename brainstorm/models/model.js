@@ -95,6 +95,37 @@ GroupManager = (function () {
     * Object that allows for most group manipulations including 
     *   assignment, creation, and modification
     ****************************************************************/
+    copyGroup: function(group) {
+      /**************************************************************
+      * Creates a duplicate group based on a given group's template
+      * and adds it to the database. Intended to abstract mechanics
+      * of copying/creation of a group. Duplicating groups should
+      * be a common function
+      **************************************************************/
+      var newGroup = new Group(group.template);
+      newGroup._id = Groups.insert(newGroup);
+      return newGroup;
+    },
+
+    createGroup: function(template, users) {
+      /**************************************************************
+      * Create a new group from a tempalte and perform an necessary
+      * initialization
+      **************************************************************/
+      var newGroup = new Group(template);
+      newGroup._id = Groups.insert(newGroup);
+      // Assign users to group if users are given
+      if (users) {
+        for (var i=0; i<users.length; i++) {
+          if (group.isOpen) {
+            //Assign the user and update the db entry
+            this.addUser(group, users[i])
+          }
+        }
+      }
+      return newGroup;
+    },
+
     numOpenSlots: function(group) {
       /****************************************************************
       * Determine if the group can accept more members according to 
@@ -124,7 +155,7 @@ GroupManager = (function () {
     addUser: function(group, user) {
       /**************************************************************
       * Adds a user to the group assumes group has capacity unless
-      *   isOpen flag is set to false
+      *   isOpen flag is set to false, also updates database entry
       * @Params
       *   user - user to be added to the group
       * @Return

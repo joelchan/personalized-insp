@@ -19,7 +19,7 @@ Experiment = function () {
    * @return {object} GroupTemplate object 
     ********************************************************************/
   
-  this.creationTime = new Date().getTime();
+  this.creationTime = new Date();
   //Description of the experiment
   this.description = null;
   //Url to pass to participants 
@@ -27,10 +27,10 @@ Experiment = function () {
   this.url = Meteor.absoluteUrl() + 'LoginPage/';
   //List of all experimental conditions
   this.conditions = [];
-  //Tracks group references: key: condition, value: array of groups
+  //Tracks group references: key: condition.id, value: array of groupIDs
   this.groups = {};
-  //Tracks all participants in the experiment
-  this.participants = [];
+  //Tracks all participant IDs assigned to the experiment
+  this.participantIDs = [];
   //Optional set of users not allowed to participate
   this.excludeUsers = [];
 
@@ -70,6 +70,10 @@ ExperimentManager = (function () {
   return {
 
     initGroupRefs: function(exp) {
+      /***********************************************************
+      * Initialize object fields for each condition with empty 
+      * arrays to contain the groupIDs assigned to that condition
+      ***********************************************************/
       for (var i=0; i<exp.conditions.length; i++) {
         exp.groups[exp.conditions[i].id] = [];
       }
@@ -110,7 +114,8 @@ ExperimentManager = (function () {
           //Determin number of participants expected - number already assigned
           var numPart = exp.conditions[i].groupNum -
               Participants.find({experimentID: exp._id, 
-                  condition: exp.conditions[i]}).count();
+                  conditionID: exp.conditions[i]._id}).count();
+          //numPart may be negative if overrecruiting for experiment
           for (var j=0; j<numPart; j++) {
               slots.push(i);
           }
@@ -128,39 +133,48 @@ ExperimentManager = (function () {
         var numSlots = 0;
         //Find all groups with open slots
         for (var i=0; i<exp.groups[condition.id].length; i++) {
-            var group = $.extend(new Group(), 
-                exp.groups[condition.id][i]
-                );
-            var groupOpenSlots = group.numSlots();
-            if (groupOpenSlots > 0) {
-                openGroups.push(exp.groups[condition.id][i]);
-                numSlots += groupOpenSlots;
+            var groupID = exp.groups[condition.id][i];
+            var group = Groups.findOne({_id: groupID});
+            console.log(group);
+            if (group.isOpen) {
+              openGroups.push(group);
+              numSlots += GroupManager.numOpenSlots(group);
             }
+            console.log(openGroups);
         }
-        //Ignore open slots for now
-        var result = getRandomElement(openGroups);
-   
-        return $.extend(true, new Group(), result);
+        if (openGroups.length == 0) {
+          //If no open groups, then create a group
+          var newGroup = GroupManager.createGroup(condition.groupTemplate);
+          //Register groupID with experiment condition
+          exp.groups[condition.id].push(newGroup._id);
+          console.log("created new group");
+          return newGroup;
+        } else {
+          //Otherwise select a random group
+          //Ignore open slots for now
+          console.log("retrieved existing group");
+          return getRandomElement(openGroups);
+        }
     },
 
     addExperimentParticipant: function (exp, user) {
-      //Check for duplicate users in list of current participants
-      for (var i=0; i<exp.participants.length; i++) {
-          if (exp.participants[i].userID == user._id) {
-              console.log("repeat participant");
-              return exp.participants[i]
-          }
+      //Look for duplicate participant with same userID and expID
+      var part = Participants.findOne({userID: user._id, experimentID: exp._id});
+      if (part) {
+        console.log("repeat participant");
+        return part;
+      } else {
+        //Create new participant if no duplicates found
+        var cond = this.getRandomCondition(exp);
+        var group = this.getExpGroup(exp, cond);
+        var role = GroupManager.addUser(group, user);
+        var part = new Participant(exp, user, cond, group, role);
+        part._id = Participants.insert(part);
+        exp.participantIDs.push(part._id);
+        Experiments.update({_id: exp._id}, {$push: {participantIDs: part._id}});
+        console.log("Added new participant, total: " + exp.participantIDs.length)
+        return part;
       }
-      //Create new participant if no duplicates found
-      var cond = getRandomCondition(exp);
-      var group = getExpGroup(exp, cond);
-      var role = group.addUser(user);
-      var part = new Participant(exp, user, cond, group, role);
-      part._id = Participants.insert(part);
-      exp.participants.push(part);
-      Experiments.update({_id: exp._id}, {$push: {participants: part}});
-      console.log("# participants: " + exp.participants.length)
-      return part;
     },
    
     canParticipate: function (exp, userName) {
@@ -170,18 +184,26 @@ ExperimentManager = (function () {
       //checks if user is on list of prohibitied users
       for (var i=0; i<exp.excludeUsers.length; i++) {
         if (exp.excludeUsers[i] == userName) {
-            return false
+            return false;
         }
       }
       //checks if user is on list of current participants marked as finished
-      for (var i=0; i<exp.participants.length; i++) {
-          if (exp.participants[i].userName == userName) {
-              if (exp.participants[i].isFinished) {
-                console.log("repeat participant has finished already");
-                return false;
-              }
-          }
-      }
+      var part = Participants.findOne({userName: userName, experimentID: exp._id});
+      if (part) {
+        if (part.hasFinished) {
+          return false;
+        } else {
+          return true;
+        }
+      } 
+      //for (var i=0; i<exp.participantIDs.length; i++) {
+          //if (exp.participantIDs[i].userName == userName) {
+              //if (exp.participantIDs[i].isFinished) {
+                //console.log("repeat participant has finished already");
+                //return false;
+              //}
+          //}
+      //}
       return true;
     }
 
@@ -307,7 +329,7 @@ Participant = function(exp, user, cond, group, role) {
     this.userID = user._id;
     this.userName = user.name;
     // Assign Participant to condition
-    this.condition = cond;
+    this.conditionID = cond._id;
     this.groupID = group._id;
     this.role = Roles.findOne(role.role);
     this.verifyCode = this.userID.hashCode();
