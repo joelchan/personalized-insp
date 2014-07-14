@@ -83,6 +83,7 @@ Template.userseries.rendered = function(){
 	//console.log(this);
 	var self = this;
 	var userID = self.data._id;
+	//console.log(userID);
 	//var part_ID = self.data.
 	var node = self.find(".series");
 	var svg = d3.select(node).append("svg");
@@ -91,22 +92,29 @@ Template.userseries.rendered = function(){
 	var w = 546;
 	var pad = 20;
 
-	var data = Events.find({userID: userID, description: "Participant submitted idea"}).fetch(); //
-	//data = Ideas.find({"participantID": part_ID}).fetch(); //change to events
-	var now = new Date(Date.now());
-	var minAgo = new Date(now - 15*MS_PER_MINUTE);
+
+	var submissionEvents = Events.find({userID: userID, description: "Participant submitted idea"}); //
+	var results = [];//submissionEvents.fetch();
+
+	//console.log(data);
+	var start = new Date(Events.findOne({userID: userID, description: "Participant began ideation"}).time);
+	//console.log(start);
+	var sessionlength = 15;
+	var end = new Date(start + sessionlength*MS_PER_MINUTE);
+	// var now = new Date(Date.now());
+	// var minAgo = new Date(now - 15*MS_PER_MINUTE);
 	var x = d3.time.scale()
-					.domain([minAgo, now])
+					.domain([start, end])
 					.nice(d3.time.minute)
-					.range([w-pad, pad]);
+					.range([pad, w-pad]);
 
 	var xAxis = d3.svg.axis()
 						.scale(x)
-						.ticks(4)
-						.tickFormat(function(d){
-							return moment(d).fromNow();
-						})
-						.orient("bottom")
+						.ticks(d3.time.minute, 1)
+						// .tickFormat(function(d){
+						// 	return moment(d).fromNow();
+						// })
+						.orient("bottom");
 
 	var xAxisGroup = svg.append("g")
 						.attr("class", "axis")
@@ -116,37 +124,19 @@ Template.userseries.rendered = function(){
 	var marks = svg.append("g")
 					.selectAll("rect")
 
-	//var timeDep = new Deps.Dependency();
-	function refresh(){
-		console.log("refresh");
-		//timeDep.depend();
-		data = Events.find({userID: userID, description: "Participant submitted idea"/*, time: {$lt: Date(now - 15*MS_PER_MINUTE)}*/}).fetch();
-		console.log(data.length);
-		// data = Events.find({userID: userID, description: "Participant submitted idea"}).fetch(); //
-		// //data = Ideas.find({"participantID": part_ID}).fetch(); //change to events
-		// var now = new Date(Date.now());
-		// var minAgo = new Date(now - 15*MS_PER_MINUTE);
-		// var x = d3.time.scale()
-		// 				.domain([minAgo, now])
-		// 				.nice(d3.time.minute)
-		// 				.range([w-pad, pad]);
+	submissionEvents.observeChanges({
+		added: function(doc){
+			// console.log("calling refreshGraph");
+			// console.log(data);
+			results.push(Events.findOne({_id: doc}));
+			// console.log(data);
+			refreshGraph(results);
+		}
+	});
 
-		// var xAxis = d3.svg.axis()
-		// 					.scale(x)
-		// 					.ticks(4)
-		// 					.tickFormat(function(d){
-		// 						return moment(d).fromNow();
-		// 					})
-		// 					.orient("bottom")
-
-		// var xAxisGroup = svg.append("g")
-		// 					.attr("class", "axis")
-		// 					.attr("transform", "translate(0," + (h - pad) + ")")
-		// 					.call(xAxis);
-		//marks.remove();
-		marks.attr("transform", "translate("+x(new Date(Date.now()+1000))+")")
-
-		marks.data(data)
+	function refreshGraph(r){
+		console.log(r);
+		marks.data(r)
 			.enter()
 			.append("rect")
 			.attr("height", "50px")
@@ -160,30 +150,88 @@ Template.userseries.rendered = function(){
 				// var durToIdea = moment.duration(d.time);
 				// var ideaTime = moment(minAgo).add(durToIdea);
 				// return x(ideaTime);
-				console.log("x");
-				return x(d.time);
+				//console.log(d);
+				var time = new Date(d.time);
+				//console.log(time);
+				console.log(x(time));
+				return x(time);
 			})
 			.attr("y", 0)
 			.attr("fill", "#d43f3a")
 			.append("svg:title")
-   			.text(function(d) { return d.content; });
+			.text(function(d) { return d.content; });
+	}
+	//var timeDep = new Deps.Dependency();
 
-   	}
-
-   	//drawSeries();
-
-	// var timeDep = new Deps.Dependency();
-	// Deps.autorun(function() {
-	// 	//data = Ideas.find({"participantID": part_ID}).fetch(); //from data context of template
-	// 	//^change data to point towards events collection
-	// 	timeDep.depend();
-
+	// Events.find({userID: userID, description: "Participant submitted idea"}).observeChanges({
+	// 	added: function(doc){
+	// 		// console.log("calling refreshGraph");
+	// 		// console.log(data);
+	// 		data.push(Events.findOne({_id: doc}));
+	// 		// console.log(data);
+	// 		refreshGraph();
+	// 	}
 	// });
-	
-	//timeDep.changed();
-	Meteor.setInterval(function(){
-		refresh()
-	}, 1000);
+
+	//refreshGraph();
+
+
+	// function refresh(){
+	// 	console.log("refresh");
+	// 	//timeDep.depend();
+	// 	data = Events.find({userID: userID, description: "Participant submitted idea"/*, time: {$lt: Date(now - 15*MS_PER_MINUTE)}*/}).fetch();
+	// 	console.log(data.length);
+	// 	// data = Events.find({userID: userID, description: "Participant submitted idea"}).fetch(); //
+	// 	// //data = Ideas.find({"participantID": part_ID}).fetch(); //change to events
+	// 	// var now = new Date(Date.now());
+	// 	// var minAgo = new Date(now - 15*MS_PER_MINUTE);
+	// 	// var x = d3.time.scale()
+	// 	// 				.domain([minAgo, now])
+	// 	// 				.nice(d3.time.minute)
+	// 	// 				.range([w-pad, pad]);
+
+	// 	// var xAxis = d3.svg.axis()
+	// 	// 					.scale(x)
+	// 	// 					.ticks(4)
+	// 	// 					.tickFormat(function(d){
+	// 	// 						return moment(d).fromNow();
+	// 	// 					})
+	// 	// 					.orient("bottom")
+
+	// 	// var xAxisGroup = svg.append("g")
+	// 	// 					.attr("class", "axis")
+	// 	// 					.attr("transform", "translate(0," + (h - pad) + ")")
+	// 	// 					.call(xAxis);
+	// 	//marks.remove();
+	// 	marks.attr("transform", "translate("+x(new Date(Date.now()+1000))+")")
+
+	// 	marks.data(data)
+	// 		.enter()
+	// 		.append("rect")
+	// 		.attr("height", "50px")
+	// 		.attr("width", "1.5px")
+	// 		.attr("class", "bar")
+	// 		.attr("id", function(d){
+	// 			return d._id;
+	// 		})
+	// 		.attr("x", function(d){
+	// 			//console.log(now)
+	// 			// var durToIdea = moment.duration(d.time);
+	// 			// var ideaTime = moment(minAgo).add(durToIdea);
+	// 			// return x(ideaTime);
+	// 			console.log("x");
+	// 			return x(d.time);
+	// 		})
+	// 		.attr("y", 0)
+	// 		.attr("fill", "#d43f3a")
+	// 		.append("svg:title")
+ //   			.text(function(d) { return d.content; });
+
+ //   	}
+
+	// Meteor.setInterval(function(){
+	// 	refresh()
+	// }, 1000);
 }
 
 /********************************************************************
@@ -215,7 +263,12 @@ Template.Dashboard.helpers({
   	},
 
   	users : function(){
-  		return MyUsers.find({name: {$ne: "ProtoAdmin"}});
+  		var beganIdeation = Events.find({description: "Participant began ideation"});
+  		var userIDs = [];
+  		beganIdeation.forEach(function(event){
+  			userIDs.push(event.userID);
+  		})
+  		return MyUsers.find({name: {$ne: "ProtoAdmin"}, _id: {$in: userIDs}});
   	},
 
   	selectedparts : function(){

@@ -94,6 +94,12 @@ Router.map(function () {
     template: 'Dashboard',
     waitOn: function() {
         return Meteor.subscribe('events');
+    }, 
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
     }
   });
   this.route('NoParticipation', {
