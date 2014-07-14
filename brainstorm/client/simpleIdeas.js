@@ -115,10 +115,14 @@ Template.Priming.helpers({
 
 Template.Prompt.helpers({
     prompt: function() {
-      var condition = 
-          Conditions.findOne(
-            {_id: Session.get("currentParticipant").conditionID});
-      return condition.prompt.question;
+      var part = Session.get("currentParticipant");
+      if (part) {
+        var condition = 
+            Conditions.findOne({_id: part.conditionID});
+        return condition.prompt.question;
+      } else {
+        return "";
+      }
     }
 });
 
@@ -135,7 +139,7 @@ Template.IdeationPage.rendered = function() {
   // Register event listenr to click submit button when enter is pressed
   $('#nextIdea').keyup(function(e){
     if(e.keyCode===13) {
-      console.log("enter pressed")
+      //console.log("enter pressed")
       $('#submitIdea').click();
     }
   });
