@@ -75,7 +75,7 @@ Meteor.startup(function() {
           //Roles.findOne({'title': "Ideator"}), 1)
       exp.conditions = [cond1, cond2];
       //Each condition has 30 participants
-      exp.setNumGroups(30);
+      ExperimentManager.setNumGroups(exp, 30);
       Experiments.update({_id: exp._id},
           {$set: {conditions: exp.conditions}});
       ExperimentManager.initGroupRefs(exp);
@@ -97,7 +97,7 @@ Meteor.startup(function() {
           Roles.findOne({'title': "Forest Synthesizer"}), 1);
       cond1._id = Conditions.insert(cond1);
       exp.conditions = [cond1];
-      exp.setNumGroups(1);
+      ExperimentManager.setNumGroups(exp, 1);
       Experiments.update({_id: exp._id},
           {$set: {conditions: exp.conditions}});
       ExperimentManager.initGroupRefs(exp);
@@ -128,7 +128,7 @@ Meteor.startup(function() {
       cond2._id = Conditions.insert(cond2);
       exp.conditions = [cond1, cond2];
       //Each condition has 30 participants
-      exp.setNumGroups(30);
+      ExperimentManager.setNumGroups(exp, 30);
       Experiments.update({_id: exp._id},
           {$set: {conditions: exp.conditions}});
       ExperimentManager.initGroupRefs(exp);
@@ -160,4 +160,7 @@ Meteor.startup(function() {
 
 //Meteor.startup(function() {
   //testGroupManager();
+//});
+//Meteor.startup(function() {
+  //testExperimentManager();
 //});

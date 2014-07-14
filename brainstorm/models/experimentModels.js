@@ -43,12 +43,12 @@ Experiment.prototype.getUrl = function() {
   return Meteor.absoluteUrl() + 'LoginPage/' + this._id;
 };
 
-Experiment.prototype.setNumGroups = function(num) {
+//Experiment.prototype.setNumGroups = function(num) {
   /******************************************************************
   * sets all experimental conditions to have the same number of groups
   ******************************************************************/
-  for (var i=0; i<this.conditions.length; i++) {
-    this.conditions[i].groupNum = num;
+  //for (var i=0; i<this.conditions.length; i++) {
+    //this.conditions[i].groupNum = num;
     //console.log("adding group for condition:");
     //console.log(this.conditions[i]);
     //INitialize empty groups for each condition
@@ -59,8 +59,8 @@ Experiment.prototype.setNumGroups = function(num) {
       //groups.push(newGroup);
     //}
     //this.groups[this.conditions[i].id] = groups
-  }
-};
+  //}
+//};
 
 ExperimentManager = (function () {
   /****************************************************************
@@ -110,12 +110,14 @@ ExperimentManager = (function () {
         //Create an array with length = number of slot
         var slots = [];
         for (var i=0; i<exp.conditions.length; i++) {
-          //For now I'm assuming a groupsize of 1
-          //Determin number of participants expected - number already assigned
+          //Determin number of participants expected - number already 
+          //  assigned and completed
           var numPart = exp.conditions[i].groupNum -
               Participants.find({experimentID: exp._id, 
-                  conditionID: exp.conditions[i]._id}).count();
+                  conditionID: exp.conditions[i]._id,
+                  hasFinished: true}).count();
           //numPart may be negative if overrecruiting for experiment
+          console.log("number of particiapants finished in cond: " + numPart);
           for (var j=0; j<numPart; j++) {
               slots.push(i);
           }
@@ -139,13 +141,15 @@ ExperimentManager = (function () {
               openGroups.push(group);
               numSlots += GroupManager.numOpenSlots(group);
             }
-            console.log(openGroups);
+            //console.log(openGroups);
         }
         if (openGroups.length == 0) {
           //If no open groups, then create a group
           var newGroup = GroupManager.createGroup(condition.groupTemplate);
           //Register groupID with experiment condition
           exp.groups[condition.id].push(newGroup._id);
+          Experiments.update({_id: exp._id},
+              {$set: {groups: exp.groups}});
           console.log("created new group");
           return newGroup;
         } else {

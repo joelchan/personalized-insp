@@ -176,9 +176,10 @@ GroupManager = (function () {
         }
         //Update group in group collection
         Groups.update({_id: group._id},
-            {$set: {isOpen: group.isOpen},
+            {
               $push: {users: user},
-              $set: {assignments: group.assignments}
+              $set: {assignments: group.assignments,
+                  isOpen: group.isOpen}
             }
         );
       }
@@ -215,28 +216,28 @@ GroupManager = (function () {
   }; 
 }());
 
-Group.prototype.numSlots = function() {
-    /****************************************************************
-    * Determine if the group can accept more members according to 
-    * the template definition 
-    ****************************************************************/
-    var numOpen = 0;
-    var roles = this.template.roles;
-    for (var i=0; i<roles.length; i++) {
-        var numUsers = this.assignments[roles[i].roleID].length;
-        var numSlots = roles[i].num;
-        numOpen += numSlots - numUsers;
-    }
-    return numOpen;
-};
-
-
-Group.prototype.addUser = function(user) {
-    var role = this.getRandomRole();
-    this.users[user._id] = role;
-    this.assignments[role._id] = user;
-    return role;
-}
+//Group.prototype.numSlots = function() {
+    ///****************************************************************
+    //* Determine if the group can accept more members according to 
+    //* the template definition 
+    //****************************************************************/
+    //var numOpen = 0;
+    //var roles = this.template.roles;
+    //for (var i=0; i<roles.length; i++) {
+        //var numUsers = this.assignments[roles[i].roleID].length;
+        //var numSlots = roles[i].num;
+        //numOpen += numSlots - numUsers;
+    //}
+    //return numOpen;
+//};
+//
+//
+//Group.prototype.addUser = function(user) {
+    //var role = this.getRandomRole();
+    //this.users[user._id] = role;
+    //this.assignments[role._id] = user;
+    //return role;
+//}
 
 GroupTemplate = function () {
   /******************************************************************
@@ -328,11 +329,6 @@ User = function(name, type){
   //Currently only "admin" is significant
   this.type = type;
 };
-
-//Random assignment and user management logic
-	//when user opens client they get randomly assigned to a role and/or workflow and paired unique url (hashed)
-//Need to track completion
-
 
 //Javascript implementation of Java's hash code function 
 //Hash code function 
