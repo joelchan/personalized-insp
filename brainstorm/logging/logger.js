@@ -53,7 +53,7 @@ Logger = (function () {
       misc.push({name: 'participantID', data: part._id});
       misc.push({name: 'expID', data: part.experimentID});
       //Retrieve user from participant fields
-      user = Names.findOne({_id: part.userID});
+      user = MyUsers.findOne({_id: part.userID});
       //Log Event
       this.logEvent(msg, user, type, misc);
     },

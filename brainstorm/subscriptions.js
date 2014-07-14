@@ -41,5 +41,6 @@ Meteor.startup(function(){
 		* Subscribe to notificationModels.js collection
 		************************************************************/
 		Meteor.subscribe("notifications");
+    Meteor.subscribe('exp-conditions');
 	}
 });

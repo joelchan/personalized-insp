@@ -4,12 +4,12 @@ LoginManager = (function () {
       /******************************************************************
       * Convenience function for logging in users
       * ****************************************************************/
-      var matches = Names.find({name: userName});
+      var matches = MyUsers.find({name: userName});
       if (matches.count() > 0) {
         var myUser = matches.fetch()[0]
       } else {
         myUser = new User(userName, "Experiment Participant");
-        myUser._id = Names.insert(myUser);
+        myUser._id = MyUsers.insert(myUser);
       }
       Session.set("currentUser", myUser);
       return myUser
@@ -20,7 +20,7 @@ LoginManager = (function () {
       * Quick hack for detecting an admin login
       ***************************************************************/
       if (userName.toLowerCase() == "protoadmin") {
-        this.loginUser(Names.findOne({name: "ProtoAdmin"}));
+        this.loginUser(MyUsers.findOne({name: "ProtoAdmin"}));
         console.log("logged in admin User");
         return true;
       } else {

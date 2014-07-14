@@ -47,6 +47,9 @@ Meteor.startup(function(){
 		Meteor.publish("consents", function(){
 			return Consents.find();
 		});
+		Meteor.publish("exp-conditions", function(){
+			return Conditions.find();
+		});
 		Meteor.publish("participants", function(){
 			return Participants.find();
 		});
