@@ -8,12 +8,12 @@ Router.map(function () {
   this.route('LoginPage', {
   	path: '/LoginPage/:_id',
     template: 'LoginPage',
-    waitOn: function() {
-        return Meteor.subscribe('experiments', this.params._id);
-        },
+    //waitOn: function() {
+        //return Meteor.subscribe('experiments', this.params._id);
+        //},
     onBeforeAction: function() {
         //console.log("before action");
-        this.subscribe('experiments', this.params._id).wait();
+        //this.subscribe('experiments', this.params._id).wait();
         if (this.data()) {
           //console.log(Experiments.find().fetch().length);
           var x = Experiments.findOne({_id: this.params._id});
@@ -58,9 +58,9 @@ Router.map(function () {
     data: function() {
       return Experiments.findOne({_id: this.params._id});
     },
-    waitOn: function() {
-        return Meteor.subscribe('ideas');
-        },
+    //waitOn: function() {
+        //return Meteor.subscribe('ideas');
+        //},
     onRun: function() {
       Session.set("currentExp", Experiments.findOne({_id: this.params._id}));
     }

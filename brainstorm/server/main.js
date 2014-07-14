@@ -1,3 +1,4 @@
+
 Meteor.startup(function() {
   /****************************************************************
   * Ensure each screen is inserted into the database
@@ -50,24 +51,35 @@ Meteor.startup(function() {
       var question = "Many people have old iPods or MP3 players that they no longer use. In the next 15 minutes, please brainstorm as many uses as you can for old iPods/MP3 players. Assume that the devices' batteries no longer work, though they can be powered via external power sources. Also be aware that devices may <em>not</em> have displays. Be as specific as possible in your descriptions."
       var exp = new Experiment();
       exp.description = "Replicating the effect of priming with common vs rare ideas in individual brainstorming"; 
+      exp._id = Experiments.insert(exp);
       var cond1 = new ExpCondition(1,
+          exp._id,
           question,
           "individual brainstorming primed with rare ideas",
           30
           );
-      cond1.groupTemplate.addRole(
-          Roles.findOne({'title': "Ideator"}), 1)
+      GroupManager.addRole(cond1.groupTemplate,
+          Roles.findOne({'title': "Ideator"}), 1);
+      cond1._id = Conditions.insert(cond1);
+      //cond1.groupTemplate.addRole(
+          //Roles.findOne({'title': "Ideator"}), 1)
       var cond2 = new ExpCondition(2, 
+          exp._id,
           question,
           "individual brainstorming primed with common ideas",
           30
           );
-      cond2.groupTemplate.addRole(
-          Roles.findOne({'title': "Ideator"}), 1)
+      GroupManager.addRole(cond2.groupTemplate,
+          Roles.findOne({'title': "Ideator"}), 1);
+      cond2._id = Conditions.insert(cond2);
+      //cond2.groupTemplate.addRole(
+          //Roles.findOne({'title': "Ideator"}), 1)
       exp.conditions = [cond1, cond2];
       //Each condition has 30 participants
-      exp.setNumGroups(30);
-      Experiments.insert(exp);
+      ExperimentManager.setNumGroups(exp, 30);
+      Experiments.update({_id: exp._id},
+          {$set: {conditions: exp.conditions}});
+      ExperimentManager.initGroupRefs(exp);
       //console.log(Experiments.find().fetch());
     }
 
@@ -75,40 +87,65 @@ Meteor.startup(function() {
       var question = "Many people have old iPods or MP3 players that they no longer use. Please brainstorm 50 uses for old iPods/MP3 players. Assume that the devices' batteries no longer work, though they can be powered via external power sources. Also be aware that devices may <em>not</em> have displays. Be as specific as possible in your descriptions."
       var exp = new Experiment();
       exp.description = "Testing idea forest synthesis"; 
+      exp._id = Experiments.insert(exp);
       var cond1 = new ExpCondition(1,
+          exp._id,
           question,
           "Synthesizing",
           30
           );
-      cond1.groupTemplate.addRole(
+      GroupManager.addRole(cond1.groupTemplate,
           Roles.findOne({'title': "Forest Synthesizer"}), 1);
+      cond1._id = Conditions.insert(cond1);
       exp.conditions = [cond1];
-      exp.setNumGroups(1);
-      Experiments.insert(exp);
+      ExperimentManager.setNumGroups(exp, 1);
+      Experiments.update({_id: exp._id},
+          {$set: {conditions: exp.conditions}});
+      ExperimentManager.initGroupRefs(exp);
       //console.log(Experiments.find().fetch());
     }
     if (Experiments.find().count() == 2) {
       var question = "Many people have old iPods or MP3 players that they no longer use. In the next 15 minutes, please brainstorm as many uses as you can for old iPods/MP3 players. Assume that the devices' batteries no longer work, though they can be powered via external power sources. Also be aware that devices may <em>not</em> have displays. Be as specific as possible in your descriptions."
       var exp = new Experiment();
       exp.description = "Replicating the effect of priming with common vs rare ideas in individual brainstorming with revised interface"; 
+      exp._id = Experiments.insert(exp);
       var cond1 = new ExpCondition(1,
+          exp._id,
           question,
           "individual brainstorming primed with rare ideas",
           30
           );
-      cond1.groupTemplate.addRole(
+      GroupManager.addRole(cond1.groupTemplate,
           Roles.findOne({'title': "Ideator"}), 1)
+      cond1._id = Conditions.insert(cond1);
       var cond2 = new ExpCondition(2, 
+          exp._id,
           question,
           "individual brainstorming primed with common ideas",
           30
           );
-      cond2.groupTemplate.addRole(
+      GroupManager.addRole(cond2.groupTemplate,
           Roles.findOne({'title': "Ideator"}), 1)
+      cond2._id = Conditions.insert(cond2);
       exp.conditions = [cond1, cond2];
       //Each condition has 30 participants
-      exp.setNumGroups(30);
-      Experiments.insert(exp);
+      ExperimentManager.setNumGroups(exp, 30);
+      var excludeList = ["A4EF1F3YS1LZ6", "A4CX7I79NKBQA", 
+          "A28N4YR1LYTKOC", "A27LGC4MU1R7PQ", "A1RYC2OETJVEG7", 
+          "A2F79GFUWU5O96", "A21Y22J7Q0KSGN", "A0017268R9SKD8U2Y3F",
+          "A1H95TGQZSN1P1", "A1Z048705962W6", "A2V3P1XE33NYC3",
+          "A39M1U0GJ1YWBD", "A6WK319U256SM",  "A69KEZJP0BY6B",
+          "A1R8A1ZKR80MRA", "A2DNWDHMMBSHWT", "A2CZGKI3K6ZT7R",
+          "A1Y8BAQ5RYDUEN", "A38ZV8LBZ034IZ", "A68EM6DOP6D80", 
+          "A19KF02ULCISTQ", "A3V4RQCV749KKJ", "AKLV0WIZZ356X",
+          "A3FJE9AUW0O41D", "A2TPIS2HB11T7R", "AVHC83KXLJUOW", 
+          "AX6JQ37WUHFSH"
+      ];
+      exp.excludeUsers.concat(excludeList);
+      Experiments.update({_id: exp._id},
+          {$set: {conditions: exp.conditions},
+           $push: {excludeUsers: {$each: excludeList}}});
+      ExperimentManager.initGroupRefs(exp);
     }
 });
 
@@ -139,12 +176,9 @@ Meteor.startup(function() {
     }
 });
 
-//Meteor.startup(function () {
-    //console.log(CryptoJS.SHA256("test"));
-    //var crypto = require('crypto');
-    //var hash = crypto.createHash("sha224");
-    //hash.update("test");
-    //var results = hash.digest("hex");
-    //console.log(result);
+//Meteor.startup(function() {
+  //testGroupManager();
 //});
-
+//Meteor.startup(function() {
+  //testExperimentManager();
+//});

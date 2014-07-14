@@ -26,3 +26,8 @@ makeID = function(size) {
     return text;
 };
 
+getTime = function(t){
+  var time = moment(t);
+  time = time.fromNow();
+  return time;
+};

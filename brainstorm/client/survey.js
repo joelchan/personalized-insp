@@ -100,7 +100,11 @@ Template.SurveyPage.events({
     try {
       var resp = getResponse();
       resp._id = SurveyResponses.insert(resp);
-      logSubmittedSurvey(Session.get("currentParticipant"), resp);
+      var part = Session.get("currentParticipant");
+      Logger.logSubmittedSurvey(part, resp);
+      //Mark participant as finished
+      Participants.update({_id: part._id},
+          {$set: {hasFinished: true}});
       //console.log("formsubmitted");
       Router.goToNextPage("SurveyPage");
     } catch (err) {
