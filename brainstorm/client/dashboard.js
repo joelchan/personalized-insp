@@ -97,10 +97,14 @@ Template.userseries.rendered = function(){
 	var results = [];//submissionEvents.fetch();
 
 	//console.log(data);
-	var start = new Date(Events.findOne({userID: userID, description: "Participant began ideation"}).time);
+	var start = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time);
+	console.log("start: ");
+	console.log(start);
 	//console.log(start);
 	var sessionlength = 15;
-	var end = new Date(start + sessionlength*MS_PER_MINUTE);
+	var end = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time).add('m', 15);//new Date(start + sessionlength*MS_PER_MINUTE);
+	console.log("end: ");
+	console.log(end);
 	// var now = new Date(Date.now());
 	// var minAgo = new Date(now - 15*MS_PER_MINUTE);
 	var x = d3.time.scale()
@@ -110,7 +114,8 @@ Template.userseries.rendered = function(){
 
 	var xAxis = d3.svg.axis()
 						.scale(x)
-						.ticks(d3.time.minute, 1)
+						.ticks(15)
+						.tickFormat(d3.time.format("%I:%M"))
 						// .tickFormat(function(d){
 						// 	return moment(d).fromNow();
 						// })
