@@ -80,7 +80,7 @@ Logger = (function () {
    
     logIdeaSubmission: function(participant, ideaID) {
       var msg = "Participant submitted idea";
-      misc = {name: "ideaID", data: ideaID};
+      misc = [{name: "ideaID", data: ideaID}];
       this.logExpEvent(msg, participant, "info", misc);
     },
    
@@ -96,7 +96,7 @@ Logger = (function () {
    
     logSubmittedSurvey: function(participant, response) {
       var msg = "Participant submitted survey";
-      misc = {name: 'responseID', data: response._id};
+      misc = [{name: 'responseID', data: response._id}];
       this.logExpEvent(msg, participant, "info", misc);
     }
   };

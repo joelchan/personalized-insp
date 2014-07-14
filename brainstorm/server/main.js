@@ -123,7 +123,7 @@ Meteor.startup(function() {
           "individual brainstorming primed with common ideas",
           30
           );
-      GroupManager.addRole(cond1.groupTemplate,
+      GroupManager.addRole(cond2.groupTemplate,
           Roles.findOne({'title': "Ideator"}), 1)
       cond2._id = Conditions.insert(cond2);
       exp.conditions = [cond1, cond2];
@@ -157,3 +157,7 @@ Meteor.startup(function() {
       Clusters.insert(root);
     }
 });
+
+//Meteor.startup(function() {
+  //testGroupManager();
+//});

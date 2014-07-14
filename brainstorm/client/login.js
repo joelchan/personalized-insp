@@ -70,7 +70,7 @@ Template.LoginPage.events({
     },
     'keyup input#name': function (evt) {
       if(evt.keyCode==13) {
-        console.log("enter released, clicking continue");
+        //console.log("enter released, clicking continue");
         $('#nextPage').click();
       }
         //$(document).ready(function(){

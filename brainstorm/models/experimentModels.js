@@ -135,7 +135,6 @@ ExperimentManager = (function () {
         for (var i=0; i<exp.groups[condition.id].length; i++) {
             var groupID = exp.groups[condition.id][i];
             var group = Groups.findOne({_id: groupID});
-            console.log(group);
             if (group.isOpen) {
               openGroups.push(group);
               numSlots += GroupManager.numOpenSlots(group);
@@ -331,7 +330,7 @@ Participant = function(exp, user, cond, group, role) {
     // Assign Participant to condition
     this.conditionID = cond._id;
     this.groupID = group._id;
-    this.role = Roles.findOne(role.role);
+    this.role = Roles.findOne(role.roleID);
     this.verifyCode = this.userID.hashCode();
     //console.log("Participant verify code is: " + this.verifyCode);
     //Participants have not finished by default

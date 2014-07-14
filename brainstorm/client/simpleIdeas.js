@@ -59,46 +59,47 @@ getRandomRares = function() {
 
 getPrimingIdeas = function () {
     var participant = Session.get("currentParticipant");
+    //Check if priming ideas were already set
     if (participant.misc != undefined) {
       return participant.misc
     }
     var newIdeas = [];
-      //console.log("inserting priming ideas");
-      if (participant.condition.id == 1) {
-        //console.log("Priming with rare ideas");
-        //Grab 5 random rare ideas
-        var ideas = getRandomRares();
-        for (var i=0; i<ideas.length; i++) {
-          //console.log(ideas[i]);
-          //console.log("creating rare idea: " + ideas[i]);
-            var idea = new Idea(ideas[i],
-                participant.userID,
-                participant.condition.prompt,
-                participant
-                );
-            newIdeas.push(idea);
-            //if (Ideas.find({content: idea.content}).count() == 0) {
-              ////Ideas.insert(idea);
-            //}
-        }
-      } else {
-        //console.log("Priming with common ideas");
-        var ideas = getRandomElement(primingIdeas['common']);
-        for (var i=0; i<ideas.length; i++) {
-            var idea = new Idea(ideas[i], 
-                participant.user,
-                participant.condition.prompt,
-                participant
-                );
-            newIdeas.push(idea);
-            //if (Ideas.find({content: idea.content}).count() == 0) {
-              ////Ideas.insert(idea);
-            //}
-  
-        }
+    var cond = Conditions.findOne({_id: participant.conditionID});
+    //console.log("inserting priming ideas");
+    if (cond.id == 1) {
+      //console.log("Priming with rare ideas");
+      //Grab 5 random rare ideas
+      var ideas = getRandomRares();
+      for (var i=0; i<ideas.length; i++) {
+        //console.log(ideas[i]);
+        //console.log("creating rare idea: " + ideas[i]);
+          var idea = new Idea(ideas[i],
+              participant.userID,
+              cond.prompt,
+              participant
+              );
+          newIdeas.push(idea);
+          //if (Ideas.find({content: idea.content}).count() == 0) {
+            ////Ideas.insert(idea);
+          //}
       }
-
-      return newIdeas;
+    } else {
+      //console.log("Priming with common ideas");
+      var ideas = getRandomElement(primingIdeas['common']);
+      for (var i=0; i<ideas.length; i++) {
+          var idea = new Idea(ideas[i], 
+              participant.userID,
+              cond.prompt,
+              participant
+              );
+          newIdeas.push(idea);
+          //if (Ideas.find({content: idea.content}).count() == 0) {
+            ////Ideas.insert(idea);
+          //} 
+      }
+    }
+    
+    return newIdeas;
 };
 
 Template.Priming.helpers({
@@ -114,8 +115,9 @@ Template.Priming.helpers({
 
 Template.Prompt.helpers({
     prompt: function() {
-      var condition = Session.get("currentParticipant").condition;
-      //console.log(condition);
+      var condition = 
+          Conditions.findOne(
+            {_id: Session.get("currentParticipant").conditionID});
       return condition.prompt.question;
     }
 });
@@ -131,7 +133,7 @@ Template.IdeationPage.rendered = function() {
   window.scrollTo(0,0);
 
   // Register event listenr to click submit button when enter is pressed
-  $('#nextIdea').keypress(function(e){
+  $('#nextIdea').keyup(function(e){
     if(e.keyCode===13) {
       console.log("enter pressed")
       $('#submitIdea').click();
@@ -141,15 +143,15 @@ Template.IdeationPage.rendered = function() {
   
   //Add Exit study button to top right
   if ($('.exitStudy').length == 0) {
-      
     $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
   } else {
       $('.exitStudy').removeClass('hidden');
   }
+
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
-      console.log("exitign study")
-    logExitStudy(Session.get("currentParticipant"));
+      console.log("exiting study early")
+    Logger.logExitStudy(Session.get("currentParticipant"));
     exitIdeation();
   });
 
@@ -158,10 +160,11 @@ Template.IdeationPage.rendered = function() {
   var participant = Session.get("currentParticipant");
   //participant.misc = primes;
   Participants.update({_id: participant._id}, {$set: {misc: primes}});
+  //Update the participant misc fields in the session variable
   Session.set("currentParticipant", Participants.findOne({_id: participant._id}));
   var participant = Session.get("currentParticipant");
   //console.log(participant);
-  logBeginIdeation(participant);
+  Logger.logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
   setTimeout('exitIdeation()', 900000);
   //Setup timer for decrementing onscreen timer
@@ -182,25 +185,27 @@ Template.IdeationPage.events({
         //Add idea to database
         if (newIdea.trim() != "") {
           var participant = Session.get("currentParticipant");
+          var user = Session.get("currentUser");
+          var cond = Session.get("currentCond");
+          //Set a session variable to convenience
+          if (!cond) {
+            cond = Conditions.findOne({_id: participant.conditionID});
+            Session.set("currentCond", cond);
+          }
           var idea = new Idea(newIdea,
-              participant.user,
-              participant.condition.prompt,
+              user,
+              cond.prompt,
               participant
               );
           //console.log(idea); 
           var ideaID = Ideas.insert(idea); //returns _id of Idea after it is inserted
-          logIdeaSubmission(participant, ideaID); 
+          Logger.logIdeaSubmission(participant, ideaID); 
           // Clear the text field
           $('#nextIdea').val('');
         }
     }
 
 });
-
-
-//Placing the button in the navbar means I have to add event listeners
-//to the toplevel template
-
 
 getUser = function() {
   /******************************************************************
@@ -215,7 +220,7 @@ exitIdeation = function exitIdeation() {
   ******************************************************************/
   //Logs a partial idea if user hasn't submitted it
   $('#submitIdea').click();
-  logEndIdeation(Session.get("currentParticipant"));
+  Logger.logEndIdeation(Session.get("currentParticipant"));
   $('.exitStudy').addClass("hidden");
   Router.goToNextPage("IdeationPage");
 };

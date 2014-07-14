@@ -1,5 +1,4 @@
-
-function testGroupManager() {
+testGroupManager = function() {
   /*****************************************************************
   * Test group manager
   *****************************************************************/
@@ -28,7 +27,7 @@ function testGroupManager() {
 }
 
 
-function testExpManager() {
+testExpManager = function() {
   /*****************************************************************
   * Test Experiment manager
   *****************************************************************/
