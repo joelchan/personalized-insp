@@ -129,12 +129,9 @@ Template.userseries.rendered = function(){
 	var marks = svg.append("g")
 					.selectAll("rect")
 
-	submissionEvents.observeChanges({
+	submissionEvents.observe({
 		added: function(doc){
-			// console.log("calling refreshGraph");
-			// console.log(data);
-			results.push(Events.findOne({_id: doc}));
-			// console.log(data);
+			results.push(doc);
 			refreshGraph(results);
 		}
 	});

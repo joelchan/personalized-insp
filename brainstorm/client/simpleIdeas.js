@@ -257,9 +257,9 @@ var newNotify = null; //stores a new notification
 Template.NotificationDrawer.rendered = function(){
   $('.menu-link').bigSlide();
 
-  Notifications.find({recipient: Session.get("currentUser"), handled: false}).observeChanges({
+  Notifications.find({recipient: Session.get("currentUser"), handled: false}).observe({
     added : function(doc){
-      newNotify = Notifications.findOne({_id: doc}); //holds new notification
+      newNotify = doc;//Notifications.findOne({_id: doc}); //holds new notification
     }
   });
 }
