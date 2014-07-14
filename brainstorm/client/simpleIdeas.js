@@ -264,7 +264,7 @@ Template.NotificationDrawer.rendered = function(){
 //Helpers
 Template.NotificationDrawer.helpers({
   notifications : function(){
-    return Notifications.find({recipient: Session.get("currentUser")._id, handled: false});
+    return Notifications.find({recipient: Session.get("currentUser")._id});
   },
   directions : function(){
     return this.type.val === -1;
@@ -335,7 +335,7 @@ Template.SubmitIdeas.events({
     'keyup textarea' : function(){;
       window.clearTimeout(timer);
       timer = window.setTimeout(function(){
-        isTyping = false;
+        //isTyping = false;
       }, 3000);
     }
 });
