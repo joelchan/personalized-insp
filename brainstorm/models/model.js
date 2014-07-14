@@ -61,7 +61,7 @@ Group = function(template) {
       for (var i=0; i<this.template.roles.length; i++) {
         //Use roleID as the key toe the object containing assignments
         var roleID = this.template.roles[i].roleID;
-        console.log(this.template.roles[i].roleID);
+        //console.log(this.template.roles[i].roleID);
         //var newRoleAssign = {'roleID': roleID};
         this.assignments[roleID] = [];
         //The title of the role associated with these assignments

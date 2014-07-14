@@ -287,7 +287,7 @@ canParticipate = function (exp, userName) {
     }
   }
   //checks if user is on list of current participants marked as finished
-  for (var i=0; i<exp.participants.length; i++) {
+  for (var i=0; i<exp.participantIDs.length; i++) {
       if (exp.participants[i].userName == userName) {
           if (exp.participants[i].isFinished) {
             console.log("repeat participant has finished already");
