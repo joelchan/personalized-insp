@@ -112,6 +112,10 @@ Template.Clustering.helpers({
     return IdeasToProcess.find({inCluster: {$ne: true}});
   },
 
+  clusters : function(){
+    return Clusters.find({isRoot: {$ne: true}});
+  },
+  
   clustername : function(){
     var clu = Clusters.findOne({_id: this.toString()});
     if(clu === undefined) return false
@@ -175,17 +179,17 @@ Template.cluster.helpers({
 ********************************************************************/
 Template.Clustering.events({
   //checks that a name has been provided for all clusters
-  'click button#finish' : function(){
-    var finished = true;
-    Clusters.find().forEach(function(myCluster){
-      if(myCluster.name == undefined || myCluster.name ==="" 
-        || myCluster.name ==="Not named yet"){
-        alert("Please name all clusters");
-        finished = false;
-        return finished;
-      }
-    });
-  },
+  // 'click button#finish' : function(){
+  //   var finished = true;
+  //   Clusters.find().forEach(function(myCluster){
+  //     if(myCluster.name == undefined || myCluster.name ==="" 
+  //       || myCluster.name ==="Not named yet"){
+  //       alert("Please name all clusters");
+  //       finished = false;
+  //       return finished;
+  //     }
+  //   });
+  // },
 
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
