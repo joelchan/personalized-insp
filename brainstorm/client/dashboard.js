@@ -186,7 +186,7 @@ Template.userseries.rendered = function(){
 			.remove();
 	}
 
-	var nowData = [start]; // data for nowLine
+	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
 	var nowLine = svg.append("g")
 					.selectAll("rect")
 	nowLine.data(nowData) // initialize nowLine
