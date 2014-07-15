@@ -322,7 +322,7 @@ Template.Dashboard.helpers({
 	ideas : function(){
 		var filters = Session.get("partFilters");
 		if(filters.length > 0){
-			return IdeasToProcess.find({userName: {$in: filters}});
+			return IdeasToProcess.find({userID: {$in: filters}});
 		} else
    			return IdeasToProcess.find();
   	},
@@ -349,11 +349,11 @@ Template.Dashboard.helpers({
   	},
 
   	selectedparts : function(){
-  		return Session.get("selectedParts");
+  		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
   	},
 
   	filters : function(){
-  		return Session.get("partFilters");
+  		return MyUsers.find({_id: {$in: Session.get("partFilters")}});
   	}
 });
 
@@ -388,21 +388,22 @@ Template.Dashboard.events({
 	'dblclick .profile' : function(e){
 		var id = e.currentTarget.id;
 		id = id.split("-")[1];
-		var userName = MyUsers.findOne({_id: id}).name;
+		//var userName = MyUsers.findOne({_id: id}).name;
 		var parts = Session.get("partFilters");
 
 		for (var i = 0; i < parts.length; i++) {
-			if(parts[i] === userName) 
+			if(parts[i] === id) 
 				return false;
 		};
 
-		parts.push(userName);
+		parts.push(id);
 		Session.set("partFilters", parts);
 	},
 
 	'click .fa-minus-circle' : function(){
 		var label = $(event.target).parent();
-		var id = label.text();
+		var id = label.attr("id");
+		id = id.split("-")[1];
 		//console.log(id);
 		if(label.hasClass("filter-label")){
 			//console.log("removeing filter label");

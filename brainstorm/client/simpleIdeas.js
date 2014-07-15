@@ -174,7 +174,7 @@ Template.NotifyItem.helpers({
 ********************************************************************/
 //Rendered Callback    
 Template.IdeationPage.rendered = function() {
-  $('.menu-link').bigSlide();
+  $('.menu-link').bigSlide().open();
   //Debug statements
   //console.log("rendered");
   //console.log(Session.get('currentExp'));

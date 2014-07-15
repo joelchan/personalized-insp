@@ -15,7 +15,7 @@
             </a>
           </h5>
         </div>
-        <div id="directions" class="panel-collapse collapse in">
+        <div id="directions" class="panel-collapse collapse">
           <div class="panel-body">
             <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
             <ol>
@@ -128,7 +128,7 @@ complete idea)"></textarea>
   </div>
 </template>-->
 
-<template name="SubmitIdeas">
+<!-- <template name="SubmitIdeas">
   <div class="row">
     <div class="col-md-9">
         <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
@@ -145,6 +145,27 @@ complete idea)"></textarea>
           <span class="badge">{{number}}</span>
         {{/if}}
       </a>
+    </div>
+  </div>
+</template> -->
+
+<template name="SubmitIdeas">
+  <div class="row">
+    <div class="col-md-1">
+      <a href="#notifications" class="menu-link">
+        <i id="notify-bulb" class="fa fa-lightbulb-o fa-5x"></i>
+        {{#if number}}
+          <span class="badge">{{number}}</span>
+        {{/if}}
+      </a>
+    </div>
+    <div class="col-md-9">
+        <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
+(press the &lt;Enter&gt; key or the &quot;Enter Idea&quot; button to the right after each 
+complete idea)"></textarea>
+    </div>
+    <div class="col-md-2">
+        <button id="submitIdea" class="submitIdea btn-default btn-primary"> Enter Idea </button>
     </div>
   </div>
 </template>
@@ -178,7 +199,7 @@ complete idea)"></textarea>
   </div>
 </template>-->
 
-<template name="IdeationPage">
+<!-- <template name="IdeationPage">
   <div class="sidebar">
         {{> NotificationDrawer}}
   </div>
@@ -199,12 +220,38 @@ complete idea)"></textarea>
           {{> Priming }}
         </div>
       </div> 
-      <!-- close header -->
+      <!- - close header - ->
       <div class="row">
         {{> IdeaBox}}
       </div>
   
       <div class="footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
+        {{> SubmitIdeas }}
+      </div>
+    </div>
+  </div>
+</template> -->
+
+<template name="IdeationPage">
+  <div class="row">
+    <div>
+      {{> NotificationDrawer}}
+    </div>
+    <div id="ideation-pane" class="push col-md-8">
+      <div class="header" data-spy="affix" data-offset-top="50"> 
+        <div class="row">
+          {{> Prompt}}
+        </div>
+        <!-- <div class="row">
+          {{> Priming }}
+        </div> -->
+      </div> 
+      <!-- close header -->
+      <div class="row">
+        {{> IdeaBox}}
+      </div>
+  
+      <div class="push footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
         {{> SubmitIdeas }}
       </div>
     </div>

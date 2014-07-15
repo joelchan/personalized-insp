@@ -46,7 +46,7 @@
 						<h3>Filters</h3>
 						{{#each filters}}
 						<div>
-							<span class="filter-label label label-default"><i class="fa fa-minus-circle"></i>{{this}}</span>
+							<span class="filter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						</div>
 						{{/each}}
 					</div>
@@ -97,7 +97,7 @@
 					<div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
-							<span class="part-label label label-primary"><i class="fa fa-minus-circle"></i>{{this}}</span>
+							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
 					</div>
             	</div>
@@ -134,7 +134,7 @@
 					<div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
-							<span class="part-label label label-primary"><i class="fa fa-minus-circle"></i>{{this}}</span>
+							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
 					</div>
             	</div>
@@ -163,7 +163,7 @@
 	<div class="profile" id="userprofile-{{_id}}">
 		<form class="form-inline" role="form">
   			<div class="checkbox">
-      			<input class="selectpart" type="checkbox" value="{{this.name}}">
+      			<input class="selectpart" type="checkbox" value="{{this._id}}">
       			<label>{{this.name}}</label>
   			</div>
   			<!--<div class="name-icon"><i class="fa fa-user fa-2x"></i></div>-->
