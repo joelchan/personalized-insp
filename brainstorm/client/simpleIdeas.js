@@ -278,17 +278,31 @@ Template.NotificationDrawer.helpers({
 Template.NotificationDrawer.events({
   'click a' : function(){
     var $icon = $(event.target).children('i');
+
     if($icon.hasClass('fa-chevron-circle-right')){
       $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
     } else if($icon.hasClass('fa-chevron-circle-down')){
       $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
     }
 
-    var $notification = $(event.target).parents('.unhandled');
-    $notification.removeClass("unhandled");
+    var $notification = $(event.target).parent().parent().parent();
+    var id = $notification.children('.panel-collapse').attr('id');
 
-    var id = $notification.find('.panel-collapse').attr('id');
-    Notifications.update({_id: id}, {$set: {handled: true}});
+    if(!Notifications.findOne({_id: id}).handled){
+      Notifications.update({_id: id}, {$set: {handled: true}});
+      Logger.logNotificationHandled(Session.get("currentParticipant"), id);
+      $notification.removeClass("unhandled");
+      return false; //handled event is same as first expansion event
+    } else {
+      var context = $(event.target).parent('.panel-heading').context;
+      if($(context).hasClass("collapsed")){
+        Logger.logNotificationExpanded(Session.get("currentParticipant"), id);
+        console.log("logging expansion");
+      } else {
+        Logger.logNotificationCollapsed(Session.get("currentParticipant"), id);
+        console.log("logging collapse");
+      }
+    }
   }
 });
 

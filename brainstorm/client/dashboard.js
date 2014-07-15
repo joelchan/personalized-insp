@@ -466,13 +466,13 @@ Template.Dashboard.events({
 		};
 	},
 
-	'click #sendmodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
+	'click #sendExModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
 		var recipients = Session.get("selectedParts");
 		var examples = [];
 
 		var sender = Session.get("currentUser");
 
-		$('#sendmodal-idealist .idea.selected').each(function(i){
+		$('#sendExModal-idealist .idea.selected').each(function(i){
 			var idea = {_id: $(this).attr('id'), content: $(this).text()}
 			examples.push(idea);
 		});
