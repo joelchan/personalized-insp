@@ -165,7 +165,81 @@ Template.userseries.rendered = function(){
 			.attr("fill", "#d43f3a")
 			.append("svg:title")
 			.text(function(d) { return d.content; });
+		marks.transition()
+			.duration(500)
+			.attr("height", "50px")
+			.attr("width", "1.5px")
+			.attr("class", "bar")
+			.attr("id", function(d){
+				return d._id;
+			})
+			.attr("x", function(d){
+				var time = new Date(d.time);
+				return x(time);
+			})
+			.attr("y", 0)
+			.attr("fill", "#d43f3a")
+		marks.exit()
+			.transition()
+			.duration(500)
+			.attr("x",w)
+			.remove();
 	}
+
+	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
+	var nowLine = svg.append("g")
+					.selectAll("rect")
+	nowLine.data(nowData) // initialize nowLine
+		.enter()
+		.append("rect")
+		.attr("height", "50px")
+		.attr("width", "2px")
+		.attr("class", "nowLine")
+		.attr("x", function(d){
+			return x(d);
+		})
+		.attr("y", 0)
+		.attr("fill", "gray")
+
+	// function for updating and transitioning the nowLine
+	function drawNow(nd) {
+		var nLine = svg.selectAll(".nowLine")
+			.data(nd)
+		nLine
+			.enter()
+			.append("rect")
+			.attr("height", "50px")
+			.attr("width", "2px")
+			.attr("class", "nowLine")
+			.attr("id", function(d){
+				return d._id;
+			})
+			.attr("x", function(d){
+				return x(d);
+			})
+			.attr("y", 0)
+			.attr("fill", "gray")
+		nLine.transition()
+			.duration(500)
+			.attr("height", "50px")
+			.attr("width", "2px")
+			.attr("x", function(d){
+				return x(d);
+			})
+			.attr("y", 0)
+			.attr("fill", "gray")
+		nLine.exit()
+			.transition()
+			.duration(500)
+			.attr("x",w) // this moves the previous nowLine off the scale
+			.remove();
+	}
+
+	Meteor.setInterval(function(){
+		nowData.pop(); // removing the old "now"
+		nowData.push(new moment(Date.now())); // pushing the new now in
+		drawNow(nowData);
+	}, 1000);
 	//var timeDep = new Deps.Dependency();
 
 	// Events.find({userID: userID, description: "Participant submitted idea"}).observeChanges({
