@@ -165,6 +165,25 @@ Template.userseries.rendered = function(){
 			.attr("fill", "#d43f3a")
 			.append("svg:title")
 			.text(function(d) { return d.content; });
+		marks.transition()
+			.duration(500)
+			.attr("height", "50px")
+			.attr("width", "1.5px")
+			.attr("class", "bar")
+			.attr("id", function(d){
+				return d._id;
+			})
+			.attr("x", function(d){
+				var time = new Date(d.time);
+				return x(time);
+			})
+			.attr("y", 0)
+			.attr("fill", "#d43f3a")
+		marks.exit()
+			.transition()
+			.duration(500)
+			.attr("x",w)
+			.remove();
 	}
 
 	var nowData = [start]; // data for nowLine
