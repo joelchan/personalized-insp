@@ -65,8 +65,8 @@
 				    	<span class="sr-only">Toggle Dropdown</span>
 				  	</button>
 				  	<ul class="dropdown-menu" role="menu">
-				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#changemodal">Change Prompt</a></li>
-				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#sendmodal">Send Examples</a></li>
+				    	<li><a href="#" class="show-modal" id="changebutton" data-toggle="modal" data-target="#changemodal">Change Prompt</a></li>
+				    	<li><a href="#" class="show-modal" id="sendexbutton" data-toggle="modal" data-target="#sendmodal">Send Examples</a></li>
 				  	</ul>
 				</span>
 				People</h3>
@@ -152,14 +152,18 @@
 </template>
 
 <template name="tagcloud">
-	<div id="tagcloud"></div>
+	<div id="tagcloud">
+		{{#each clusters}}
+			<span class="tagname" style="font-size: {{getFontSize}}px;">{{name}}</span>
+		{{/each}}
+	</div>
 </template>
 
 <template name="userprofile">
 	<div class="profile" id="userprofile-{{_id}}">
 		<form class="form-inline" role="form">
   			<div class="checkbox">
-      			<input class="selectpart" type="checkbox" value="{{this._id}}">
+      			<input class="selectpart" type="checkbox" value="{{this.name}}">
       			<label>{{this.name}}</label>
   			</div>
   			<!--<div class="name-icon"><i class="fa fa-user fa-2x"></i></div>-->

@@ -10,7 +10,7 @@ Template.Clustering.rendered = function(){
       if(ui.sender.hasClass('cluster')){
         var myIdeaId = $(ui.item).attr('id');
         myIdea = processIdeaSender(ui, myIdeaId);
-        updateIdeas(myIdeaId, false);
+        updateIdeas(myIdeaId, true);
       }
       createCluster(ui.item);
       ui.item.remove();
@@ -33,18 +33,6 @@ Template.Clustering.rendered = function(){
       updateIdeas(myIdeaId, false);
     }
   });
-
-  //Attach sortable to the cluster list
-  /*$('ul.clusterdeck').sortable({
-    items: ">*:not(.sort-disabled)",
-    connectWith: 'ul.stack',
-    receive: function(event,ui){
-      if(ui.sender.hasClass('stack')){
-        ui.item.remove();
-      }
-      return false;
-    }
-  });*/
 }
 
 Template.clusterarea.rendered = function(){
@@ -284,4 +272,6 @@ function updateIdeas(ideaId, inCluster){
     {$set:
       {inCluster: inCluster}
   });
+
+  
 }

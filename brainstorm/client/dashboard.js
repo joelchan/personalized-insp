@@ -3,79 +3,81 @@ Session.set("selectedParts", []);
 Session.set("selectedIdeas", []);
 MS_PER_MINUTE = 60000;
 
+
 Template.Dashboard.rendered = function(){
 	Session.set("currentPrompt", "Alternate uses for an iPod");
 }
 
+
 Template.tagcloud.rendered = function(){
-	var self = this;
-	self.node = self.find("svg");
-	var w = 453;
-	var h = 280;
-	var hPad = 20;
-	var wPad = 30;
-	var svg = d3.select("#tagcloud")
-				.append("svg")
-				.attr("height", h)
-				.attr("width", w);
+	// var self = this;
+	// self.node = self.find("svg");
+	// var w = 453;
+	// var h = 280;
+	// var hPad = 20;
+	// var wPad = 30;
+	// var svg = d3.select("#tagcloud")
+	// 			.append("svg")
+	// 			.attr("height", h)
+	// 			.attr("width", w);
 
-	var timeDep = new Deps.Dependency();
-	Deps.autorun(function () {
-		timeDep.depend();
-		var clusters = Clusters.find().fetch();
+	// var timeDep = new Deps.Dependency();
+	// Deps.autorun(function () {
+	// 	timeDep.depend();
+	// 	var clusters = Clusters.find().fetch();
 
-    	var xScale = d3.scale.linear()
-						.domain([d3.min(clusters, function(d){
-							if(d.position !== undefined) return d.position.left;
-						}), d3.max(clusters, function(d) {
-							if(d.position !== undefined) return d.position.left; 
-						})])
-						.range([wPad, w - wPad*3]);
+ //    	var xScale = d3.scale.linear()
+	// 					.domain([d3.min(clusters, function(d){
+	// 						if(d.position !== undefined) return d.position.left;
+	// 					}), d3.max(clusters, function(d) {
+	// 						if(d.position !== undefined) return d.position.left; 
+	// 					})])
+	// 					.range([wPad, w - wPad*3]);
 
-		var yScale = d3.scale.linear()
-						.domain([d3.min(clusters, function(d){
-							if(d.position !== undefined) return d.position.top;
-						}), d3.max(clusters, function(d) {
-							if(d.position !== undefined) return d.position.top;
-						})])
-						.range([hPad, h - hPad]);
+	// 	var yScale = d3.scale.linear()
+	// 					.domain([d3.min(clusters, function(d){
+	// 						if(d.position !== undefined) return d.position.top;
+	// 					}), d3.max(clusters, function(d) {
+	// 						if(d.position !== undefined) return d.position.top;
+	// 					})])
+	// 					.range([hPad, h - hPad]);
 
-		var wsScale = d3.scale.linear()
-						.domain([0, d3.max(clusters, function(d){
-							if(d.ideas !== undefined) return d.ideas.length;
-						})])
-						.range([10, 25]);
+	// 	var wsScale = d3.scale.linear()
+	// 					.domain([0, d3.max(clusters, function(d){
+	// 						if(d.ideas !== undefined) return d.ideas.length;
+	// 					})])
+	// 					.range([10, 25]);
 
-    	var tags = svg.selectAll("text")
-    				.data(clusters);
+ //    	var tags = svg.selectAll("text")
+ //    				.data(clusters);
 
-    	tags.enter()
-   			.append("text")
-    		.attr("x", function(d){
-    			if(d.position !== undefined)
-    				return xScale(d.position.left);
-   			})
- 			.attr("y", function(d){
-    			if(d.position !== undefined)
-    				return yScale(d.position.top);
-    		})
-    		.style("font-size", function(d){
-    			if(d.ideas !== undefined){
-    				console.log(wsScale(d.ideas.length));
-    				return wsScale(d.ideas.length);}
-    		})
-			.text(function(d){
-			   	return d.name;
-			});
+ //    	tags.enter()
+ //   			.append("text")
+ //    		.attr("x", function(d){
+ //    			if(d.position !== undefined)
+ //    				return xScale(d.position.left);
+ //   			})
+ // 			.attr("y", function(d){
+ //    			if(d.position !== undefined)
+ //    				return yScale(d.position.top);
+ //    		})
+ //    		.style("font-size", function(d){
+ //    			if(d.ideas !== undefined){
+ //    				//console.log(wsScale(d.ideas.length));
+ //    				return wsScale(d.ideas.length);}
+ //    		})
+	// 		.text(function(d){
+	// 		   	return d.name;
+	// 		});
 
-		tags.exit()
-			.remove();
-	});
+	// 	tags.exit()
+	// 		.remove();
+	// });
 
-	timeDep.changed(); //run once at beginning
-	setInterval(function(){
-		timeDep.changed();
-	}, 5000);
+	// timeDep.changed(); //run once at beginning
+	// setInterval(function(){
+	// 	timeDep.changed();
+	// }, 5000);
 }
 
 Template.userseries.rendered = function(){
@@ -98,13 +100,13 @@ Template.userseries.rendered = function(){
 
 	//console.log(data);
 	var start = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time);
-	console.log("start: ");
-	console.log(start);
+	//console.log("start: ");
+	//console.log(start);
 	//console.log(start);
 	var sessionlength = 15;
 	var end = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time).add('m', 15);//new Date(start + sessionlength*MS_PER_MINUTE);
-	console.log("end: ");
-	console.log(end);
+	//console.log("end: ");
+	//console.log(end);
 	// var now = new Date(Date.now());
 	// var minAgo = new Date(now - 15*MS_PER_MINUTE);
 	var x = d3.time.scale()
@@ -140,7 +142,7 @@ Template.userseries.rendered = function(){
 	});
 
 	function refreshGraph(r){
-		console.log(r);
+		//console.log(r);
 		marks.data(r)
 			.enter()
 			.append("rect")
@@ -158,7 +160,7 @@ Template.userseries.rendered = function(){
 				//console.log(d);
 				var time = new Date(d.time);
 				//console.log(time);
-				console.log(x(time));
+				//console.log(x(time));
 				return x(time);
 			})
 			.attr("y", 0)
@@ -337,10 +339,6 @@ Template.Dashboard.helpers({
   		return false;
   	},
 
-  	clusters : function(){
-    	return Clusters.find();
-  	},
-
   	users : function(){
   		var beganIdeation = Events.find({description: "Participant began ideation"});
   		var userIDs = [];
@@ -358,6 +356,17 @@ Template.Dashboard.helpers({
   		return Session.get("partFilters");
   	}
 });
+
+Template.tagcloud.helpers({
+	clusters : function(){
+    	return Clusters.find({isRoot: {$ne: true}}, {sort: {name: 1}});
+  	},
+
+  	getFontSize : function(){
+  		//console.log(this);
+  		return 10 +(this.ideas.length * 4);
+  	}
+})
 
 /********************************************************************
 * Template Events
@@ -383,7 +392,7 @@ Template.Dashboard.events({
 		var parts = Session.get("partFilters");
 
 		for (var i = 0; i < parts.length; i++) {
-			if(parts[i] === id) 
+			if(parts[i] === userName) 
 				return false;
 		};
 
@@ -394,14 +403,14 @@ Template.Dashboard.events({
 	'click .fa-minus-circle' : function(){
 		var label = $(event.target).parent();
 		var id = label.text();
-		console.log(id);
+		//console.log(id);
 		if(label.hasClass("filter-label")){
-			console.log("removeing filter label");
+			//console.log("removeing filter label");
 			var partFilters = Session.get("partFilters");
 			for (var i = 0; i < partFilters.length; i++) {
 				if (partFilters[i] === id){
 					partFilters.splice(i,1);
-					console.log("removed");
+					//console.log("removed");
 					return Session.set("partFilters", partFilters);
 				}
 			};
@@ -429,8 +438,21 @@ Template.Dashboard.events({
    		Session.set("selectedParts", array);
 	},
 
-	'click .modal .idea' : function(){
-		$(event.target).toggleClass("selected");
+	'click #changebutton' : function(){
+		$('#new-prompt').val("");
+	},
+
+	'click #sendexbutton' : function(){
+		$('.modal .idea').each(function(){
+			$(this).removeClass("selected");
+		});
+	},
+
+	'click .modal .idea' : function(event){
+		var $target = $(event.target)
+		if ($target.hasClass("gamechangestar"))
+			return false;
+		$target.toggleClass("selected");
 	},
 
 	'click #changemodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
