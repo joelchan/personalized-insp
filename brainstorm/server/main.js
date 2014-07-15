@@ -187,10 +187,16 @@ Meteor.startup(function() {
   /****************************************************************
   * Keep IdeasToProcess and Ideas collections synchronized
   ****************************************************************/
-  Ideas.find().observe({
-    added: function(doc) {
-      IdeasToProcess.insert(doc);
-    },
+  //Clear out the IdeasToProcess collection before adding  function
+  //to synce them
+  IdeasToProcess.remove({},
+    function (err) {
+      //Callback to add sync after IdeasToProcess.remove finishes
+      Ideas.find().observe({
+        added: function(doc) {
+            IdeasToProcess.insert(doc);
+        },
+      });
   });
 });
 
