@@ -38,7 +38,7 @@
 						<h3>Ideas <span class="quantity">({{numIdeas}})</span></h3>  
 						<div class="idealist">
 							{{#each ideas}}
-								<div id={{_id}} class="idea">{{content}}</div>
+								{{> idea}}
 							{{/each}}	
 						</div>
 					</div>
@@ -128,7 +128,7 @@
 
 					<div id="sendmodal-idealist" class="idealist">
 						{{#each ideas}}
-							<div id={{_id}} class="idea">{{content}}</div>
+							{{> idea}}
 						{{/each}}	
 					</div>
 					<div id="selectedparts">
@@ -145,6 +145,10 @@
     		</div>
   		</div>
 	</div>
+</template>
+
+<template name="idea">
+	<div id={{_id}} class="idea">{{content}} <i class="fa fa-lg {{#if this.isGamechanger}} fa-star {{else}} fa-star-o {{/if}}gamechangestar"></i></div>
 </template>
 
 <template name="tagcloud">

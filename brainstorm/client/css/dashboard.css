@@ -74,6 +74,12 @@ html,body {
 	margin: 2px;
 }
 
+.dashboard .gamechangestar{
+	float: right;
+	color: #f0ad4e;
+	text-shadow: 1px 1px #ddd;
+}
+
 .changeprompt{
 	height: 40%;
 }

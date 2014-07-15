@@ -320,17 +320,17 @@ Template.Dashboard.helpers({
 	ideas : function(){
 		var filters = Session.get("partFilters");
 		if(filters.length > 0){
-			return Ideas.find({userName: {$in: filters}});
+			return IdeasToProcess.find({userName: {$in: filters}});
 		} else
-   			return Ideas.find();
+   			return IdeasToProcess.find();
   	},
 
   	numIdeas : function(){
   		var filters = Session.get("partFilters");
 		if(filters.length > 0){
-			return Ideas.find({userName: {$in: filters}}).count();
+			return IdeasToProcess.find({userName: {$in: filters}}).count();
 		} else
-   			return Ideas.find().count();
+   			return IdeasToProcess.find().count();
   	},
 
   	gamechangers : function(){
@@ -368,8 +368,12 @@ Template.Dashboard.events({
 		//need to show visually that idea is selected as example in idea list?
 	},
 
-	'click .idealist .idea' : function(){
-		var id = $(event.target).attr('id');
+	'click .gamechangestar' : function(){
+		var id = (this)._id;
+		var idea = IdeasToProcess.findOne({_id: id});
+		var state = !idea.isGamechanger;
+
+		IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
 	},
 
 	'dblclick .profile' : function(e){

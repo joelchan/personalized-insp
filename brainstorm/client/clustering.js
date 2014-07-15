@@ -120,7 +120,7 @@ Template.cluster.rendered = function(){
 ********************************************************************/
 Template.Clustering.helpers({
   ideas : function(){
-    return IdeasToProcess.find();
+    return IdeasToProcess.find({inCluster: {$ne: true}});
   },
 
   clustername : function(){
@@ -128,35 +128,26 @@ Template.Clustering.helpers({
     if(clu === undefined) return false
     return clu.name;
   },
-
-  isClustered : function(){
-    if(this.inCluster){
-      return false;
-    } else {
-      return true;
-    }
-  },
     
   prompt : function(){
     return "Alternative uses for old ipods";//Session.get("currentExp").conditions[0].prompt.question;
   }
 });
 
-
 /********************************************************************
 * Cluster Area template Helpers
 ********************************************************************/
 Template.clusterarea.helpers({
   clusters : function(){
-    return Clusters.find().fetch();
-  },
-
-  isNotRoot : function(){
-    if($(this)[0].isRoot)
-      return false;
-    return true;
+    return Clusters.find({isRoot: {$ne: true}});
   },
 });
+
+Template.ideaitem.helpers({
+  gameChangerStatus : function(){
+    return this.isGamechanger;
+  }
+})
 
 
 /********************************************************************
@@ -217,7 +208,7 @@ Template.Clustering.events({
   },
 
   //Collapse clusters and makes them unsortable until expanded
-  'click .fa' : function(){
+  'click .collapser' : function(){
     var id = $(event.target).parent().parent().attr('id');
     var cluster = Clusters.findOne({_id: id});
     var state = !cluster.isCollapsed;
@@ -232,6 +223,15 @@ Template.Clustering.events({
     }
     $(event.target).parent().parent().children('li').slideToggle("fast");*/
   },
+
+  'click .gamechangestar' : function(){
+    console.log(this);
+    var id = (this)._id;
+    var idea = IdeasToProcess.findOne({_id: id});
+    var state = !idea.isGamechanger;
+
+    IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
+  }
 
   //Attaches sortable and draggable to clusters when mouse moves into cluster area
 });
