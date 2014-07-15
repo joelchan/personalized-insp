@@ -67,6 +67,7 @@
 				  	<ul class="dropdown-menu" role="menu">
 				    	<li><a href="#" class="show-modal" id="changebutton" data-toggle="modal" data-target="#changemodal">Change Prompt</a></li>
 				    	<li><a href="#" class="show-modal" id="sendexbutton" data-toggle="modal" data-target="#sendExModal">Send Examples</a></li>
+				    	<li><a href="#" class="show-modal" id="sendthemebutton" data-toggle="modal" data-target="#sendThemeModal">Send Theme</a></li>
 				  	</ul>
 				</span>
 				People</h3>
@@ -145,10 +146,43 @@
     		</div>
   		</div>
 	</div>
+
+	<div class="modal fade" id="sendThemeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    	<div class="modal-dialog ">
+        	<div class="modal-content">
+            	<div class="modal-header">
+            		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            		<h4 class="modal-title" id="myModalLabel">Send Them</h4>
+            	</div>
+            	<div class="modal-body">
+                	<h3>Choose a theme to send to participants</h3>
+                	<div id="sendThemeModal-clusterlist" class="idealist">
+						{{#each clusters}}
+							{{> theme}}
+						{{/each}}	
+					</div>
+					<div id="selectedparts">
+						<label>Selected Participants: </label>
+						{{#each selectedparts}}
+							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+						{{/each}}
+					</div>
+            	</div>
+            	<div class="modal-footer">
+                	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                	<button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
+        		</div>
+    		</div>
+  		</div>
+	</div>
 </template>
 
 <template name="idea">
-	<div id={{_id}} class="idea">{{content}} <i class="fa fa-lg {{#if this.isGamechanger}} fa-star {{else}} fa-star-o {{/if}}gamechangestar"></i></div>
+	<div id={{this._id}} class="idea">{{this.content}} <i class="fa fa-lg {{#if this.isGamechanger}} fa-star {{else}} fa-star-o {{/if}}gamechangestar"></i></div>
+</template>
+
+<template name="theme">
+	<div id={{this._id}} class="idea">{{this.name}}</div>
 </template>
 
 <template name="tagcloud">

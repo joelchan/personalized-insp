@@ -335,6 +335,10 @@ Template.Dashboard.helpers({
    			return IdeasToProcess.find().count();
   	},
 
+  	clusters : function(){
+  		return Clusters.find({isRoot: {$ne: true}});
+  	},
+
   	gamechangers : function(){
   		return false;
   	},
@@ -449,6 +453,8 @@ Template.Dashboard.events({
 		});
 	},
 
+	//send theme clear selections
+
 	'click .modal .idea' : function(event){
 		var $target = $(event.target)
 		if ($target.hasClass("gamechangestar"))
@@ -481,4 +487,6 @@ Template.Dashboard.events({
 			sendExamplesNotify(sender, recipients[i], examples);
 		};
 	}
+
+	//send theme modal event
 });
