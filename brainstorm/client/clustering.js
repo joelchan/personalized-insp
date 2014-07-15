@@ -115,7 +115,7 @@ Template.Clustering.helpers({
   clusters : function(){
     return Clusters.find({isRoot: {$ne: true}});
   },
-  
+
   clustername : function(){
     var clu = Clusters.findOne({_id: this.toString()});
     if(clu === undefined) return false
@@ -124,6 +124,15 @@ Template.Clustering.helpers({
     
   prompt : function(){
     return "Alternative uses for old ipods";//Session.get("currentExp").conditions[0].prompt.question;
+  },
+
+  numClusters : function(){
+    return Clusters.find({isRoot: {$ne: true}}).count();
+  },
+
+  numUnnamed : function(){
+    var nullNames = ["Not named yet", "", " ", "  ", "   ", undefined];
+    return Clusters.find({isRoot: {$ne: true}, name: {$in: nullNames}}).count();
   }
 });
 
