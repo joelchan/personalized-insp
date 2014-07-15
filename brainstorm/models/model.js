@@ -321,6 +321,7 @@ Idea = function (content, user, prompt, participant) {
   this.userName = user.name;
   this.prompt = prompt;
   this.isGamechanger = false;
+  this.inCluster = false;
   //Optional fields not logged during non-experiments
   this.participantID = participant._id;
 };
