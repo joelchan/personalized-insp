@@ -454,7 +454,7 @@ Template.Dashboard.events({
 		var clusters = filters.clusterFilters;
 
 		for (var i = 0; i < clusters.length; i++) {
-			if(clusters[i] === id) 
+			if(clusters[i].id === id) 
 				return false;
 		};
 
