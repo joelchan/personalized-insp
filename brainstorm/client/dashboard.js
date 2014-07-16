@@ -1,9 +1,14 @@
-Session.set("partFilters", []);
+//Session.set("partFilters", []);
 Session.set("selectedParts", []);
 Session.set("selectedIdeas", []);
 Session.set("sessionLength", 30);
+var filters = {
+	partFilters: [],
+	clusterFilters: [],
+	gamchanger: false
+}
+Session.set("idealistFilters", filters);
 MS_PER_MINUTE = 60000;
-
 
 Template.Dashboard.rendered = function(){
 	Session.set("currentPrompt", "Alternate uses for an iPod");
@@ -193,7 +198,6 @@ Template.userseries.rendered = function(){
 	// 				.domain([0, sessionlength])
 	// 				.range([pad, w-pad]);
 	var nowWidth = (w-2*pad)/sessionlength; //1 minute
-
 	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
 	var nowLine = svg.append("g")
 					.selectAll("rect")
@@ -332,15 +336,15 @@ Template.userseries.rendered = function(){
 *********************************************************************/
 Template.Dashboard.helpers({
 	ideas : function(){
-		var filters = Session.get("partFilters");
-		if(filters.length > 0){
-			return IdeasToProcess.find({userID: {$in: filters}});
+		var filters = Session.get("idealistFilters");//Session.get("partFilters");
+		if(filters.partFilters.length > 0){
+			return IdeasToProcess.find({userID: {$in: filters.partFilters}});
 		} else
    			return IdeasToProcess.find();
   	},
 
   	numIdeas : function(){
-  		var filters = Session.get("partFilters");
+  		var filters = Session.get("idealistFilters");
 		if(filters.length > 0){
 			return IdeasToProcess.find({userName: {$in: filters}}).count();
 		} else
@@ -368,8 +372,8 @@ Template.Dashboard.helpers({
   		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
   	},
 
-  	filters : function(){
-  		return MyUsers.find({_id: {$in: Session.get("partFilters")}});
+  	partFilters : function(){
+  		return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
   	}
 });
 
@@ -405,15 +409,19 @@ Template.Dashboard.events({
 		var id = $(e.currentTarget).parents('.profile').attr("id");
 		id = id.split("-")[1];
 		//var userName = MyUsers.findOne({_id: id}).name;
-		var parts = Session.get("partFilters");
+		//var parts = Session.get("idealistFilters");
+		var filters = Session.get("idealistFilters");
+		var parts = filters.partFilters;
 
 		for (var i = 0; i < parts.length; i++) {
 			if(parts[i] === id) 
 				return false;
 		};
 
-		parts.push(id);
-		Session.set("partFilters", parts);
+		filters.partFilters.push(id);
+		//Session.set("partFilters", parts);
+		Session.set("idealistFilters", filters);
+
 	},
 
 	'click .fa-minus-circle' : function(){
@@ -423,14 +431,21 @@ Template.Dashboard.events({
 		//console.log(id);
 		if(label.hasClass("filter-label")){
 			//console.log("removeing filter label");
-			var partFilters = Session.get("partFilters");
-			for (var i = 0; i < partFilters.length; i++) {
-				if (partFilters[i] === id){
-					partFilters.splice(i,1);
-					//console.log("removed");
-					return Session.set("partFilters", partFilters);
+			// var partFilters = Session.get("partFilters");
+			// for (var i = 0; i < partFilters.length; i++) {
+			// 	if (partFilters[i] === id){
+			// 		partFilters.splice(i,1);
+			// 		//console.log("removed");
+			// 		return Session.set("partFilters", partFilters);
+			// 	}
+			// };
+			var filters = Session.get("idealistFilters");
+			for (var i = 0; i < filters.partFilters.length; i++) {
+				if (filters.partFilters[i] === id){
+					filters.partFilters.splice(i,1);
+					return Session.set("idealistFilters", filters);
 				}
-			};
+			}
 		} else if (label.hasClass("part-label")) {
 			var selectedParts = Session.get("selectedParts");
 			for (var i = 0; i < selectedParts.length; i++) {
