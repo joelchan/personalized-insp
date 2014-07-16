@@ -59,6 +59,11 @@ html,body {
 	height: 345px;
 }
 
+#filterGamechangers{
+	float: right;
+	padding-right: 5px;
+}
+
 #filters{
 	padding-left: 0px !important;
 }

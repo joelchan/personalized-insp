@@ -5,7 +5,7 @@ Session.set("sessionLength", 30);
 var filters = {
 	partFilters: [],
 	clusterFilters: [],
-	gamchanger: false
+	gamchanger: [true, false]
 }
 Session.set("idealistFilters", filters);
 MS_PER_MINUTE = 60000;
@@ -342,13 +342,13 @@ Template.Dashboard.helpers({
 			clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
 		};
 		if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
-			return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}});
+			return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}});
 		} else if (clusterIdeas.length > 0){
-   			return IdeasToProcess.find({_id: {$in: clusterIdeas}});
+   			return IdeasToProcess.find({_id: {$in: clusterIdeas}, isGamechanger: {$in: filters.gamchanger}});
    		} else if (filters.partFilters.length > 0){
-   			return IdeasToProcess.find({userID: {$in: filters.partFilters}})
+   			return IdeasToProcess.find({userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}})
    		} else {
-   			return IdeasToProcess.find();
+   			return IdeasToProcess.find({isGamechanger: {$in: filters.gamchanger}});
    		}
   	},
 
@@ -412,6 +412,19 @@ Template.Dashboard.events({
 		var state = !idea.isGamechanger;
 
 		IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
+	},
+
+	'click #filterGamechangers' : function(){
+		var filters = Session.get("idealistFilters");
+		if ($("#filterGamechangers").hasClass("fa-star-o")){
+			filters.gamchanger = [true];
+			$("#filterGamechangers").switchClass("fa-star-o", "fa-star")
+			return Session.set("idealistFilters", filters);
+		} else if ($("#filterGamechangers").hasClass("fa-star")){
+			filters.gamchanger = [true, false];
+			$("#filterGamechangers").switchClass("fa-star", "fa-star-o")
+			return Session.set("idealistFilters", filters);
+		}
 	},
 
 	'click .userprofilename' : function(e){
