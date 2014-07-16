@@ -160,13 +160,47 @@ Template.NotifyItem.helpers({
       return false;
   },
 
-  examples : function(){
-    return this.examples;
+  isPrompt : function(){
+    if(this.type.val === 1)
+      return true;
+    else
+      return false;
+  },
+
+  isTheme : function(){
+    if(this.type.val === 2)
+      return true;
+    else
+      return false;
   },
 
   time : function(){
     timeDep.depend();
     return getTime(this.time);
+  }
+});
+
+Template.sentexamples.helpers({
+  examples : function(){
+    return this.examples;
+  }
+});
+
+Template.senttheme.helpers({
+  theme : function(){
+    //console.log(this);
+    return Clusters.findOne({_id: this.theme}).name;
+  },
+
+  themeexamples : function(){
+    var ideaIDs = Clusters.findOne({_id: this.theme}).ideas;
+    return IdeasToProcess.find({_id: {$in: ideaIDs}});
+  }
+});
+
+Template.senttheme.events({
+  'click .themehint' : function(){
+    $(event.target).next().slideToggle();
   }
 });
 /********************************************************************
@@ -291,18 +325,19 @@ Template.NotificationDrawer.events({
     if(!Notifications.findOne({_id: id}).handled){
       Notifications.update({_id: id}, {$set: {handled: true}});
       Logger.logNotificationHandled(Session.get("currentParticipant"), id);
-      $notification.removeClass("unhandled");
-      return false; //handled event is same as first expansion event
+      //return false; //handled event is same as first expansion event
     } else {
       var context = $(event.target).parent('.panel-heading').context;
       if($(context).hasClass("collapsed")){
         Logger.logNotificationExpanded(Session.get("currentParticipant"), id);
-        console.log("logging expansion");
+        //console.log("logging expansion");
       } else {
         Logger.logNotificationCollapsed(Session.get("currentParticipant"), id);
-        console.log("logging collapse");
+        //console.log("logging collapse");
       }
     }
+
+    $notification.removeClass("unhandled");
   }
 });
 

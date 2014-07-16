@@ -147,7 +147,7 @@
   border-radius: 50%;
   position:absolute;
   top: 18px;
-  left: 52px;
+  left: 35px;
 }
 
 /*#notifications-handle{
@@ -218,7 +218,7 @@
 }
 
 #notifications .time-label{
-  font-size: 10px;
+  font-size: 9px;
   float: right;
 }
 
@@ -254,6 +254,18 @@
   border-bottom: 1px dotted #ddd;
   border-top: 1px dotted #ddd;
   padding: 10px;
+}
+
+#notifications .themehint{
+  cursor: pointer;
+}
+
+#notifications .themeexamples{
+  display: none;
+}
+
+#notifications .idea:nth-child(1){
+  border-top: 1px dotted #ddd;
 }
 
 .affix {

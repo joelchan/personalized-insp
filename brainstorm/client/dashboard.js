@@ -454,6 +454,9 @@ Template.Dashboard.events({
 	},
 
 	//send theme clear selections
+	'click #sendthemebutton' : function(){
+		$('input[name="themeRadios"]').prop('checked', false);
+	},
 
 	'click .modal .idea' : function(event){
 		var $target = $(event.target)
@@ -463,9 +466,12 @@ Template.Dashboard.events({
 	},
 
 	'click #changemodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
+		var sender = Session.get("currentUser");
 		var recipients = Session.get("selectedParts");
 		var prompt = $('#new-prompt').val();
-		var sender = Session.get("currentUser");
+
+		if(prompt === "" || prompt === " ")
+			return false;
 
 		for (var i = 0; i < recipients.length; i++) {
 			changePromptNotify(sender, recipients[i], prompt);
@@ -473,18 +479,33 @@ Template.Dashboard.events({
 	},
 
 	'click #sendExModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
+		var sender = Session.get("currentUser");
 		var recipients = Session.get("selectedParts");
 		var examples = [];
-
-		var sender = Session.get("currentUser");
 
 		$('#sendExModal-idealist .idea.selected').each(function(i){
 			var idea = {_id: $(this).attr('id'), content: $(this).text()}
 			examples.push(idea);
 		});
 
+		if(examples.length < 1)
+			return false;
+
 		for (var i = 0; i < recipients.length; i++) {
 			sendExamplesNotify(sender, recipients[i], examples);
+		};
+	},
+
+	'click #sendThemeModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
+		var sender = Session.get("currentUser");
+		var recipients = Session.get("selectedParts");
+		var theme = $('input[name=themeRadios]:checked').val();
+		
+		if(theme === undefined)
+			return false;
+
+		for (var i = 0; i < recipients.length; i++) {
+			sendThemeNotify(sender, recipients[i], theme);
 		};
 	}
 

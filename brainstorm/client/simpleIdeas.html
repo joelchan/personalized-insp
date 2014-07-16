@@ -50,16 +50,51 @@
     <div id="{{_id}}" class="panel-collapse collapse">
       <div class="panel-body">
         {{#if isExamples}}
-          <h5 class="notify-label">Consider these ideas: </h5>
-          {{#each examples}}
-            <div id={{this._id}} class="idea"><i class="idea-bullet fa fa-lightbulb-o"></i> {{this.content}} </div>
-          {{/each}}
-        {{else}}
-          <h5 class="notify-label">Consider the following: </h5>
-          <div class="notify-prompt"><i class="fa fa-question-circle"></i> {{prompt}} </div>
+          {{> sentexamples}}
+        {{/if}}
+        {{#if isPrompt}}
+          {{> sentprompt}}
+        {{/if}}
+        {{#if isTheme}}
+          {{> senttheme}}
         {{/if}}
       </div>
     </div>
+  </div>
+</template>
+
+<template name="sentexamples">
+  <h5 class="notify-label">Consider these ideas: </h5>
+    {{#each examples}}
+      <div id={{this._id}} class="idea">
+        <i class="idea-bullet fa fa-lightbulb-o"></i> 
+        {{this.content}} 
+      </div>
+    {{/each}}
+</template>
+
+<template name="sentprompt">
+  <h5 class="notify-label">Consider the following: </h5>
+  <div class="notify-prompt">
+    <i class="fa fa-question-circle"></i>
+    {{prompt}}
+  </div>
+</template>
+
+<template name="senttheme">
+  <h5 class="notify-label">Try generating ideas under the following theme: </h5>
+  <div>
+    <i class="fa fa-bolt"></i>
+    {{theme}}
+  </div>
+  <h6 class="themehint">Need more help? Click here to see other ideas in this theme.</h6>
+  <div class="themeexamples">
+    {{#each themeexamples}}
+      <div id={{this._id}} class="idea">
+        <i class="idea-bullet fa fa-lightbulb-o"></i> 
+        {{this.content}} 
+      </div>
+    {{/each}}
   </div>
 </template>
 
@@ -237,7 +272,7 @@ complete idea)"></textarea>
     <div>
       {{> NotificationDrawer}}
     </div>
-    <div id="ideation-pane" class="push col-md-8">
+    <div id="ideation-pane" class="push col-md-9">
       <div class="header" data-spy="affix" data-offset-top="50"> 
         <div class="row">
           {{> Prompt}}

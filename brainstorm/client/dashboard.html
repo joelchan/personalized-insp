@@ -152,11 +152,11 @@
         	<div class="modal-content">
             	<div class="modal-header">
             		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            		<h4 class="modal-title" id="myModalLabel">Send Them</h4>
+            		<h4 class="modal-title" id="myModalLabel">Send Theme</h4>
             	</div>
             	<div class="modal-body">
                 	<h3>Choose a theme to send to participants</h3>
-                	<div id="sendThemeModal-clusterlist" class="idealist">
+                	<div id="sendThemeModal-clusterlist">
 						{{#each clusters}}
 							{{> theme}}
 						{{/each}}	
@@ -182,7 +182,11 @@
 </template>
 
 <template name="theme">
-	<div id={{this._id}} class="idea">{{this.name}}</div>
+	<div id={{this._id}} class="radio theme">
+		<label><input type="radio" name="themeRadios" id="themeRadios{{this._id}}" value="{{this._id}}">
+			{{this.name}}
+		</label>
+	</div>
 </template>
 
 <template name="tagcloud">
