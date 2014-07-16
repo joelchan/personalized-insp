@@ -123,6 +123,10 @@ html,body {
 	height:100%;
 }
 
+.nowLine{
+	opacity: 0.30;
+	fill: gray;
+}
 
 #examples {
 	border: solid 1px #ddd;	

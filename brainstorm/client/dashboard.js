@@ -1,6 +1,7 @@
 Session.set("partFilters", []);
 Session.set("selectedParts", []);
 Session.set("selectedIdeas", []);
+Session.set("sessionLength", 30);
 MS_PER_MINUTE = 60000;
 
 
@@ -103,8 +104,8 @@ Template.userseries.rendered = function(){
 	//console.log("start: ");
 	//console.log(start);
 	//console.log(start);
-	var sessionlength = 15;
-	var end = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time).add('m', 15);//new Date(start + sessionlength*MS_PER_MINUTE);
+	var sessionlength = Session.get("sessionLength");
+	var end = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time).add('m', sessionlength);//new Date(start + sessionlength*MS_PER_MINUTE);
 	//console.log("end: ");
 	//console.log(end);
 	// var now = new Date(Date.now());
@@ -116,7 +117,7 @@ Template.userseries.rendered = function(){
 
 	var xAxis = d3.svg.axis()
 						.scale(x)
-						.ticks(15)
+						.ticks(10)
 						.tickFormat(d3.time.format("%I:%M"))
 						// .tickFormat(function(d){
 						// 	return moment(d).fromNow();
@@ -188,6 +189,11 @@ Template.userseries.rendered = function(){
 			.remove();
 	}
 
+	// var durScale =  d3.scale().linear()
+	// 				.domain([0, sessionlength])
+	// 				.range([pad, w-pad]);
+	var nowWidth = (w-2*pad)/sessionlength; //1 minute
+
 	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
 	var nowLine = svg.append("g")
 					.selectAll("rect")
@@ -195,10 +201,12 @@ Template.userseries.rendered = function(){
 		.enter()
 		.append("rect")
 		.attr("height", "50px")
-		.attr("width", "2px")
+		.attr("width", function(){
+			return nowWidth;
+		})
 		.attr("class", "nowLine")
 		.attr("x", function(d){
-			return x(d);
+			return x(d)-nowWidth;
 		})
 		.attr("y", 0)
 		.attr("fill", "gray")
@@ -211,28 +219,32 @@ Template.userseries.rendered = function(){
 			.enter()
 			.append("rect")
 			.attr("height", "50px")
-			.attr("width", "2px")
+			.attr("width", function(){
+				return nowWidth;
+			})
 			.attr("class", "nowLine")
 			.attr("id", function(d){
 				return d._id;
 			})
 			.attr("x", function(d){
-				return x(d);
+				return x(d)-nowWidth;
 			})
 			.attr("y", 0)
 			.attr("fill", "gray")
 		nLine.transition()
-			.duration(500)
+			.duration(0)
 			.attr("height", "50px")
-			.attr("width", "2px")
+			.attr("width", function(){
+				return nowWidth
+			})
 			.attr("x", function(d){
-				return x(d);
+				return x(d)-nowWidth;
 			})
 			.attr("y", 0)
 			.attr("fill", "gray")
 		nLine.exit()
 			.transition()
-			.duration(500)
+			.duration(0)
 			.attr("x",w) // this moves the previous nowLine off the scale
 			.remove();
 	}
@@ -241,7 +253,7 @@ Template.userseries.rendered = function(){
 		nowData.pop(); // removing the old "now"
 		nowData.push(new moment(Date.now())); // pushing the new now in
 		drawNow(nowData);
-	}, 1000);
+	}, 100);
 	//var timeDep = new Deps.Dependency();
 
 	// Events.find({userID: userID, description: "Participant submitted idea"}).observeChanges({
