@@ -46,7 +46,12 @@
 						<h3>Filters</h3>
 						{{#each partFilters}}
 						<div>
-							<span class="filter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+							<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+						</div>
+						{{/each}}
+						{{#each clusterFilters}}
+						<div>
+							<span class="clusterfilter-label label label-info" id="cf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						</div>
 						{{/each}}
 					</div>

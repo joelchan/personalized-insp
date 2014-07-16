@@ -337,10 +337,20 @@ Template.userseries.rendered = function(){
 Template.Dashboard.helpers({
 	ideas : function(){
 		var filters = Session.get("idealistFilters");//Session.get("partFilters");
-		if(filters.partFilters.length > 0){
-			return IdeasToProcess.find({userID: {$in: filters.partFilters}});
-		} else
+		var clusterIdeas = [];
+		for (var i = 0; i < filters.clusterFilters.length; i++) {
+			clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
+		};
+		if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
+			return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}});
+		} else if (clusterIdeas.length > 0){
+			
+   			return IdeasToProcess.find({_id: {$in: clusterIdeas}});
+   		} else if (filters.partFilters.length > 0){
+   			return IdeasToProcess.find({userID: {$in: filters.partFilters}})
+   		} else {
    			return IdeasToProcess.find();
+   		}
   	},
 
   	numIdeas : function(){
@@ -374,6 +384,10 @@ Template.Dashboard.helpers({
 
   	partFilters : function(){
   		return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
+  	},
+
+  	clusterFilters : function(){
+  		return Session.get("idealistFilters").clusterFilters;
   	}
 });
 
@@ -436,7 +450,16 @@ Template.Dashboard.events({
 				return false;
 		};
 
-		filters.clusterFilters.push(id);
+		var clusterMap = {
+			ideas: [], //maps cluster id to its idea's ids
+		}
+
+		var myCluster = Clusters.findOne({_id: id});
+		clusterMap.ideas = myCluster.ideas;
+		clusterMap.name = myCluster.name;
+		clusterMap.id = id;
+
+		filters.clusterFilters.push(clusterMap);
 		Session.set("idealistFilters", filters);		
 	},
 
@@ -444,24 +467,17 @@ Template.Dashboard.events({
 		var label = $(event.target).parent();
 		var id = label.attr("id");
 		id = id.split("-")[1];
-		//console.log(id);
-		if(label.hasClass("filter-label")){
-			//console.log("removeing filter label");
-			// var partFilters = Session.get("partFilters");
-			// for (var i = 0; i < partFilters.length; i++) {
-			// 	if (partFilters[i] === id){
-			// 		partFilters.splice(i,1);
-			// 		//console.log("removed");
-			// 		return Session.set("partFilters", partFilters);
-			// 	}
-			// };
-			var filters = Session.get("idealistFilters");
+		var filters = Session.get("idealistFilters");
+
+		if(label.hasClass("partfilter-label")){
 			for (var i = 0; i < filters.partFilters.length; i++) {
 				if (filters.partFilters[i] === id){
 					filters.partFilters.splice(i,1);
 					return Session.set("idealistFilters", filters);
 				}
 			}
+		} else if(label.hasClass("clusterfilter-label")){
+
 		} else if (label.hasClass("part-label")) {
 			var selectedParts = Session.get("selectedParts");
 			for (var i = 0; i < selectedParts.length; i++) {
