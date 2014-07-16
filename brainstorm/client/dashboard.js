@@ -389,8 +389,8 @@ Template.Dashboard.events({
 		IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
 	},
 
-	'dblclick .profile' : function(e){
-		var id = e.currentTarget.id;
+	'click .userprofilename' : function(e){
+		var id = $(e.currentTarget).parents('.profile').attr("id");
 		id = id.split("-")[1];
 		//var userName = MyUsers.findOne({_id: id}).name;
 		var parts = Session.get("partFilters");
