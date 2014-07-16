@@ -235,6 +235,15 @@ Template.Clustering.events({
     var state = !idea.isGamechanger;
 
     IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
+  },
+
+  'click .cluster-item': function(){
+    //console.log(event.target);
+    var id = $(event.target).attr("id");
+    id = id.split("-")[1];
+    var cluster = Clusters.findOne({_id: id});
+    var top = cluster.position.top;
+    window.scrollTo(0, top+100);
   }
 
   //Attaches sortable and draggable to clusters when mouse moves into cluster area

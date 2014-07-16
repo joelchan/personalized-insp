@@ -29,7 +29,7 @@
 				<h3>Cluster List</h3>
 				<ul id="clusterlist" class="deck clusterdeck">
 					{{#each clusters}}
-						<li id={{_id}} class="idea-item">{{name}}</li>
+						<li id="ci-{{_id}}" class="cluster-item idea-item">{{name}}</li>
 					{{/each}}
 				</ul>
 			</div>
@@ -64,7 +64,7 @@
 	<div class="cluster col-md-3" id={{_id}} style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
 		<div class="form-group form-group-inline">
 			<i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
-			<label class="sort-disabled">Cluster Name:
+			<label class="sort-disabled">
 				<span id="clusterlabel" class="{{named}}">{{this.name}}</span>
 			</label>
 		</div>

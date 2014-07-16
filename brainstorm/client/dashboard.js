@@ -424,6 +424,22 @@ Template.Dashboard.events({
 
 	},
 
+	'click .tagname' : function(){
+		var id = $(event.target).parent().attr("id");
+		id = id.split("-")[1];
+		
+		var filters = Session.get("idealistFilters");
+		var clusters = filters.clusterFilters;
+
+		for (var i = 0; i < clusters.length; i++) {
+			if(clusters[i] === id) 
+				return false;
+		};
+
+		filters.clusterFilters.push(id);
+		Session.set("idealistFilters", filters);		
+	},
+
 	'click .fa-minus-circle' : function(){
 		var label = $(event.target).parent();
 		var id = label.attr("id");

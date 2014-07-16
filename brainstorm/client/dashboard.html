@@ -192,7 +192,7 @@
 <template name="tagcloud">
 	<div id="tagcloud">
 		{{#each clusters}}
-			<span class="tagname" style="font-size: {{getFontSize}}px;"><a href="">{{name}}</a></span>
+			<span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}"><a href="">{{name}}</a></span>
 		{{/each}}
 	</div>
 </template>
