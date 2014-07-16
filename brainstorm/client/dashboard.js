@@ -344,7 +344,6 @@ Template.Dashboard.helpers({
 		if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
 			return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}});
 		} else if (clusterIdeas.length > 0){
-			
    			return IdeasToProcess.find({_id: {$in: clusterIdeas}});
    		} else if (filters.partFilters.length > 0){
    			return IdeasToProcess.find({userID: {$in: filters.partFilters}})
@@ -354,11 +353,7 @@ Template.Dashboard.helpers({
   	},
 
   	numIdeas : function(){
-  		var filters = Session.get("idealistFilters");
-		if(filters.length > 0){
-			return IdeasToProcess.find({userName: {$in: filters}}).count();
-		} else
-   			return IdeasToProcess.find().count();
+  		return Template.Dashboard.ideas().count();
   	},
 
   	clusters : function(){
@@ -467,6 +462,7 @@ Template.Dashboard.events({
 		var label = $(event.target).parent();
 		var id = label.attr("id");
 		id = id.split("-")[1];
+		//console.log(id);
 		var filters = Session.get("idealistFilters");
 
 		if(label.hasClass("partfilter-label")){
@@ -477,7 +473,13 @@ Template.Dashboard.events({
 				}
 			}
 		} else if(label.hasClass("clusterfilter-label")){
-
+			for (var i = 0; i < filters.clusterFilters.length; i++) {
+				console.log(filters.clusterFilters[i].id);
+				if (filters.clusterFilters[i].id === id){
+					filters.clusterFilters.splice(i,1);
+					return Session.set("idealistFilters", filters);
+				}
+			}
 		} else if (label.hasClass("part-label")) {
 			var selectedParts = Session.get("selectedParts");
 			for (var i = 0; i < selectedParts.length; i++) {
@@ -567,6 +569,4 @@ Template.Dashboard.events({
 			sendThemeNotify(sender, recipients[i], theme);
 		};
 	}
-
-	//send theme modal event
 });
