@@ -272,8 +272,9 @@
   display: none;
 }
 
-#notifications .idea:nth-child(1){
+#notifications .themeexamples .idea:nth-child(1){
   border-top: 1px dotted #ddd;
+  border-bottom: none;
 }
 
 .affix {
