@@ -135,7 +135,10 @@ Template.IdeaBox.helpers({
 
 Template.simpleIdea.helpers({
   isStarred : function(){
-    return IdeasToProcess.findOne({_id: this._id}).isGamechanger;
+    var idea = IdeasToProcess.findOne({_id: this._id});
+    if (idea === undefined)
+      return false;
+    return idea.isGamechanger;
   }
 })
 
