@@ -38,13 +38,30 @@ root = {
 UserTypes = new Meteor.Collection("userTypes");
 
 
-Prompt = function(question) {
+Prompt = function(question, template, exp, cond) {
   /********************************************************************
    * Constructor that defines a brainstorming prompt/question
+   * @Params
+   *    question - A string containing the brainstorming prompt/subject
+   *    template - (Optional) Group Template associated with groups
+   *        responding to this prompt
+   *    exp      - (Optional) The experiment associated with this prompt
+   *    cond     - (Optional) The experiment condition associated with 
+   *        this prompt
    *
    * @return {object} Prompt object 
   ********************************************************************/
   this.question = question;
+  // Temporary modifications to prompt to quickly associate with an experiment
+  if (template) {
+    this.template = template;
+  }
+  if (exp) {
+    this.expID = exp._id;
+  }
+  if (cond) {
+    this.condID = cond._id;
+  }
 };
 
 Group = function(template) {

@@ -24,7 +24,6 @@ Meteor.startup(function() {
   }
 
 });
-
      
 Meteor.startup(function() {
     /****************************************************************
@@ -33,19 +32,50 @@ Meteor.startup(function() {
     ****************************************************************/
 
     //Initialize roles
+    var newRole
     if (Roles.find().count() === 0) {
-        var ideator = new Role("Ideator");
-        ideator.workflow = ["LoginPage",
+        newRole = new Role("Ideator");
+        newRole.workflow = ["LoginPage",
           "MTurkConsentPage",
           "IdeationPage",
           "SurveyPage",
           "FinalizePage"];
-        Roles.insert(ideator);
-        ideator = new Role("Forest Synthesizer");
-        ideator.workflow = ["LoginPage",
+        Roles.insert(newRole);
+        newRole = new Role("Forest Synthesizer");
+        newRole.workflow = ["LoginPage",
           "Forest"];
-        Roles.insert(ideator);
+        Roles.insert(newRole);
     }
+    if (Roles.find({'title': "Brainstorm Ideator"}).count() === 0) {
+        var newRole = new Role("Brainstorm Ideator");
+        newRole.workflow = ["IdeationPage"];
+        Roles.insert(newRole);
+    }
+    if (Roles.find({'title': "Brainstorm Theme Extractor"}).count() === 0) {
+        newRole = new Role("Brainstorm Theme Extractor");
+        newRole.workflow = ["Clustering"];
+        Roles.insert(newRole);
+    }
+    if (Roles.find({'title': "Brainstorm Facilitator"}).count() === 0) {
+        newRole = new Role("Brainstorm Facilitator");
+        newRole.workflow = ["Dashboard"];
+        Roles.insert(newRole);
+    }
+    //Initialize generic group template with unlimited ideation,
+    //clustering, and dashboard users
+    if (GroupTemplates.find({isTemplate: true}).count() == 0) {
+      var newTemplate = new GroupTemplate();
+      var roles = ["Brainstorm Ideator", "Brainstorm Theme Extractor",
+          "Brainstorm Facilitator"];
+      for (var i=0; i< roles.length; i++) {
+        var role = Roles.findOne({'title': roles[i]});
+        GroupManager.addRole(newTemplate, role, 100);
+      }
+      newTemplate.isDefault = true;
+      GroupTemplates.insert(newTemplate);
+    }
+    
+
     //Initialize experiment hardcoded on boot
     if (Experiments.find().count() === 0) {
       var question = "Many people have old iPods or MP3 players that they no longer use. In the next 15 minutes, please brainstorm as many uses as you can for old iPods/MP3 players. Assume that the devices' batteries no longer work, though they can be powered via external power sources. Also be aware that devices may <em>not</em> have displays. Be as specific as possible in your descriptions."

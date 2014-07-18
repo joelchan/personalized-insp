@@ -46,7 +46,10 @@ Router.map(function () {
       template: 'ScreensReviewPage'
   });
 
-  this.route('PromptPage');
+  this.route('PromptPage', {
+      path: 'Brainstorms/',
+      template: 'PromptPage'
+  });
   this.route('ExpAdminPage', {
       path: 'ExpAdmin/',
       template: 'ExpAdminPage'

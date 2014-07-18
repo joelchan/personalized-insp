@@ -249,10 +249,10 @@ Template.IdeationPage.rendered = function() {
   //console.log(participant);
   Logger.logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
-  Meteor.setTimeout('exitIdeation()', 900000);
+  //Meteor.setTimeout('exitIdeation()', 900000);
   //Setup timer for decrementing onscreen timer
-  Session.set("timeLeft", 15);
-  Meteor.setTimeout('decrementTimer()', 60000);
+  //Session.set("timeLeft", 15);
+  //Meteor.setTimeout('decrementTimer()', 60000);
 };
 
 //Events

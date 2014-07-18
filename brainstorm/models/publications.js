@@ -35,6 +35,9 @@ Meteor.startup(function(){
 		Meteor.publish("groups", function(){
 			return Groups.find();
 		});
+		Meteor.publish("groupTemplates", function(){
+			return GroupTemplates.find();
+		});
 		Meteor.publish("userTypes", function(){
 			return UserTypes.find();
 		});
