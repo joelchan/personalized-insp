@@ -7,10 +7,10 @@
 
   $.fn.bigSlide = function(options) {
     var settings = $.extend({
-      'menu': ('#notifications'),
+      'menu': ('#notifications'), //changed
       'push': ('.push'),
-      'side': 'right',
-      'menuWidth': '35%',
+      'side': 'left', 
+      'menuWidth': '25%', //changed
       'speed': '300'
     }, options);
 
@@ -49,18 +49,18 @@
       push.css(settings.side, width);
     };
 
-    menu.close = function() {
-      menu._state = 'closed';
-      menu.css(settings.side, '-' + width);
-      push.css(settings.side, '0');
-    };
+    // menu.close = function() {
+    //   menu._state = 'closed';
+    //   menu.css(settings.side, '-' + width);
+    //   push.css(settings.side, '0');
+    // };
 
     menuLink.on('click.bigSlide', function(e) {
       e.preventDefault();
       if (menu._state === 'closed') {
         menu.open();
       } else {
-        menu.close();
+        //menu.close();
       }
     });
 

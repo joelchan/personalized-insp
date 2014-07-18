@@ -98,6 +98,25 @@ Logger = (function () {
       var msg = "Participant submitted survey";
       misc = [{name: 'responseID', data: response._id}];
       this.logExpEvent(msg, participant, "info", misc);
+    },
+
+  /** Notifications **/
+    logNotificationHandled: function(participant, notificationID){
+      var msg = "Participant handled a notification";
+      misc = [{name: "notificationID", data: notificationID}]
+      this.logExpEvent(msg, participant, "info", misc);
+    },
+    
+    logNotificationExpanded: function(participant, notificationID){
+      var msg = "Participant expanded a notification";
+      misc = [{name: "notificationID", data: notificationID}]
+      this.logExpEvent(msg, participant, "info", misc);
+    },
+
+    logNotificationCollapsed: function(participant, notificationID){
+      var msg = "Participant collapsed a notification";
+      misc = [{name: "notificationID", data: notificationID}]
+      this.logExpEvent(msg, participant, "info", misc);
     }
   };
 }());

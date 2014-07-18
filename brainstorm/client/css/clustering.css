@@ -35,8 +35,11 @@ li.idea-item{
 	cursor: pointer;
 }
 
-li.idea-item.gamechanger{
-	
+li.idea-item .gamechangestar{
+	float: right;
+	/*padding-top: 0px;*/
+	color: #f0ad4e;
+	text-shadow: 1px 1px #ddd; /*#eea236;*/
 }
 
 li.cluster-item{

@@ -17,7 +17,7 @@
 }
 
 .donestack > .idea-item, .cluster-item{
-	display: none;
+	/*display: none;*/
 }
 
 .idea-item, .donestack, .stack{

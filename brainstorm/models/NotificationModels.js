@@ -3,7 +3,8 @@ Notifications = new Meteor.Collection("notifications"); //collection for messagi
 var Types = {
 	DIRECTIONS: {val: -1, title: "Directions"},
 	SEND_EXAMPLES: {val: 0, title: "You've been sent examples"},
-	CHANGE_PROMPT: {val: 1, title: "You're prompt has been changed"},
+	CHANGE_PROMPT: {val: 1, title: "Your prompt has been changed"},
+	SEND_THEME: {val: 2, title: "You've been sent a theme"}
 }
 
 Object.freeze(Types);
@@ -29,8 +30,15 @@ sendExamplesNotify = function(sender, recipient, examples){
 }
 
 changePromptNotify = function(sender, recipient, prompt){
-	notification = new Notification(sender, recipient);
+	var notification = new Notification(sender, recipient);
 	notification.type = Types.CHANGE_PROMPT;
 	notification.prompt = prompt;
+	Notifications.insert(notification);
+}
+
+sendThemeNotify = function(sender, recipient, clusterID){
+	var notification = new Notification(sender, recipient);
+	notification.type = Types.SEND_THEME;
+	notification.theme = clusterID;
 	Notifications.insert(notification);
 }

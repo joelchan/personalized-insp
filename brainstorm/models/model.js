@@ -14,6 +14,9 @@ Groups = new Meteor.Collection("groups");
 GroupTemplates = new Meteor.Collection("groupTemplates");
 Clusters = new Meteor.Collection("clusters");
 IdeasToProcess = new Meteor.Collection("ideasToProcess");
+// Generic Filters for dynamic UI filtering
+Filters = new Meteor.Collection("filters");
+
 
 IdeaToProcess = function(content, participant){
   this.content = content;
@@ -38,13 +41,30 @@ root = {
 UserTypes = new Meteor.Collection("userTypes");
 
 
-Prompt = function(question) {
+Prompt = function(question, template, exp, cond) {
   /********************************************************************
    * Constructor that defines a brainstorming prompt/question
+   * @Params
+   *    question - A string containing the brainstorming prompt/subject
+   *    template - (Optional) Group Template associated with groups
+   *        responding to this prompt
+   *    exp      - (Optional) The experiment associated with this prompt
+   *    cond     - (Optional) The experiment condition associated with 
+   *        this prompt
    *
    * @return {object} Prompt object 
   ********************************************************************/
   this.question = question;
+  // Temporary modifications to prompt to quickly associate with an experiment
+  if (template) {
+    this.template = template;
+  }
+  if (exp) {
+    this.expID = exp._id;
+  }
+  if (cond) {
+    this.condID = cond._id;
+  }
 };
 
 Group = function(template) {
@@ -82,23 +102,6 @@ Group = function(template) {
     //* Encapsulates the assignment of a user in a group to a role
     //* @Params
     //*   user - the user that is being assign
-    //*   role - the role the user is being assign to
-    //****************************************************************/
-    //this.userID = user._id;
-    //this.userName = user.name;
-    //this.roleID = role._id;
-    //this.roletitle = role.title;
-//};
-
-GroupManager = (function () {
-  return {
-    /****************************************************************
-    * Object that allows for most group manipulations including 
-    *   assignment, creation, and modification
-    ****************************************************************/
-    copyGroup: function(group) {
-      /**************************************************************
-      * Creates a duplicate group based on a given group's template
       * and adds it to the database. Intended to abstract mechanics
       * of copying/creation of a group. Duplicating groups should
       * be a common function
@@ -304,6 +307,23 @@ Role.prototype.nextFunc = function (current) {
   }
 };
 
+Role.prototype.nextFunc = function (current) {
+  for (var i=0; i<this.workflow.length; i++) {
+      var workflowPage = this.workflow[i]; 
+      if (workflowPage == current) {
+          //console.log("current function is: " + this.workflow[i]);
+          var workflowIndex = i;
+      }
+  }
+  if (workflowIndex + 1 < this.workflow.length) {
+      //console.log("next function is: " + this.workflow[workflowIndex + 1]);
+      return this.workflow[workflowIndex+1];
+  } else {
+      //console.log("No next function found");
+    return null;
+  }
+};
+
 Role.prototype.getRole = function(newRole) {
   return $.extend(true, new Role(), newRole);
 }
@@ -321,6 +341,7 @@ Idea = function (content, user, prompt, participant) {
   this.userName = user.name;
   this.prompt = prompt;
   this.isGamechanger = false;
+  this.inCluster = false;
   //Optional fields not logged during non-experiments
   this.participantID = participant._id;
 };
@@ -330,6 +351,14 @@ User = function(name, type){
 	this.name = name;
   //Currently only "admin" is significant
   this.type = type;
+};
+
+Filter = function (name, user, collection) {
+  this.name =  name
+  this.user = user
+  this.collection = collection
+  this.sort = [];
+  this.filter [];
 };
 
 //Javascript implementation of Java's hash code function 

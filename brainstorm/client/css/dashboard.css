@@ -30,6 +30,13 @@ html,body {
 	margin: 10px;
 }
 
+.tagcloud.tagname{
+	text-align: center;
+}
+
+.tagname a, .userprofilename{
+	text-decoration: underline;
+}
 
 .db-title{
 	margin-top: 5px;
@@ -56,14 +63,19 @@ html,body {
 	height: 345px;
 }
 
+#filterGamechangers{
+	float: right;
+	padding-right: 5px;
+}
+
 #filters{
 	padding-left: 0px !important;
 }
-.part-label, .filter-label{
+.part-label, .partfilter-label, .clusterfilter-label{
 	padding-left: 0em;
 }
 
-.part-label > i, .filter-label > i{
+.part-label > i, .partfilter-label > i, .clusterfilter-label > i{
 	padding-right: 5px;
 }
 
@@ -72,6 +84,12 @@ html,body {
 	border-radius: 5px;
 	padding: 5px;
 	margin: 2px;
+}
+
+.dashboard .gamechangestar, .modal .gamechangestar{
+	float: right;
+	color: #f0ad4e;
+	text-shadow: 1px 1px #ddd;
 }
 
 .changeprompt{
@@ -90,7 +108,7 @@ html,body {
 
 }
 
-hr{
+#sendThemeModal .theme{
 	margin: 5px;
 }
 
@@ -114,6 +132,10 @@ hr{
 	height:100%;
 }
 
+.nowLine{
+	opacity: 0.30;
+	fill: gray;
+}
 
 #examples {
 	border: solid 1px #ddd;	

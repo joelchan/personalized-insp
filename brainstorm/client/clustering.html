@@ -4,6 +4,11 @@
 	<div class="container-fluid clusterinterface">
 		<div class="row">
 			<div id="left" class="col-md-3">
+				<div>
+						<span>Total Clusters: {{numClusters}}</span>
+						<br/>
+						<span>Number Not Yet Named: {{numUnnamed}}</span>
+				</div>
 				<!--Create New Cluster-->
 				<h3>Create New Cluster</h3>
 				<ul class="newcluster ui-sortable" id="node-drag-target">
@@ -16,31 +21,30 @@
 				<ul id="idealist" class="ideadeck ui-sortable">
 					<li class="sort-disabled"></li>
 					{{#each ideas}}
-						{{#if isClustered}}
-						<li id={{_id}} class="idea-item">{{content}}</li>
-						{{/if}}
+						{{> ideaitem}}
 					{{/each}}
 				</ul>
 				<!--End Idea List-->
 
-				<!--<h3>Cluster List</h3>
+				<h3>Cluster List</h3>
 				<ul id="clusterlist" class="deck clusterdeck">
 					{{#each clusters}}
-					{{#if isRoot}}
-						<li class="sort-disabled"></li>
-					{{else}}
-						<li id={{_id}} class="idea-item">{{name}}</li>
-					{{/if}}
+						<li id="ci-{{_id}}" class="cluster-item idea-item">{{name}}</li>
 					{{/each}}
-				</ul>-->
+				</ul>
 			</div>
 
 			<div id="right" class="col-md-9 container-fluid">
 				<div class="row">
 					<div class="col-md-9"><h3>Clusters</h3></div>
-					<div class="col-md-3">
+					<!-- <div class="col-md-3">
+						<span>Total Clusters: {{numClusters}}</span>
+						<br/>
+						<span>Number Not Yet Named: {{numUnnamed}}</span>
+					</div> -->
+					<!-- <div class="col-md-3">
 						<button id='finish' class='btn btn-large btn-primary'>Finished</button>
-					</div>
+					</div> -->
 				</div>
 				<div  id="clusterarea">
 					{{> clusterarea}}
@@ -52,31 +56,33 @@
 
 <template name="clusterarea">
 	{{#each clusters}}
-		{{#if isNotRoot}}
-			{{> cluster}}
-		{{/if}}
+		{{> cluster}}
 	{{/each}}
 </template>
 
 <template name="cluster">
 	<div class="cluster col-md-3" id={{_id}} style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
 		<div class="form-group form-group-inline">
-			<i class="fa {{#if isCollapsed}}fa-toggle-down{{else}}fa-toggle-up{{/if}}"></i>
-			<label class="sort-disabled">Cluster Name:
+			<i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
+			<label class="sort-disabled">
 				<span id="clusterlabel" class="{{named}}">{{this.name}}</span>
 			</label>
-			<input type="text" class="namecluster form-control input-sm sort-disabled" 
-				placeholder="Name this cluster"/>
 		</div>
 		<ul class="clusterul {{#if isCollapsed}} hidden {{else}} show {{/if}}" id={{_id}}>
+		<input type="text" class="namecluster form-control input-sm sort-disabled" 
+				placeholder="Name this cluster"/>
 		{{#each clusterideas}}
-			<li id={{_id}} class="idea-item">{{content}}</li>
+			{{> ideaitem}}
 		{{/each}}
 		<!--{{#each clusterchildren}}
 			<li id={{this}} class="cluster-item">{{clustername}}</li>
 		{{/each}}-->
 		</ul>
 	</div>
+</template>
+
+<template name="ideaitem">
+	<li id={{_id}} class="idea-item">{{content}} <i class="sort-disabled fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}} gamechangestar"></i></li>
 </template>
 
 
