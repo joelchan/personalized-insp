@@ -66,7 +66,7 @@
 			<!--People View-->
 			<div id="people-view" class="col-md-7 dashboard-panel-7 pull-right">
 				<h3>
-				<!-- <span class="btn-group">
+				<span class="btn-group">
 					<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
 						Action
 				    	<span class="caret"></span>
@@ -77,14 +77,18 @@
 				    	<li><a href="#" class="show-modal" id="sendexbutton" data-toggle="modal" data-target="#sendExModal">Send Examples</a></li>
 				    	<li><a href="#" class="show-modal" id="sendthemebutton" data-toggle="modal" data-target="#sendThemeModal">Send Theme</a></li>
 				  	</ul>
-				</span> -->
+				</span>
 				People</h3>
 				<hr>
 				<div id="people">
-				<!--Need to change here to point to (users)names collection-->
-				{{#each users}}
-					{{> userprofile}}
-				{{/each}}
+					<div id="checkall-btn-group" class="btn-group btn-group-xs">
+						<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
+						<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
+					</div>
+					{{#each users}}
+						{{> userprofile}}
+					{{/each}}
+
 				</div>
 
 				<!-- <div id="tempactionbuttons">

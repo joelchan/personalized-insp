@@ -69,7 +69,7 @@ html,body {
 
 #filterGamechangers{
 	float: right;
-	padding-right: 5px;
+	padding-right: 11px;
 }
 
 #filters{
@@ -119,6 +119,15 @@ html,body {
 #people{
 	/*height: 620px;*/
 	overflow: auto;
+}
+
+#checkall-btn-group{
+	margin-bottom: 10px;
+}
+
+#people-view hr{
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .profile{

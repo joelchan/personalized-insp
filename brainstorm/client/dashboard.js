@@ -427,6 +427,20 @@ Template.Dashboard.events({
 		}
 	},
 
+	'click #checkall' : function(event, template){
+		//event.target
+		$("input[type=checkbox]").each(function(i){
+			$(this).prop('checked', true);
+		});
+	},
+
+	'click #uncheckall' : function(event, template){
+		//event.target
+		$("input[type=checkbox]").each(function(i){
+			$(this).prop('checked', false);
+		});
+	},
+
 	'click .userprofilename' : function(e){
 		var id = $(e.currentTarget).parents('.profile').attr("id");
 		id = id.split("-")[1];
