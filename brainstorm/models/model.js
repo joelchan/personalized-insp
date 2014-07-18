@@ -6,7 +6,7 @@ Prompts = new Meteor.Collection("prompts");
 Ideas = new Meteor.Collection("ideas");
 ReplayIdeas = new Meteor.Collection("replayIdeas");
 // All system users
-Names = new Meteor.Collection("names");
+MyUsers = new Meteor.Collection("myUsers");
 // All roles
 Roles = new Meteor.Collection("roles");
 // Logs all formed groups
@@ -24,8 +24,9 @@ IdeaToProcess = function(content, participant){
 Cluster = function(ideas){
   this.ideas = ideas;
   this.name = "Not named yet"; //default name for unnamed clusters
-  this.position;
+  this.position; //used only for clustering interface and tag cloud
   this.children = [];
+  this.isCollapsed = false; //used only for clustering interface
 }
 
 root = {
@@ -255,16 +256,16 @@ GroupTemplate = function () {
 
 };
 
-GroupTemplate.prototype.addRole = function (role, num){
-  /******************************************************************
-  * Adds a role to the set of roles in a group template
-  *
-  * @return null
-  ******************************************************************/
-  var newRole = new RoleTemplate(role, num);
-  this.size += num;
-  this.roles.push(newRole);
-};
+//GroupTemplate.prototype.addRole = function (role, num){
+  ///******************************************************************
+  //* Adds a role to the set of roles in a group template
+  //*
+  //* @return null
+  //******************************************************************/
+  //var newRole = new RoleTemplate(role, num);
+  //this.size += num;
+  //this.roles.push(newRole);
+//};
 
 RoleTemplate = function (role, num) {
   this.roleID = role._id;
@@ -308,7 +309,7 @@ Role.prototype.getRole = function(newRole) {
 }
 
 
-Idea = function (content, userID, prompt, participant) {
+Idea = function (content, user, prompt, participant) {
   /********************************************************************
   * Encapsulation of ideas recorded by the system
   *
@@ -316,7 +317,8 @@ Idea = function (content, userID, prompt, participant) {
   ********************************************************************/
   this.time = new Date();
   this.content = content;
-  this.userID = userID;
+  this.userID = user._id;
+  this.userName = user.name;
   this.prompt = prompt;
   this.isGamechanger = false;
   //Optional fields not logged during non-experiments

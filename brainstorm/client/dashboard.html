@@ -1,5 +1,4 @@
 <template name="Dashboard">
-	<h1 class="page-header db-title">Dashboard</h1>
 	<div class="container-fluid dashboard">
 		<div class="row">
 			<!--Ideas View (Vizes + Ideas)-->
@@ -68,13 +67,13 @@
 				  	<ul class="dropdown-menu" role="menu">
 				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#changemodal">Change Prompt</a></li>
 				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#sendmodal">Send Examples</a></li>
-				    	<li><a href="#" class="show-modal">Something else here</a></li>
 				  	</ul>
 				</span>
 				People</h3>
 				<hr>
 				<div id="people">
-				{{#each participants}}
+				<!--Need to change here to point to (users)names collection-->
+				{{#each users}}
 					{{> userprofile}}
 				{{/each}}
 				</div>
@@ -104,7 +103,7 @@
             	</div>
             	<div class="modal-footer">
                 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                	<button type="button" class="btn btn-primary">Send</button>
+                	<button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
         		</div>
     		</div>
   		</div>
@@ -127,7 +126,7 @@
                 		{{/each}}
                 	</div>
 
-					<div class="idealist">
+					<div id="sendmodal-idealist" class="idealist">
 						{{#each ideas}}
 							<div id={{_id}} class="idea">{{content}}</div>
 						{{/each}}	
@@ -141,7 +140,7 @@
             	</div>
             	<div class="modal-footer">
                 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                	<button type="button" class="btn btn-primary">Send</button>
+                	<button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
         		</div>
     		</div>
   		</div>
@@ -153,12 +152,13 @@
 </template>
 
 <template name="userprofile">
-	<div class="profile" id={{_id}}>
+	<div class="profile" id="userprofile-{{_id}}">
 		<form class="form-inline" role="form">
   			<div class="checkbox">
-      			<input class="selectpart" type="checkbox" value={{_id}}>
+      			<input class="selectpart" type="checkbox" value="{{this._id}}">
+      			<label>{{this.name}}</label>
   			</div>
-  			<label><i class="fa fa-user fa-2x"></i></label>
+  			<!--<div class="name-icon"><i class="fa fa-user fa-2x"></i></div>-->
   		</form>
 		{{> userseries this}}
 	</div>
@@ -167,4 +167,8 @@
 <template name="userseries">
 	<div class="series">
 	</div>
+</template>
+
+<template name="loading">
+	<h5>Loading</h5>
 </template>

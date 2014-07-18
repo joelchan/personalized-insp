@@ -116,3 +116,153 @@
   font-size: 22px;
 }
 
+#notify-bulb{
+  transition: color 0.5s ease;
+  -webkit-transition: color 0.5s ease;
+  -moz-transition: color 0.5s ease;
+  -o-transition: color 0.5s ease;
+  padding-top: 20px;
+  padding-left: 15px;
+  color: #A1A1A1;
+  text-shadow: 1px 1px #ededed;
+}
+
+#notify-bulb:hover{
+  color: #6e6e6e;
+}
+
+.badge{
+  font-size: 14px;
+  background: #f0ad4e;
+  border: 1px solid #eea236;
+  width: auto;
+  height: auto;
+  margin: 0;
+  border-radius: 50%;
+  position:absolute;
+  top: 18px;
+  left: 52px;
+}
+
+#notifications-handle{
+  float: right;
+  position: fixed;
+  top: 45%;
+  left: 98%;
+  width: 2%;
+  text-shadow: 1px 1px #ededed;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  -webkit-box-shadow: -1px 0px 2px 1px rgba(0,0,0,0.05);
+  -moz-box-shadow:    -1px 0px 2px 1px rgba(0,0,0,0.05);
+  box-shadow:         -1px 0px 2px 1px rgba(0,0,0,0.05);
+  transition: left 300ms ease; /*same as speed option in bigslide.js*/
+  -webkit-transition: left 300ms ease; 
+  -moz-transition: left 300ms ease;
+  -o-transition: left 300ms ease;
+}
+#notifications-handle.moved{
+  left: 63%;
+  z-index: 2;
+}
+
+#notifications-handle a{
+  color: #f0ad4e;
+
+}#notifications-handle i{
+  padding-bottom: 3px;
+  padding-right: 4px;
+}
+
+#notifications{
+  -webkit-box-shadow: -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
+  -moz-box-shadow:    -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
+  box-shadow:         -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
+  padding-top: 51px;
+  overflow: auto;
+  z-index: 1;
+  padding-bottom: 125px;
+}
+
+#notifications .notification-item{
+  border-radius: 0px;
+  padding-bottom: 0px !important;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  box-shadow: none !important;
+}
+
+.notification-item .panel-heading{
+  color: #666666;
+  background-image: none !important;
+  background-color: white; 
+  transition: background-color 0.75s, color 0.65s;
+  -webkit-transition: background-color 0.75s, color 0.65s;
+  -moz-transition: background-color 0.75s, color 0.65s;
+  -o-transition: background-color 0.75s, color 0.65s;
+}
+
+.notification-item.unhandled .panel-heading{
+  background-color: #f0ad4e;
+  color: white;
+}
+
+#notifications .time-label{
+  font-size: 10px;
+  float: right;
+}
+
+#notifications .panel-body{
+  padding-top: 5px;
+  background-color: #fcfcfc;
+}
+
+#notifications .notify-label{
+  padding-top: 0px;
+}
+
+.notification-item .panel-body{
+  -webkit-box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.05);
+  -moz-box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.05);
+  box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.05);
+}
+
+#notifications .idea{
+  border-bottom: 1px dotted #ddd;
+  padding: 10px;
+}
+
+#notifications .idea:nth-child(2){
+  border-top: 1px dotted #ddd;
+}
+
+#notifications .idea-bullet{
+  text-shadow: 1px 1px #fff;
+}
+
+#notifications .notify-prompt{
+  border-bottom: 1px dotted #ddd;
+  border-top: 1px dotted #ddd;
+  padding: 10px;
+}
+
+.affix {
+  width: inherit;
+  position: absolute;
+  top: 50px;
+}
+
+.affix-bottom {
+  width: inherit;
+  position: absolute;
+  top: 50px;
+}
+
+.affix-top {
+  width: inherit;
+  position: absolute;
+  top: 50px;
+}

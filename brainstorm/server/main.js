@@ -155,20 +155,24 @@ Meteor.startup(function() {
     * Ensure basic admin user is in the database
     ****************************************************************/
     var adminName = "ProtoAdmin";
-    var adminUsers = Names.find({name: adminName});
+    var adminUsers = MyUsers.find({name: adminName});
     if (adminUsers.count() > 0) {
       if (adminUsers.count() > 1) {
-        Names.remove({name: adminName});
+        MyUsers.remove({name: adminName});
         var admin = new User("ProtoAdmin", "admin");
-        Names.insert(admin);
+        MyUsers.insert(admin);
       }
     } else {
       var admin = new User("ProtoAdmin", "admin");
-      Names.insert(admin);
+      MyUsers.insert(admin);
     }
 
     if(Clusters.findOne({_id: "-1"})===undefined){
       Clusters.insert(root);
+    }
+
+    if(Notifications.findOne({_id: "directions"})===undefined){
+      Notifications.insert(directions);
     }
 });
 
@@ -178,3 +182,22 @@ Meteor.startup(function() {
 //Meteor.startup(function() {
   //testExperimentManager();
 //});
+
+Meteor.startup(function() {
+  /****************************************************************
+  * Keep IdeasToProcess and Ideas collections synchronized
+  ****************************************************************/
+  //Clear out the IdeasToProcess collection before adding  function
+  //to synce them
+  IdeasToProcess.remove({},
+    function (err) {
+      //Callback to add sync after IdeasToProcess.remove finishes
+      Ideas.find().observe({
+        added: function(doc) {
+            IdeasToProcess.insert(doc);
+        },
+      });
+  });
+});
+
+

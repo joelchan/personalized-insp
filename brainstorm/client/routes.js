@@ -84,14 +84,23 @@ Router.map(function () {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
   });
-  this.route('Cluster');
+  this.route('Clustering');
   this.route('Forest', {
     path: 'Forest/:_id',
     template: 'Forest',
   });
   this.route('Dashboard', {
     path: 'Dashboard',
-    template: 'Dashboard'
+    template: 'Dashboard',
+    waitOn: function() {
+        return Meteor.subscribe('events');
+    }, 
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    }
   });
   this.route('NoParticipation', {
     path: 'participation/', 

@@ -26,7 +26,24 @@
 	list-style: none;
 	list-style-type: none;
 }
-.newstack{
+
+.forest ul {
+	list-style: none;
+	list-style-type: none;
+}
+
+.forest li.ui-sortable-helper{
+	cursor: move;
+}
+
+.forest li.sort-disabled{
+	border: none;
+	background-color: #f5f5f5;
+	height:0px;
+	padding:1px;
+}
+
+.forest .newstack{
 	border: dashed 1px #ddd;
 	border-radius: 5px;
 	padding: 5px;

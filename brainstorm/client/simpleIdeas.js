@@ -59,6 +59,7 @@ getRandomRares = function() {
 
 getPrimingIdeas = function () {
     var participant = Session.get("currentParticipant");
+    var user = Session.get("currentUser");
     //Check if priming ideas were already set
     if (participant.misc != undefined) {
       return participant.misc
@@ -74,7 +75,7 @@ getPrimingIdeas = function () {
         //console.log(ideas[i]);
         //console.log("creating rare idea: " + ideas[i]);
           var idea = new Idea(ideas[i],
-              participant.userID,
+              user,
               cond.prompt,
               participant
               );
@@ -88,7 +89,7 @@ getPrimingIdeas = function () {
       var ideas = getRandomElement(primingIdeas['common']);
       for (var i=0; i<ideas.length; i++) {
           var idea = new Idea(ideas[i], 
-              participant.userID,
+              user,
               cond.prompt,
               participant
               );
@@ -131,8 +132,52 @@ Template.IdeaBox.helpers({
       return Ideas.find({participantID: Session.get("currentParticipant")._id});
     },
 });
-    
+
+
+/********************************************************************
+* NotifyItem Template
+********************************************************************/
+var timeDep = new Deps.Dependency();
+
+
+//Rendered callback
+Template.NotifyItem.rendered = function(){
+  timeInterval = Meteor.setInterval(function(){
+    timeDep.changed();
+  }, 60000);
+}
+
+//Helpers
+Template.NotifyItem.helpers({
+  title : function(){
+    return this.type.title;
+  }, 
+
+  isExamples : function(){
+    if(this.type.val === 0)
+      return true;
+    else
+      return false;
+  },
+
+  examples : function(){
+    return this.examples;
+  },
+
+  time : function(){
+    timeDep.depend();
+    return getTime(this.time);
+  }
+});
+/********************************************************************
+* IdeationPage Template
+********************************************************************/
+//Rendered Callback    
 Template.IdeationPage.rendered = function() {
+  $('.menu-link').bigSlide();
+  //Debug statements
+  //console.log("rendered");
+  //console.log(Session.get('currentExp'));
   // Scroll window back to top
   window.scrollTo(0,0);
 
@@ -170,13 +215,95 @@ Template.IdeationPage.rendered = function() {
   //console.log(participant);
   Logger.logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
-  setTimeout('exitIdeation()', 900000);
+  Meteor.setTimeout('exitIdeation()', 900000);
   //Setup timer for decrementing onscreen timer
   Session.set("timeLeft", 15);
-  setTimeout('decrementTimer()', 60000);
+  Meteor.setTimeout('decrementTimer()', 60000);
 };
 
+//Events
 Template.IdeationPage.events({
+  'click #notifications-handle' : function(){
+    $('#notifications-handle').toggleClass('moved');
+  }
+});
+
+/********************************************************************
+* NotificationDrawer Template
+********************************************************************/
+var newNotify = null; //stores a new notification
+
+//defines isTyping as object that executes function when value is 
+//changed to false and there is a new notfication waiting
+(function() {
+    var val = true;
+    
+    Object.defineProperty(window, "isTyping", {
+        get: function() {
+            return val;
+        },
+        set: function(v) {
+            val = !!v;
+            if(newNotify !== null && val === false){
+              //alert(newNotify); //or some other function
+              //newNotify = null;
+              //val = true;
+            }
+        }
+    });
+})();
+
+//Rendered Callback
+Template.NotificationDrawer.rendered = function(){
+  $('.menu-link').bigSlide();
+
+  Notifications.find({recipient: Session.get("currentUser"), handled: false}).observe({
+    added : function(doc){
+      newNotify = doc;//Notifications.findOne({_id: doc}); //holds new notification
+    }
+  });
+}
+
+//Helpers
+Template.NotificationDrawer.helpers({
+  notifications : function(){
+    return Notifications.find({recipient: Session.get("currentUser")._id});
+  },
+  directions : function(){
+    return this.type.val === -1;
+  }
+});
+
+//Events
+Template.NotificationDrawer.events({
+  'click a' : function(){
+    var $icon = $(event.target).children('i');
+    if($icon.hasClass('fa-chevron-circle-right')){
+      $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
+    } else if($icon.hasClass('fa-chevron-circle-down')){
+      $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
+    }
+
+    var $notification = $(event.target).parents('.unhandled');
+    $notification.removeClass("unhandled");
+
+    var id = $notification.find('.panel-collapse').attr('id');
+    Notifications.update({_id: id}, {$set: {handled: true}});
+  }
+});
+
+/********************************************************************
+* SubmitIdeas Template
+********************************************************************/
+//Helpers
+Template.SubmitIdeas.helpers({
+  number : function(){
+    return Notifications.find({recipient: Session.get("currentUser")._id, handled: false}).count(); 
+  }
+});
+//Events
+var timer;
+Template.SubmitIdeas.events({
     'click button.submitIdea': function () {
         //console.log("event submitted");
         var newIdea = $('#nextIdea').val();
@@ -207,9 +334,22 @@ Template.IdeationPage.events({
           // Clear the text field
           $('#nextIdea').val('');
         }
-    }
+    },
 
+    'click #notify-bulb' : function(){
+      $('#notifications-handle').toggleClass('moved');
+    },
+
+    //waits 3 seconds after user stops typing to change isTyping flag to false
+    'keyup textarea' : function(){;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(function(){
+        //isTyping = false;
+      }, 3000);
+    }
 });
+
+
 
 getUser = function() {
   /******************************************************************
