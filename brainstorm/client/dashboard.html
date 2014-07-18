@@ -47,11 +47,15 @@
 					</div>
 					<div id="filters" class="col-md-4">
 						<h3>Filters</h3>
+
+						<h5>Showing Ideas by: </h5>
 						{{#each partFilters}}
 						<div>
 							<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						</div>
 						{{/each}}
+
+						<h5>That Appear in Themes:</h5>
 						{{#each clusterFilters}}
 						<div>
 							<span class="clusterfilter-label label label-info" id="cf-{{this.id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
@@ -147,10 +151,15 @@
             	<div class="modal-body">
                 	<h3>Choose examples to send to the selected participants</h3>
                 	<div>
-                		<label>Filtering by participant(s): </label>
-                		{{#each filters}}
-                			<span class="filter-label label label-default"><i class="fa fa-minus-circle"></i>{{this}}</span>
-                		{{/each}}
+                		<label>Showing Ideas by: </label>
+						{{#each partFilters}}
+							<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+						{{/each}}
+
+						<label>That Appear in Themes: </label>
+						{{#each clusterFilters}}
+							<span class="clusterfilter-label label label-info" id="cf-{{this.id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+						{{/each}}
                 	</div>
 
 					<div id="sendExModal-idealist" class="idealist">
