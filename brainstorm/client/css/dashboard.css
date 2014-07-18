@@ -8,6 +8,10 @@
     vertical-align: top;
 }*/
 
+#tempactionbuttons{
+	margin-top: 50px;
+	/*font-weight: bold;*/
+}
 html,body {
     height:100%;
 }
@@ -113,7 +117,7 @@ html,body {
 }
 
 #people{
-	height: 620px;
+	/*height: 620px;*/
 	overflow: auto;
 }
 

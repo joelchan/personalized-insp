@@ -8,6 +8,20 @@
 	padding-left: 0px;
 }
 
+#idealistHeader{
+	display: inline-block;
+	/*width: 50%;*/
+}
+
+#left > div:nth-child(4) > div{
+	float: right;
+	/*width: 50%;*/
+}
+
+#sortMenuButton{
+	margin: 20px 0px 5px 15px;
+}
+
 .cluster{
 	border: 1px solid black;
 	border-radius: 5px;

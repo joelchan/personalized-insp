@@ -1,6 +1,9 @@
 <template name="simpleIdea">
   <div class='list-item' draggable="true">
     {{ content }}
+  {{#if isStarred}}
+    <i class="fa fa-star gamechangestar"></i>
+  {{/if}}
   </div>
 </template>
 
