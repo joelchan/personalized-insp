@@ -133,6 +133,15 @@ Template.IdeaBox.helpers({
     },
 });
 
+Template.simpleIdea.helpers({
+  isStarred : function(){
+    var idea = IdeasToProcess.findOne({_id: this._id});
+    if (idea === undefined)
+      return false;
+    return idea.isGamechanger;
+  }
+})
+
 
 /********************************************************************
 * NotifyItem Template
@@ -301,7 +310,7 @@ Template.NotificationDrawer.rendered = function(){
 //Helpers
 Template.NotificationDrawer.helpers({
   notifications : function(){
-    return Notifications.find({recipient: Session.get("currentUser")._id});
+    return Notifications.find({recipient: Session.get("currentUser")._id}, {sort: {time: -1}});
   },
   directions : function(){
     return this.type.val === -1;
@@ -311,14 +320,6 @@ Template.NotificationDrawer.helpers({
 //Events
 Template.NotificationDrawer.events({
   'click a' : function(){
-    var $icon = $(event.target).children('i');
-
-    if($icon.hasClass('fa-chevron-circle-right')){
-      $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
-    } else if($icon.hasClass('fa-chevron-circle-down')){
-      $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
-    }
-
     var $notification = $(event.target).parent().parent().parent();
     var id = $notification.children('.panel-collapse').attr('id');
 
@@ -336,8 +337,26 @@ Template.NotificationDrawer.events({
         //console.log("logging collapse");
       }
     }
-
     $notification.removeClass("unhandled");
+
+    var $icon = $(event.target).children('i');
+    //target is expanded
+    if($icon.hasClass('fa-chevron-circle-down')){
+      $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
+      return;
+    }
+
+    //set all other arrows to closed
+    $('.fa-chevron-circle-down').each(function(i){
+      $(this).switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
+      console.log($(this));
+    });
+
+    //target is collapsed
+    if($icon.hasClass('fa-chevron-circle-right')){
+      $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
+      return;
+    }
   }
 });
 

@@ -1,3 +1,5 @@
+Session.set("sortByTime", -1);
+
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
 ********************************************************************/
@@ -109,7 +111,7 @@ Template.cluster.rendered = function(){
 ********************************************************************/
 Template.Clustering.helpers({
   ideas : function(){
-    return IdeasToProcess.find({inCluster: {$ne: true}});
+    return IdeasToProcess.find({inCluster: {$ne: true}}, {sort: {time: Session.get("sortByTime")}});
   },
 
   clusters : function(){
@@ -244,6 +246,14 @@ Template.Clustering.events({
     var cluster = Clusters.findOne({_id: id});
     var top = cluster.position.top;
     window.scrollTo(0, top+100);
+  },
+
+  'click #sortOldest' : function(){
+    Session.set("sortByTime", 1);
+  },
+
+  'click #sortMostRecent' : function(){
+    Session.set("sortByTime", -1);
   }
 
   //Attaches sortable and draggable to clusters when mouse moves into cluster area

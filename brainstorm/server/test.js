@@ -1,3 +1,8 @@
+testFilterFactory = function(){
+  var user = new User("testUser", "Test User");
+  var filter = FilterFactory.create("Test Filter", user, "ideas");
+}
+
 testGroupManager = function() {
   /*****************************************************************
   * Test group manager

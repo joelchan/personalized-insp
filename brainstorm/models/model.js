@@ -14,8 +14,7 @@ Groups = new Meteor.Collection("groups");
 GroupTemplates = new Meteor.Collection("groupTemplates");
 Clusters = new Meteor.Collection("clusters");
 IdeasToProcess = new Meteor.Collection("ideasToProcess");
-// Generic Filters for dynamic UI filtering
-Filters = new Meteor.Collection("filters");
+
 
 
 IdeaToProcess = function(content, participant){
@@ -98,18 +97,35 @@ Group = function(template) {
 }
 
 //GroupAssignment = function(user, role) {
-    ///****************************************************************
-    //* Encapsulates the assignment of a user in a group to a role
-    //* @Params
-    //*   user - the user that is being assign
-      * and adds it to the database. Intended to abstract mechanics
-      * of copying/creation of a group. Duplicating groups should
-      * be a common function
-      **************************************************************/
-      var newGroup = new Group(group.template);
-      newGroup._id = Groups.insert(newGroup);
-      return newGroup;
-    },
+  ///****************************************************************
+  //* Encapsulates the assignment of a user in a group to a role
+  //* @Params
+  //*   user - the user that is being assign
+  //*   role - the role the user is being assign to
+  //****************************************************************/
+  //this.userID = user._id;
+  //this.userName = user.name;
+  //this.roleID = role._id;
+  //this.roletitle = role.title;
+//};
+
+GroupManager = (function () {
+    return {
+    /****************************************************************
+     * Object that allows for most group manipulations including 
+     *   assignment, creation, and modification
+     ****************************************************************/
+     copyGroup: function(group) {
+       /**************************************************************
+        * Creates a duplicate group based on a given group's template
+        * and adds it to the database. Intended to abstract mechanics
+        * of copying/creation of a group. Duplicating groups should
+        * be a common function
+        **************************************************************/
+        var newGroup = new Group(group.template);
+        newGroup._id = Groups.insert(newGroup);
+        return newGroup;
+      },
 
     createGroup: function(template, users) {
       /**************************************************************
@@ -353,13 +369,6 @@ User = function(name, type){
   this.type = type;
 };
 
-Filter = function (name, user, collection) {
-  this.name =  name
-  this.user = user
-  this.collection = collection
-  this.sort = [];
-  this.filter [];
-};
 
 //Javascript implementation of Java's hash code function 
 //Hash code function 

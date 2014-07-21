@@ -106,6 +106,13 @@
   font-size: 14px;
 }
 
+.list-item .gamechangestar{
+  float: right;
+  padding-top: 3px;
+  color: #f0ad4e;
+  text-shadow: 1px 1px #ddd; /*#eea236;*/
+}
+
 #ideation-pane .footer{
   margin-left: 0px;
 }
@@ -272,8 +279,9 @@
   display: none;
 }
 
-#notifications .idea:nth-child(1){
+#notifications .themeexamples .idea:nth-child(1){
   border-top: 1px dotted #ddd;
+  border-bottom: none;
 }
 
 .affix {
