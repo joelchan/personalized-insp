@@ -96,21 +96,38 @@ Group = function(template) {
     }
 }
 
-GroupAssignment = (function(){//function(user, role) {
-    ///****************************************************************
-    //* Encapsulates the assignment of a user in a group to a role
-    //* @Params
-    //*   user - the user that is being assign
-    // * and adds it to the database. Intended to abstract mechanics
-    // * of copying/creation of a group. Duplicating groups should
-    // * be a common function
-    // **************************************************************/
-    //   var newGroup = new Group(group.template);
-    //   newGroup._id = Groups.insert(newGroup);
-    //   return newGroup;
-    // },
+//GroupAssignment = function(user, role) {
+  ///****************************************************************
+  //* Encapsulates the assignment of a user in a group to a role
+  //* @Params
+  //*   user - the user that is being assign
+  //*   role - the role the user is being assign to
+  //****************************************************************/
+  //this.userID = user._id;
+  //this.userName = user.name;
+  //this.roleID = role._id;
+  //this.roletitle = role.title;
+//};
 
-    return {createGroup: function(template, users) {
+GroupManager = (function () {
+    return {
+    /****************************************************************
+     * Object that allows for most group manipulations including 
+     *   assignment, creation, and modification
+     ****************************************************************/
+     copyGroup: function(group) {
+       /**************************************************************
+        * Creates a duplicate group based on a given group's template
+        * and adds it to the database. Intended to abstract mechanics
+        * of copying/creation of a group. Duplicating groups should
+        * be a common function
+        **************************************************************/
+        var newGroup = new Group(group.template);
+        newGroup._id = Groups.insert(newGroup);
+        return newGroup;
+      },
+
+    createGroup: function(template, users) {
       /**************************************************************
       * Create a new group from a tempalte and perform an necessary
       * initialization
