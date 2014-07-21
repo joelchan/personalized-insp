@@ -18,6 +18,7 @@ IdeasToProcess = new Meteor.Collection("ideasToProcess");
 Filters = new Meteor.Collection("filters");
 
 
+
 IdeaToProcess = function(content, participant){
   this.content = content;
   this.participantID = participant._id;
@@ -97,21 +98,21 @@ Group = function(template) {
     }
 }
 
-//GroupAssignment = function(user, role) {
+GroupAssignment = (function(){//function(user, role) {
     ///****************************************************************
     //* Encapsulates the assignment of a user in a group to a role
     //* @Params
     //*   user - the user that is being assign
-      * and adds it to the database. Intended to abstract mechanics
-      * of copying/creation of a group. Duplicating groups should
-      * be a common function
-      **************************************************************/
-      var newGroup = new Group(group.template);
-      newGroup._id = Groups.insert(newGroup);
-      return newGroup;
-    },
+    // * and adds it to the database. Intended to abstract mechanics
+    // * of copying/creation of a group. Duplicating groups should
+    // * be a common function
+    // **************************************************************/
+    //   var newGroup = new Group(group.template);
+    //   newGroup._id = Groups.insert(newGroup);
+    //   return newGroup;
+    // },
 
-    createGroup: function(template, users) {
+    return {createGroup: function(template, users) {
       /**************************************************************
       * Create a new group from a tempalte and perform an necessary
       * initialization

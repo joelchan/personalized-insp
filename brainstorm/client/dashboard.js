@@ -15,17 +15,20 @@ var filters = {
 //FilterFactory.addSort(myFilter, 'user', [1,2,3]);
 //FilterFactory.performQuery(myFilter);
 
-var myFilter = FilterFactory.create("Dashboard Participant Filter",
-    Session.get("currentUser"),
-    "ideas"
-    );
+// var myFilter = FilterFactory.create("Dashboard Participant Filter",
+//     Session.get("currentUser"),
+//     "ideas"
+//     );
 
-myFilters = Filters.findOne({name: "Dashboard Participant Filter", 
-              user: Session.get("currentUser")
-});
+// console.log(getCollection(myFilters));
 
-filter.filter = [{key: "_id", val: {$in: clusterIdeas}},
-      {key: "isGamechanger", val: {$in: filters.gamchanger}}];
+// myFilters = Filters.findOne({name: "Dashboard Participant Filter", 
+//               user: Session.get("currentUser")
+// });
+
+// filter.filter = [{key: "_id", val: {$in: clusterIdeas}},
+//       {key: "isGamechanger", val: {$in: filters.gamchanger}}];
+
 
 
 ////////////////////////////////////////////////////////////////
@@ -38,6 +41,13 @@ MS_PER_MINUTE = 60000;
 
 Template.Dashboard.rendered = function(){
 	Session.set("currentPrompt", "Alternate uses for an iPod");
+
+	var myFilter = FilterFactory.create("Dashboard Participant Filter",
+    Session.get("currentUser"),
+    "ideas"
+    );
+
+	console.log(getCollection(myFilter.collection));
 }
 
 
