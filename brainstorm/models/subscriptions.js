@@ -21,6 +21,7 @@ Meteor.startup(function(){
 		Meteor.subscribe("roles");
 		Meteor.subscribe("groups");
 		Meteor.subscribe("userTypes");
+    Meteor.subscribe("filters");
 		/************************************************************
 		* Subscribe to experimentModels.js collections
 		************************************************************/

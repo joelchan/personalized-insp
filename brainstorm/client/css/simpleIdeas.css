@@ -16,6 +16,11 @@
   padding: 10px;
 }
 
+.prompt-box p{
+  /*font-weight: bold;*/
+  font-size: 20px;
+}
+
 .header .sample-ideas {
   background: #eee;
   padding: 10px;
@@ -62,7 +67,8 @@
   margin: 5px;
 }
 
-.idea-box {
+/*unused class*/
+/*.idea-box {
     height:400px;
     border:1px solid #ccc;
     border-radius: 10px;
@@ -70,7 +76,9 @@
     padding: 5px;
     font-family: 'HelveticaNeue-UltraLight';
     overflow: auto;
-}
+}*/
+
+
 
 .ideabox {
    font-size: 20px;
@@ -98,11 +106,22 @@
   font-size: 14px;
 }
 
+.list-item .gamechangestar{
+  float: right;
+  padding-top: 3px;
+  color: #f0ad4e;
+  text-shadow: 1px 1px #ddd; /*#eea236;*/
+}
+
+#ideation-pane .footer{
+  margin-left: 0px;
+}
+
 .idea-input {
   width: 100%;
   margin-top: 50px;
   height: 75px;
-  margin: 25px 0 20px 20px;
+  margin: 25px 0 20px 0; /*20px;*/
 }
 
 .footer {
@@ -122,14 +141,16 @@
   -moz-transition: color 0.5s ease;
   -o-transition: color 0.5s ease;
   padding-top: 20px;
-  padding-left: 15px;
+  /*padding-left: 15px;*/
+  padding-left: 0px;
   color: #A1A1A1;
   text-shadow: 1px 1px #ededed;
+  cursor: default;
 }
 
-#notify-bulb:hover{
+/*#notify-bulb:hover{
   color: #6e6e6e;
-}
+}*/
 
 .badge{
   font-size: 14px;
@@ -141,10 +162,10 @@
   border-radius: 50%;
   position:absolute;
   top: 18px;
-  left: 52px;
+  left: 35px;
 }
 
-#notifications-handle{
+/*#notifications-handle{
   float: right;
   position: fixed;
   top: 45%;
@@ -158,7 +179,7 @@
   -webkit-box-shadow: -1px 0px 2px 1px rgba(0,0,0,0.05);
   -moz-box-shadow:    -1px 0px 2px 1px rgba(0,0,0,0.05);
   box-shadow:         -1px 0px 2px 1px rgba(0,0,0,0.05);
-  transition: left 300ms ease; /*same as speed option in bigslide.js*/
+  transition: left 300ms ease; /*same as speed option in bigslide.js
   -webkit-transition: left 300ms ease; 
   -moz-transition: left 300ms ease;
   -o-transition: left 300ms ease;
@@ -170,16 +191,17 @@
 
 #notifications-handle a{
   color: #f0ad4e;
-
-}#notifications-handle i{
-  padding-bottom: 3px;
-  padding-right: 4px;
 }
 
+#notifications-handle i{
+  padding-bottom: 3px;
+  padding-right: 4px;
+}*/
+
 #notifications{
-  -webkit-box-shadow: -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
-  -moz-box-shadow:    -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
-  box-shadow:         -2px 0px 5px 0px rgba(50, 50, 50, 0.15);
+  -webkit-box-shadow: 2px 0px 5px 1px rgba(50, 50, 50, 0.05);
+  -moz-box-shadow:    2px 0px 5px 1px rgba(50, 50, 50, 0.05);
+  box-shadow:         2px 0px 5px 1px rgba(50, 50, 50, 0.05);
   padding-top: 51px;
   overflow: auto;
   z-index: 1;
@@ -211,7 +233,7 @@
 }
 
 #notifications .time-label{
-  font-size: 10px;
+  font-size: 9px;
   float: right;
 }
 
@@ -247,6 +269,19 @@
   border-bottom: 1px dotted #ddd;
   border-top: 1px dotted #ddd;
   padding: 10px;
+}
+
+#notifications .themehint{
+  cursor: pointer;
+}
+
+#notifications .themeexamples{
+  display: none;
+}
+
+#notifications .themeexamples .idea:nth-child(1){
+  border-top: 1px dotted #ddd;
+  border-bottom: none;
 }
 
 .affix {

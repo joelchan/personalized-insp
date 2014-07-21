@@ -1,3 +1,5 @@
+Session.set("sortByTime", -1);
+
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
 ********************************************************************/
@@ -7,10 +9,11 @@ Template.Clustering.rendered = function(){
     items : '',
     receive : function(event, ui){
       var myIdea;
-      if(ui.sender.hasClass('cluster')){
-        var myIdeaId = $(ui.item).attr('id');
-        myIdea = processIdeaSender(ui, myIdeaId);
-        updateIdeas(myIdeaId, false);
+      if(ui.sender.parent().hasClass('cluster')){
+        console.log(ui.sender);
+        var myIdeaID = $(ui.item).attr('id');
+        myIdea = processIdeaSender(ui, myIdeaID);
+        //updateIdeas(myIdeaID, true);
       }
       createCluster(ui.item);
       ui.item.remove();
@@ -23,28 +26,16 @@ Template.Clustering.rendered = function(){
     connectWith : 'ul.ideadeck, ul.newcluster, .cluster ul',
     //re-insert idea back into ideas collection if dragged to deck
     receive: function(event, ui){
-      var myIdeaId = $(ui.item).attr('id');
+      var myIdeaID = $(ui.item).attr('id');
       if(ui.sender.hasClass('clusterul')){
-        myIdea = processIdeaSender(ui, myIdeaId); 
+        myIdea = processIdeaSender(ui, myIdeaID); 
       } else {
         alert("unknown sender"); //no way for this to happen
         return false;
       }
-      updateIdeas(myIdeaId, false);
+      updateIdeas(myIdeaID, false);
     }
   });
-
-  //Attach sortable to the cluster list
-  /*$('ul.clusterdeck').sortable({
-    items: ">*:not(.sort-disabled)",
-    connectWith: 'ul.stack',
-    receive: function(event,ui){
-      if(ui.sender.hasClass('stack')){
-        ui.item.remove();
-      }
-      return false;
-    }
-  });*/
 }
 
 Template.clusterarea.rendered = function(){
@@ -57,19 +48,19 @@ Template.cluster.rendered = function(){
     items: ":not(.sort-disabled)",
     connectWith : 'ul.ideadeck, ul.newcluster, .cluster ul, ul.clusterdeck',
     receive : function(event, ui){
-      var myIdeaId = $(ui.item).attr('id');
+      var myIdeaID = $(ui.item).attr('id');
       var myIdea;
-      var myClusterId = $(this).attr('id'); //get cluster being modified
+      var myClusterID = $(this).attr('id'); //get cluster being modified
 
       //if item is coming from cluster list
       if ($(ui.sender).hasClass('clusterdeck')){
-        if(myClusterId === $(ui.item).attr('id')){ //if item being added has ID of cluster being added to
+        if(myClusterID === $(ui.item).attr('id')){ //if item being added has ID of cluster being added to
           alert("A cluster cannot be a member of itself. Sorry!");
           $(ui.sender).sortable('cancel');
           //ui.item.remove();
           return false;
         } else {
-          Clusters.update({_id: myClusterId}, 
+          Clusters.update({_id: myClusterID}, 
             {$addToSet:
               {children: $(ui.item).attr('id')} 
           });
@@ -84,19 +75,19 @@ Template.cluster.rendered = function(){
         }
       //if item is coming from the idealist
       } else if ($(ui.sender).hasClass('ideadeck')){
-        myIdea = IdeasToProcess.findOne({_id: myIdeaId});
-        updateIdeas(myIdeaId, true);
+        myIdea = IdeasToProcess.findOne({_id: myIdeaID});
+        updateIdeas(myIdeaID, true);
 
       //if item is idea coming from another cluster
       } else if ($(ui.sender).hasClass('clusterul') && 
         $(ui.item).hasClass('idea-item')){
-        myIdea = processIdeaSender(ui, myIdeaId);
+        myIdea = processIdeaSender(ui, myIdeaID);
       }
 
       //update cluster by pushing idea onto ideas field
-      Clusters.update({_id: myClusterId}, 
-        {$push: 
-          {ideas: myIdea}
+      Clusters.update({_id: myClusterID}, 
+        {$addToSet: 
+          {ideas: myIdeaID}
       });
     }
   });
@@ -120,7 +111,11 @@ Template.cluster.rendered = function(){
 ********************************************************************/
 Template.Clustering.helpers({
   ideas : function(){
-    return IdeasToProcess.find();
+    return IdeasToProcess.find({inCluster: {$ne: true}}, {sort: {time: Session.get("sortByTime")}});
+  },
+
+  clusters : function(){
+    return Clusters.find({isRoot: {$ne: true}});
   },
 
   clustername : function(){
@@ -128,35 +123,36 @@ Template.Clustering.helpers({
     if(clu === undefined) return false
     return clu.name;
   },
-
-  isClustered : function(){
-    if(this.inCluster){
-      return false;
-    } else {
-      return true;
-    }
-  },
     
   prompt : function(){
-    return "Alternative uses for old ipods";//Session.get("currentExp").conditions[0].prompt.question;
+    //return Session.get("currentCond").prompt;
+    return "Names for Niki & Jeff's Company";//Session.get("currentExp").conditions[0].prompt.question;
+  },
+
+  numClusters : function(){
+    return Clusters.find({isRoot: {$ne: true}}).count();
+  },
+
+  numUnnamed : function(){
+    var nullNames = ["Not named yet", "", " ", "  ", "   ", undefined];
+    return Clusters.find({isRoot: {$ne: true}, name: {$in: nullNames}}).count();
   }
 });
-
 
 /********************************************************************
 * Cluster Area template Helpers
 ********************************************************************/
 Template.clusterarea.helpers({
   clusters : function(){
-    return Clusters.find().fetch();
-  },
-
-  isNotRoot : function(){
-    if($(this)[0].isRoot)
-      return false;
-    return true;
+    return Clusters.find({isRoot: {$ne: true}});
   },
 });
+
+Template.ideaitem.helpers({
+  gameChangerStatus : function(){
+    return this.isGamechanger;
+  }
+})
 
 
 /********************************************************************
@@ -164,7 +160,8 @@ Template.clusterarea.helpers({
 ********************************************************************/
 Template.cluster.helpers({
   clusterideas : function(){
-    return $(this)[0].ideas;
+    var ideaIDs = $(this)[0].ideas;
+    return IdeasToProcess.find({_id: {$in: ideaIDs}})
   },
 
   named : function(){
@@ -194,17 +191,17 @@ Template.cluster.helpers({
 ********************************************************************/
 Template.Clustering.events({
   //checks that a name has been provided for all clusters
-  'click button#finish' : function(){
-    var finished = true;
-    Clusters.find().forEach(function(myCluster){
-      if(myCluster.name == undefined || myCluster.name ==="" 
-        || myCluster.name ==="Not named yet"){
-        alert("Please name all clusters");
-        finished = false;
-        return finished;
-      }
-    });
-  },
+  // 'click button#finish' : function(){
+  //   var finished = true;
+  //   Clusters.find().forEach(function(myCluster){
+  //     if(myCluster.name == undefined || myCluster.name ==="" 
+  //       || myCluster.name ==="Not named yet"){
+  //       alert("Please name all clusters");
+  //       finished = false;
+  //       return finished;
+  //     }
+  //   });
+  // },
 
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
@@ -217,7 +214,7 @@ Template.Clustering.events({
   },
 
   //Collapse clusters and makes them unsortable until expanded
-  'click .fa' : function(){
+  'click .collapser' : function(){
     var id = $(event.target).parent().parent().attr('id');
     var cluster = Clusters.findOne({_id: id});
     var state = !cluster.isCollapsed;
@@ -233,6 +230,32 @@ Template.Clustering.events({
     $(event.target).parent().parent().children('li').slideToggle("fast");*/
   },
 
+  'click .gamechangestar' : function(){
+    console.log(this);
+    var id = (this)._id;
+    var idea = IdeasToProcess.findOne({_id: id});
+    var state = !idea.isGamechanger;
+
+    IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
+  },
+
+  'click .cluster-item': function(){
+    //console.log(event.target);
+    var id = $(event.target).attr("id");
+    id = id.split("-")[1];
+    var cluster = Clusters.findOne({_id: id});
+    var top = cluster.position.top;
+    window.scrollTo(0, top+100);
+  },
+
+  'click #sortOldest' : function(){
+    Session.set("sortByTime", 1);
+  },
+
+  'click #sortMostRecent' : function(){
+    Session.set("sortByTime", -1);
+  }
+
   //Attaches sortable and draggable to clusters when mouse moves into cluster area
 });
 
@@ -241,37 +264,38 @@ Template.Clustering.events({
 * Creates new cluster, adds it to collection, and updates Ideas list*
 ********************************************************************/
 function createCluster(item) {
-  var ideaId = item.attr('id');
-  var ideas = [IdeasToProcess.findOne({_id: ideaId})];
+  var ideaID = item.attr('id');
+  var ideas = [ideaID];//[IdeasToProcess.findOne({_id: ideaID})];
   var cluster = new Cluster(ideas);
   cluster.position = {top: 55, left:0};
   Clusters.insert(cluster);
-  updateIdeas(ideaId, true);
+  updateIdeas(ideaID, true);
 }
 
 /********************************************************************
 * Takes a ui and id of idea being moved. Returns an idea and updates
 * the sender.  
 ********************************************************************/
-function processIdeaSender(ui, ideaId){
+function processIdeaSender(ui, ideaID){
   var myIdea;
-  var senderId = $(ui.sender).attr('id');
-  var sender = Clusters.findOne({_id: senderId});//remove that idea from sending cluster
+  var senderID = $(ui.sender).attr('id');
+  var sender = Clusters.findOne({_id: senderID});//remove that idea from sending cluster
     
   //find all ideas in clusters idea list with matching id (should be one)>need error check here
   myIdea = $.grep(sender.ideas, function(idea){
-    return idea._id === ideaId;
+    return idea === ideaID;
   })[0];
 
-  Clusters.update({_id: senderId},
+  Clusters.update({_id: senderID},
     {$pull:
-      {ideas: {_id: ideaId}}
+      {ideas: ideaID}
   });
 
   //if sending cluster now has no ideas, get rid of it
-  var ideasLength = Clusters.findOne({_id: senderId}).ideas.length;
+  var ideasLength = Clusters.findOne({_id: senderID}).ideas.length;
+  //console.log(ideasLength);
   if(ideasLength === 0){
-    Clusters.remove(senderId);
+    Clusters.remove(senderID);
   }
   return myIdea;
 }
@@ -279,8 +303,8 @@ function processIdeaSender(ui, ideaId){
 /********************************************************************
 * Convenince function used to update items in the Ideas Collection  *
 ********************************************************************/
-function updateIdeas(ideaId, inCluster){
-  IdeasToProcess.update({_id: ideaId}, 
+function updateIdeas(ideaID, inCluster){
+  IdeasToProcess.update({_id: ideaID}, 
     {$set:
       {inCluster: inCluster}
   });

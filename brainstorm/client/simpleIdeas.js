@@ -133,6 +133,15 @@ Template.IdeaBox.helpers({
     },
 });
 
+Template.simpleIdea.helpers({
+  isStarred : function(){
+    var idea = IdeasToProcess.findOne({_id: this._id});
+    if (idea === undefined)
+      return false;
+    return idea.isGamechanger;
+  }
+})
+
 
 /********************************************************************
 * NotifyItem Template
@@ -160,8 +169,18 @@ Template.NotifyItem.helpers({
       return false;
   },
 
-  examples : function(){
-    return this.examples;
+  isPrompt : function(){
+    if(this.type.val === 1)
+      return true;
+    else
+      return false;
+  },
+
+  isTheme : function(){
+    if(this.type.val === 2)
+      return true;
+    else
+      return false;
   },
 
   time : function(){
@@ -169,12 +188,36 @@ Template.NotifyItem.helpers({
     return getTime(this.time);
   }
 });
+
+Template.sentexamples.helpers({
+  examples : function(){
+    return this.examples;
+  }
+});
+
+Template.senttheme.helpers({
+  theme : function(){
+    //console.log(this);
+    return Clusters.findOne({_id: this.theme}).name;
+  },
+
+  themeexamples : function(){
+    var ideaIDs = Clusters.findOne({_id: this.theme}).ideas;
+    return IdeasToProcess.find({_id: {$in: ideaIDs}});
+  }
+});
+
+Template.senttheme.events({
+  'click .themehint' : function(){
+    $(event.target).next().slideToggle();
+  }
+});
 /********************************************************************
 * IdeationPage Template
 ********************************************************************/
 //Rendered Callback    
 Template.IdeationPage.rendered = function() {
-  $('.menu-link').bigSlide();
+  $('.menu-link').bigSlide().open();
   //Debug statements
   //console.log("rendered");
   //console.log(Session.get('currentExp'));
@@ -267,7 +310,7 @@ Template.NotificationDrawer.rendered = function(){
 //Helpers
 Template.NotificationDrawer.helpers({
   notifications : function(){
-    return Notifications.find({recipient: Session.get("currentUser")._id});
+    return Notifications.find({recipient: Session.get("currentUser")._id}, {sort: {time: -1}});
   },
   directions : function(){
     return this.type.val === -1;
@@ -277,18 +320,43 @@ Template.NotificationDrawer.helpers({
 //Events
 Template.NotificationDrawer.events({
   'click a' : function(){
-    var $icon = $(event.target).children('i');
-    if($icon.hasClass('fa-chevron-circle-right')){
-      $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
-    } else if($icon.hasClass('fa-chevron-circle-down')){
-      $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
-    }
+    var $notification = $(event.target).parent().parent().parent();
+    var id = $notification.children('.panel-collapse').attr('id');
 
-    var $notification = $(event.target).parents('.unhandled');
+    if(!Notifications.findOne({_id: id}).handled){
+      Notifications.update({_id: id}, {$set: {handled: true}});
+      Logger.logNotificationHandled(Session.get("currentParticipant"), id);
+      //return false; //handled event is same as first expansion event
+    } else {
+      var context = $(event.target).parent('.panel-heading').context;
+      if($(context).hasClass("collapsed")){
+        Logger.logNotificationExpanded(Session.get("currentParticipant"), id);
+        //console.log("logging expansion");
+      } else {
+        Logger.logNotificationCollapsed(Session.get("currentParticipant"), id);
+        //console.log("logging collapse");
+      }
+    }
     $notification.removeClass("unhandled");
 
-    var id = $notification.find('.panel-collapse').attr('id');
-    Notifications.update({_id: id}, {$set: {handled: true}});
+    var $icon = $(event.target).children('i');
+    //target is expanded
+    if($icon.hasClass('fa-chevron-circle-down')){
+      $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
+      return;
+    }
+
+    //set all other arrows to closed
+    $('.fa-chevron-circle-down').each(function(i){
+      $(this).switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
+      console.log($(this));
+    });
+
+    //target is collapsed
+    if($icon.hasClass('fa-chevron-circle-right')){
+      $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
+      return;
+    }
   }
 });
 

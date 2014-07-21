@@ -35,18 +35,30 @@
 				
 					<!--List of Ideas-->
 					<div class="col-md-8">
-						<h3>Ideas <span class="quantity">({{numIdeas}})</span></h3>  
+						<h3>Ideas 
+							<span class="quantity">({{numIdeas}})</span>
+							<i class="fa fa-star-o" id="filterGamechangers"></i>
+						</h3>  
 						<div class="idealist">
 							{{#each ideas}}
-								<div id={{_id}} class="idea">{{content}}</div>
+								{{> idea}}
 							{{/each}}	
 						</div>
 					</div>
 					<div id="filters" class="col-md-4">
 						<h3>Filters</h3>
-						{{#each filters}}
+
+						<h5>Showing Ideas by: </h5>
+						{{#each partFilters}}
 						<div>
-							<span class="filter-label label label-default"><i class="fa fa-minus-circle"></i>{{this}}</span>
+							<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+						</div>
+						{{/each}}
+
+						<h5>That Appear in Themes:</h5>
+						{{#each clusterFilters}}
+						<div>
+							<span class="clusterfilter-label label label-info" id="cf-{{this.id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						</div>
 						{{/each}}
 					</div>
@@ -65,18 +77,37 @@
 				    	<span class="sr-only">Toggle Dropdown</span>
 				  	</button>
 				  	<ul class="dropdown-menu" role="menu">
-				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#changemodal">Change Prompt</a></li>
-				    	<li><a href="#" class="show-modal" data-toggle="modal" data-target="#sendmodal">Send Examples</a></li>
+				    	<li><a href="#" class="show-modal" id="changebutton" data-toggle="modal" data-target="#changemodal">Change Prompt</a></li>
+				    	<li><a href="#" class="show-modal" id="sendexbutton" data-toggle="modal" data-target="#sendExModal">Send Examples</a></li>
+				    	<li><a href="#" class="show-modal" id="sendthemebutton" data-toggle="modal" data-target="#sendThemeModal">Send Theme</a></li>
 				  	</ul>
 				</span>
 				People</h3>
 				<hr>
 				<div id="people">
-				<!--Need to change here to point to (users)names collection-->
-				{{#each users}}
-					{{> userprofile}}
-				{{/each}}
+					<div id="checkall-btn-group" class="btn-group btn-group-xs">
+						<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
+						<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
+					</div>
+					{{#each users}}
+						{{> userprofile}}
+					{{/each}}
+
 				</div>
+
+				<!-- <div id="tempactionbuttons">
+					<div class="btn-group btn-group-justified">
+					  <div class="btn-group">
+					    <button type="button" class="btn btn-info"><b>Change Prompt</b></button>
+					  </div>
+					  <div class="btn-group">
+					    <button type="button" class="btn btn-info"><b>Send Examples</b></button>
+					  </div>
+					  <div class="btn-group">
+					    <button type="button" class="btn btn-info"><b>Send Theme</b></button>
+					  </div>
+					</div>
+				</div> -->
 			</div>
 		</div>
 	</div>
@@ -97,7 +128,7 @@
 					<div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
-							<span class="part-label label label-primary"><i class="fa fa-minus-circle"></i>{{this}}</span>
+							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
 					</div>
             	</div>
@@ -110,7 +141,7 @@
 	</div>
 
 	<!--Send Examples Modal-->
-	<div class="modal fade" id="sendmodal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+	<div class="modal fade" id="sendExModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     	<div class="modal-dialog modal-lg">
         	<div class="modal-content">
             	<div class="modal-header">
@@ -120,21 +151,55 @@
             	<div class="modal-body">
                 	<h3>Choose examples to send to the selected participants</h3>
                 	<div>
-                		<label>Filtering by participant(s): </label>
-                		{{#each filters}}
-                			<span class="filter-label label label-default"><i class="fa fa-minus-circle"></i>{{this}}</span>
-                		{{/each}}
+                		<label>Showing Ideas by: </label>
+						{{#each partFilters}}
+							<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+						{{/each}}
+
+						<label>That Appear in Themes: </label>
+						{{#each clusterFilters}}
+							<span class="clusterfilter-label label label-info" id="cf-{{this.id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+						{{/each}}
                 	</div>
 
-					<div id="sendmodal-idealist" class="idealist">
+					<div id="sendExModal-idealist" class="idealist">
 						{{#each ideas}}
-							<div id={{_id}} class="idea">{{content}}</div>
+							{{> idea}}
 						{{/each}}	
 					</div>
 					<div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
-							<span class="part-label label label-primary"><i class="fa fa-minus-circle"></i>{{this}}</span>
+							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
+						{{/each}}
+					</div>
+            	</div>
+            	<div class="modal-footer">
+                	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                	<button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
+        		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<div class="modal fade" id="sendThemeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    	<div class="modal-dialog ">
+        	<div class="modal-content">
+            	<div class="modal-header">
+            		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            		<h4 class="modal-title" id="myModalLabel">Send Theme</h4>
+            	</div>
+            	<div class="modal-body">
+                	<h3>Choose a theme to send to participants</h3>
+                	<div id="sendThemeModal-clusterlist">
+						{{#each clusters}}
+							{{> theme}}
+						{{/each}}	
+					</div>
+					<div id="selectedparts">
+						<label>Selected Participants: </label>
+						{{#each selectedparts}}
+							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
 					</div>
             	</div>
@@ -147,8 +212,24 @@
 	</div>
 </template>
 
+<template name="idea">
+	<div id={{this._id}} class="idea">{{this.content}} <i class="fa fa-lg {{#if this.isGamechanger}} fa-star {{else}} fa-star-o {{/if}}gamechangestar"></i></div>
+</template>
+
+<template name="theme">
+	<div id={{this._id}} class="radio theme">
+		<label><input type="radio" name="themeRadios" id="themeRadios{{this._id}}" value="{{this._id}}">
+			{{this.name}}
+		</label>
+	</div>
+</template>
+
 <template name="tagcloud">
-	<div id="tagcloud"></div>
+	<div id="tagcloud">
+		{{#each clusters}}
+			<span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}"><a href="">{{name}}</a></span>
+		{{/each}}
+	</div>
 </template>
 
 <template name="userprofile">
@@ -156,7 +237,7 @@
 		<form class="form-inline" role="form">
   			<div class="checkbox">
       			<input class="selectpart" type="checkbox" value="{{this._id}}">
-      			<label>{{this.name}}</label>
+      			<a class="userprofilename" href=""><label>{{this.name}}</label></a>
   			</div>
   			<!--<div class="name-icon"><i class="fa fa-user fa-2x"></i></div>-->
   		</form>

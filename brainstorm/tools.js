@@ -31,3 +31,31 @@ getTime = function(t){
   time = time.fromNow();
   return time;
 };
+
+getIndex = function(list, member) {
+  for (var i=0; i<list.length; i++) {
+    if (list[i] == member) {
+      return i
+    }
+  }
+}
+
+//from http://stackoverflow.com/questions/10984030/get-meteor-collection-by-name
+//Returns meteor collection based on string name. Only works in client(?)
+getCollection = function (collectionName) {
+  console.log(Meteor.connection._mongo_livedata_collections["ideas"]);
+  // for (var globalObject in global) {
+  //     if (global[globalObject] instanceof Meteor.Collection) {
+  //         if (globalObject === string) {
+  //             return (global[globalObject]);
+  //             break;
+  //         };        
+  //     }
+  // }
+  // return undefined; // if none of the collections match
+};
+removeMember = function(list, member) {
+  var index = getIndex(list, member);
+  list.splice(index, 1);
+  return list;
+};

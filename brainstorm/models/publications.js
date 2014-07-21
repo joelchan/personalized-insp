@@ -38,6 +38,9 @@ Meteor.startup(function(){
 		Meteor.publish("userTypes", function(){
 			return UserTypes.find();
 		});
+		Meteor.publish("filters", function(){
+			return Filters.find();
+		});				
 		/*****************************************************************
 		* Publish experimentModels.js collections
 		******************************************************************/
