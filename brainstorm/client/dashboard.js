@@ -7,6 +7,32 @@ var filters = {
 	clusterFilters: [],
 	gamchanger: [true, false]
 }
+
+/////////////////////////// Demo code //////////////////////////
+
+
+///////// Sample Filtering code /////////////////////////////////
+//FilterFactory.addSort(myFilter, 'user', [1,2,3]);
+//FilterFactory.performQuery(myFilter);
+
+var myFilter = FilterFactory.create("Dashboard Participant Filter",
+    Session.get("currentUser"),
+    "ideas"
+    );
+
+myFilters = Filters.findOne({name: "Dashboard Participant Filter", 
+              user: Session.get("currentUser")
+});
+
+filter.filter = [{key: "_id", val: {$in: clusterIdeas}},
+      {key: "isGamechanger", val: {$in: filters.gamchanger}}];
+
+
+////////////////////////////////////////////////////////////////
+
+
+
+
 Session.set("idealistFilters", filters);
 MS_PER_MINUTE = 60000;
 

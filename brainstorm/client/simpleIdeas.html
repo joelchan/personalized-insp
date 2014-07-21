@@ -8,12 +8,14 @@
 </template>
 
 <template name="NotificationDrawer">
-  <nav id="notifications" class="panel" role="navigation">
+  <!-- <div id="notifications" class="panel" role="navigation"> -->
+  <div id="notifications" class="panel">  
     <div class="panel-group" id="accordion">
       <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
         <div class="panel-heading">
           <h5 class="panel-title">
-            <a data-toggle="collapse" data-parent="#accordion" href="#directions">
+            <!-- <a data-toggle="collapse" data-parent="#accordion" href="#directions"> -->
+            <a data-toggle="collapse" data-target="#directions" href="#directions">  
               <i class="fa fa-info-circle"></i> Directions
             </a>
           </h5>
@@ -37,7 +39,7 @@
         {{/unless}}
       {{/each}}
     </div>
-  </nav>
+  </div>
 </template>
 
 <template name="NotifyItem">
