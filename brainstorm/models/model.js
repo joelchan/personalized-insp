@@ -14,8 +14,6 @@ Groups = new Meteor.Collection("groups");
 GroupTemplates = new Meteor.Collection("groupTemplates");
 Clusters = new Meteor.Collection("clusters");
 IdeasToProcess = new Meteor.Collection("ideasToProcess");
-// Generic Filters for dynamic UI filtering
-Filters = new Meteor.Collection("filters");
 
 
 
@@ -354,13 +352,6 @@ User = function(name, type){
   this.type = type;
 };
 
-Filter = function (name, user, collection) {
-  this.name =  name
-  this.user = user
-  this.collection = collection
-  this.sort = [];
-  this.filter [];
-};
 
 //Javascript implementation of Java's hash code function 
 //Hash code function 
