@@ -20,7 +20,7 @@
             </a>
           </h5>
         </div>
-        <div id="directions" class="panel-collapse collapse">
+        <div id="directions" class="panel-collapse collapse in">
           <div class="panel-body">
             <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
             <ol>
@@ -33,6 +33,28 @@
           </div>
         </div>
       </div>
+      <!-- for priming -->
+      <!-- <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
+        <div class="panel-heading">
+          <h5 class="panel-title">
+            <a data-toggle="collapse" data-target="#primes" href="#primes">  
+              <i class="fa fa-info-circle"></i> Directions
+            </a>
+          </h5>
+        </div>
+        <div id="primes" class="panel-collapse collapse in">
+          <div class="panel-body">
+            <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
+            <ol>
+              <li>There are no bad Ideas. Defer judgement on your ideas.</li>
+              <li>Wild ideas and building off of old ideas are okay</li>
+              <li>Quantity of ideas is prioritized</li>
+              <li>Combinations of ideas count as new ideas.</li>
+            </ol>
+            <p>Keep in mind if at any point you must exit the study early, you can click the button in the top right corner of the screen. You will be compensated on a pro-rated basis according to your participation time.</p>
+          </div>
+        </div>
+      </div> -->
       {{#each notifications}}
         {{#unless directions}}
           {{> NotifyItem}}
