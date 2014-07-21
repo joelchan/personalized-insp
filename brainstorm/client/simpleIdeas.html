@@ -34,27 +34,22 @@
         </div>
       </div>
       <!-- for priming -->
-      <!-- <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
+      <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
+      <!-- <div class="panel panel-default notification-item"> -->
         <div class="panel-heading">
           <h5 class="panel-title">
             <a data-toggle="collapse" data-target="#primes" href="#primes">  
-              <i class="fa fa-info-circle"></i> Directions
+              <i class="fa fa-info-circle"></i> Initial inspiration
             </a>
           </h5>
         </div>
         <div id="primes" class="panel-collapse collapse in">
           <div class="panel-body">
-            <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
-            <ol>
-              <li>There are no bad Ideas. Defer judgement on your ideas.</li>
-              <li>Wild ideas and building off of old ideas are okay</li>
-              <li>Quantity of ideas is prioritized</li>
-              <li>Combinations of ideas count as new ideas.</li>
-            </ol>
-            <p>Keep in mind if at any point you must exit the study early, you can click the button in the top right corner of the screen. You will be compensated on a pro-rated basis according to your participation time.</p>
+            <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
+            {{ > Priming }}
           </div>
         </div>
-      </div> -->
+      </div>
       {{#each notifications}}
         {{#unless directions}}
           {{> NotifyItem}}
@@ -141,13 +136,17 @@
 
 <template name="Priming">
    <div class="priming">
-     <div class="prime-directions">
+     <!-- <div class="prime-directions">
        <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
-     </div>
+     </div> -->
      <div class="primeIdeas">
        {{#each primeIdeas}}
-         <div class="prime-idea">
-           <strong>{{ content }}</strong>
+         <!-- <div class="prime-idea"> -->
+         <div>
+           <!-- <i class="idea-bullet fa fa-lightbulb-o"></i>  -->
+            <ul>
+              <li>{{ content }}</li>
+            </ul>
          </div>
        {{/each}}
      </div>

@@ -314,6 +314,9 @@ Template.NotificationDrawer.helpers({
   },
   directions : function(){
     return this.type.val === -1;
+  },
+  primes : function(){
+    return this.type.val === 3;
   }
 });
 
