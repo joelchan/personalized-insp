@@ -408,8 +408,8 @@ Template.SubmitIdeas.events({
         }
     },
 
-    'click #notify-bulb' : function(){
-      
+    'click #request-help' : function(){
+      requestHelpNotify(Session.get("currentUser"), "db");
     },
 
     //waits 3 seconds after user stops typing to change isTyping flag to false

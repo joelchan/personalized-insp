@@ -193,7 +193,7 @@ complete idea)"></textarea>
 <template name="SubmitIdeas">
   <div class="row">
     <div class="col-md-1">
-      <a href="#notifications" class="menu-link">
+      <a href="" data-toggle="modal" data-target="#acknowledgeModal">
         <i id="request-help" class="fa fa-question-circle fa-5x" title="Click to request help"></i>
         {{#if number}}
           <span class="badge">{{number}}</span>
@@ -294,6 +294,23 @@ complete idea)"></textarea>
   
       <div class="push footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
         {{> SubmitIdeas }}
+      </div>
+
+      <div class="modal fade" id="acknowledgeModal" tabindex="-1" role="dialog" aria-labelledby="acknowledgeModal" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myModalLabel">Help Requested</h4>
+            </div>
+            <div class="modal-body">
+              <h3>A notification has been sent to the facilitator. Help is on the way.</h3>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
