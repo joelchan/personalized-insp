@@ -217,7 +217,10 @@ Template.senttheme.events({
 ********************************************************************/
 //Rendered Callback    
 Template.IdeationPage.rendered = function() {
-  $('.menu-link').bigSlide().open();
+  $('.menu-link').bigSlide({
+    'menu': ('#notifications'),
+    'menuWidth': '25%'
+  }).open();
   //Debug statements
   //console.log("rendered");
   //console.log(Session.get('currentExp'));

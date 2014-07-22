@@ -5,7 +5,8 @@ var Types = {
 	SEND_EXAMPLES: {val: 0, title: "You've been sent examples"},
 	CHANGE_PROMPT: {val: 1, title: "Your prompt has been changed"},
 	SEND_THEME: {val: 2, title: "You've been sent a theme"},
-	REQUEST_HELP: {val: 3, title: "Please help me out"}
+	REQUEST_HELP: {val: 3, title: "Please help me out"},
+	CHAT_MESSAGE: {val: 4, title: "You've been sent a message"}
 }
 
 Object.freeze(Types);
@@ -47,5 +48,12 @@ sendThemeNotify = function(sender, recipient, clusterID){
 requestHelpNotify = function(sender, recipient){
 	var notification = new Notification(sender, recipient);
 	notification.type = Types.REQUEST_HELP;
+	Notifications.insert(notification);
+}
+
+chatNotify = function(sender, recipient, message){
+	var notification = new Notification(sender, recipient);
+	notification.message = message;
+	notification.type = Types.CHAT_MESSAGE;
 	Notifications.insert(notification);
 }

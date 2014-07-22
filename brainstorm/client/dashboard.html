@@ -1,8 +1,9 @@
 <template name="Dashboard">
 	<div class="container-fluid dashboard">
+		{{> chatdrawer}}
 		<div class="row">
 			<!--Ideas View (Vizes + Ideas)-->
-			<div class="ideasview col-md-5 dashboard-panel-5">
+			<div class="ideasview col-md-5 dashboard-panel-5 push">
 				<!--Vizes-->
 				<div class="vizes row">
 					<!--Viz Selector-->
@@ -31,7 +32,7 @@
 				<!--End Vizes-->
 
 				<!--Ideas-->
-				<div class="ideas row">
+				<div class="ideas row push">
 				
 					<!--List of Ideas-->
 					<div class="col-md-8">
@@ -68,7 +69,7 @@
 			<!--End Ideas View-->
 
 			<!--People View-->
-			<div id="people-view" class="col-md-7 dashboard-panel-7 pull-right">
+			<div id="people-view" class="col-md-7 dashboard-panel-7 pull-right push">
 				<h3>
 				<span class="btn-group">
 					<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -251,5 +252,27 @@
 </template>
 
 <template name="loading">
-	<h5>Loading</h5>
+	<h4>Loading</h4>
+</template>
+
+<template name="filter-UI">
+
+</template>
+
+<template name="chatdrawer">
+	<div id="chat-handle">
+		<a href="#menu" class="menu-link push"><i id="messageicon" class="fa fa-2x fa-comments-o"></i></a>
+	</div>
+	<nav id="chat-drawer" class="panel" role="navigation">
+		{{#each messages}}
+
+
+		{{/each}}
+	    <div id="write-message" class="input-group">
+	    	<input type="text" class="form-control">
+			<span class="input-group-btn">
+				<button class="btn btn-success" type="button">Send</button>
+			</span>
+		</div><!-- /input-group -->
+	</nav>
 </template>

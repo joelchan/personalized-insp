@@ -92,6 +92,9 @@ Router.map(function () {
   this.route('Dashboard', {
     path: 'Dashboard',
     template: 'Dashboard',
+    onRun: function() {
+      Session.set("currentUser", MyUsers.findOne({_id: "db"}));
+    },
     waitOn: function() {
         return Meteor.subscribe('events');
     }, 
