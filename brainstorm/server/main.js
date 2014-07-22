@@ -174,6 +174,10 @@ Meteor.startup(function() {
     if(Notifications.findOne({_id: "directions"})===undefined){
       Notifications.insert(directions);
     }
+
+    if(Notifications.findOne({_id: "priming"})===undefined){
+      Notifications.insert(priming);
+    }
 });
 
 //Meteor.startup(function() {
