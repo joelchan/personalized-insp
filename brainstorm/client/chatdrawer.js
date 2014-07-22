@@ -29,7 +29,7 @@ Template.chatdrawer.rendered = function(){
   		}
   		messageAlertInterval = Meteor.setInterval(function(){
   			$('#chat-handle').toggleClass('flash');
-  		}, 500);
+  		}, 750);
   	}
   });
 
