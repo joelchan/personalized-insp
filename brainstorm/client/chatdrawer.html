@@ -1,21 +1,24 @@
 <template name="chatdrawer">
-	<div id="chat-handle">
-		<a href="#menu" class="menu-link push"><i id="messageicon" class="fa fa-2x fa-comments-o"></i></a>
-	</div>
-	<nav id="chat-drawer" class="panel" role="navigation">
-		<div id="messageview">
-		{{#each messages}}
-			<span class="chatmessage {{#if isSender}} sender {{/if}}">
-				<label>{{username}}: </label>
-				{{this.message}}
-			</span>
-		{{/each}}
+	<div>
+		<div id="chat-handle">
+			<i id="messageicon" class="fa fa-2x fa-comments-o menu-link"></i>
 		</div>
-	    <div id="write-message" class="input-group">
-	    	<input id="chatinput" type="text" class="form-control">
-			<span class="input-group-btn">
-				<button id="sendchat" class="btn btn-success" type="button">Send</button>
-			</span>
-		</div><!-- /input-group -->
-	</nav>
+		<nav id="chat-drawer" class="panel" role="navigation">
+			<div id="messageview">
+			{{#each messages}}
+
+				<div class="chatmessage {{#if isSender}} sender {{/if}}">
+					<label>{{username}}: </label>
+					{{this.message}}
+				</div>
+			{{/each}}
+			</div>
+		    <div id="write-message" class="input-group">
+		    	<input id="chatinput" type="text" class="form-control">
+				<span class="input-group-btn">
+					<button id="sendchat" class="btn btn-success" type="button">Send</button>
+				</span>
+			</div><!-- /input-group -->
+		</nav>
+	</div>
 </template>

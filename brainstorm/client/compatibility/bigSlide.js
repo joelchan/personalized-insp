@@ -3,7 +3,6 @@
 * Copyright (c) 2014 Adam D. Scott; Licensed MIT */
 (function($) {
   'use strict';
-  console.log("bigslide loaded");
 
   $.fn.bigSlide = function(options) {
     var settings = $.extend({

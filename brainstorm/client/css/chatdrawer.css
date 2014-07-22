@@ -4,8 +4,7 @@
 	-moz-box-shadow:    2px 0px 5px 1px rgba(50, 50, 50, 0.05);
 	box-shadow:         2px 0px 5px 1px rgba(50, 50, 50, 0.05);
 	padding-top: 51px;
-	
-	z-index: 1;
+	z-index: 2;
 }
 
 #messageview{
@@ -37,7 +36,10 @@
   height: 6%;
   text-shadow: 1px 1px #ededed;
   background-color: white;
-  border: 1px solid #ddd;
+  opacity: 1; 
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   /*border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;*/
   border-top-right-radius: 15px;
@@ -50,10 +52,10 @@
   -moz-transition: left 300ms ease;
   -o-transition: left 300ms ease;
 }
-/*#chat-handle.moved{
-  right: 63%;
-  z-index: 2;
-}*/
+#chat-handle.moved{
+  left: 25%;
+  z-index: 1;
+}
 
 #messageicon{
 	padding-left: 2px;
