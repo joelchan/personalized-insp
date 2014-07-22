@@ -296,9 +296,13 @@ var newNotify = null; //stores a new notification
     });
 })();
 
+Template.SubmitIdeas.rendered = function(){
+  $("[data-toggle='tooltip']").tooltip({'placement': 'top'});
+}
+
 //Rendered Callback
 Template.NotificationDrawer.rendered = function(){
-  $('.menu-link').bigSlide();
+  //$('.menu-link').bigSlide();
 
   Notifications.find({recipient: Session.get("currentUser"), handled: false}).observe({
     added : function(doc){
@@ -404,8 +408,8 @@ Template.SubmitIdeas.events({
         }
     },
 
-    'click #notify-bulb' : function(){
-      $('#notifications-handle').toggleClass('moved');
+    'click #request-help' : function(){
+      requestHelpNotify(Session.get("currentUser"), "db");
     },
 
     //waits 3 seconds after user stops typing to change isTyping flag to false
