@@ -21,10 +21,14 @@ Template.chatdrawer.rendered = function(){
   
   Notifications.find({recipient: Session.get("currentUser")._id}).observe({
   	added: function(message){
-  		console.log("message added");
   		Meteor.clearInterval(messageAlertInterval);
+
+  		if($('#chat-handle').hasClass('moved')){
+  			messageViewScrollTo();
+  			return false;
+  		}
   		messageAlertInterval = Meteor.setInterval(function(){
-  			$('#chat-handle').toggleClass('alert');
+  			$('#chat-handle').toggleClass('flash');
   		}, 500);
   	}
   });
@@ -35,7 +39,7 @@ Template.chatdrawer.rendered = function(){
 Template.chatdrawer.helpers({
 	messages: function(){
 		var currUser = Session.get("currentUser");
-		console.log(Notifications.find({$or: [{sender: currUser._id}, {recipient: currUser._id}]}).fetch())
+		//console.log(Notifications.find({$or: [{sender: currUser._id}, {recipient: currUser._id}]}).fetch())
 		return Notifications.find({$or: [{sender: currUser._id}, {recipient: currUser._id}]});
 	},
 	username: function(){
@@ -46,6 +50,11 @@ Template.chatdrawer.helpers({
 		return (this.sender === Session.get("currentUser")._id);
 	}
 });
+
+messageViewScrollTo =function(){
+	$('#messageview').scrollTop($('#messageview')[0].scrollHeight);
+	console.log("scrolled");
+}
 
 Template.chatdrawer.events({
 	'click #messageicon' : function(){
@@ -59,6 +68,7 @@ Template.chatdrawer.events({
 		Meteor.clearInterval(messageAlertInterval);
 		$('#chat-handle').removeClass('alert');
 
+		messageViewScrollTo();
 	},
 	'click #sendchat' : function(){
 		var message = $("#chatinput").val()
@@ -71,5 +81,8 @@ Template.chatdrawer.events({
 			console.log(user)
 			chatNotify(Session.get("currentUser")._id, user._id, message);
 		});
+
+		messageViewScrollTo();
+		//$('#messageview').scrollTop($('#messageview')[0].scrollHeight);
 	}
 });

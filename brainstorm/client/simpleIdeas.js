@@ -408,6 +408,8 @@ Template.SubmitIdeas.events({
           Logger.logIdeaSubmission(participant, ideaID); 
           // Clear the text field
           $('#nextIdea').val('');
+
+          $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
         }
     },
 

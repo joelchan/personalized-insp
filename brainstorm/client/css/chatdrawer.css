@@ -25,9 +25,9 @@
 	color: #428bca;
 }
 
-#messageview .chatmessage label{
+/*#messageview .chatmessage label{
 
-}
+}*/
 
 #chat-handle{
   float: right;
@@ -49,17 +49,18 @@
   -webkit-box-shadow: 1px 0px 2px 1px rgba(0,0,0,0.05);
   -moz-box-shadow:    1px 0px 2px 1px rgba(0,0,0,0.05);
   box-shadow:         1px 0px 2px 1px rgba(0,0,0,0.05);
-  transition: left 300ms ease, background-color 150ms ease;  /*same as speed option in bigslide.js*/
-  -webkit-transition: left 300ms ease, background-color 150ms ease;  
-  -moz-transition: left 300ms ease, background-color 150ms ease; 
-  -o-transition: left 300ms ease, background-color 150ms ease; 
+  transition: left 300ms ease, background-color 150ms ease, color 150ms ease;  /*same as speed option in bigslide.js*/
+  -webkit-transition: left 300ms ease, background-color 150ms ease, color 150ms ease;  
+  -moz-transition: left 300ms ease, background-color 150ms ease, color 150ms ease; 
+  -o-transition: left 300ms ease, background-color 150ms ease, color 150ms ease; 
 }
+
 #chat-handle.moved{
   left: 25%;
   z-index: 1;
 }
 
-#chat-handle.alert{
+#chat-handle.flash{
   background-color: #f0ad4e;
   color: white;
 }
