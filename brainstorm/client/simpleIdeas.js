@@ -224,20 +224,26 @@ Template.IdeationPage.rendered = function() {
   // Scroll window back to top
   window.scrollTo(0,0);
 
-  // Register event listenr to click submit button when enter is pressed
+  // Register event listenr to click submit button when enter is pressed2
   $('#nextIdea').keyup(function(e){
     if(e.keyCode===13) {
       //console.log("enter pressed")
       $('#submitIdea').click();
     }
   });
-
   
   //Add Exit study button to top right
   if ($('.exitStudy').length == 0) {
     $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
   } else {
       $('.exitStudy').removeClass('hidden');
+  }
+
+  //Add timer
+  if ($('.timer').length == 0) {
+    $('.login').append('<span id="time">15</span><span> minutes remaining</span>');
+  } else {
+      $('.timer').removeClass('hidden');
   }
 
   //Add event handler for the exit study button
@@ -258,10 +264,10 @@ Template.IdeationPage.rendered = function() {
   //console.log(participant);
   Logger.logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
-  Meteor.setTimeout('exitIdeation()', 900000);
+  Meteor.setTimeout(exitIdeation, 900000);
   //Setup timer for decrementing onscreen timer
   Session.set("timeLeft", 15);
-  Meteor.setTimeout('decrementTimer()', 60000);
+  Meteor.setTimeout(decrementTimer, 60000);
 };
 
 //Events
@@ -314,6 +320,9 @@ Template.NotificationDrawer.helpers({
   },
   directions : function(){
     return this.type.val === -1;
+  },
+  primes : function(){
+    return this.type.val === 3;
   }
 });
 
@@ -445,6 +454,7 @@ decrementTimer = function decrementTimer() {
   Session.set("timeLeft", nextTime);
   var time = $('#time').text(nextTime);
   if (nextTime != 0) {
-    setTimeout('decrementTimer()', 60000);
+    Meteor.setTimeout(decrementTimer, 60000);
+    // console.log("Decrementing timer")
   }
 };

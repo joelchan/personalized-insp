@@ -21,7 +21,7 @@
             </a>
           </h5>
         </div>
-        <div id="directions" class="panel-collapse collapse">
+        <div id="directions" class="panel-collapse collapse in">
           <div class="panel-body">
             <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
             <ol>
@@ -34,24 +34,23 @@
           </div>
         </div>
       </div>
-
-      <!--Priming-->
+      <!-- for priming -->
       <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
+      <!-- <div class="panel panel-default notification-item"> -->
         <div class="panel-heading">
-          <h4 class="panel-title">
-            <!-- <label class="time-label">{{time}}</label> -->
-            <a data-toggle="collapse" data-parent="#accordion" href="#priming">
-              <i class="fa fa-chevron-circle-right"></i> Some example ideas to get you started  
+          <h5 class="panel-title">
+            <a data-toggle="collapse" data-target="#priming" href="#priming">  
+              <i class="fa fa-info-circle"></i> Initial inspiration
             </a>
-          </h4>
+          </h5>
         </div>
-        <div id="priming" class="panel-collapse collapse">
+        <div id="priming" class="panel-collapse collapse in">
           <div class="panel-body">
-            {{>Priming}}
+            <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
+            {{ > Priming }}
           </div>
         </div>
       </div>
-
       {{#each notifications}}
         {{#unless directions}}
           {{> NotifyItem}}
@@ -100,11 +99,10 @@
 
 
 <template name="Priming">
-  <h5 class="notify-label">Consider these ideas: </h5>
-    {{#each examples}}
-      <div id={{this._id}} class="idea">
+    {{#each primeIdeas}}
+      <div class="idea">
         <i class="idea-bullet fa fa-lightbulb-o"></i> 
-        {{this.content}} 
+        {{content}} 
       </div>
     {{/each}}
 </template>
@@ -150,13 +148,17 @@
 
 <!-- <template name="Priming">
    <div class="priming">
-     <div class="prime-directions">
+     <!- - <div class="prime-directions">
        <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
-     </div>
+     </div> - ->
      <div class="primeIdeas">
        {{#each primeIdeas}}
-         <div class="prime-idea">
-           <strong>{{ content }}</strong>
+         <!- - <div class="prime-idea"> - ->
+         <div>
+           <!- - <i class="idea-bullet fa fa-lightbulb-o"></i>  - ->
+            <ul>
+              <li>{{ content }}</li>
+            </ul>
          </div>
        {{/each}}
      </div>
@@ -165,6 +167,7 @@
 
 
 
+<!-- currently unused -->
 <template name="Timer">
   <div class="timer">
     <span id="time">15</span><span> minutes remaining</span>
@@ -225,20 +228,20 @@ complete idea)"></textarea>
 
 <template name="SubmitIdeas">
   <div class="row">
-    <div class="col-md-1">
+    <!-- <div class="col-md-1">
       <a href="#notifications" class="menu-link">
         <i id="notify-bulb" class="fa fa-lightbulb-o fa-5x"></i>
         {{#if number}}
           <span class="badge">{{number}}</span>
         {{/if}}
       </a>
-    </div>
+    </div> -->
     <div class="col-md-9">
         <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
 (press the &lt;Enter&gt; key or the &quot;Enter Idea&quot; button to the right after each 
 complete idea)"></textarea>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
         <button id="submitIdea" class="submitIdea btn-default btn-primary"> Enter Idea </button>
     </div>
   </div>

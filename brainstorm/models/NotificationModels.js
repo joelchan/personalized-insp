@@ -5,7 +5,8 @@ var Types = {
 	DIRECTIONS: {val: -1, title: "Directions"},
 	SEND_EXAMPLES: {val: 0, title: "You've been sent examples"},
 	CHANGE_PROMPT: {val: 1, title: "Your prompt has been changed"},
-	SEND_THEME: {val: 2, title: "You've been sent a theme"}
+	SEND_THEME: {val: 2, title: "You've been sent a theme"},
+	PRIMES: {val: 3, title: "Initial inspiration"}
 }
 
 Object.freeze(Types);
