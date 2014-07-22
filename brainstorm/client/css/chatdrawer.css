@@ -1,0 +1,73 @@
+#chat-drawer{
+	padding-top: 50px;
+	-webkit-box-shadow: 2px 0px 5px 1px rgba(50, 50, 50, 0.05);
+	-moz-box-shadow:    2px 0px 5px 1px rgba(50, 50, 50, 0.05);
+	box-shadow:         2px 0px 5px 1px rgba(50, 50, 50, 0.05);
+	padding-top: 51px;
+	
+	z-index: 1;
+}
+
+#messageview{
+	overflow: auto;
+	height: 90%;
+}
+
+#messageview .chatmessage{
+	padding: 5px 10px 5px 10px;
+}
+#messageview .sender{
+	float: right;
+}
+
+#messageview .sender label{
+	color: #428bca;
+}
+
+#messageview .chatmessage label{
+
+}
+
+#chat-handle{
+  float: right;
+  position: fixed;
+  top: 45%;
+  left: 0%;
+  width: 3%;
+  height: 6%;
+  text-shadow: 1px 1px #ededed;
+  background-color: white;
+  border: 1px solid #ddd;
+  /*border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;*/
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  -webkit-box-shadow: 1px 0px 2px 1px rgba(0,0,0,0.05);
+  -moz-box-shadow:    1px 0px 2px 1px rgba(0,0,0,0.05);
+  box-shadow:         1px 0px 2px 1px rgba(0,0,0,0.05);
+  transition: left 300ms ease; /*same as speed option in bigslide.js*/
+  -webkit-transition: left 300ms ease; 
+  -moz-transition: left 300ms ease;
+  -o-transition: left 300ms ease;
+}
+/*#chat-handle.moved{
+  right: 63%;
+  z-index: 2;
+}*/
+
+#messageicon{
+	padding-left: 2px;
+	/*padding-top: 40%;*/
+}
+
+#write-message{
+	padding-top: 10px;
+	padding-left: 2%;
+	padding-right: 2%;
+	border-top: 1px solid #ddd;
+  /*border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;*/
+  -webkit-box-shadow: 1px 0px 2px 1px rgba(0,0,0,0.05);
+  -moz-box-shadow:    1px 0px 2px 1px rgba(0,0,0,0.05);
+  box-shadow:         1px 0px 2px 1px rgba(0,0,0,0.05);
+}

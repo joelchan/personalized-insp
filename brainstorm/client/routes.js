@@ -84,7 +84,21 @@ Router.map(function () {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
   });
-  this.route('Clustering');
+  this.route('Clustering', {
+    onRun: function(){
+      Session.set("currentUser", MyUsers.findOne({_id: "syn"}));
+    },
+    waitOn: function(){
+      return Session.set("currentUser", MyUsers.findOne({_id: "syn"}));
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    }
+    
+  });
   this.route('Forest', {
     path: 'Forest/:_id',
     template: 'Forest',

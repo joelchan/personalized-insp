@@ -51,24 +51,6 @@ Template.Dashboard.rendered = function(){
 	console.log(getCollection(myFilter.collection));
 }
 
-Template.chatdrawer.rendered = function(){
-	$('.menu-link').bigSlide({
-		'menu': ('#chat-drawer'),
-		'push': ('.push'),
-    	'side': 'left', 
-    	'menuWidth': '25%', 
-    	'speed': '300'
-	});
-}
-
-Template.chatdrawer.helpers({
-	messages: function(){
-		var currUser = Session.get("currentUser");
-		console.log(currUser);
-		return Notifications.find({recipient: currUser._id})
-	}
-});
-
 Template.tagcloud.rendered = function(){
 	// var self = this;
 	// self.node = self.find("svg");

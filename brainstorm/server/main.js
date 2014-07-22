@@ -181,6 +181,20 @@ Meteor.startup(function() {
       MyUsers.insert(db);
     }
 
+    var synUsers = MyUsers.find({_id: "syn"});
+    if (synUsers.count() > 0) {
+      if (dbUsers.count() > 1) {
+        MyUsers.remove({_id: "syn"});
+        var syn = new User("SynthesisUser", "anonSynUser");
+        syn._id = "syn";
+        MyUsers.insert(syn);
+      }
+    } else {
+      var syn = new User("SynthesisUser", "anonSynUser");
+      syn._id = "syn";
+      MyUsers.insert(syn);
+    }
+
     if(Clusters.findOne({_id: "-1"})===undefined){
       Clusters.insert(root);
     }
