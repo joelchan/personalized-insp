@@ -9,8 +9,9 @@
 
 <template name="NotificationDrawer">
   <!-- <div id="notifications" class="panel" role="navigation"> -->
-  <div id="notifications" class="panel">  
+  <div id="notifications" class="panel">   
     <div class="panel-group" id="accordion">
+      <!--Directions--> 
       <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
         <div class="panel-heading">
           <h5 class="panel-title">
@@ -33,6 +34,24 @@
           </div>
         </div>
       </div>
+
+      <!--Priming-->
+      <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <!-- <label class="time-label">{{time}}</label> -->
+            <a data-toggle="collapse" data-parent="#accordion" href="#priming">
+              <i class="fa fa-chevron-circle-right"></i> Some example ideas to get you started  
+            </a>
+          </h4>
+        </div>
+        <div id="priming" class="panel-collapse collapse">
+          <div class="panel-body">
+            {{>Priming}}
+          </div>
+        </div>
+      </div>
+
       {{#each notifications}}
         {{#unless directions}}
           {{> NotifyItem}}
@@ -69,6 +88,18 @@
 </template>
 
 <template name="sentexamples">
+  <h5 class="notify-label">Consider these ideas: </h5>
+    {{#each primeIdeas}}
+      <div id={{this._id}} class="idea">
+        <i class="idea-bullet fa fa-lightbulb-o"></i> 
+        {{this.content}} 
+      </div>
+    {{/each}}
+</template>
+
+
+
+<template name="Priming">
   <h5 class="notify-label">Consider these ideas: </h5>
     {{#each examples}}
       <div id={{this._id}} class="idea">
@@ -117,7 +148,7 @@
   </div><!-- end sidebar -->
 </template>
 
-<template name="Priming">
+<!-- <template name="Priming">
    <div class="priming">
      <div class="prime-directions">
        <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
@@ -130,7 +161,9 @@
        {{/each}}
      </div>
    </div>
-</template>
+</template> -->
+
+
 
 <template name="Timer">
   <div class="timer">

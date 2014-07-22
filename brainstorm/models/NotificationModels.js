@@ -1,6 +1,7 @@
 Notifications = new Meteor.Collection("notifications"); //collection for messaging from facilitators to ideators
 
 var Types = {
+	PRIMING: {val: -2, title: "Some Examples to get you Started"},
 	DIRECTIONS: {val: -1, title: "Directions"},
 	SEND_EXAMPLES: {val: 0, title: "You've been sent examples"},
 	CHANGE_PROMPT: {val: 1, title: "Your prompt has been changed"},
@@ -21,6 +22,10 @@ Notification = function(sender, recipient){
 directions = new Notification('ideagens','all');
 directions._id = 'directions';
 directions.type = Types.DIRECTIONS;
+
+priming = new Notification('ideagens','all');
+priming._id = 'priming';
+priming.type = Types.PRIMING;
 
 sendExamplesNotify = function(sender, recipient, examples){
 	var notification = new Notification(sender, recipient);
