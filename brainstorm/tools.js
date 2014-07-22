@@ -54,8 +54,24 @@ getCollection = function (collectionName) {
   // }
   // return undefined; // if none of the collections match
 };
+
 removeMember = function(list, member) {
   var index = getIndex(list, member);
   list.splice(index, 1);
   return list;
+};
+
+isInList = function(member, list, field) {
+  for (var i=0; i< list.length; i++) {
+    if (field) {
+      if (list[i][field] == member[field]) {
+        return true;
+      }
+    } else {
+      if (list[i] == member) {
+        return true;
+      }
+    }
+  }
+  return false;
 };

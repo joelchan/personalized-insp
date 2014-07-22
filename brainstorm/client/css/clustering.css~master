@@ -1,0 +1,85 @@
+
+#idealist, #clusterlist{
+	background-color: #f5f5f5;
+	height: 500px;
+	overflow: auto;
+	list-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+}
+
+#idealistHeader{
+	display: inline-block;
+	/*width: 50%;*/
+}
+
+#left > div:nth-child(4) > div{
+	float: right;
+	/*width: 50%;*/
+}
+
+#sortMenuButton{
+	margin: 20px 0px 5px 15px;
+}
+
+.cluster{
+	border: 1px solid black;
+	border-radius: 5px;
+	background-color: #f5f5f5;
+	padding-left: 5px;
+	padding-right: 5px;
+	cursor: move;
+}
+
+i {
+	cursor: pointer;
+}
+
+.clusterul{
+	height: 100%;
+	list-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+}
+li.idea-item{
+	border: solid 1px black;
+	margin: 5px;
+	padding: 5px;
+	background-color: #fff;
+	cursor: pointer;
+}
+
+li.idea-item .gamechangestar{
+	float: right;
+	/*padding-top: 0px;*/
+	color: #f0ad4e;
+	text-shadow: 1px 1px #ddd; /*#eea236;*/
+}
+
+li.cluster-item{
+	background-color: #fcf8e3;
+	border: solid 1px black;
+	margin: 5px;
+	padding: 5px;
+	background-color: #fff;
+	cursor: pointer;
+}
+
+.newcluster{
+	border: dashed 1px;
+	border-radius: 5px;
+	padding: 10px;
+}
+
+.namecluster{
+	width: 100%;
+}
+
+#finish{
+	margin-top: 10px;
+	float: right;
+}
+
+#clusterprompt{
+	margin-top: 20px;
+}

@@ -177,11 +177,14 @@ Meteor.startup(function() {
 });
 
 //Meteor.startup(function() {
-  //testGroupManager();
+  //testGroupManager.testAll();
 //});
 //Meteor.startup(function() {
-  //testExperimentManager();
+  //testExperimentManager.testAll();
 //});
+Meteor.startup(function() {
+  testFilterFactory.testAll();
+});
 
 Meteor.startup(function() {
   /****************************************************************

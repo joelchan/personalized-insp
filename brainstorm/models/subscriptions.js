@@ -3,12 +3,11 @@
 * be moved to relevant locations (e.g. routes.js and specific
 * Templates where the data is actually needed) in client as logic 
 * becomes more developed. Publications are located in 
-* brainstorm/publications.js for now.
+* brainstorm/models/publications.js for now.
 ********************************************************************/
 
 Meteor.startup(function(){
-
-	if(Meteor.isClient){
+  if (Meteor.isClient) {
 		/************************************************************
 		* Subscribe to models.js collections
 		************************************************************/
@@ -43,5 +42,37 @@ Meteor.startup(function(){
 		************************************************************/
 		Meteor.subscribe("notifications");
     Meteor.subscribe('exp-conditions');
-	}
+  }
 });
+
+// Manually define dictionary of all collections
+MyCollections = 
+{
+    "ideas": Ideas,
+    "prompts": Prompts,
+    "replayIdeas": ReplayIdeas,
+    "myUsers": MyUsers,
+    "roles": Roles,
+    "groups": Groups,
+    'groupTemplates': GroupTemplates,
+    'clusters': Clusters,
+    'ideasToProcess': IdeasToProcess,
+    'filters': Filters,
+    'notifications': Notifications,
+    'experiments': Experiments,
+    'exp-conditions': Conditions,
+    'consents': Consents,
+    'participants': Participants,
+    'surveyResponses': SurveyResponses
+};
+//myCollections = (function() {
+  //console.log("running init of all collections dictionary");
+  //var allCols = {};
+  //for(var key in window) {
+    //var value = window[key];
+    //if (value instanceof Meteor.Collection) {
+      //allCols[value._name] = value;
+    //}
+  //}
+  //return allCols; 
+//}());
