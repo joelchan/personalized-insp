@@ -13,13 +13,15 @@
 }
 
 #messageview .chatmessage{
-	padding: 5px 10px 5px 10px;
+	padding: 0px 10px 0px 10px;
+  min-height: 35px;
+  vertical-align: center;
 }
-#messageview .sender{
+.message-content.sender{
 	float: right;
 }
 
-#messageview .sender label{
+.message-content.sender label{
 	color: #428bca;
 }
 
@@ -33,7 +35,7 @@
   top: 45%;
   left: 0%;
   width: 3%;
-  height: 6%;
+  height: 8%;
   text-shadow: 1px 1px #ededed;
   background-color: white;
   opacity: 1; 
@@ -47,22 +49,30 @@
   -webkit-box-shadow: 1px 0px 2px 1px rgba(0,0,0,0.05);
   -moz-box-shadow:    1px 0px 2px 1px rgba(0,0,0,0.05);
   box-shadow:         1px 0px 2px 1px rgba(0,0,0,0.05);
-  transition: left 300ms ease; /*same as speed option in bigslide.js*/
-  -webkit-transition: left 300ms ease; 
-  -moz-transition: left 300ms ease;
-  -o-transition: left 300ms ease;
+  transition: left 300ms ease, background-color 150ms ease;  /*same as speed option in bigslide.js*/
+  -webkit-transition: left 300ms ease, background-color 150ms ease;  
+  -moz-transition: left 300ms ease, background-color 150ms ease; 
+  -o-transition: left 300ms ease, background-color 150ms ease; 
 }
 #chat-handle.moved{
   left: 25%;
   z-index: 1;
 }
 
+#chat-handle.alert{
+  background-color: #f0ad4e;
+  color: white;
+}
+
+
 #messageicon{
 	padding-left: 2px;
-	/*padding-top: 40%;*/
+	margin-top: auto;
+  margin-bottom: auto;
 }
 
 #write-message{
+  position: absolute;
 	padding-top: 10px;
 	padding-left: 2%;
 	padding-right: 2%;

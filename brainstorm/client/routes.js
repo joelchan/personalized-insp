@@ -89,7 +89,7 @@ Router.map(function () {
       Session.set("currentUser", MyUsers.findOne({_id: "syn"}));
     },
     waitOn: function(){
-      return Session.set("currentUser", MyUsers.findOne({_id: "syn"}));
+      return Meteor.subscribe('notifications');
     },
     action: function(){
       if(this.ready())

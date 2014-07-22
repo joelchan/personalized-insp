@@ -6,10 +6,11 @@
 		<nav id="chat-drawer" class="panel" role="navigation">
 			<div id="messageview">
 			{{#each messages}}
-
-				<div class="chatmessage {{#if isSender}} sender {{/if}}">
-					<label>{{username}}: </label>
-					{{this.message}}
+				<div class="chatmessage">
+					<span class="message-content {{#if isSender}} sender {{/if}}">
+						<label>{{username}}: </label>
+						{{this.message}}
+					</span>
 				</div>
 			{{/each}}
 			</div>

@@ -1,3 +1,6 @@
+var messageAlertInterval;
+var messageWaiting = false;
+
 Template.chatdrawer.rendered = function(){
 	$('.menu-link').bigSlide({
 		'menu': ('#chat-drawer'),
@@ -14,6 +17,19 @@ Template.chatdrawer.rendered = function(){
       $('#sendchat').click();
     }
   });
+
+  
+  Notifications.find({recipient: Session.get("currentUser")._id}).observe({
+  	added: function(message){
+  		console.log("message added");
+  		Meteor.clearInterval(messageAlertInterval);
+  		messageAlertInterval = Meteor.setInterval(function(){
+  			$('#chat-handle').toggleClass('alert');
+  		}, 500);
+  	}
+  });
+
+  Meteor.clearInterval(messageAlertInterval);
 }
 
 Template.chatdrawer.helpers({
@@ -32,13 +48,17 @@ Template.chatdrawer.helpers({
 });
 
 Template.chatdrawer.events({
-	'click #chat-handle' : function(){
+	'click #messageicon' : function(){
 		console.log("moving");
 		if($('#chat-handle').hasClass('moved')){
 			$('#chat-handle').removeClass('moved');
 		} else {
 			$('#chat-handle').addClass('moved');
 		}
+
+		Meteor.clearInterval(messageAlertInterval);
+		$('#chat-handle').removeClass('alert');
+
 	},
 	'click #sendchat' : function(){
 		var message = $("#chatinput").val()
@@ -47,7 +67,7 @@ Template.chatdrawer.events({
 		$("#chatinput").val("");
 		//chatNotify(Session.get("currentUser")._id, "syn", message);
 
-		MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$ne: "admin"}}).forEach(function(user){
+		MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["anonDBUser", "anonSynUser"]}}).forEach(function(user){
 			console.log(user)
 			chatNotify(Session.get("currentUser")._id, user._id, message);
 		});
