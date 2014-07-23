@@ -1,0 +1,53 @@
+#filter-box{
+	margin-bottom: 5px;
+}
+#filter-box button{
+	margin: 0px;
+	margin-top: 0px;
+}
+
+
+#star-toggle-icon{
+	padding: 0px;
+}
+
+.fa-filter{
+	/*float: left;*/
+	padding-right: 5px;
+	display: inline-block;
+}
+
+.filter-dropdown {
+	width: 100%;
+	background-color: #fcfcfc;
+	display: none;
+	position:absolute;
+	border: 1px solid #ddd;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.filter-list{
+	overflow: auto;
+	max-height: 150px;
+	border-bottom: 1px solid #ddd;
+}
+
+.filter-checkbox{
+	height: 20px;
+}
+
+.time-select-box{
+	padding: 5px;
+}
+
+.time-select{
+	display: inline-block;
+	max-width: 50px;
+	padding: 5px; 
+}
+
+.filter-dropdown button{
+	margin-top: 10px;
+	float: right;
+}

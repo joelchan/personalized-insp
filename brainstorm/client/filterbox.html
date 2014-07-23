@@ -1,0 +1,111 @@
+<template name="filterbox">
+	<div>
+		<i class="fa fa-filter"></i>
+		<span id="filter-box" class="btn-group btn-group-xs">
+			<button id="parts-filter" class="btn btn-info">
+				Participants <span class="caret"></span>
+			</button>
+			<button id="theme-filter" class="btn btn-info">
+				Theme <span class="caret"></span>
+			</button>
+			<button id="time-filter" class="btn btn-info">
+				Time<span class="caret"></span>
+			</button>
+			<button id="gamechange-filter" class="btn btn-info">
+				<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
+			</button>
+		</span>
+	</div>
+
+	<!--Participant Filter Dropdown-->
+	<div id="select-part-filters" class="filter-dropdown col-md-3">
+		<h5>Select Participants</h5>
+		<div class="filter-list">
+			<select multiple class="form-control">
+				{{#each participants}}
+					<option val="this._id">{{this.name}}</option>
+				{{/each}}
+			</select>
+		</div>
+		<div class="apply-filter">
+			<button class="btn btn-default">Apply</button>
+		</div>
+	</div>
+
+	<!--Theme Filter Dropdown-->
+	<div id="select-theme-filters" class="filter-dropdown col-md-3">
+		<h5>Select Themes</h5>
+		<div class="filter-list">
+			<select multiple class="form-control">
+				{{#each clusters}}
+					<option val="this._id">{{this.name}}</option>
+				{{/each}}
+			</select>
+		</div>
+		<div class="apply-filter">
+			<button class="btn btn-default">Apply</button>
+		</div>
+	</div>
+
+	<!--Time Filter Dropdown-->
+	<div id="select-time-filters" class="filter-dropdown col-md-3">
+		<div class="filter-list">
+			<h5>Select Time Window</h5>
+			<div class="time-select-box">
+				<label>Start: </label>
+				<select class="form-control time-select">
+  					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+					<option>13</option>
+					<option>14</option>
+					<option>15</option>
+				</select>
+				<span> minutes ago.</span>
+			</div>
+			<div class="time-select-box">
+				<label>End: </label>
+				<select class="form-control time-select">
+  					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+					<option>13</option>
+					<option>14</option>
+					<option>15</option>
+				</select>
+				<span> minutes ago.</span>
+			</div>
+		</div>
+		<div class="apply-filter">
+			<button class="btn btn-default">Apply</button>
+		</div>
+	</div>
+</template>
+
+<template name="filtercheckbox">
+	<div class="checkbox filter-checkbox">
+		<label>
+			<input type="checkbox" value="{{this._id}}">
+			{{this.name}}
+		</label>
+	</div>
+</template>

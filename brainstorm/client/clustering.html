@@ -19,9 +19,9 @@
 				<!--End Create New Cluster-->
 
 				<!--Idea List-->
-				<div>
+				<div id="idealistwrapper">
 					<h3 id="idealistHeader">Idea List</h3>
-					<div class="btn-group">
+					<!-- <div class="btn-group">
 						<button id="sortMenuButton" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
 							Sort By
 					    	<span class="caret"></span>
@@ -31,15 +31,17 @@
 					    	<li><a href="" id="sortOldest">Oldest</a></li>
 					    	<li><a href="" id="sortMostRecent">Most Recent</a></li>
 					  	</ul>
-					</div>
-				</div>
+					</div> -->
+					{{> filterbox}}
 
-				<ul id="idealist" class="ideadeck ui-sortable">
-					<li class="sort-disabled"></li>
-					{{#each ideas}}
-						{{> ideaitem}}
-					{{/each}}
-				</ul>
+				<!-- <div> -->
+					<ul id="idealist" class="ideadeck ui-sortable">
+						<li class="sort-disabled"></li>
+						{{#each ideas}}
+							{{> ideaitem}}
+						{{/each}}
+					</ul>
+				</div>
 				<!--End Idea List-->
 
 				<h3>Cluster List</h3>
