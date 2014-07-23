@@ -66,7 +66,7 @@ Template.chatdrawer.events({
 		}
 
 		Meteor.clearInterval(messageAlertInterval);
-		$('#chat-handle').removeClass('alert');
+		$('#chat-handle').removeClass('flash');
 
 		messageViewScrollTo();
 	},

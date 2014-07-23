@@ -68,9 +68,9 @@
 
 
 #messageicon{
-	padding-left: 2px;
-	margin-top: auto;
-  margin-bottom: auto;
+	position: relative;
+  top: 45%;
+  transform: translateY(-50%);
 }
 
 #write-message{
