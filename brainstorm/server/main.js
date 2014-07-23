@@ -182,10 +182,11 @@ Meteor.startup(function() {
     }
 
     var synUsers = MyUsers.find({_id: "syn"});
+    var syn = new User("SynthesisUser", "anonSynUser");
     if (synUsers.count() > 0) {
       if (dbUsers.count() > 1) {
         MyUsers.remove({_id: "syn"});
-        var syn = new User("SynthesisUser", "anonSynUser");
+        
         syn._id = "syn";
         MyUsers.insert(syn);
       }
@@ -193,6 +194,14 @@ Meteor.startup(function() {
       var syn = new User("SynthesisUser", "anonSynUser");
       syn._id = "syn";
       MyUsers.insert(syn);
+    }
+
+    var filter = Filters.findOne({name: "Syn Idea List Filter"});
+    if(filter === undefined)
+      FilterFactory.create("Syn Idea List Filter", syn, "ideas");
+    else {
+      Filters.remove({_id: filter._id});
+      FilterFactory.create("Syn Idea List Filter", syn, "ideas");
     }
 
     if(Clusters.findOne({_id: "-1"})===undefined){

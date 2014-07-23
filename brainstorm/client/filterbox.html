@@ -5,8 +5,8 @@
 			<button id="parts-filter" class="btn btn-info">
 				Participants <span class="caret"></span>
 			</button>
-			<button id="theme-filter" class="btn btn-info">
-				Theme <span class="caret"></span>
+			<button id="themed-filter" class="btn btn-info">
+				Themed <span class="caret"></span>
 			</button>
 			<button id="time-filter" class="btn btn-info">
 				Time<span class="caret"></span>
@@ -21,9 +21,9 @@
 	<div id="select-part-filters" class="filter-dropdown col-md-3">
 		<h5>Select Participants</h5>
 		<div class="filter-list">
-			<select multiple class="form-control">
+			<select id="select-participants" multiple class="form-control">
 				{{#each participants}}
-					<option val="this._id">{{this.name}}</option>
+					<option val="pf-{{this._id}}">{{this.name}}</option>
 				{{/each}}
 			</select>
 		</div>
@@ -34,14 +34,21 @@
 	</div>
 
 	<!--Theme Filter Dropdown-->
-	<div id="select-theme-filters" class="filter-dropdown col-md-3">
-		<h5>Select Themes</h5>
+	<div id="select-themed-filters" class="filter-dropdown col-md-3">
+		<h5>Select Themed or Unthemed</h5>
 		<div class="filter-list">
-			<select multiple class="form-control">
-				{{#each clusters}}
-					<option val="this._id">{{this.name}}</option>
-				{{/each}}
-			</select>
+			<div class="checkbox filter-checkbox">
+			  <label>
+			    <input name="themecheck" type="checkbox" value="true">
+			    In a theme
+			  </label>
+			</div>
+			<div class="checkbox filter-checkbox">
+			  <label>
+			    <input name="themecheck" type="checkbox" value="false">
+			    Yet to be themed
+			  </label>
+			</div>	
 		</div>
 		<div class="apply-filter">
 			<button class="btn btn-default">Cancel</button>
@@ -104,11 +111,8 @@
 	</div>
 </template>
 
-<template name="filtercheckbox">
-	<div class="checkbox filter-checkbox">
-		<label>
-			<input type="checkbox" value="{{this._id}}">
-			{{this.name}}
-		</label>
-	</div>
+<template name="applied-filters">
+	{{#each filters}}
+		
+	{{/each}}
 </template>

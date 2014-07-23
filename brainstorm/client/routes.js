@@ -87,17 +87,19 @@ Router.map(function () {
   this.route('Clustering', {
     onRun: function(){
       Session.set("currentUser", MyUsers.findOne({_id: "syn"}));
+      Session.set("currentFilter",
+        Filters.findOne({user: MyUsers.findOne({_id: "syn"})}));
     },
     waitOn: function(){
-      return Meteor.subscribe('notifications');
+      return [Meteor.subscribe('notifications'), Meteor.subscribe('filters'), Meteor.subscribe('ideasToProcess')];
     },
+
     action: function(){
       if(this.ready())
         this.render();
       else
         this.render('loading');
-    }
-    
+    }  
   });
   this.route('Forest', {
     path: 'Forest/:_id',
