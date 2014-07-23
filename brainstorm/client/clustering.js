@@ -89,6 +89,8 @@ Template.cluster.rendered = function(){
         {$addToSet: 
           {ideas: myIdeaID}
       });
+
+      ui.item.remove();
     }
   });
 
