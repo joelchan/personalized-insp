@@ -29,6 +29,7 @@ sendExamplesNotify = function(sender, recipient, examples){
 	notification.type = Types.SEND_EXAMPLES;
 	notification.examples = examples;
 	Notifications.insert(notification);
+	Logger.logSendExamples(notification);
 }
 
 changePromptNotify = function(sender, recipient, prompt){
@@ -36,6 +37,7 @@ changePromptNotify = function(sender, recipient, prompt){
 	notification.type = Types.CHANGE_PROMPT;
 	notification.prompt = prompt;
 	Notifications.insert(notification);
+	Logger.logChangePrompt(notification);
 }
 
 sendThemeNotify = function(sender, recipient, clusterID){
@@ -43,12 +45,14 @@ sendThemeNotify = function(sender, recipient, clusterID){
 	notification.type = Types.SEND_THEME;
 	notification.theme = clusterID;
 	Notifications.insert(notification);
+	Logger.logSendTheme(notification);
 }
 
 requestHelpNotify = function(sender, recipient){
 	var notification = new Notification(sender, recipient);
 	notification.type = Types.REQUEST_HELP;
 	Notifications.insert(notification);
+	Logger.logRequestHelp(notification);
 }
 
 chatNotify = function(sender, recipient, message){
@@ -57,3 +61,5 @@ chatNotify = function(sender, recipient, message){
 	notification.type = Types.CHAT_MESSAGE;
 	Notifications.insert(notification);
 }
+
+

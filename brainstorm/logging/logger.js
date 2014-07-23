@@ -100,7 +100,7 @@ Logger = (function () {
       this.logExpEvent(msg, participant, "info", misc);
     },
 
-  /** Notifications **/
+  /** Notification Drawer Events**/
     logNotificationHandled: function(participant, notificationID){
       var msg = "Participant handled a notification";
       misc = [{name: "notificationID", data: notificationID}]
@@ -117,7 +117,47 @@ Logger = (function () {
       var msg = "Participant collapsed a notification";
       misc = [{name: "notificationID", data: notificationID}]
       this.logExpEvent(msg, participant, "info", misc);
-    }
+    },
+
+    /** Notification events**/
+    logSendExamples: function(notification){
+      var msg = "Dashboard user sent examples";
+      var user = MyUsers.findOne({_id: notification.sender});
+      misc = [{name: "sender", data: notification.sender},
+              {name: "recipient", data: notification.recipient},
+              {name: "type", data: notification.type},
+              {name: "examples", data: notification.examples}];
+      this.logEvent(msg, user, "notification", misc);
+    },
+
+    logChangePrompt: function(notification){
+      var msg = "Dashboard user changed prompt";
+      var user = MyUsers.findOne({_id: notification.sender});
+      misc = [{name: "sender", data: notification.sender},
+              {name: "recipient", data: notification.recipient},
+              {name: "type", data: notification.type},
+              {name: "prompt", data: notification.examples}];
+      this.logEvent(msg, user, "notification", misc);
+    },
+
+    logSendTheme: function(notification){
+      var msg = "Dashboard user sent theme";
+      var user = MyUsers.findOne({_id: notification.sender});
+      misc = [{name: "sender", data: notification.sender},
+              {name: "recipient", data: notification.recipient},
+              {name: "type", data: notification.type},
+              {name: "theme", data: notification.examples}];
+      this.logEvent(msg, user, "notification", misc);
+    },
+
+    logRequestHelp: function(notification){
+      var msg = "Ideator requested help";
+      var user = MyUsers.findOne({_id: notification.sender});
+      misc = [{name: "sender", data: notification.sender},
+              {name: "recipient", data: notification.recipient},
+              {name: "type", data: notification.type}];
+      this.logEvent(msg, user, "notification", misc);
+    },
   };
 }());
   
