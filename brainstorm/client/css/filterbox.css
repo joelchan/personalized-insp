@@ -1,6 +1,7 @@
 #filter-box{
 	margin-bottom: 5px;
 }
+
 #filter-box button{
 	margin: 0px;
 	margin-top: 0px;
@@ -46,8 +47,10 @@
 	max-width: 50px;
 	padding: 5px; 
 }
-
+.apply-filter{
+	float: right;
+}
 .filter-dropdown button{
 	margin-top: 10px;
-	float: right;
+	/*float: right;*/
 }

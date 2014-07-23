@@ -12,29 +12,32 @@ Template.filterbox.events({
 		$('#select-part-filters').slideToggle();
 	},
 
-	'click #select-part-filters > div.apply-filter > button' :function(){
+	'click #select-part-filters > div.apply-filter > button.apply' :function(){
 		console.log(FilterFactory);
-
-		$('#select-part-filters').slideToggle();
 	},
 
 	'click #theme-filter' : function(){
 		$('#select-theme-filters').slideToggle();
 	},
 
-	'click #select-theme-filters > div.apply-filter > button' :function(){
-
-		$('#select-theme-filters').slideToggle();
+	'click #select-theme-filters > div.apply-filter > button.apply' :function(){
+		//console.log(FilterFactory);
 	},
 
 	'click #time-filter' : function(){
 		$('#select-time-filters').slideToggle();
 	},
 
-	'click #select-time-filters > div.apply-filter > button' :function(){
-
-		$('#select-time-filters').slideToggle();
+	'click #select-time-filters > div.apply-filter > button.apply' :function(){
+		//console.log(FilterFactory);
 	},
+
+	'click .filter-dropdown > div.apply-filter > button' :function(){
+		$('#select-part-filters').slideUp();
+		$('#select-theme-filters').slideUp();
+		$('#select-time-filters').slideUp();
+	},
+
 
 	'click #gamechange-filter' : function(){
 		var $icon = $('#gamechange-filter').children('i');
