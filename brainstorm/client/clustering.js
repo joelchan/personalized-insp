@@ -27,12 +27,13 @@ Template.Clustering.rendered = function(){
     receive: function(event, ui){
       var myIdeaID = $(ui.item).attr('id');
       if(ui.sender.hasClass('clusterul')){
-        myIdea = processIdeaSender(ui, myIdeaID); 
+        var myClusterID = processIdeaSender(ui, myIdeaID); 
       } else {
         alert("unknown sender"); //no way for this to happen
         return false;
       }
       updateIdeas(myIdeaID, false);
+      updateClusterList(myIdeaID, myClusterID, false);
     }
   });
 }
@@ -52,7 +53,7 @@ Template.cluster.rendered = function(){
       var myClusterID = $(this).attr('id'); //get cluster being modified
 
       //if item is coming from cluster list
-      if ($(ui.sender).hasClass('clusterdeck')){
+      /*if ($(ui.sender).hasClass('clusterdeck')){
         if(myClusterID === $(ui.item).attr('id')){ //if item being added has ID of cluster being added to
           alert("A cluster cannot be a member of itself. Sorry!");
           $(ui.sender).sortable('cancel');
@@ -73,7 +74,7 @@ Template.cluster.rendered = function(){
         return false;
         }
       //if item is coming from the idealist
-      } else if ($(ui.sender).hasClass('ideadeck')){
+      } else*/ if ($(ui.sender).hasClass('ideadeck')){
         myIdea = IdeasToProcess.findOne({_id: myIdeaID});
         updateIdeas(myIdeaID, true);
 
@@ -89,7 +90,14 @@ Template.cluster.rendered = function(){
           {ideas: myIdeaID}
       });
 
+      updateClusterList(myIdeaID, myClusterID, true);
       ui.item.remove();
+    },
+    remove: function(event, ui){
+      var myIdeaID = $(ui.item).attr('id');
+      var myClusterID = $(this).attr('id');
+
+      updateClusterList(myIdeaID, myClusterID, false);
     }
   });
 
@@ -270,8 +278,9 @@ function createCluster(item) {
   var ideas = [ideaID];//[IdeasToProcess.findOne({_id: ideaID})];
   var cluster = new Cluster(ideas);
   cluster.position = {top: 55, left:0};
-  Clusters.insert(cluster);
+  var clusterID = Clusters.insert(cluster);
   updateIdeas(ideaID, true);
+  updateClusterList(ideaID, clusterID, true);
 }
 
 /********************************************************************
@@ -299,7 +308,7 @@ function processIdeaSender(ui, ideaID){
   if(ideasLength === 0){
     Clusters.remove(senderID);
   }
-  return myIdea;
+  return senderID;
 }
 
 /********************************************************************
@@ -310,4 +319,18 @@ function updateIdeas(ideaID, inCluster){
     {$set:
       {inCluster: inCluster}
   });
+}
+
+function updateClusterList(ideaID, clusterID, adding){
+  if (adding){
+    IdeasToProcess.update({_id: ideaID}, 
+      {$addToSet:
+        {clusters: clusterID}
+    });
+  } else {
+    IdeasToProcess.update({_id: ideaID}, 
+      {$pull:
+        {clusters: clusterID}
+    });
+  }
 }

@@ -25,9 +25,9 @@ Template.filterbox.events({
 		    return id;
 		});
 		console.log(ids);
-		var filter = Session.get("currentFilter");
-		FilterFactory.addInListFilter(filter, 'userID', ids);
-		Session.set("currentFilter", filter);
+		// var filter = Session.get("currentFilter");
+		// FilterFactory.addInListFilter(filter, 'userID', ids);
+		// Session.set("currentFilter", filter);
 	},
 
 	'click #themed-filter' : function(){
@@ -42,10 +42,10 @@ Template.filterbox.events({
 		});
 
 		console.log(checked);
-		var filter = Session.get("currentFilter");
-		console.log(filter.filter);
-		FilterFactory.addInListFilter(filter, 'inCluster', checked);
-		Session.set("currentFilter", filter);
+		// var filter = Session.get("currentFilter");
+		// console.log(filter.filter);
+		// FilterFactory.addInListFilter(filter, 'inCluster', checked);
+		// Session.set("currentFilter", filter);
 	},
 
 	'click #time-filter' : function(){

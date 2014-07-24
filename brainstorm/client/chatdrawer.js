@@ -5,9 +5,9 @@ Template.chatdrawer.rendered = function(){
 	$('.menu-link').bigSlide({
 		'menu': ('#chat-drawer'),
 		'push': ('.push'),
-  	'side': 'left', 
-  	'menuWidth': '25%', 
-  	'speed': '300'
+	  	'side': 'left', 
+	  	'menuWidth': '25%', 
+	  	'speed': '300'
 	});
 
 	// Register event listenr to click submit button when enter is pressed
