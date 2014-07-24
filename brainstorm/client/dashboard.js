@@ -138,19 +138,11 @@ Template.userseries.rendered = function(){
 
 
 	var submissionEvents = Events.find({userID: userID, description: "Participant submitted idea"}); //
-	var results = [];//submissionEvents.fetch();
-
-	//console.log(data);
+	var results = [];
 	var start = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time);
-	//console.log("start: ");
-	//console.log(start);
-	//console.log(start);
 	var sessionlength = Session.get("sessionLength");
 	var end = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time).add('m', sessionlength);//new Date(start + sessionlength*MS_PER_MINUTE);
-	//console.log("end: ");
-	//console.log(end);
-	// var now = new Date(Date.now());
-	// var minAgo = new Date(now - 15*MS_PER_MINUTE);
+
 	var x = d3.time.scale()
 					.domain([start, end])
 					.nice(d3.time.minute)
@@ -192,14 +184,7 @@ Template.userseries.rendered = function(){
 				return d._id;
 			})
 			.attr("x", function(d){
-				//console.log(now)
-				// var durToIdea = moment.duration(d.time);
-				// var ideaTime = moment(minAgo).add(durToIdea);
-				// return x(ideaTime);
-				//console.log(d);
 				var time = new Date(d.time);
-				//console.log(time);
-				//console.log(x(time));
 				return x(time);
 			})
 			.attr("y", 0)
@@ -227,9 +212,51 @@ Template.userseries.rendered = function(){
 			.remove();
 	}
 
-	// var durScale =  d3.scale().linear()
-	// 				.domain([0, sessionlength])
-	// 				.range([pad, w-pad]);
+	var leverEventsCursor = Events.find({recipient: userID, description: 
+		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
+		"Dashboard user sent theme"]}});
+	var leverEventMarks = svg.append("g")
+							.selectAll("rect");
+	var leverEvents = [];
+
+	function refreshLeverEvents(leverData){
+		leverEventMarks.data(leverData)
+					.enter()
+					.append("rect")
+					.attr("height", "50px")
+					.attr("width", "1.5px")
+					.attr("class", "bar")
+					.attr("id", function(d){
+						return d._id;
+					})
+					.attr("x", function(d){
+						var time = new Date(d.time);
+						return x(time);
+					})
+					.attr("y", 0)
+					.attr("fill", function(d){
+						var desc = d.description;
+						if(desc === "Dashboard user sent examples")
+							return "#449d44";
+						else if (desc === "Dashboard user changed")
+							return "#4cae4c";
+						else if (desc === "Dashboard user sent theme")
+							return "#d58512";
+					})
+					.append("svg:title")
+					.text(function(d) { return d.description; });
+
+	}
+
+	leverEventsCursor.observe({
+		added: function(doc){
+			leverEvents.push(doc);
+			refreshLeverEvents(leverEvents);
+		}
+	});
+
+
+	
 	var nowWidth = (w-2*pad)/sessionlength; //1 minute
 	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
 	var nowLine = svg.append("g")
