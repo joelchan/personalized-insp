@@ -47,18 +47,31 @@ Meteor.startup(function(){
 
 Meteor.startup(function(){
 	if (Meteor.isClient) {
-		IdeaFilter = Meteor.FilterCollections(IdeasToProcess, {
+		console.log(IdeaFilter = new Meteor.FilterCollections(IdeasToProcess, {
 		      template: 'filterbox', 
-		      // filter: {
-		      //   userID: {
-		      //     title: "User ID",
-		      //     operator: ['$in', 'i'],
-		      //     condition: '$and',
-		      //     searchable: true
-		      //   },
-		      // }
-		    });
-		console.log(IdeaFilter);
+		      sort: {
+		      	defaults: [
+		      		['time', 'asc'],
+		      		['userName', 'asc']
+		      	]
+		      },
+		      filters: {
+		        'userID': {
+		          title: "UserIDs",
+		          operator: ['$in'],
+		          searchable: true
+		        },
+		        'userName': {
+		        	title: "User Name"
+		        },
+		        'isGamechanger': {
+		        	title: "Is Idea Gamechanger",
+
+		        }
+		      }
+		    }));
+		//console.log(IdeaFilter);
+		//IdeaFilter.filter.set('userName', {value: ['asdf'] , operator: ['$in']});
 	}
 })
 

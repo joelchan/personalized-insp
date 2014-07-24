@@ -24,7 +24,10 @@ Template.filterbox.events({
 			id = id.split("-")[1];
 		    return id;
 		});
-		console.log(ids);
+		// console.log(ids);
+		// IdeaFilter.sort.set('time', 'asc', true);
+		IdeaFilter.filter.set('userID', {value: ids[0], operator: ['$ne']});
+		IdeaFilter.filter.run();
 		// var filter = Session.get("currentFilter");
 		// FilterFactory.addInListFilter(filter, 'userID', ids);
 		// Session.set("currentFilter", filter);
@@ -66,10 +69,12 @@ Template.filterbox.events({
 	'click #gamechange-filter' : function(){
 		var $icon = $('#gamechange-filter').children('i');
 
-		if($icon.hasClass('fa-star-o'))
+		if($icon.hasClass('fa-star-o')){
 			$icon.switchClass('fa-star-o', 'fa-star');
-		else if($icon.hasClass('fa-star'))
+			IdeaFilter.filter.set('isGamechanger', {value: true}, true)
+		} else if($icon.hasClass('fa-star')){
 			$icon.switchClass('fa-star', 'fa-star-o');
+		}
 		//console.log($icon);
 	},
 });

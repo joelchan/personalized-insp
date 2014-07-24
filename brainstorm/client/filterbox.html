@@ -110,6 +110,16 @@
 		</div>
 	</div>
 
+
+	{{#if fcFilterActive}}
+		<h4>Active Filters</h4>
+		{{#each fcFilterActive}}
+			<button href="#" class="fc-filter-clear">
+			{{title}}: {{operator}} {{value}}
+			</button>
+		{{/each}}
+	{{/if}}
+	<button href="#" class="btn btn-info btn-xs fc-filter-reset">Reset all filters</button>
 	<ul id="idealist" class="ideadeck ui-sortable">
 		<li class="sort-disabled"></li>
 			{{#each fcResults}}
