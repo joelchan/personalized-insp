@@ -109,6 +109,13 @@
 			<button class="btn btn-primary apply">Apply</button>
 		</div>
 	</div>
+
+	<ul id="idealist" class="ideadeck ui-sortable">
+		<li class="sort-disabled"></li>
+			{{#each fcResults}}
+				{{> ideaitem}}
+			{{/each}}
+	</ul>
 </template>
 
 <template name="applied-filters">

@@ -20,7 +20,7 @@ Meteor.startup(function(){
 		Meteor.subscribe("roles");
 		Meteor.subscribe("groups");
 		Meteor.subscribe("userTypes");
-    Meteor.subscribe("filters");
+    	Meteor.subscribe("filters");
 		/************************************************************
 		* Subscribe to experimentModels.js collections
 		************************************************************/
@@ -41,9 +41,26 @@ Meteor.startup(function(){
 		* Subscribe to notificationModels.js collection
 		************************************************************/
 		Meteor.subscribe("notifications");
-    Meteor.subscribe('exp-conditions');
+    	Meteor.subscribe('exp-conditions');
   }
 });
+
+Meteor.startup(function(){
+	if (Meteor.isClient) {
+		IdeaFilter = Meteor.FilterCollections(IdeasToProcess, {
+		      template: 'filterbox', 
+		      // filter: {
+		      //   userID: {
+		      //     title: "User ID",
+		      //     operator: ['$in', 'i'],
+		      //     condition: '$and',
+		      //     searchable: true
+		      //   },
+		      // }
+		    });
+		console.log(IdeaFilter);
+	}
+})
 
 // Manually define dictionary of all collections
 MyCollections = 

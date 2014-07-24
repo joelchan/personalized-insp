@@ -5,7 +5,8 @@
       "iron-router": {},
       "fontawesome4": {},
       "nvd3js": {},
-      "moment": {}
+      "moment": {},
+      "filter-collections": {}
     },
     "packages": {
       "iron-router": {
@@ -27,6 +28,11 @@
         "git": "https://github.com/acreeger/meteor-moment.git",
         "tag": "v2.6.0",
         "commit": "26156df681750fd6e6ed77043eef32b6653ebbdf"
+      },
+      "filter-collections": {
+        "git": "https://github.com/julianmontagna/filter-collections.git",
+        "tag": "v0.1.4",
+        "commit": "87bc9cee7a23459e427d4613383be3f67f29245c"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

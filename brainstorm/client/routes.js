@@ -121,6 +121,11 @@ Router.map(function () {
         this.render('loading');
     }
   });
+  this.route('filterbox', {
+    waitOn: function(){
+      return Meteor.subscribe('ideasToProcess');
+    }
+  });
   this.route('NoParticipation', {
     path: 'participation/', 
     template: 'NoParticipationPage',
