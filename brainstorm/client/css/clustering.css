@@ -20,6 +20,11 @@
 	/*width: 50%;*/
 }
 
+#left{
+	padding: 5px;
+	margin: 5px;
+}
+
 #left > div:nth-child(4) > div{
 	/*float: right;*/
 	/*width: 50%;*/

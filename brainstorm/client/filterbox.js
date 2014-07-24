@@ -6,15 +6,18 @@ Template.filterbox.helpers({
 	participants : function(){
 		return MyUsers.find({type: "Experiment Participant"});
 	},
-	// clusters: function(){
-	// 	return Clusters.find({_id: {$ne: "-1"}});
-	// }
+	ideas : function(){
+		return IdeaFilter.query.getResults();
+	},
+	clusters: function(){
+		return Clusters.find({_id: {$ne: "-1"}});
+	}
 });
 
 Template.filterbox.events({
-	'click #parts-filter' : function(){
-		$('#select-part-filters').slideToggle();
-	},
+	// 'click #parts-filter' : function(){
+	// 	$('#select-part-filters').slideToggle();
+	// },
 
 	'click #select-part-filters > div.apply-filter > button.apply' :function(){
 		var options = $('#select-participants option:selected');
@@ -26,16 +29,19 @@ Template.filterbox.events({
 		});
 		// console.log(ids);
 		// IdeaFilter.sort.set('time', 'asc', true);
-		IdeaFilter.filter.set('userID', {value: ids[0], operator: ['$ne']});
-		IdeaFilter.filter.run();
+		IdeaFilter.filter.set('userID', {value: ids, operator: ['$in']}, true);
 		// var filter = Session.get("currentFilter");
 		// FilterFactory.addInListFilter(filter, 'userID', ids);
 		// Session.set("currentFilter", filter);
 	},
 
-	'click #themed-filter' : function(){
-		$('#select-themed-filters').slideToggle();
-	},
+	// 'click #themed-filter' : function(){
+	// 	$('#select-themed-filters').slideToggle();
+	// },
+
+	// 'click #memberOf-filter' : function(){
+	// 	$('#select-memberOf-filters').slideToggle();
+	// },
 
 	'click #select-themed-filters > div.apply-filter > button.apply' :function(){
 		var checkboxes = $("input:checkbox[name=themecheck]:checked");
@@ -45,24 +51,36 @@ Template.filterbox.events({
 		});
 
 		console.log(checked);
-		// var filter = Session.get("currentFilter");
-		// console.log(filter.filter);
-		// FilterFactory.addInListFilter(filter, 'inCluster', checked);
-		// Session.set("currentFilter", filter);
+		if(checked.length < 1){
+			IdeaFilter.filter.get().inCluster.active = false;
+			console.log("IdeaFilter: ");
+			console.log(IdeaFilter);
+		} else
+			IdeaFilter.filter.set('inCluster', {value: checked[0], operator: ['$in']}, true);
+
 	},
 
-	'click #time-filter' : function(){
-		$('#select-time-filters').slideToggle();
-	},
+	// 'click #time-filter' : function(){
+	// 	$('#select-time-filters').slideDown();
+	// },
 
 	'click #select-time-filters > div.apply-filter > button.apply' :function(){
 		
 	},
 
-	'click .filter-dropdown > div.apply-filter > button' :function(){
-		$('#select-part-filters').slideUp();
-		$('#select-themed-filters').slideUp();
-		$('#select-time-filters').slideUp();
+	'click .filter-drop-button' :function(){
+		var id = $(event.target).attr('id');
+		id = 'select-' +id;
+		$('.filter-dropdown').each(function(i){
+			if($(this).attr('id') === id){
+				$('#' + id).slideDown();
+			} else {
+				$('#' + $(this).attr('id')).slideUp();
+			}
+		});
+	},
+	'click .filter-dropdown > div.apply-filter > button' : function(){
+		$(event.target).parents('.filter-dropdown').slideUp();
 	},
 
 

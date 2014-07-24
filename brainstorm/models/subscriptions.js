@@ -58,15 +58,24 @@ Meteor.startup(function(){
 		      filters: {
 		        'userID': {
 		          title: "UserIDs",
-		          operator: ['$in'],
-		          searchable: true
+		          // operator: ['$in'],
+		          // condition: ['$and'],
+		          // searchable: true
 		        },
 		        'userName': {
-		        	title: "User Name"
+		        	title: "User Name",
+		        	// condition: ['$and'],
+		         //  	searchable: true
 		        },
 		        'isGamechanger': {
 		        	title: "Is Idea Gamechanger",
-
+		        	// condition: ['$and'],
+		         //  	searchable: true
+		        },
+		        'inCluster': {
+		        	title: "Idea is in a Session",
+		        	// condition: ['$and'],
+		         //  	searchable: true
 		        }
 		      }
 		    }));

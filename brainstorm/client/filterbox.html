@@ -2,23 +2,26 @@
 	<div>
 		<i class="fa fa-filter"></i>
 		<span id="filter-box" class="btn-group btn-group-xs">
-			<button id="parts-filter" class="btn btn-info">
-				Participants <span class="caret"></span>
+			<button id="parts-filters" class="filter-drop-button btn btn-info">
+				User <span class="caret"></span>
 			</button>
-			<button id="themed-filter" class="btn btn-info">
+			<button id="themed-filters" class="filter-drop-button btn btn-info">
 				Themed <span class="caret"></span>
 			</button>
-			<button id="time-filter" class="btn btn-info">
+			<button id="memberOf-filters" class="filter-drop-button btn btn-info">
+				Member Of <span class="caret"></span>
+			</button>
+			<button id="time-filters" class="filter-drop-button btn btn-info">
 				Time<span class="caret"></span>
 			</button>
-			<button id="gamechange-filter" class="btn btn-info">
+			<button id="gamechange-filters" class="filter-drop-button btn btn-info">
 				<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
 			</button>
 		</span>
 	</div>
 
 	<!--Participant Filter Dropdown-->
-	<div id="select-part-filters" class="filter-dropdown col-md-3">
+	<div id="select-parts-filters" class="filter-dropdown col-md-3">
 		<h5>Select Participants</h5>
 		<div class="filter-list">
 			<select id="select-participants" multiple class="form-control">
@@ -33,7 +36,7 @@
 		</div>
 	</div>
 
-	<!--Theme Filter Dropdown-->
+	<!--Themed Filter Dropdown-->
 	<div id="select-themed-filters" class="filter-dropdown col-md-3">
 		<h5>Select Themed or Unthemed</h5>
 		<div class="filter-list">
@@ -49,6 +52,22 @@
 			    Yet to be themed
 			  </label>
 			</div>	
+		</div>
+		<div class="apply-filter">
+			<button class="btn btn-default">Cancel</button>
+			<button class="btn btn-primary apply">Apply</button>
+		</div>
+	</div>
+
+	<!--Member Of Selection Filter-->
+	<div id="select-memberOf-filters" class="filter-dropdown col-md-3">
+		<h5>Select Themes</h5>
+		<div class="filter-list">
+			<select id="select-themes" multiple class="form-control">
+				{{#each cluster}}
+					<option val="mo-{{this._id}}">{{this.name}}</option>
+				{{/each}}
+			</select>
 		</div>
 		<div class="apply-filter">
 			<button class="btn btn-default">Cancel</button>
@@ -111,18 +130,18 @@
 	</div>
 
 
-	{{#if fcFilterActive}}
+	<!-- {{#if fcFilterActive}}
 		<h4>Active Filters</h4>
 		{{#each fcFilterActive}}
 			<button href="#" class="fc-filter-clear">
 			{{title}}: {{operator}} {{value}}
 			</button>
 		{{/each}}
-	{{/if}}
+	{{/if}} -->
 	<button href="#" class="btn btn-info btn-xs fc-filter-reset">Reset all filters</button>
 	<ul id="idealist" class="ideadeck ui-sortable">
 		<li class="sort-disabled"></li>
-			{{#each fcResults}}
+			{{#each ideas}}
 				{{> ideaitem}}
 			{{/each}}
 	</ul>
