@@ -1,6 +1,8 @@
 .login {
   padding-top: 12px;
   text-align: right;
+  display: inline-block;
+
 }
 
 .line {

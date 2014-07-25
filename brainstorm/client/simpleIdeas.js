@@ -103,6 +103,9 @@ getPrimingIdeas = function () {
     return newIdeas;
 };
 
+/********************************************************************
+* Template helpers
+********************************************************************/
 Template.Priming.helpers({
     primeIdeas: function() {
       //console.log("getting prime ideas");
@@ -235,16 +238,17 @@ Template.IdeationPage.rendered = function() {
   //Add Exit study button to top right
   if ($('.exitStudy').length == 0) {
     $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
-  } else {
-      $('.exitStudy').removeClass('hidden');
   }
 
-  //Add timer
-  if ($('.timer').length == 0) {
-    $('.login').append('<span id="time">15</span><span> minutes remaining</span>');
-  } else {
-      $('.timer').removeClass('hidden');
-  }
+  //Add timer\
+  Session.set("hasTimer", true);
+  var timerTemplate = UI.render(Template.Timer);
+  UI.insert(timerTemplate, $('#nav-right')[0]);
+  //Setup timer for decrementing onscreen timer with 17 minute timeout
+  var time = 17;
+  Session.set("timeLeft", time);
+  $('#time').text(time);
+  Meteor.setTimeout(decrementTimer, 60000);
 
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
@@ -263,11 +267,6 @@ Template.IdeationPage.rendered = function() {
   var participant = Session.get("currentParticipant");
   //console.log(participant);
   Logger.logBeginIdeation(participant);
-  //Set timer for page to transition after 15 minutes
-  Meteor.setTimeout(exitIdeation, 900000);
-  //Setup timer for decrementing onscreen timer
-  Session.set("timeLeft", 15);
-  Meteor.setTimeout(decrementTimer, 60000);
 };
 
 //Events
@@ -442,7 +441,12 @@ exitIdeation = function exitIdeation() {
   //Logs a partial idea if user hasn't submitted it
   $('#submitIdea').click();
   Logger.logEndIdeation(Session.get("currentParticipant"));
-  $('.exitStudy').addClass("hidden");
+  $('.exitStudy').remove();
+  //Removing timer from ideation
+  if (Session.get("hasTimer")) {
+    $('.timer').remove();
+    Session.set("hasTimer", false);
+  }
   Router.goToNextPage("IdeationPage");
 };
 
@@ -456,5 +460,7 @@ decrementTimer = function decrementTimer() {
   if (nextTime != 0) {
     Meteor.setTimeout(decrementTimer, 60000);
     // console.log("Decrementing timer")
+  } else {
+    exitIdeation();
   }
 };

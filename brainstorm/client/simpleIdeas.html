@@ -23,14 +23,7 @@
         </div>
         <div id="directions" class="panel-collapse collapse in">
           <div class="panel-body">
-            <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
-            <ol>
-              <li>There are no bad Ideas. Defer judgement on your ideas.</li>
-              <li>Wild ideas and building off of old ideas are okay</li>
-              <li>Quantity of ideas is prioritized</li>
-              <li>Combinations of ideas count as new ideas.</li>
-            </ol>
-            <p>Keep in mind if at any point you must exit the study early, you can click the button in the top right corner of the screen. You will be compensated on a pro-rated basis according to your participation time.</p>
+            {{> Directions }}
           </div>
         </div>
       </div>
@@ -46,7 +39,6 @@
         </div>
         <div id="priming" class="panel-collapse collapse in">
           <div class="panel-body">
-            <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
             {{ > Priming }}
           </div>
         </div>
@@ -97,8 +89,8 @@
 </template>
 
 
-
 <template name="Priming">
+     <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
     {{#each primeIdeas}}
       <div class="idea">
         <i class="idea-bullet fa fa-lightbulb-o"></i> 
@@ -133,8 +125,7 @@
 </template>
 
 <template name="Directions">
-  <div class="row directions">
-    <h2>Directions:</h2>
+  <div class="directions">
     <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
     <ol>
       <li>There are no bad Ideas. Defer judgement on your ideas.</li>
@@ -145,27 +136,6 @@
     <p>Keep in mind if at any point you must exit the study early, you can click the button in the top right corner of the screen. You will be compensated on a pro-rated basis according to your participation time.</p>
   </div><!-- end sidebar -->
 </template>
-
-<!-- <template name="Priming">
-   <div class="priming">
-     <!- - <div class="prime-directions">
-       <p>To get you started, here are some ideas others have generated for this problem. These ideas are simply here for your inspiration. Feel free to ignore them, build on them, or combine them as you see fit.</p>
-     </div> - ->
-     <div class="primeIdeas">
-       {{#each primeIdeas}}
-         <!- - <div class="prime-idea"> - ->
-         <div>
-           <!- - <i class="idea-bullet fa fa-lightbulb-o"></i>  - ->
-            <ul>
-              <li>{{ content }}</li>
-            </ul>
-         </div>
-       {{/each}}
-     </div>
-   </div>
-</template> -->
-
-
 
 <!-- currently unused -->
 <template name="Timer">
@@ -247,7 +217,7 @@ complete idea)"></textarea>
   </div>
 </template>
 
-<!--<template name="IdeationPage">
+<template name="IdeationPageOld3">
   <div class="row">
     <div class="col-md-3">
       <div class="sidebar">
@@ -264,7 +234,7 @@ complete idea)"></textarea>
         <div class="row">
           {{> Priming }}
         </div>
-      </div> <!- - close header - ->
+      </div> <!-- close header -->
       <div class="row">
         {{> IdeaBox}}
       </div>
@@ -274,9 +244,9 @@ complete idea)"></textarea>
       </div>
     </div>
   </div>
-</template>-->
+</template>
 
-<!-- <template name="IdeationPage">
+<template name="IdeationPageOld">
   <div class="sidebar">
         {{> NotificationDrawer}}
   </div>
@@ -297,7 +267,7 @@ complete idea)"></textarea>
           {{> Priming }}
         </div>
       </div> 
-      <!- - close header - ->
+      <!-- close header -->
       <div class="row">
         {{> IdeaBox}}
       </div>
@@ -307,7 +277,7 @@ complete idea)"></textarea>
       </div>
     </div>
   </div>
-</template> -->
+</template>
 
 <template name="IdeationPage">
   <div class="row">

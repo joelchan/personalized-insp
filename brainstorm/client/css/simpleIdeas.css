@@ -27,20 +27,26 @@
 
 }
 
-.timer {
+#nav-right .timer {
+  background: #eee;
+  display: inline-block;
+  margin: 10px;
+}
+
+#ideastorm .timer {
   background: #eee;
   padding: 5px;
   text-align: center;
   margin-top: -25px;
 }
 
-.timer span {
+#ideastorm .timer span {
   font-size: 2em;
   color: #000;
   background: #eee;
 }
 
-#time {
+#ideastorm .time {
   margin-top: -10px;
   padding-left: 10px;
   font-weight:bold;
