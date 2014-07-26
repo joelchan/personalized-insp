@@ -24,7 +24,7 @@ Filter = function (name, user, collection) {
   if (op) {
     this.op = op
   } else {
-    this.op = "in";
+    this.op = "eq";
   }
 };
 
@@ -69,7 +69,7 @@ FilterFactory = (function () {
        *        dot notation for document subfields)
        *    val  -  the value used for comparison with the field
        *    op  - (optional) the comparison operator to be applied
-       *        with the given value (ie: eq, neq, gt, lt, gte, lte)
+       *        with the given value (ie: eq, ne, gt, lt, gte, lte)
        * @Return
        *    boolean - true if successful creation of iflter that will
        *        not conflict with existing queries
@@ -77,11 +77,23 @@ FilterFactory = (function () {
       /*****************   Stub code *******************************/
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
+      //Need to check for conflicting operators on the same field
+      if (!op) {
+        op = "eq";
+      } 
+      var otherOps = Filters.find({name: name, 
+          user: user, 
+          col: col, 
+          field: field,
+          op: {'$ne': op}});
+      if (otherOps.count() != 0) { 
+        var newFilter = new Filter(name, user, col, field, val, op);
+        newFilter._id = Filters.insert(newFilter);
+        return true;
+      } else {
+        return false;
+      }
       /*****************   End Actual Implementation code **********/
-
-      var newFilter = new Filter(name, user, collection);
-      newFilter._id = Filters.insert(newFilter);
-      return newFilter;
     },
     getFilterList: function(name, user, col) {
       /**************************************************************

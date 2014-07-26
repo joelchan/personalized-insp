@@ -4,6 +4,8 @@
     "fontawesome4": {},
     "nvd3js": {},
     "moment": {},
-    "filter-collections": {}
+    "filter-collections": {},
+    "winston": {},
+    "winston-client": {}
   }
 }

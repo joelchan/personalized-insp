@@ -6,7 +6,9 @@
       "fontawesome4": {},
       "nvd3js": {},
       "moment": {},
-      "filter-collections": {}
+      "filter-collections": {},
+      "winston": {},
+      "winston-client": {}
     },
     "packages": {
       "iron-router": {
@@ -33,6 +35,16 @@
         "git": "https://github.com/julianmontagna/filter-collections.git",
         "tag": "v0.1.4",
         "commit": "87bc9cee7a23459e427d4613383be3f67f29245c"
+      },
+      "winston": {
+        "git": "https://github.com/tomrogers3/meteor-winston.git",
+        "tag": "v0.0.3",
+        "commit": "60dc02303ca003ef05254f94fbb9bfd40915d5d3"
+      },
+      "winston-client": {
+        "git": "https://github.com/farpoint/meteor-winston-client.git",
+        "tag": "v0.0.4",
+        "commit": "bc9959bf320e7745052d42e84038b27eec0b1a68"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",
