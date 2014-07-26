@@ -130,6 +130,10 @@ Router.map(function () {
     path: 'participation/', 
     template: 'NoParticipationPage',
   });
+  this.route('TestSummary', {
+    path: 'test', 
+    template: 'TestSummary',
+  });
 });
 
 //Sets layout for all routes to IdeaGen template

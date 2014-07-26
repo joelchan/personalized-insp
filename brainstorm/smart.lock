@@ -7,7 +7,8 @@
       "nvd3js": {},
       "moment": {},
       "filter-collections": {},
-      "pince": {}
+      "pince": {},
+      "mocha-web": {}
     },
     "packages": {
       "iron-router": {
@@ -39,6 +40,11 @@
         "git": "https://github.com/mad-eye/pince.git",
         "tag": "v0.0.5",
         "commit": "4524ecc0bdf043c49dc62e91bbd8a99c661081ed"
+      },
+      "mocha-web": {
+        "git": "https://github.com/mad-eye/meteor-mocha-web.git",
+        "tag": "v0.2.4",
+        "commit": "97194bc90ea9b32047973ff44562a3da3b4e7477"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

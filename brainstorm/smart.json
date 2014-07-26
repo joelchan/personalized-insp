@@ -5,6 +5,7 @@
     "nvd3js": {},
     "moment": {},
     "filter-collections": {},
-    "pince": {}
+    "pince": {},
+    "mocha-web": {}
   }
 }

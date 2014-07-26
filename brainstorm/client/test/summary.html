@@ -1,0 +1,14 @@
+<template name="TestSummary">
+  <div class="test-report">
+    <div class="server-results">
+      <h1> Server Test Results</h1>
+        {{> serverTestReport }}
+    </div>
+    <div class="client-results">
+      <h1> Client Test Results</h1>
+        {{> mochaTestReport }}
+    </div>
+  </div>
+</template>
+
+
