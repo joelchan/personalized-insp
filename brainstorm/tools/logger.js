@@ -1,10 +1,17 @@
 //Logging still needs refinement for logger instantiation and
 //function scope
 
-Logger = (function () {
+/********************************************************************
+ * Configuring Pince logger to enable multi-level logging for 
+ * system monitoring to console
+ *******************************************************************/
+//Set global message logging level
+Logger.setLevel('trace');
+
+EventLogger = (function () {
   return {
     /*****************************************************************
-    * Global object used to contain scope of all logging functionality
+    * Global object for logging high level system events to database
     ******************************************************************/
    
     logEvent: function(msg, user, type, misc) {

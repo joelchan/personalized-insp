@@ -101,7 +101,7 @@ Template.SurveyPage.events({
       var resp = getResponse();
       resp._id = SurveyResponses.insert(resp);
       var part = Session.get("currentParticipant");
-      Logger.logSubmittedSurvey(part, resp);
+      EventLogger.logSubmittedSurvey(part, resp);
       //Mark participant as finished
       Participants.update({_id: part._id},
           {$set: {hasFinished: true}});

@@ -14,7 +14,7 @@
        var collection = "ideas";
        var user = TestUserFactory.getTestUsers(1)[0];
        var newFilter = FilterFactory.create(
-           "Test Filter", user, collection, 'userID', );
+           "Test Filter", user, collection, 'userID' );
        if (newFilter) {
          //console.log("new filter created");
          var match = Filters.findOne({'name': "Test Filter"});
@@ -39,7 +39,7 @@
        var collection = "ideas";
        var user = TestUserFactory.getTestUsers(1)[0];
        var f = FilterFactory.create(
-           "Test Filter", user, collection, );
+           "Test Filter", user, collection );
        filterIdeas = FilterFactory.performQuery(f);
        //For now just check for equal returned counts
        if (filterIdeas.count() == allIdeas.count()) {

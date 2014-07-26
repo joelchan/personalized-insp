@@ -15,4 +15,4 @@ nvd3js
 moment
 filter-collections
 winston
-winston-client
+pince

@@ -58,13 +58,13 @@ FilterFactory = (function () {
       //'participants': Participants,
       //'surveyResponses': SurveyResponses
     //},
-    create: function(name, user, collection, field, val, op) {
+    create: function(name, user, col, field, val, op) {
       /**************************************************************
        * Create a new filter
        * @Params
        *    name - An identifier used but the filtering component
        *    user - the user that is using the query
-       *    collection - the colleciton that will be queried
+       *    col - the colleciton that will be queried
        *    field - the document field to be operated on (using
        *        dot notation for document subfields)
        *    val  -  the value used for comparison with the field

@@ -246,7 +246,7 @@ Template.IdeationPage.rendered = function() {
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
       console.log("exiting study early")
-    Logger.logExitStudy(Session.get("currentParticipant"));
+    EventLogger.logExitStudy(Session.get("currentParticipant"));
     exitIdeation();
   });
 
@@ -259,7 +259,7 @@ Template.IdeationPage.rendered = function() {
   Session.set("currentParticipant", Participants.findOne({_id: participant._id}));
   var participant = Session.get("currentParticipant");
   //console.log(participant);
-  Logger.logBeginIdeation(participant);
+  EventLogger.logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
   Meteor.setTimeout('exitIdeation()', 900000);
   //Setup timer for decrementing onscreen timer
@@ -332,15 +332,15 @@ Template.NotificationDrawer.events({
 
     if(!Notifications.findOne({_id: id}).handled){
       Notifications.update({_id: id}, {$set: {handled: true}});
-      Logger.logNotificationHandled(Session.get("currentParticipant"), id);
+      EventLogger.logNotificationHandled(Session.get("currentParticipant"), id);
       //return false; //handled event is same as first expansion event
     } else {
       var context = $(event.target).parent('.panel-heading').context;
       if($(context).hasClass("collapsed")){
-        Logger.logNotificationExpanded(Session.get("currentParticipant"), id);
+        EventLogger.logNotificationExpanded(Session.get("currentParticipant"), id);
         //console.log("logging expansion");
       } else {
-        Logger.logNotificationCollapsed(Session.get("currentParticipant"), id);
+        EventLogger.logNotificationCollapsed(Session.get("currentParticipant"), id);
         //console.log("logging collapse");
       }
     }
@@ -405,7 +405,7 @@ Template.SubmitIdeas.events({
               );
           //console.log(idea); 
           var ideaID = Ideas.insert(idea); //returns _id of Idea after it is inserted
-          Logger.logIdeaSubmission(participant, ideaID); 
+          EventLogger.logIdeaSubmission(participant, ideaID); 
           // Clear the text field
           $('#nextIdea').val('');
 
@@ -441,7 +441,7 @@ exitIdeation = function exitIdeation() {
   ******************************************************************/
   //Logs a partial idea if user hasn't submitted it
   $('#submitIdea').click();
-  Logger.logEndIdeation(Session.get("currentParticipant"));
+  EventLogger.logEndIdeation(Session.get("currentParticipant"));
   $('.exitStudy').addClass("hidden");
   Router.goToNextPage("IdeationPage");
 };
