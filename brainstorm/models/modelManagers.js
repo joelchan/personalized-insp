@@ -1,7 +1,7 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
-Logger.setLevel('Model:Managers', 'warn');
+Logger.setLevel('Model:Managers', 'info');
 
 UserFactory  = (function() {
    return {
@@ -81,11 +81,36 @@ IdeaFactory = (function() {
 
 ClusterFactory = (function() {
   return {
+    insertIdeaToCluster: function(idea, cluster) {
+      logger.trace("Inserting idea into cluster");
+      clusterIdeas = cluster.ideas;
+      clusterIdeas.push(idea);
+      idea.clusterIDs.push(cluster._id);
+      //Update the corresponding db entries for each idea and cluster
+      Ideas.update({_id: idea._id}, {$push: {'clusterIDs': cluster._id}});
+      Clusters.update({_id: cluster._id}, {$push: {ideas: idea}});
+    },
     create: function(ideas) {
       logger.trace("Creating new Cluster");
-      var cluster = new Cluster(ideas);
+      var cluster = new Cluster();
       cluster._id = Clusters.insert(cluster);
+      var factory = this;
+      ideas.forEach(function(idea) {
+        logger.trace("Adding idea with id + " + idea._id + " to cluster");
+        ClusterFactory.insertIdeaToCluster(idea, cluster);
+      });
       return cluster;
+    },
+    removeIdeaFromCluster: function(idea, cluster) {
+      //Not working and tested yet
+      logger.trace("Removing idea from cluster");
+      logger.debug("Cluster has " + cluster.ideas.length + " ideas");
+      removeMember(cluster.ideas, idea);
+      logger.debug("Cluster has " + cluster.ideas.length + " ideas after remove");
+      //idea.clusterIDs.push(cluster._id);
+      //Update the corresponding db entries for each idea and cluster
+      //Ideas.update({_id: idea._id}, {$push: {clusterIDs: cluster._id}});
+      //Clusters.update({_id: cluster._id}, {$push: {ideas: idea}});
     },
     createDummy: function(ideas, num) {
       if (!num) {

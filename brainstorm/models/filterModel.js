@@ -5,7 +5,7 @@ Filters = new Meteor.Collection("filters");
 // Configure logger for Filters
 var logger = new Logger('Filter');
 // Comment out to use global logging level
-Logger.setLevel('Filter', 'info');
+Logger.setLevel('Filter', 'trace');
 
 Filter = function (name, user, collection, field, val, op) {
   /******************************************************************
@@ -103,7 +103,35 @@ FilterManager = (function () {
       //logger.debug("found " + allOps.count() + " filters with matching");
       //logger.debug(allOps.fetch()[0]);
 
-      if (otherOps.count() === 0) { 
+      var createFilter = true;
+      if (otherOps.count() !== 0) { 
+        //Settle potentially conflicting ops
+        logger.trace("Found " + otherOps.count() + 
+            " filters with different ops from: " + op);
+        otherOps.forEach(function (filt) {
+        logger.trace("Comparing to filter with op " + filt.op);
+          switch (filt.op) {
+            case "eq":
+              //Only additional eq ops allowed
+              logger.trace("Filter op is eq");
+              createFilter = false;
+              break;
+            case "ne":
+              //Only additional ne ops allowed
+              logger.trace("Filter op is ne");
+              createFilter = false;
+              break;
+            default:
+              //Only eq & ne are conflicting
+              if (op === 'eq' || op === 'ne') {
+                logger.trace("Filter op is gt, lt, gte, lte");
+                createFilter = false;
+              }
+              break;
+          }
+        });
+      } 
+      if (createFilter) {
         logger.trace("No Conflicting filters found. Creating new filter");
         var newFilter = new Filter(name, user, col, field, val, op);
         newFilter._id = Filters.insert(newFilter);
@@ -113,6 +141,8 @@ FilterManager = (function () {
       } else {
         return false;
       }
+
+
       /*****************   End Actual Implementation code **********/
     },
     getFilterList: function(name, user, col) {
@@ -164,17 +194,69 @@ FilterManager = (function () {
       logger.trace("Beginning getFilterList");
       var result = {};
       //var rawFilters = this.getFilterList(name, user, col);
+      //Get user filters
       var userFilters = Filters.find({name: name, 
           user: user, 
           collection: col,
           field: 'userID'
       });
-      logger.debug("Found " + results.count() + " filters matching");
-       
-
-      logger.trace("Creating Session var with name: " + sessVar);
-      Session.set(sessVar, result);
-
+      logger.debug("Found " + userFilters.count() + " matching user filters");
+      if (userFilters.count() !== 0) {
+        //Grab userIDs from filters and get associated user documents
+        var IDs = getValsFromField(userFilters, 'val');
+        logger.debug("IDs of users: " + JSON.stringify(IDs));
+        result['users'] = MyUsers.find({_id: {$in: IDs}}).fetch();
+      }
+      //Get cluster filters
+      var clusterFilters = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: 'clusterIDs'
+      });
+      logger.debug("Found " + clusterFilters.count() + 
+          " matching cluster filters");
+      if (clusterFilters.count() !== 0) {
+        //Grab clusterIDs from filters and get associated cluster documents
+        IDs = getValsFromField(clusterFilters, 'val');
+        logger.debug("IDs of clusters: " + JSON.stringify(IDs));
+        result['clusters'] = Clusters.find({_id: {$in: IDs}}).fetch();
+      }
+      //Get time filters
+      var timeFilters = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: 'time'
+      });
+      logger.debug("Found " + timeFilters.count() + 
+          " matching time filters");
+      //Translate to begin and end times
+      if (timeFilters.count() !== 0) {
+        var time = {};
+        timeFilters.forEach(function(filt) {
+          if (filt.op === 'gt' || filt.op === 'gte') {
+            time['begin'] = filt.val;
+          } else if (filt.op === 'lt' || filt.op === 'lte') {
+            time['end'] = filt.val;
+          }
+        });
+        result['time'] = time;
+      }
+      //Return nonmatching filters as raw filters
+      var filts = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: {$nin: ['userID', 'clusterIDs', 'time']}
+      });
+      logger.debug("Found " + filts.count() + 
+          " matching misc filters");
+      if (filts.count() !== 0) {
+        result['misc'] = filts.fetch();
+      }
+      if (Meteor.isClient) {
+        logger.trace("Creating Session var with name: " + sessVar);
+        Session.set(sessVar, result);
+      }
+      return result;
       /*****************   End Actual Implementation code **********/
 
     },
