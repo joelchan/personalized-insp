@@ -285,12 +285,26 @@ FilterManager = (function () {
           //val: val
       //});
       //logger.debug("Found " + results.count() + " filters to remove");
-      Filters.remove({name: name, 
+      if (Meteor.isServer) {
+        Filters.remove({name: name, 
+            user: user, 
+            collection: col,
+            field: field,
+            val: val
+        });
+      } else {
+        //Can't delete data except by using individual IDs on client
+        var filts = Filters.find({name: name, 
           user: user, 
           collection: col,
           field: field,
           val: val
-      });
+        });
+        filts.forEach(function(filt) {
+          Filters.remove({_id: filt._id});
+        });
+
+      }
       var results = Filters.find({name: name, 
           user: user, 
           collection: col,
@@ -325,10 +339,21 @@ FilterManager = (function () {
           collection: col,
       });
       logger.debug("Found " + results.count() + " filters to remove");
-      Filters.remove({name: name, 
+      if (Meteor.isServer) {
+        Filters.remove({name: name, 
+            user: user, 
+            collection: col,
+        });
+      } else {
+        //Can't delete data except by using individual IDs on client
+        var filts = Filters.find({name: name, 
           user: user, 
-          collection: col,
-      });
+          collection: col
+        });
+        filts.forEach(function(filt) {
+          Filters.remove({_id: filt._id});
+        });
+      }
       results = Filters.find({name: name, 
           user: user, 
           collection: col,

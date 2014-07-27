@@ -376,8 +376,5 @@ describe("Filtering with FilterManager", function() {
           "Found misc filters where none should be found");
       //Need to check for misc filters if there are misc filters
     });
-    it("Retrieving mapped filter objects callback", function() {
-
-    });
   });
 });

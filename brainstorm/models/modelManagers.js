@@ -71,7 +71,13 @@ IdeaFactory = (function() {
         for (var i=0; i<ideas.length; i++) {
           ids.push(ideas._id);
         } 
-        Ideas.remove({_id: {$in: ids}});
+        if (Meteor.isServer) {
+          Ideas.remove({_id: {$in: ids}});
+        } else {
+          ideas.forEach(function(idea) {
+            Ideas.remove({_id: idea._id});
+          });
+        }
       } else {
         Ideas.remove({_id: ideas._id});
       }
@@ -129,7 +135,13 @@ ClusterFactory = (function() {
         for (var i=0; i<clusters.length; i++) {
           ids.push(clusters._id);
         } 
-        Clusters.remove({_id: {$in: ids}});
+        if (Meteor.isServer) {
+          Clusters.remove({_id: {$in: ids}});
+        } else {
+          clusters.forEach(function(cluster) {
+            Clusters.remove({_id: cluster._id});
+          });
+        }
       } else {
         Clusters.remove({_id: clusters._id});
       }
