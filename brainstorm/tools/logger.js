@@ -6,7 +6,7 @@
  * system monitoring to console
  *******************************************************************/
 //Set global message logging level
-Logger.setLevel('trace');
+Logger.setLevel('debug');
 
 EventLogger = (function () {
   return {

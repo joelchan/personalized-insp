@@ -2,7 +2,12 @@
 //    -- currently only supports comparison filters
 Filters = new Meteor.Collection("filters");
 
-Filter = function (name, user, collection) {
+// Configure logger for Filters
+var logger = new Logger('Filter');
+// Comment out to use global logging level
+Logger.setLevel('Filter', 'info');
+
+Filter = function (name, user, collection, field, val, op) {
   /******************************************************************
    * Filter definition with parameters for filtering across a given
    * collection> 
@@ -28,7 +33,7 @@ Filter = function (name, user, collection) {
   }
 };
 
-FilterFactory = (function () {
+FilterManager = (function () {
   return {
     //myCollections: (function() {
       //console.log("running init of all collections dictionary");
@@ -77,18 +82,33 @@ FilterFactory = (function () {
       /*****************   Stub code *******************************/
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
+      logger.trace("Beginning FilterManager.create");
       //Need to check for conflicting operators on the same field
       if (!op) {
+        logger.debug("no op provided to create filter");
         op = "eq";
       } 
       var otherOps = Filters.find({name: name, 
           user: user, 
-          col: col, 
+          collection: col, 
           field: field,
           op: {'$ne': op}});
-      if (otherOps.count() != 0) { 
+      logger.debug("found " + otherOps.count() + " filters with other ops");
+      //var allOps = Filters.find({name: name, 
+          //user: user, 
+          //collection: col, 
+          //field: field,
+          //});
+      //allOps = Filters.find({user: user, name: name});
+      //logger.debug("found " + allOps.count() + " filters with matching");
+      //logger.debug(allOps.fetch()[0]);
+
+      if (otherOps.count() === 0) { 
+        logger.trace("No Conflicting filters found. Creating new filter");
         var newFilter = new Filter(name, user, col, field, val, op);
         newFilter._id = Filters.insert(newFilter);
+        logger.debug("New Filter: ");
+        logger.debug(newFilter);
         return true;
       } else {
         return false;
@@ -108,6 +128,13 @@ FilterFactory = (function () {
       /*****************   Stub code *******************************/
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
+      logger.trace("Beginning getFilterList");
+      var results = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+      });
+      logger.debug("Found " + results.count() + " filters matching");
+      return results;
       /*****************   End Actual Implementation code **********/
 
     },
@@ -134,6 +161,20 @@ FilterFactory = (function () {
       /*****************   Stub code *******************************/
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
+      logger.trace("Beginning getFilterList");
+      var result = {};
+      //var rawFilters = this.getFilterList(name, user, col);
+      var userFilters = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: 'userID'
+      });
+      logger.debug("Found " + results.count() + " filters matching");
+       
+
+      logger.trace("Creating Session var with name: " + sessVar);
+      Session.set(sessVar, result);
+
       /*****************   End Actual Implementation code **********/
 
     },
@@ -154,6 +195,31 @@ FilterFactory = (function () {
       /*****************   Stub code *******************************/
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
+      logger.trace("Beginning remove matching filters");
+      //var results = Filters.find({name: name, 
+          //user: user, 
+          //collection: col,
+          //field: field,
+          //val: val
+      //});
+      //logger.debug("Found " + results.count() + " filters to remove");
+      Filters.remove({name: name, 
+          user: user, 
+          collection: col,
+          field: field,
+          val: val
+      });
+      var results = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: field,
+          val: val
+      });
+      logger.debug("Found " + results.count() + " filters after remove");
+      if (results.count() === 0) 
+        return true;
+      else
+        return false;
       /*****************   End Actual Implementation code **********/
 
     },
@@ -171,6 +237,25 @@ FilterFactory = (function () {
       /*****************   Stub code *******************************/
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
+      logger.trace("Beginning reset all matching filters");
+      var results = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+      });
+      logger.debug("Found " + results.count() + " filters to remove");
+      Filters.remove({name: name, 
+          user: user, 
+          collection: col,
+      });
+      results = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+      });
+      logger.debug("Found " + results.count() + " filters after remove");
+      if (results.count() === 0) 
+        return true;
+      else
+        return false;
       /*****************   End Actual Implementation code **********/
 
     },

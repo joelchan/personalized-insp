@@ -196,13 +196,13 @@ Meteor.startup(function() {
       MyUsers.insert(syn);
     }
 
-    var filter = Filters.findOne({name: "Syn Idea List Filter"});
-    if(filter === undefined)
-      FilterFactory.create("Syn Idea List Filter", syn, "ideas");
-    else {
-      Filters.remove({_id: filter._id});
-      FilterFactory.create("Syn Idea List Filter", syn, "ideas");
-    }
+    //var filter = Filters.findOne({name: "Syn Idea List Filter"});
+    //if(filter === undefined)
+      //FilterFactory.create("Syn Idea List Filter", syn, "ideas");
+    //else {
+      //Filters.remove({_id: filter._id});
+      //FilterFactory.create("Syn Idea List Filter", syn, "ideas");
+    //}
 
     if(Clusters.findOne({_id: "-1"})===undefined){
       Clusters.insert(root);

@@ -75,3 +75,17 @@ isInList = function(member, list, field) {
   }
   return false;
 };
+
+getIDs = function(objs) {
+  /******************************************************************
+   * Get the _id's of a list of mongo objects
+   * @params:
+   *    objs - either an array of mongodb documents, or a cursor 
+   *        to a list of mongodb documents
+   *****************************************************************/
+  ids = []
+  objs.forEach(function(obj) {
+    ids.push(obj._id);
+  });
+  return ids;
+};

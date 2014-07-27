@@ -359,7 +359,9 @@ Idea = function (content, user, prompt, participant) {
   this.isGamechanger = false;
   this.inCluster = false;
   //Optional fields not logged during non-experiments
-  this.participantID = participant._id;
+  if (participant) {
+    this.participantID = participant._id;
+  }
 };
 
 //Class that encapsulates prompt and workflow/role + url to each and url to the set
