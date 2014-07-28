@@ -11,6 +11,8 @@ Metoerite
 iron-router
 crypto-base
 moment
+nvd3js
+fontawesome4
 pince
 mocha-web
 
@@ -32,8 +34,6 @@ To run locally, just enter the brainstorm directory and run meteor
 > cd brainstorm
 > meteor
 ```
-
-
 
 To run with live tests, you will have to build the environment first time you run the tests:
 

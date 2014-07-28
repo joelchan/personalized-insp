@@ -213,6 +213,22 @@ FilterManager = (function () {
         });
         result['time'] = time;
       }
+      //Get EventType Filters
+      var typeFilters = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: 'eventTypeIDs'
+      });
+      logger.debug("Found " + typeFilters.count() + 
+          " matching EventType filters");
+      if (typeFilters.count() !== 0) {
+        //Grab EventTypeIDs from filters and get associated 
+        //cluster documents
+        IDs = getValsFromField(typeFilters, 'val');
+        logger.debug("IDs of EventTypes: " + JSON.stringify(IDs));
+        result['eventTypes'] = EventTypes.find(
+            {_id: {$in: IDs}}).fetch();
+      }
       //Return nonmatching filters as raw filters
       var filts = Filters.find({name: name, 
           user: user, 

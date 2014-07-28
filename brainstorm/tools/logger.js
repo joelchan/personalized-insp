@@ -8,13 +8,53 @@
 //Set global message logging level
 Logger.setLevel('debug');
 
+// Configure logger for event logging 
+var logger = new Logger('Tools:Logging');
+// Comment out to use global logging level
+Logger.setLevel('Tools:Logging', 'debug');
+
 EventLogger = (function () {
   return {
     /*****************************************************************
     * Global object for logging high level system events to database
     ******************************************************************/
-   
-    logEvent: function(msg, user, type, misc) {
+    log: function(type, data) {
+      /*
+      *  log any event. If insufficient data is given, warning is
+      *  logged, but does not throw error
+      *   Input:
+      *   type - the EventType associated with this event
+      *   data - (Optional) the data to be associated with the event
+      *       Specified as an object where only fieldNames specified
+      *       in type are stored
+      */ 
+      //The current user is assumed to have generated the event
+      var user = Session.get("currentUser");
+      var event = new Event(type, user);
+      //Index participantID and experimentID if experiment is set
+      var exp = Session.get("currentExperiment");
+      if (exp) {
+        var part = Session.get("currentParticipant");
+        event['participantID'] = part._id;
+        event['expID'] = exp._id;
+      }
+        
+      //Set each field specified in type
+      if (type.fields) {
+        type.fields.forEach(function(field) {
+          if (data[field]) {
+            event[field] = data[field];
+          } else {
+            logger.warn("Expected field \"" + field +
+                "\" but no data given for that field");
+          }
+        });
+      }
+      //Insert into db
+      event._id = Events.insert(event);
+      return event;
+    },
+    //logEvent: function(msg, user, type, misc) {
       /*
       *  log any event
       *   Input:
@@ -24,20 +64,20 @@ EventLogger = (function () {
       *   misc - an array of objects to log where each object
       *         has 2 fields, name and data
       */ 
-      var event;
-      if (type) {
-        event = new Event(msg, user._id, user.name, type);
-      } else {
-        event = new Event(msg, user._id, user.name, "info");
-      }
-      if (misc) {
-        //Write all misc data fields into the event
-        for (var i=0; i<misc.length; i++) {
-          event[misc[i].name] = misc[i].data
-        }
-      }
-      Events.insert(event);
-    },
+      //var event;
+      //if (type) {
+        //event = new Event(msg, user);
+      //} else {
+        //event = new Event(msg, user);
+      //}
+      //if (misc) {
+        ////Write all misc data fields into the event
+        //for (var i=0; i<misc.length; i++) {
+          //event[misc[i].name] = misc[i].data
+        //}
+      //}
+      //Events.insert(event);
+    //},
   
     logExpEvent: function(msg, part, type, misc) {
       /*
@@ -67,106 +107,180 @@ EventLogger = (function () {
    
     logParticipantLogin: function (participant) {
       var msg = "Participant logged into experiment";
-      this.logExpEvent(msg, participant);
+      var type = EventTypeManager.get(msg);
+      this.log(type);
     },
    
     logDenyParticipation: function(user) {
       var msg = "User was denied participation in experiment";
-      this.logExpEvent(msg, participant);
+      var type = EventTypeManager.get(msg);
+      this.log(type);
     },
    
     logConsent: function (participant) {
       var msg = "Participant consented to experiment";
-      this.logExpEvent(msg, participant);
+      var type = EventTypeManager.get(msg);
+      this.log(type);
     },
    
     logBeginIdeation: function(participant) {
       var msg = "Participant began ideation";
-      this.logExpEvent(msg, participant);
+      var type = EventTypeManager.get(msg);
+      this.log(type);
     },
    
     logIdeaSubmission: function(participant, ideaID) {
       var msg = "Participant submitted idea";
-      misc = [{name: "ideaID", data: ideaID}];
-      this.logExpEvent(msg, participant, "info", misc);
+      var type = EventTypeManager.get(msg);
+      var data = {"ideaID": ideaID};
+      this.log(type, data);
     },
    
     logEndIdeation: function(participant) {
       var msg = "Participant finished ideation";
-      this.logExpEvent(msg, participant);
+      var type = EventTypeManager.get(msg);
+      this.log(type);
     },
    
     logExitStudy: function(participant) {
       var msg = "Participant exited study early";
-      this.logExpEvent(msg, participant);
+      var type = EventTypeManager.get(msg);
+      this.log(type);
     },
    
     logSubmittedSurvey: function(participant, response) {
       var msg = "Participant submitted survey";
-      misc = [{name: 'responseID', data: response._id}];
-      this.logExpEvent(msg, participant, "info", misc);
+      var type = EventTypeManager.get(msg);
+      var data = {'responseID': response._id};
+      this.log(type, data);
     },
 
   /** Notification Drawer Events**/
     logNotificationHandled: function(participant, notificationID){
       var msg = "Participant handled a notification";
-      misc = [{name: "notificationID", data: notificationID}]
-      this.logExpEvent(msg, participant, "info", misc);
+      var type = EventTypeManager.get(msg);
+      var data = {"notificationID": notificationID};
+      this.log(type, data);
     },
     
     logNotificationExpanded: function(participant, notificationID){
       var msg = "Participant expanded a notification";
-      misc = [{name: "notificationID", data: notificationID}]
-      this.logExpEvent(msg, participant, "info", misc);
+      var type = EventTypeManager.get(msg);
+      var data = {"notificationID": notificationID};
+      this.log(type, data);
     },
 
     logNotificationCollapsed: function(participant, notificationID){
       var msg = "Participant collapsed a notification";
-      misc = [{name: "notificationID", data: notificationID}]
-      this.logExpEvent(msg, participant, "info", misc);
+      var type = EventTypeManager.get(msg);
+      var data = {"notificationID": notificationID};
+      this.log(type, data);
     },
 
     /** Notification events**/
     logSendExamples: function(notification){
       var msg = "Dashboard user sent examples";
-      var user = notification.sender;
-      misc = [{name: "sender", data: notification.sender._id},
-              {name: "recipient", data: notification.recipient},
-              {name: "type", data: notification.type},
-              {name: "examples", data: notification.examples}];
-      this.logEvent(msg, user, "notification", misc);
+      var type = EventTypeManager.get(msg);
+      var data  = {"sender": notification.sender._id,
+              "recipient": notification.recipient,
+              "type": notification.type,
+              "examples": notification.examples};
+      this.log(type, data);
     },
 
     logChangePrompt: function(notification){
       console.log(notification);
       var msg = "Dashboard user changed prompt";
-      var user = notification.sender;
-      console.log(user);
-      misc = [{name: "sender", data: notification.sender._id},
-              {name: "recipient", data: notification.recipient},
-              {name: "type", data: notification.type},
-              {name: "prompt", data: notification.prompt}];
-      this.logEvent(msg, user, "notification", misc);
+      var type = EventTypeManager.get(msg);
+      var data  = {"sender": notification.sender._id,
+              "recipient": notification.recipient,
+              "type": notification.type,
+              "prompt": notification.prompt};
+      this.log(type, data);
+      //var user = notification.sender;
+      //console.log(user);
+      //misc = [{name: "sender", data: notification.sender._id},
+              //{name: "recipient", data: notification.recipient},
+              //{name: "type", data: notification.type},
+              //{name: "prompt", data: notification.prompt}];
+      //this.logEvent(msg, user, "notification", misc);
     },
 
     logSendTheme: function(notification){
       var msg = "Dashboard user sent theme";
-      var user = notification.sender;
-      misc = [{name: "sender", data: notification.sender._id},
-              {name: "recipient", data: notification.recipient},
-              {name: "type", data: notification.type},
-              {name: "theme", data: notification.theme}];
-      this.logEvent(msg, user, "notification", misc);
+      var type = EventTypeManager.get(msg);
+      var data  = {"sender": notification.sender._id,
+              "recipient": notification.recipient,
+              "type": notification.type,
+              "theme": notification.theme};
+      this.log(type, data);
+      //var user = notification.sender;
+      //misc = [{name: "sender", data: notification.sender._id},
+              //{name: "recipient", data: notification.recipient},
+              //{name: "type", data: notification.type},
+              //{name: "theme", data: notification.theme}];
+      //this.logEvent(msg, user, "notification", misc);
     },
 
     logRequestHelp: function(notification){
       var msg = "Ideator requested help";
-      var user = notification.sender;
-      misc = [{name: "sender", data: notification.sender._id},
-              {name: "recipient", data: notification.recipient},
-              {name: "type", data: notification.type}];
-      this.logEvent(msg, user, "notification", misc);
+      var type = EventTypeManager.get(msg);
+      var data  = {"sender": notification.sender._id,
+              "recipient": notification.recipient,
+              "type": notification.type};
+      this.log(type, data);
+      //var user = notification.sender;
+      //misc = [{name: "sender", data: notification.sender._id},
+              //{name: "recipient", data: notification.recipient},
+              //{name: "type", data: notification.type}];
+      //this.logEvent(msg, user, "notification", misc);
     },
   };
 }());
-  
+
+EventTypeManager = (function() {
+  return {
+    create: function(desc, fields) {
+      var type = new EventType(desc, fields); 
+      type._id = EventTypes.insert(type);
+      return type;
+    },
+    get: function(desc, fields) {
+      var create = false;
+      if (fields) {
+        var results = EventTypes.find(
+          {desc: desc,
+            fields: fields
+          });
+        if (results.count() > 0) {
+          return results[0];
+        }
+      } else {
+        var results = EventTypes.find({desc: desc});
+        if (results.count() > 0) {
+          return results[0];
+        }
+      }
+      //No result foudn, so return newly created type
+      return this.create(desc, fields);
+    },
+    remove: function(types) {
+      if (types instanceof Array) {
+        ids = [];
+        if (Meteor.isServer) {
+          for (var i=0; i<types.length; i++) {
+            ids.push(types._id);
+          } 
+          EventTypes.remove({"_id": {$in: ids}}); 
+        } else {
+          types.forEach(function(type) {
+            EventTypes.remove({"_id": type._id}); 
+          });
+        } 
+      } else {
+        //types is just a single EventType object, not an array
+        EventTypes.remove({_id: types._id});  
+      }
+    }
+  };
+}());

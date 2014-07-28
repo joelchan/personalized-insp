@@ -16,6 +16,10 @@ UserFactory  = (function() {
        user._id = MyUsers.insert(user);
        return user;
      },
+     getTestUser: function() {
+       var userName = this.testName;
+       return this.create(userName, this.testType);
+     },
      getTestUsers: function(num) {
        users = [];
        for (var i=0; i<num; i++) {
