@@ -45,45 +45,6 @@ Meteor.startup(function(){
   }
 });
 
-Meteor.startup(function(){
-	if (Meteor.isClient) {
-		console.log(IdeaFilter = new Meteor.FilterCollections(IdeasToProcess, {
-		      template: 'filterbox', 
-		      sort: {
-		      	defaults: [
-		      		['time', 'asc'],
-		      		['userName', 'asc']
-		      	]
-		      },
-		      filters: {
-		        'userID': {
-		          title: "UserIDs",
-		          // operator: ['$in'],
-		          // condition: ['$and'],
-		          // searchable: true
-		        },
-		        'userName': {
-		        	title: "User Name",
-		        	// condition: ['$and'],
-		         //  	searchable: true
-		        },
-		        'isGamechanger': {
-		        	title: "Is Idea Gamechanger",
-		        	// condition: ['$and'],
-		         //  	searchable: true
-		        },
-		        'inCluster': {
-		        	title: "Idea is in a Session",
-		        	// condition: ['$and'],
-		         //  	searchable: true
-		        }
-		      }
-		    }));
-		//console.log(IdeaFilter);
-		//IdeaFilter.filter.set('userName', {value: ['asdf'] , operator: ['$in']});
-	}
-})
-
 // Manually define dictionary of all collections
 MyCollections = 
 {

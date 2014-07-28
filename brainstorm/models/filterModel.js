@@ -5,7 +5,7 @@ Filters = new Meteor.Collection("filters");
 // Configure logger for Filters
 var logger = new Logger('Filter');
 // Comment out to use global logging level
-Logger.setLevel('Filter', 'trace');
+Logger.setLevel('Filter', 'info');
 
 Filter = function (name, user, collection, field, val, op) {
   /******************************************************************
@@ -153,6 +153,7 @@ FilterManager = (function () {
        * @Return
        *    object with 5 possible fields
        *      users - a list of users referenced by filters
+       *      inCluster - a boolean referenced by filters
        *      clusters - a list of clusters referenced by filters
        *      eventTypes - the list of Event types
        *      time - a single object with 2 possible fields: begin
@@ -179,6 +180,21 @@ FilterManager = (function () {
         logger.debug("IDs of users: " + JSON.stringify(IDs));
         result['users'] = MyUsers.find({_id: {$in: IDs}}).fetch();
       }
+      //Get inCluster Filters
+      var inClusterFilters = Filters.findOne({name: name,
+          user: user,
+          collection: col,
+          field: 'inCluster'
+        });
+      // logger.debug("Found " + inClusterFilters.count() + 
+      //     " matching inCluster filters");
+      if (inClusterFilters) {
+        //Grab clusterIDs from filters and get associated cluster documents
+        bool = inClusterFilters.val;
+        logger.debug("bools of inClusters: " + bool);
+        result['inCluster'] = bool;
+      }
+
       //Get cluster filters
       var clusterFilters = Filters.find({name: name, 
           user: user, 
@@ -257,7 +273,7 @@ FilterManager = (function () {
        *    collection - the colleciton that will be queried
        *    field - the document field to be operated on (using
        *        dot notation for document subfields)
-       *    val  -  the value used for comparison with the field
+       *    val  - (optional) the value used for comparison with the field
        *
        * @Return
        *    boolean if the filter was successfully removed
@@ -274,31 +290,59 @@ FilterManager = (function () {
       //});
       //logger.debug("Found " + results.count() + " filters to remove");
       if (Meteor.isServer) {
-        Filters.remove({name: name, 
+        if(val){
+          Filters.remove({name: name, 
+              user: user, 
+              collection: col,
+              field: field,
+              val: val
+          });
+        } else {
+          Filters.remove({name: name, 
+              user: user, 
+              collection: col,
+              field: field
+          });
+        }
+      } else {
+        //Can't delete data except by using individual IDs on client
+        if(val){ 
+          var filts = Filters.find({name: name, 
+            user: user, 
+            collection: col,
+            field: field,
+            val: val
+          });
+          filts.forEach(function(filt) {
+            Filters.remove({_id: filt._id});
+          });
+        } else {
+          var filts = Filters.find({name: name, 
+            user: user, 
+            collection: col,
+            field: field
+          });
+          filts.forEach(function(filt) {
+            Filters.remove({_id: filt._id});
+          });
+        }
+
+      }
+      if(val){
+        var results = Filters.find({name: name, 
             user: user, 
             collection: col,
             field: field,
             val: val
         });
       } else {
-        //Can't delete data except by using individual IDs on client
-        var filts = Filters.find({name: name, 
-          user: user, 
-          collection: col,
-          field: field,
-          val: val
-        });
-        filts.forEach(function(filt) {
-          Filters.remove({_id: filt._id});
-        });
-
+        var results = Filters.find({name: name, 
+              user: user, 
+              collection: col,
+              field: field
+          });
       }
-      var results = Filters.find({name: name, 
-          user: user, 
-          collection: col,
-          field: field,
-          val: val
-      });
+
       logger.debug("Found " + results.count() + " filters after remove");
       if (results.count() === 0) 
         return true;
@@ -372,4 +416,3 @@ FilterManager = (function () {
     },
   };
 }());
-

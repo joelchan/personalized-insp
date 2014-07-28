@@ -6,7 +6,6 @@
       "fontawesome4": {},
       "nvd3js": {},
       "moment": {},
-      "filter-collections": {},
       "pince": {},
       "mocha-web": {}
     },
@@ -30,11 +29,6 @@
         "git": "https://github.com/acreeger/meteor-moment.git",
         "tag": "v2.6.0",
         "commit": "26156df681750fd6e6ed77043eef32b6653ebbdf"
-      },
-      "filter-collections": {
-        "git": "https://github.com/julianmontagna/filter-collections.git",
-        "tag": "v0.1.4",
-        "commit": "87bc9cee7a23459e427d4613383be3f67f29245c"
       },
       "pince": {
         "git": "https://github.com/mad-eye/pince.git",

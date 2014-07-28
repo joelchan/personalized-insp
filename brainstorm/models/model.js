@@ -44,12 +44,12 @@ Idea = function (content, user, prompt, participant) {
 };
 
 
-Cluster = function(ideas){
-  if (!ideas)
+Cluster = function(ideaIDs){
+  if (!ideaIDs)
   {
-    this.ideas = [];
+    this.ideaIDs = [];
   } else {
-    this.ideas = ideas;
+    this.ideaIDs = ideaIDs;
   }
   this.name = "Not named yet"; //default name for unnamed clusters
   this.position; //used only for clustering interface and tag cloud

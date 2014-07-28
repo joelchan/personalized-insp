@@ -1,3 +1,7 @@
+// Configure logger for server tests
+var logger = new Logger('Client:Clustering');
+// Comment out to use global logging level
+Logger.setLevel('Client:Clustering', 'trace');
 
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
@@ -75,7 +79,7 @@ Template.cluster.rendered = function(){
         }
       //if item is coming from the idealist
       } else*/ if ($(ui.sender).hasClass('ideadeck')){
-        myIdea = IdeasToProcess.findOne({_id: myIdeaID});
+        myIdea = Ideas.findOne({_id: myIdeaID});
         updateIdeas(myIdeaID, true);
 
       //if item is idea coming from another cluster
@@ -104,10 +108,9 @@ Template.cluster.rendered = function(){
   $('.cluster').draggable({
     stop: function() {
       var id = $(this).attr('id');
+      var cluster = Clusters.findOne({_id: id});
       var pos = $(this).position();
-      Clusters.update({_id: id},
-        {$set: {position: pos}
-      });
+      ClusterFactory.updatePosition()
     },
     //snap: "#clusterarea ul", 
     //snapMode: "outer", 
@@ -121,7 +124,7 @@ Template.cluster.rendered = function(){
 Template.Clustering.helpers({
   ideas : function(){
     //var filter = Session.get("currentFilter");//Filters.findOne({name: "Syn Idea List Filter", user: Session.get("currentUser")});
-    return IdeasToProcess.find();//FilterFactory.performQuery(filter);//
+    return Ideas.find();//FilterFactory.performQuery(filter);//
   },
 
   clusters : function(){
@@ -170,8 +173,11 @@ Template.ideaitem.helpers({
 ********************************************************************/
 Template.cluster.helpers({
   clusterideas : function(){
-    var ideaIDs = $(this)[0].ideas;
-    return IdeasToProcess.find({_id: {$in: ideaIDs}})
+    logger.trace("Getting Cluster Ideas");
+    var ideaIDs = $(this)[0].ideaIDs;
+    var cursor = Ideas.find({_id: {$in: []}});
+    logger.trace("adsfasdf");
+    return cursor
   },
 
   named : function(){
@@ -243,10 +249,10 @@ Template.Clustering.events({
   'click .gamechangestar' : function(){
     console.log(this);
     var id = (this)._id;
-    var idea = IdeasToProcess.findOne({_id: id});
+    var idea = Ideas.findOne({_id: id});
     var state = !idea.isGamechanger;
 
-    IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
+    Ideas.update({_id: id}, {$set: {isGamechanger: state}});
   },
 
   'click .cluster-item': function(){
@@ -275,8 +281,8 @@ Template.Clustering.events({
 ********************************************************************/
 function createCluster(item) {
   var ideaID = item.attr('id');
-  var ideas = [ideaID];//[IdeasToProcess.findOne({_id: ideaID})];
-  var cluster = new Cluster(ideas);
+  var ideas = [Ideas.findOne({_id: ideaID})];
+  var cluster = ClusterFactory.create(ideas);
   cluster.position = {top: 55, left:0};
   var clusterID = Clusters.insert(cluster);
   updateIdeas(ideaID, true);
@@ -293,19 +299,19 @@ function processIdeaSender(ui, ideaID){
   var sender = Clusters.findOne({_id: senderID});//remove that idea from sending cluster
     
   //find all ideas in clusters idea list with matching id (should be one)>need error check here
-  myIdea = $.grep(sender.ideas, function(idea){
+  myIdea = $.grep(sender.ideaIDs, function(idea){
     return idea === ideaID;
   })[0];
 
   Clusters.update({_id: senderID},
     {$pull:
-      {ideas: ideaID}
+      {ideaIDs: ideaID}
   });
 
   //if sending cluster now has no ideas, get rid of it
-  var ideasLength = Clusters.findOne({_id: senderID}).ideas.length;
+  var numIdeas = Clusters.findOne({_id: senderID}).ideaIDs.length;
   //console.log(ideasLength);
-  if(ideasLength === 0){
+  if(numIdeas === 0){
     Clusters.remove(senderID);
   }
   return senderID;
@@ -315,7 +321,7 @@ function processIdeaSender(ui, ideaID){
 * Convenince function used to update items in the Ideas Collection  *
 ********************************************************************/
 function updateIdeas(ideaID, inCluster){
-  IdeasToProcess.update({_id: ideaID}, 
+  Ideas.update({_id: ideaID}, 
     {$set:
       {inCluster: inCluster}
   });
@@ -323,12 +329,12 @@ function updateIdeas(ideaID, inCluster){
 
 function updateClusterList(ideaID, clusterID, adding){
   if (adding){
-    IdeasToProcess.update({_id: ideaID}, 
+    Ideas.update({_id: ideaID}, 
       {$addToSet:
         {clusters: clusterID}
     });
   } else {
-    IdeasToProcess.update({_id: ideaID}, 
+    Ideas.update({_id: ideaID}, 
       {$pull:
         {clusters: clusterID}
     });

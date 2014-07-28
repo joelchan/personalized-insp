@@ -80,11 +80,5 @@ Meteor.startup(function(){
 		Meteor.publish("notifications", function(){
 			return Notifications.find();
 		});
-		/*****************************************************************
-		* Publish FilterCollections Filters
-		******************************************************************/	
-		Meteor.FilterCollections.publish(IdeasToProcess, {
-			name: 'ideaListFilter'
-		});
 	}
 });

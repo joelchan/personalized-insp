@@ -93,12 +93,12 @@ ClusterFactory = (function() {
   return {
     insertIdeaToCluster: function(idea, cluster) {
       logger.trace("Inserting idea into cluster");
-      clusterIdeas = cluster.ideas;
-      clusterIdeas.push(idea);
+      clusterIdeas = cluster.ideaIDs;
+      clusterIdeas.push(idea._id);
       idea.clusterIDs.push(cluster._id);
       //Update the corresponding db entries for each idea and cluster
       Ideas.update({_id: idea._id}, {$push: {'clusterIDs': cluster._id}});
-      Clusters.update({_id: cluster._id}, {$push: {ideas: idea}});
+      Clusters.update({_id: cluster._id}, {$push: {ideaIDs: idea._id}});
     },
     create: function(ideas) {
       logger.trace("Creating new Cluster");
@@ -113,14 +113,29 @@ ClusterFactory = (function() {
     },
     removeIdeaFromCluster: function(idea, cluster) {
       //Not working and tested yet
-      logger.trace("Removing idea from cluster");
-      logger.debug("Cluster has " + cluster.ideas.length + " ideas");
-      removeMember(cluster.ideas, idea);
-      logger.debug("Cluster has " + cluster.ideas.length + " ideas after remove");
+      // logger.trace("Removing idea from cluster");
+      // logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
+      // removeMember(cluster.ideas, idea);
+      
+      // logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas after remove");
       //idea.clusterIDs.push(cluster._id);
       //Update the corresponding db entries for each idea and cluster
       //Ideas.update({_id: idea._id}, {$push: {clusterIDs: cluster._id}});
-      //Clusters.update({_id: cluster._id}, {$push: {ideas: idea}});
+      // Ideas.update({_id: cluster._id},
+      //   {$pull:
+      //     {ideaIDs: ideaID}
+      // });
+      // //Clusters.update({_id: cluster._id}, {$push: {ideas: idea}});
+      // Clusters.update({_id: cluster._id},
+      //   {$pull:
+      //     {ideaIDs: ideaID}
+      // });
+    },
+    updatePosition: function(position, cluster){
+      Clusters.update({_id: cluster._id},
+        {$set: {position: position}
+      });
+      cluster.position = position;
     },
     createDummy: function(ideas, num) {
       if (!num) {
