@@ -22,6 +22,10 @@
 	pointer-events: none;
 }
 
+.filter-reset{
+	margin-top: 5px;
+}
+
 .filter-dropdown {
 	width: 100%;
 	background-color: #fcfcfc;

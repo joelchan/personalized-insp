@@ -131,7 +131,7 @@ ClusterFactory = (function() {
       //     {ideaIDs: ideaID}
       // });
     },
-    updatePosition: function(position, cluster){
+    updatePosition: function(cluster, position){
       Clusters.update({_id: cluster._id},
         {$set: {position: position}
       });

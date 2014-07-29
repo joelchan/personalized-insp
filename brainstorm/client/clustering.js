@@ -1,7 +1,7 @@
-// Configure logger for server tests
-var logger = new Logger('Client:Clustering');
-// Comment out to use global logging level
-Logger.setLevel('Client:Clustering', 'trace');
+// // Configure logger for server tests
+// var logger = new Logger('Client:Clustering');
+// // Comment out to use global logging level
+// Logger.setLevel('Client:Clustering', 'trace');
 
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
@@ -110,7 +110,10 @@ Template.cluster.rendered = function(){
       var id = $(this).attr('id');
       var cluster = Clusters.findOne({_id: id});
       var pos = $(this).position();
-      ClusterFactory.updatePosition()
+      //ClusterFactory.updatePosition(cluster, pos)
+      Clusters.update({_id: cluster._id},
+        {$set: {position: pos}
+      });
     },
     //snap: "#clusterarea ul", 
     //snapMode: "outer", 
@@ -173,10 +176,10 @@ Template.ideaitem.helpers({
 ********************************************************************/
 Template.cluster.helpers({
   clusterideas : function(){
-    logger.trace("Getting Cluster Ideas");
+    // logger.trace("Getting Cluster Ideas");
     var ideaIDs = $(this)[0].ideaIDs;
-    var cursor = Ideas.find({_id: {$in: []}});
-    logger.trace("adsfasdf");
+    var cursor = Ideas.find({_id: {$in: ideaIDs}});
+    // logger.trace("adsfasdf");
     return cursor
   },
 
@@ -282,7 +285,7 @@ Template.Clustering.events({
 function createCluster(item) {
   var ideaID = item.attr('id');
   var ideas = [Ideas.findOne({_id: ideaID})];
-  var cluster = ClusterFactory.create(ideas);
+  var cluster = new Cluster(ideas);//ClusterFactory.create(ideas);
   cluster.position = {top: 55, left:0};
   var clusterID = Clusters.insert(cluster);
   updateIdeas(ideaID, true);

@@ -14,7 +14,7 @@
 			<button id="time-filters" class="filter-drop-button btn btn-info">
 				Time<span class="caret"></span>
 			</button>
-			<button id="gamechange-filters" class="filter-drop-button btn btn-info">
+			<button id="gamechange-filter" class="filter-drop-button btn btn-info">
 				<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
 			</button>
 		</span>
@@ -40,7 +40,24 @@
 	<div id="select-themed-filters" class="filter-dropdown col-md-3">
 		<h5>Select Themed or Unthemed</h5>
 		<div class="filter-list">
-				
+			<div class="radio">
+			  <label>
+			    <input type="radio" name="themedRadios" id="themedRadios1" value="true">
+			   	In a theme
+			  </label>
+			</div>
+			<div class="radio">
+			  <label>
+			    <input type="radio" name="themedRadios" id="themedRadios2" value="false">
+			    Not in a theme
+			  </label>
+			</div>
+			<div class="radio disabled">
+			  <label>
+			    <input type="radio" name="themedRadios" id="themedRadios3" value="neither">
+			    Both
+			  </label>
+			</div>
 		</div>
 		<div class="apply-filter">
 			<button class="btn btn-default">Cancel</button>
@@ -53,7 +70,7 @@
 		<h5>Select Themes</h5>
 		<div class="filter-list">
 			<select id="select-themes" multiple class="form-control">
-				{{#each cluster}}
+				{{#each clusters}}
 					<option val="mo-{{this._id}}">{{this.name}}</option>
 				{{/each}}
 			</select>
@@ -70,7 +87,8 @@
 			<h5>Select Time Window</h5>
 			<div class="time-select-box">
 				<label>Start: </label>
-				<select class="form-control time-select">
+				<select id="select-start" class="form-control time-select">
+					<option>0</option>
   					<option>1</option>
 					<option>2</option>
 					<option>3</option>
@@ -85,13 +103,12 @@
 					<option>12</option>
 					<option>13</option>
 					<option>14</option>
-					<option>15</option>
 				</select>
 				<span> minutes ago.</span>
 			</div>
 			<div class="time-select-box">
 				<label>End: </label>
-				<select class="form-control time-select">
+				<select id="select-end" class="form-control time-select">
   					<option>1</option>
 					<option>2</option>
 					<option>3</option>
@@ -101,7 +118,6 @@
 					<option>7</option>
 					<option>8</option>
 					<option>9</option>
-					<option>10</option>
 					<option>10</option>
 					<option>11</option>
 					<option>12</option>
@@ -119,15 +135,10 @@
 	</div>
 
 
-	<!-- {{#if fcFilterActive}}
-		<h4>Active Filters</h4>
-		{{#each fcFilterActive}}
-			<button href="#" class="fc-filter-clear">
-			{{title}}: {{operator}} {{value}}
-			</button>
-		{{/each}}
-	{{/if}} -->
-	<button href="#" class="btn btn-info btn-xs fc-filter-reset">Reset all filters</button>
+	{{#each getMappedFilters}}
+		<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this}}</span>
+	{{/each}}
+	<button href="#" id="reset-filters" class="btn btn-info btn-xs filter-reset">Reset all filters</button>
 	<ul id="idealist" class="ideadeck ui-sortable">
 		<li class="sort-disabled"></li>
 			{{#each ideas}}
