@@ -1,6 +1,6 @@
 Notifications = new Meteor.Collection("notifications"); //collection for messaging from facilitators to ideators
 
-var Types = {
+var NotificationTypes = {
 	DIRECTIONS: {val: -1, title: "Directions"},
 	SEND_EXAMPLES: {val: 0, title: "You've been sent examples"},
 	CHANGE_PROMPT: {val: 1, title: "Your prompt has been changed"},
@@ -9,7 +9,7 @@ var Types = {
 	CHAT_MESSAGE: {val: 4, title: "You've been sent a message"}
 }
 
-Object.freeze(Types);
+Object.freeze(NotificationTypes);
 
 
 Notification = function(sender, recipient){
@@ -22,44 +22,56 @@ Notification = function(sender, recipient){
 
 directions = new Notification('ideagens','all');
 directions._id = 'directions';
-directions.type = Types.DIRECTIONS;
+directions.type = NotificationTypes.DIRECTIONS;
 
 sendExamplesNotify = function(sender, recipient, examples){
 	var notification = new Notification(sender, recipient);
-	notification.type = Types.SEND_EXAMPLES;
+	notification.type = NotificationTypes.SEND_EXAMPLES;
 	notification.examples = examples;
 	Notifications.insert(notification);
-	Logger.logSendExamples(notification);
+	EventLogger.logSendExamples(notification);
+	checkIfHelped(recipient);
 }
 
 changePromptNotify = function(sender, recipient, prompt){
 	var notification = new Notification(sender, recipient);
-	notification.type = Types.CHANGE_PROMPT;
+	notification.type = NotificationTypes.CHANGE_PROMPT;
 	notification.prompt = prompt;
 	Notifications.insert(notification);
-	Logger.logChangePrompt(notification);
+	EventLogger.logChangePrompt(notification);
+	checkIfHelped(recipient);
 }
 
 sendThemeNotify = function(sender, recipient, clusterID){
 	var notification = new Notification(sender, recipient);
-	notification.type = Types.SEND_THEME;
+	notification.type = NotificationTypes.SEND_THEME;
 	notification.theme = clusterID;
 	Notifications.insert(notification);
-	Logger.logSendTheme(notification);
+	EventLogger.logSendTheme(notification);
+	checkIfHelped(recipient);
 }
 
 requestHelpNotify = function(sender, recipient){
 	var notification = new Notification(sender, recipient);
-	notification.type = Types.REQUEST_HELP;
+	notification.type = NotificationTypes.REQUEST_HELP;
+	notification.message = "Help Requested";
 	Notifications.insert(notification);
-	Logger.logRequestHelp(notification);
+	EventLogger.logRequestHelp(notification);
 }
 
 chatNotify = function(sender, recipient, message){
 	var notification = new Notification(sender, recipient);
 	notification.message = message;
-	notification.type = Types.CHAT_MESSAGE;
+	notification.type = NotificationTypes.CHAT_MESSAGE;
 	Notifications.insert(notification);
 }
 
+checkIfHelped = function(recipient){
+	var needHelp = Notifications.find({sender: recipient, handled: false});
+	needHelp.forEach(function(note){
+		Notifications.update({_id: note._id},
+			{$set: {handled: true}
+		});
+	});
+}
 

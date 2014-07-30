@@ -216,24 +216,22 @@ Template.userseries.rendered = function(){
 		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
 		"Dashboard user sent theme"]}});
 	var leverEventMarks = svg.append("g")
-							.selectAll("rect");
+							.selectAll("circle");
 	var leverEvents = [];
 
 	function refreshLeverEvents(leverData){
 		leverEventMarks.data(leverData)
 					.enter()
-					.append("rect")
-					.attr("height", "50px")
-					.attr("width", "1.5px")
-					.attr("class", "bar")
+					.append("circle")
+					.attr("radius", "20px")
 					.attr("id", function(d){
 						return d._id;
 					})
-					.attr("x", function(d){
+					.attr("cx", function(d){
 						var time = new Date(d.time);
 						return x(time);
 					})
-					.attr("y", 0)
+					.attr("cy", "20px")
 					.attr("fill", function(d){
 						var desc = d.description;
 						if(desc === "Dashboard user sent examples")

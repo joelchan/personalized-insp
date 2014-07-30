@@ -414,7 +414,7 @@ Template.SubmitIdeas.events({
     },
 
     'click #request-help' : function(){
-      requestHelpNotify(Session.get("currentUser"), "db");
+      requestHelpNotify(Session.get("currentUser")._id, "db");
     },
 
     //waits 3 seconds after user stops typing to change isTyping flag to false

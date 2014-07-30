@@ -133,6 +133,15 @@
 		</div>
 	</div>
 
+	<ul id="idealist" class="ideadeck ui-sortable">
+		<li class="sort-disabled"></li>
+			{{#each ideas}}
+				{{> ideaitem}}
+			{{/each}}
+	</ul>
+</template>
+
+<template name="activefilters">
 	<div class="active-filters">
 	{{#each getMappedFilters}}
 		{{#if users}}
@@ -171,16 +180,4 @@
 	{{/if}}
 	</div>
 
-	<ul id="idealist" class="ideadeck ui-sortable">
-		<li class="sort-disabled"></li>
-			{{#each ideas}}
-				{{> ideaitem}}
-			{{/each}}
-	</ul>
-</template>
-
-<template name="applied-filters">
-	{{#each filters}}
-		
-	{{/each}}
 </template>

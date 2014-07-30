@@ -17,7 +17,9 @@ Template.filterbox.helpers({
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
 	},
+});
 
+Template.activefilters.helpers({
 	getMappedFilters : function(){
 		var mappedFilts = FilterManager.createMappedFilterList("Ideas Filter", Session.get("currentUser"), "ideas", "mappedFilters");
 		mappedFilts = $.map(mappedFilts, function(val, key){
@@ -138,7 +140,9 @@ Template.filterbox.events({
 			$icon.switchClass('fa-star', 'fa-star-o');
 		}
 	},
+});
 
+Template.activefilters.events({
 	'click #reset-filters' : function(){
 		//console.log("resetting filters");
 		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");

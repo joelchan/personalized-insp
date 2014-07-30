@@ -48,6 +48,13 @@ Template.chatdrawer.helpers({
 
 	isSender : function(){
 		return (this.sender === Session.get("currentUser")._id);
+	},
+
+	helpRequest : function(){
+		if(this.type.val = 3)
+			return true;
+		else
+			return false;
 	}
 });
 

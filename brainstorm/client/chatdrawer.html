@@ -7,10 +7,23 @@
 			<div id="messageview">
 			{{#each messages}}
 				<div class="chatmessage">
-					<span class="message-content {{#if isSender}} sender {{/if}}">
-						<label>{{username}}: </label>
-						{{this.message}}
-					</span>
+					{{#unless helpRequest}}
+						<span class="message-content {{#if isSender}} sender {{/if}}">
+							<label>{{username}}: </label>
+							{{this.message}}
+						</span>
+					{{/unless}}
+					{{#if helpRequest}}
+						{{#unless this.handled}}
+							<span class="message-content helprequest">
+								<label>{{username}} is requesting help! </label>
+							</span>
+						{{else}}
+							<span class="message-content">
+								<label>{{username}} has been helped</label>
+							</span>
+						{{/unless}}
+					{{/if}}
 				</div>
 			{{/each}}
 			</div>

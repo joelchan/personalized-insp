@@ -189,14 +189,14 @@ Template.cluster.helpers({
     else return false
   },
 
-  clusterchildren : function(){
-    var children = $(this)[0].children;
-    if (children === undefined)
-      return false;
-    if(children.length > 0)
-      return $(this)[0].children;
-    else return false;
-  },
+  // clusterchildren : function(){
+  //   var children = $(this)[0].children;
+  //   if (children === undefined)
+  //     return false;
+  //   if(children.length > 0)
+  //     return $(this)[0].children;
+  //   else return false;
+  // },
 
   isCollapsed : function(){
     return $(this)[0].isCollapsed;
@@ -209,19 +209,6 @@ Template.cluster.helpers({
 * is done by the mouseover event.
 ********************************************************************/
 Template.Clustering.events({
-  //checks that a name has been provided for all clusters
-  // 'click button#finish' : function(){
-  //   var finished = true;
-  //   Clusters.find().forEach(function(myCluster){
-  //     if(myCluster.name == undefined || myCluster.name ==="" 
-  //       || myCluster.name ==="Not named yet"){
-  //       alert("Please name all clusters");
-  //       finished = false;
-  //       return finished;
-  //     }
-  //   });
-  // },
-
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
     var $myCluster = $(event.target).parent().parent();
@@ -285,7 +272,7 @@ Template.Clustering.events({
 function createCluster(item) {
   var ideaID = item.attr('id');
   var ideas = [Ideas.findOne({_id: ideaID})];
-  var cluster = new Cluster(ideas);//ClusterFactory.create(ideas);
+  var cluster = new Cluster([ideaID]);//ClusterFactory.create(ideas);
   cluster.position = {top: 55, left:0};
   var clusterID = Clusters.insert(cluster);
   updateIdeas(ideaID, true);
