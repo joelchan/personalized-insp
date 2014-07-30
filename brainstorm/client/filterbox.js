@@ -26,15 +26,14 @@ Template.filterbox.helpers({
 			return obj;
 		});
 		console.log(mappedFilts);
-		return [];
+		return mappedFilts;
 	}
 });
 
 Template.filterbox.events({
 
-	'click #select-part-filters > div.apply-filter > button.apply' :function(){
-		//FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "userID");
-
+	'click #select-parts-filters > div.apply-filter > button.apply' :function(){
+		console.log("applying participant filters");
 		var options = $('#select-participants option:selected');
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
@@ -42,6 +41,8 @@ Template.filterbox.events({
 			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
 		    return id;
 		});
+
+		console.log(options);
 
 	},
 
@@ -108,6 +109,7 @@ Template.filterbox.events({
 	},
 
 	'click #reset-filters' : function(){
-		FilterManager.reset("IdeasFilter", Session.get("currentUser"), "ideas");
+		console.log("resetting filters");
+		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
 	}
 });
