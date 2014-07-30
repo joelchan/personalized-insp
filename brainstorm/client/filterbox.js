@@ -1,5 +1,5 @@
 Template.filterbox.rendered = function(){
-	// FilterFactory.create("Syn Idea List Filter", Session.get("currentUser"), "ideas");
+
 }
 var filterName;
 Template.filterbox.helpers({
@@ -14,7 +14,7 @@ Template.filterbox.helpers({
 	ideas : function(){
 		return IdeasToProcess.find();
 	},
-	clusters: function(){
+	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
 	},
 
@@ -25,12 +25,20 @@ Template.filterbox.helpers({
 			obj[key] = val;
 			return obj;
 		});
-		console.log(mappedFilts);
+		//console.log(mappedFilts);
 		return mappedFilts;
+	},
+
+	isFilter: function(){
+		return (FilterManager.getFilterList("Ideas Filter", Session.get("currentUser"), "ideas").count() > 0);
 	},
 
 	users : function(){
 		return this.users;
+	},
+
+	clusters: function(){
+		return this.clusters;
 	},
 
 	inClusterFilter : function(){
@@ -38,7 +46,6 @@ Template.filterbox.helpers({
 	},
 
 	inCluster : function(){
-		console.log(this.inCluster);
 		return $.parseJSON(this.inCluster);
 	},
 
@@ -55,6 +62,22 @@ Template.filterbox.helpers({
 });
 
 Template.filterbox.events({
+
+	'click .filter-drop-button' :function(){
+		var id = $(event.target).attr('id');
+		id = 'select-' +id;
+		$('.filter-dropdown').each(function(i){
+			if($(this).attr('id') === id){
+				$('#' + id).slideDown();
+			} else {
+				$('#' + $(this).attr('id')).slideUp();
+			}
+		});
+	},
+
+	'click .filter-dropdown > div.apply-filter > button' : function(){
+		$(event.target).parents('.filter-dropdown').slideUp();
+	},
 
 	'click #select-parts-filters > div.apply-filter > button.apply' :function(){
 		console.log("applying participant filters");
@@ -88,7 +111,7 @@ Template.filterbox.events({
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
 			id = id.split("-")[1];
-			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterID", id);
+			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);
 		    return id;
 		});
 	},
@@ -101,22 +124,6 @@ Template.filterbox.events({
 		var end = moment(Date.now()).subtract('minutes', endDur)._d;
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", 'time', start, 'lt');
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", 'time', end, 'gt');
-	},
-
-	'click .filter-drop-button' :function(){
-		var id = $(event.target).attr('id');
-		id = 'select-' +id;
-		$('.filter-dropdown').each(function(i){
-			if($(this).attr('id') === id){
-				$('#' + id).slideDown();
-			} else {
-				$('#' + $(this).attr('id')).slideUp();
-			}
-		});
-	},
-
-	'click .filter-dropdown > div.apply-filter > button' : function(){
-		$(event.target).parents('.filter-dropdown').slideUp();
 	},
 
 
@@ -139,6 +146,10 @@ Template.filterbox.events({
 
 	'click .cancel-user': function(){
 		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "userID", this._id);
+	},
+
+	'click .cancel-cluster': function(){
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", this._id);
 	},
 
 	'click .cancel-themed': function(){

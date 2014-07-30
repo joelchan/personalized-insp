@@ -70,7 +70,7 @@
 		<h5>Select Themes</h5>
 		<div class="filter-list">
 			<select id="select-themes" multiple class="form-control">
-				{{#each clusters}}
+				{{#each currentClusters}}
 					<option val="mo-{{this._id}}">{{this.name}}</option>
 				{{/each}}
 			</select>
@@ -137,27 +137,40 @@
 	{{#each getMappedFilters}}
 		{{#if users}}
 			{{#each users}}
-				<span class="partfilter-label filter-label label label-default" id="{{this._id}}">
+				<span class="partfilter-label filter-label label label-success" id="{{this._id}}">
 					<i class="fa fa-times-circle cancel-filter cancel-user"></i>
 					{{this.name}}
 				</span>
 			{{/each}}
 		{{/if}}
 		{{#if inClusterFilter}}
-			<span class="themedfilter-label filter-label label label-primary">
+			<span class="themedfilter-label filter-label label label-default">
 				<i class="fa fa-times-circle cancel-filter cancel-themed"></i>
 				{{#if inCluster}} In Themes {{else}} Not in Themes {{/if}}
 			</span>
 		{{/if}}
+		{{#if clusters}}
+			{{#each clusters}}
+				<span class="partfilter-label filter-label label label-primary" id="{{this._id}}">
+					<i class="fa fa-times-circle cancel-filter cancel-cluster"></i>
+					{{this.name}}
+				</span>
+			{{/each}}
+		{{/if}}
 		{{#if time}}
-			<span class="timefilter-label filter-label label label-success">
+			<span class="timefilter-label filter-label label label-warning">
 				<i class="fa fa-times-circle cancel-filter cancel-time"></i>
 				{{begin}} to {{end}}
 			</span>
 		{{/if}}
 	{{/each}}
+	{{#if isFilter}}
+		<div>
+			<button href="#" id="reset-filters" class="btn btn-info btn-xs filter-reset">Reset all filters</button>
+		</div>
+	{{/if}}
 	</div>
-	<button href="#" id="reset-filters" class="btn btn-info btn-xs filter-reset">Reset all filters</button>
+
 	<ul id="idealist" class="ideadeck ui-sortable">
 		<li class="sort-disabled"></li>
 			{{#each ideas}}
