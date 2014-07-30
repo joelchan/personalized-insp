@@ -79,12 +79,12 @@ html,body {
 	padding-right: 5px;
 }*/
 
-.dashboard .idea, .modal .idea{
+/*.dashboard .idea, .modal .idea{
 	border: solid 1px #ddd;
 	border-radius: 5px;
 	padding: 5px;
 	margin: 2px;
-}
+}*/
 
 .dashboard .gamechangestar, .modal .gamechangestar{
 	float: right;

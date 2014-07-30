@@ -2,26 +2,26 @@
 	<div>
 		<i class="fa fa-filter"></i>
 		<span id="filter-box" class="btn-group btn-group-xs">
-			<button id="parts-filters" class="filter-drop-button btn btn-info">
+			<button class="parts-filters filter-drop-button btn btn-info">
 				User <span class="caret"></span>
 			</button>
-			<button id="themed-filters" class="filter-drop-button btn btn-info">
+			<button class="themed-filters filter-drop-button btn btn-info">
 				Themed <span class="caret"></span>
 			</button>
-			<button id="memberOf-filters" class="filter-drop-button btn btn-info">
+			<button class="memberOf-filters filter-drop-button btn btn-info">
 				Member Of <span class="caret"></span>
 			</button>
-			<button id="time-filters" class="filter-drop-button btn btn-info">
+			<button class="time-filters filter-drop-button btn btn-info">
 				Time<span class="caret"></span>
 			</button>
-			<button id="gamechange-filter" class="filter-drop-button btn btn-info">
+			<button class="gamechange-filter filter-drop-button btn btn-info">
 				<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
 			</button>
 		</span>
 	</div>
 
 	<!--Participant Filter Dropdown-->
-	<div id="select-parts-filters" class="filter-dropdown col-md-3">
+	<div  class="select-parts-filters filter-dropdown col-md-3">
 		<h5>Select Participants</h5>
 		<div class="filter-list">
 			<select id="select-participants" multiple class="form-control">
@@ -37,7 +37,7 @@
 	</div>
 
 	<!--Themed Filter Dropdown-->
-	<div id="select-themed-filters" class="filter-dropdown col-md-3">
+	<div class="select-themed-filters filter-dropdown col-md-3">
 		<h5>Select Themed or Unthemed</h5>
 		<div class="filter-list">
 			<div class="radio">
@@ -66,10 +66,10 @@
 	</div>
 
 	<!--Member Of Selection Filter-->
-	<div id="select-memberOf-filters" class="filter-dropdown col-md-3">
+	<div class="select-memberOf-filters filter-dropdown col-md-3">
 		<h5>Select Themes</h5>
 		<div class="filter-list">
-			<select id="select-themes" multiple class="form-control">
+			<select multiple class="select-themes form-control">
 				{{#each currentClusters}}
 					<option val="mo-{{this._id}}">{{this.name}}</option>
 				{{/each}}
@@ -82,12 +82,12 @@
 	</div>
 
 	<!--Time Filter Dropdown-->
-	<div id="select-time-filters" class="filter-dropdown col-md-3">
+	<div class="select-time-filters filter-dropdown col-md-3">
 		<div class="filter-list">
 			<h5>Select Time Window</h5>
-			<div class="time-select-box">
-				<label>Between </label>
-				<select id="select-start" class="form-control time-select">
+			<!-- <div class="time-select-box"> -->
+				Between
+				<select class="select-start form-control time-select">
 					<option>0</option>
   					<option>1</option>
 					<option>2</option>
@@ -105,9 +105,8 @@
 					<option>14</option>
 				</select>
 				<span> minutes ago and</span>
-			</div>
-			<div class="time-select-box">
-				<select id="select-end" class="form-control time-select">
+			
+				<select class="select-end form-control time-select">
   					<option>1</option>
 					<option>2</option>
 					<option>3</option>
@@ -125,7 +124,7 @@
 					<option>15</option>
 				</select>
 				<span> minutes ago.</span>
-			</div>
+			<!-- </div> -->
 		</div>
 		<div class="apply-filter">
 			<button class="btn btn-default">Cancel</button>
@@ -141,41 +140,49 @@
 	</ul>
 </template>
 
+<template name="ideaitem">
+	<li id={{_id}} class="idea-item">{{content}} <i class="sort-disabled fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}} gamechangestar"></i></li>
+</template>
+
 <template name="activefilters">
 	<div class="active-filters">
 	{{#each getMappedFilters}}
 		{{#if users}}
 			{{#each users}}
-				<span class="partfilter-label filter-label label label-success" id="{{this._id}}">
+				<span class="partfilter-label filter-label label-success" id="{{this._id}}">
 					<i class="fa fa-times-circle cancel-filter cancel-user"></i>
 					{{this.name}}
 				</span>
+				<!-- <br> -->
 			{{/each}}
 		{{/if}}
 		{{#if inClusterFilter}}
-			<span class="themedfilter-label filter-label label label-default">
+			<span class="themedfilter-label filter-label label-default">
 				<i class="fa fa-times-circle cancel-filter cancel-themed"></i>
 				{{#if inCluster}} In Themes {{else}} Not in Themes {{/if}}
 			</span>
+			<!-- <br> -->
 		{{/if}}
 		{{#if clusters}}
 			{{#each clusters}}
-				<span class="partfilter-label filter-label label label-primary" id="{{this._id}}">
+				<span class="partfilter-label filter-label label-primary" id="{{this._id}}">
 					<i class="fa fa-times-circle cancel-filter cancel-cluster"></i>
 					{{this.name}}
 				</span>
+				<!-- <br> -->
 			{{/each}}
 		{{/if}}
 		{{#if time}}
-			<span class="timefilter-label filter-label label label-warning">
+			<div class="timefilter-label filter-label label-warning">
 				<i class="fa fa-times-circle cancel-filter cancel-time"></i>
-				{{begin}} to {{end}}
-			</span>
+				 {{end}} to {{begin}}
+			</div>
+			<!-- <br> -->
 		{{/if}}
 	{{/each}}
 	{{#if isFilter}}
-		<div>
-			<button href="#" id="reset-filters" class="btn btn-info btn-xs filter-reset">Reset all filters</button>
+		<div class="filter-reset">
+			<button href="#" class="reset-filters btn btn-info btn-xs filter-reset">Reset all filters</button>
 		</div>
 	{{/if}}
 	</div>

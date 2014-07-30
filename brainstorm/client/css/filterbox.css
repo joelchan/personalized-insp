@@ -23,7 +23,7 @@
 }
 
 .filter-reset{
-	margin-top: 5px;
+	margin: 5px 5px 5px 0px;
 }
 
 .filter-dropdown {
@@ -34,6 +34,7 @@
 	border: 1px solid #ddd;
 	padding: 5px;
 	border-radius: 5px;
+	z-index: 10;
 }
 
 .filter-list{
@@ -63,9 +64,20 @@
 	/*float: right;*/
 }
 
-.active-filters span{
-	margin: 5px;
+.filter-label{
+	color: white;
+	border-radius: .25em;
+	max-width: 120px; 
+	padding:.2em .6em .3em;
+	font-size: 75%;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	margin: 5px 5px 5px 0px;
 }
+/*.active-filters span{
+	margin: 5px;
+}*/
 
 .cancel-filter{
 	cursor: pointer;

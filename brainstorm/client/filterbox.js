@@ -66,24 +66,46 @@ Template.activefilters.helpers({
 Template.filterbox.events({
 
 	'click .filter-drop-button' :function(){
-		var id = $(event.target).attr('id');
-		id = 'select-' +id;
 		$('.filter-dropdown').each(function(i){
-			if($(this).attr('id') === id){
-				$('#' + id).slideDown();
-			} else {
-				$('#' + $(this).attr('id')).slideUp();
-			}
+			$(this).slideUp()
 		});
+
+		console.log($(event.target));
+		var $menu;
+		if($(event.target).hasClass('parts-filters')){
+			$menu = $('.select-parts-filters');
+			if($menu.css('display') == 'none')
+				$menu.slideDown();
+			else
+				$menu.slideUp();
+		} else if($(event.target).hasClass('themed-filters')){
+			$menu = $('.select-themed-filters');
+			if($menu.css('display') == 'none')
+				$menu.slideDown();
+			else
+				$menu.slideUp();
+		} else if($(event.target).hasClass('memberOf-filters')){
+			$menu = $('.select-memberOf-filters');
+			if($menu.css('display') == 'none')
+				$menu.slideDown();
+			else
+				$menu.slideUp();
+		}  else if($(event.target).hasClass('time-filters')){
+			$menu = $('.select-time-filters');
+			if($menu.css('display') == 'none')
+				$menu.slideDown();
+			else
+				$menu.slideUp();
+		}
 	},
 
 	'click .filter-dropdown > div.apply-filter > button' : function(){
 		$(event.target).parents('.filter-dropdown').slideUp();
 	},
 
-	'click #select-parts-filters > div.apply-filter > button.apply' :function(){
+	'click .select-parts-filters > div.apply-filter > button.apply' :function(){
 		console.log("applying participant filters");
-		var options = $('#select-participants option:selected');
+		var options = $('.select-participants option:selected');
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
 			id = id.split("-")[1];
@@ -95,7 +117,7 @@ Template.filterbox.events({
 
 	},
 
-	'click #select-themed-filters > div.apply-filter > button.apply' :function(){
+	'click .select-themed-filters > div.apply-filter > button.apply' :function(){
 		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "inCluster");
 
 		var selected = $(".filter-list input[type='radio']:checked");
@@ -108,8 +130,8 @@ Template.filterbox.events({
 		};
 	},
 
-	'click #select-memberOf-filters > div.apply-filter > button.apply' : function(){
-		var options = $('#select-themes option:selected');
+	'click .select-memberOf-filters > div.apply-filter > button.apply' : function(){
+		var options = $('.select-themes option:selected');
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
 			id = id.split("-")[1];
@@ -118,19 +140,24 @@ Template.filterbox.events({
 		});
 	},
 
-	'click #select-time-filters > div.apply-filter > button.apply' :function(){
+	'click .select-time-filters > div.apply-filter > button.apply' :function(){
 		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", 'time');
-		var startDur = $("#select-start option:selected").text();
-		var endDur = $("#select-end option:selected").text();
+
+		var $menu = $(event.target).parents('.select-time-filters');
+
+		var startDur= $menu.find("select.select-start option:selected").text();
+		var endDur= $menu.find("select.select-end option:selected").text();
+
 		var start = moment(Date.now()).subtract('minutes', startDur)._d;
 		var end = moment(Date.now()).subtract('minutes', endDur)._d;
+		
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", 'time', start, 'lt');
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", 'time', end, 'gt');
 	},
 
 
-	'click #gamechange-filter' : function(){
-		var $icon = $('#gamechange-filter').children('i');
+	'click .gamechange-filter' : function(){
+		var $icon = $('.gamechange-filter').children('i');
 		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "isGamchanger");		
 
 		if($icon.hasClass('fa-star-o')){
@@ -143,7 +170,7 @@ Template.filterbox.events({
 });
 
 Template.activefilters.events({
-	'click #reset-filters' : function(){
+	'click .reset-filters' : function(){
 		//console.log("resetting filters");
 		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
 	},

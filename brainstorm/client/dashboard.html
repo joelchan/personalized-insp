@@ -38,14 +38,15 @@
 					<div class="col-md-8">
 						<h3>Ideas 
 							<span class="quantity">({{numIdeas}})</span>
+						</h3>
 							{{> filterbox}}
 							<!-- <i class="fa fa-star-o" id="filterGamechangers"></i> -->
-						</h3>  
-						<div class="idealist">
+						
+						<!-- <div class="idealist">
 							{{#each ideas}}
 								{{> idea}}
 							{{/each}}	
-						</div>
+						</div> -->
 					</div>
 					<div id="filters" class="col-md-4">
 						<h3>Applied Filters</h3>
@@ -153,7 +154,9 @@
             	<div class="modal-body">
                 	<h3>Choose examples to send to the selected participants</h3>
                 	<div>
-                		<label>Showing Ideas by: </label>
+                		{{>filterbox}}
+                		{{>activefilters}}
+                		<!-- <label>Showing Ideas by: </label>
 						{{#each partFilters}}
 							<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
@@ -161,14 +164,15 @@
 						<label>That Appear in Themes: </label>
 						{{#each clusterFilters}}
 							<span class="clusterfilter-label label label-info" id="cf-{{this.id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
-						{{/each}}
+						{{/each}} -->
                 	</div>
 
-					<div id="sendExModal-idealist" class="idealist">
+                	
+					<!-- <div id="sendExModal-idealist" class="idealist">
 						{{#each ideas}}
 							{{> idea}}
 						{{/each}}	
-					</div>
+					</div> -->
 					<div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
