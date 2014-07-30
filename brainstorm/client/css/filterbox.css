@@ -62,3 +62,12 @@
 	margin-top: 10px;
 	/*float: right;*/
 }
+
+.active-filters span{
+	margin: 5px;
+}
+
+.cancel-filter{
+	cursor: pointer;
+	padding-left: 0px; 
+}

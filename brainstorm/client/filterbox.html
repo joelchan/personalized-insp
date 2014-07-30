@@ -86,7 +86,7 @@
 		<div class="filter-list">
 			<h5>Select Time Window</h5>
 			<div class="time-select-box">
-				<label>Start: </label>
+				<label>Between </label>
 				<select id="select-start" class="form-control time-select">
 					<option>0</option>
   					<option>1</option>
@@ -104,10 +104,9 @@
 					<option>13</option>
 					<option>14</option>
 				</select>
-				<span> minutes ago.</span>
+				<span> minutes ago and</span>
 			</div>
 			<div class="time-select-box">
-				<label>End: </label>
 				<select id="select-end" class="form-control time-select">
   					<option>1</option>
 					<option>2</option>
@@ -134,10 +133,30 @@
 		</div>
 	</div>
 
-
+	<div class="active-filters">
 	{{#each getMappedFilters}}
-		<!-- <span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this}}</span> -->
+		{{#if users}}
+			{{#each users}}
+				<span class="partfilter-label filter-label label label-default" id="{{this._id}}">
+					<i class="fa fa-times-circle cancel-filter cancel-user"></i>
+					{{this.name}}
+				</span>
+			{{/each}}
+		{{/if}}
+		{{#if inClusterFilter}}
+			<span class="themedfilter-label filter-label label label-primary">
+				<i class="fa fa-times-circle cancel-filter cancel-themed"></i>
+				{{#if inCluster}} In Themes {{else}} Not in Themes {{/if}}
+			</span>
+		{{/if}}
+		{{#if time}}
+			<span class="timefilter-label filter-label label label-success">
+				<i class="fa fa-times-circle cancel-filter cancel-time"></i>
+				{{begin}} to {{end}}
+			</span>
+		{{/if}}
 	{{/each}}
+	</div>
 	<button href="#" id="reset-filters" class="btn btn-info btn-xs filter-reset">Reset all filters</button>
 	<ul id="idealist" class="ideadeck ui-sortable">
 		<li class="sort-disabled"></li>

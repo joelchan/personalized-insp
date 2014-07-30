@@ -27,6 +27,30 @@ Template.filterbox.helpers({
 		});
 		console.log(mappedFilts);
 		return mappedFilts;
+	},
+
+	users : function(){
+		return this.users;
+	},
+
+	inClusterFilter : function(){
+		return this.hasOwnProperty('inCluster');
+	},
+
+	inCluster : function(){
+		console.log(this.inCluster);
+		return $.parseJSON(this.inCluster);
+	},
+
+	time : function(){
+		return this.time;
+	},
+
+	begin : function(){
+		return moment(this.time.begin).fromNow();
+	},
+	end : function(){
+		return moment(this.time.end).fromNow();
 	}
 });
 
@@ -109,7 +133,19 @@ Template.filterbox.events({
 	},
 
 	'click #reset-filters' : function(){
-		console.log("resetting filters");
+		//console.log("resetting filters");
 		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
-	}
+	},
+
+	'click .cancel-user': function(){
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "userID", this._id);
+	},
+
+	'click .cancel-themed': function(){
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "inCluster");
+	},
+
+	'click .cancel-time': function(){
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "time");
+	},
 });

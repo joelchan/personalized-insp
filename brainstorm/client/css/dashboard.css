@@ -71,13 +71,13 @@ html,body {
 #filters{
 	padding-left: 0px !important;
 }
-.part-label, .partfilter-label, .clusterfilter-label{
+/*.part-label, .partfilter-label, .clusterfilter-label{
 	padding-left: 0em;
 }
 
 .part-label > i, .partfilter-label > i, .clusterfilter-label > i{
 	padding-right: 5px;
-}
+}*/
 
 .dashboard .idea, .modal .idea{
 	border: solid 1px #ddd;
@@ -162,9 +162,9 @@ html,body {
 	margin-top: 29px;
 }
 
-.fa-minus-circle{
+/*.fa-minus-circle{
 	cursor: pointer;
-}
+}*/
 
 .selected{
 	border: solid 1px #269abc!important;
