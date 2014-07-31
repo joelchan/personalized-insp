@@ -8,9 +8,9 @@
     vertical-align: top;
 }*/
 
-html,body {
+/*html,body {
     height:100%;
-}
+}*/
 
 .vizes, #people-view, .ideas, .leverbox{
 	border: solid 1px #ddd;
@@ -20,6 +20,17 @@ html,body {
 
 #people-view{
 	height: 747px;
+}
+
+#lever-events-key{
+	/*height: 15px;*/
+	padding-top: 5px;
+}
+
+#lever-events-key svg{
+	display: inline-block;
+	/*width: 15px !important;*/
+	margin: 0px !important;
 }
 
 #viz-menu{

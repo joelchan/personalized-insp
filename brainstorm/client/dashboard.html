@@ -88,9 +88,24 @@
 				People</h3>
 				<hr>
 				<div id="people">
-					<div id="checkall-btn-group" class="btn-group btn-group-xs">
-						<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
-						<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
+					<div class="row">
+						<div id="checkall-btn-group" class="col-md-5 btn-group btn-group-xs">
+							<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
+							<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
+						</div>
+						<div id="lever-events-key" class="col-md-7">
+							<svg  height="20px">
+								<circle cx="7px" cy="7px" r="5px" fill="#428bca" fill-opacity="0.4" stroke-width="1px" stroke="#428bca"></circle>
+								<text x="17px" y="11px" fill="black">Changed Prompt</text>
+
+								<circle cx="128px" cy="7px" r="5px" fill="#449d44" fill-opacity="0.4" stroke-width="1px" stroke="#449d44"></circle>
+								<text x="138px" y="11px" fill="black">Sent Examples</text>
+
+								<circle cx="238px" cy="7px" r="5px" fill="#d58512" fill-opacity="0.4" stroke-width="1px" stroke="#d58512"></circle>
+								<text x="248px" y="11px" fill="black">Sent Theme</text>
+							</svg>
+							
+						</div>
 					</div>
 					{{#each users}}
 						{{> userprofile}}
