@@ -191,6 +191,24 @@ Template.userseries.rendered = function(){
 	var leverEvents = [];
 	var leverEventMarks = svg.append("g");
 
+	var tip = d3.tip()
+				.attr('class', 'd3-tip')
+				.html(function(d) { 
+					var desc = d.description;
+					if(desc === "Dashboard user sent examples"){
+						var ideas = "Examples: ";
+						for (var i = 0; i < d.examples.length; i++) {
+							ideas += $.trim(d.examples[i].content) +", ";
+						};
+						return ideas;
+					} else if (desc === "Dashboard user changed prompt")
+						return "Prompt: " + d.prompt;
+					else if (desc === "Dashboard user sent theme")
+						return "Theme: " + Clusters.findOne(d.theme).name;
+				});
+
+	svg.call(tip);
+
 	function refreshLeverEvents(leverData){
 		var lme = leverEventMarks.selectAll("circle")
 					.data(leverData);
@@ -227,8 +245,10 @@ Template.userseries.rendered = function(){
 						return "#d58512";
 				return "#fff";
 			})
-			.append("svg:title")
-			.text(function(d) { return d.description; });
+			// .append("svg:title")
+			// .text(function(d) { return d.description; })
+			.on('mouseover', tip.show)
+  			.on('mouseout', tip.hide);
 		lme.exit()
 			.remove();
 
@@ -237,7 +257,6 @@ Template.userseries.rendered = function(){
 	leverEventsCursor.observe({
 		added: function(doc){
 			leverEvents.push(doc);
-			console.log(leverEvents);
 			refreshLeverEvents(leverEvents);
 		}
 	});
