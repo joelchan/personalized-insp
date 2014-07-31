@@ -1,30 +1,31 @@
 <template name="filterbox">
 	<div>
-		<i class="fa fa-filter"></i>
+		<!-- <i class="fa fa-filter"></i> -->
+		<label>Filter by: </label>
 		<span id="filter-box" class="btn-group btn-group-xs">
-			<button class="parts-filters filter-drop-button btn btn-info">
+			<button class="parts-filters filter-drop-button btn btn-primary">
 				User <span class="caret"></span>
 			</button>
-			<button class="themed-filters filter-drop-button btn btn-info">
-				Themed <span class="caret"></span>
+			<button class="memberOf-filters filter-drop-button btn btn-primary">
+				Theme <span class="caret"></span>
 			</button>
-			<button class="memberOf-filters filter-drop-button btn btn-info">
-				Member Of <span class="caret"></span>
+			<button class="themed-filters filter-drop-button btn btn-primary">
+				Status <span class="caret"></span>
 			</button>
-			<button class="time-filters filter-drop-button btn btn-info">
+			<button class="time-filters filter-drop-button btn btn-primary">
 				Time<span class="caret"></span>
 			</button>
-			<button class="gamechange-filter filter-drop-button btn btn-info">
+			<button class="gamechange-filter filter-drop-button btn btn-primary">
 				<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
 			</button>
 		</span>
 	</div>
 
 	<!--Participant Filter Dropdown-->
-	<div  class="select-parts-filters filter-dropdown col-md-3">
+	<div class="select-parts-filters filter-dropdown col-md-3">
 		<h5>Select Participants</h5>
 		<div class="filter-list">
-			<select id="select-participants" multiple class="form-control">
+			<select multiple class="select-participants form-control">
 				{{#each participants}}
 					<option val="pf-{{this._id}}">{{this.name}}</option>
 				{{/each}}
@@ -38,7 +39,7 @@
 
 	<!--Themed Filter Dropdown-->
 	<div class="select-themed-filters filter-dropdown col-md-3">
-		<h5>Select Themed or Unthemed</h5>
+		<h5>Select Status</h5>
 		<div class="filter-list">
 			<div class="radio">
 			  <label>

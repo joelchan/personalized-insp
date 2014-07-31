@@ -388,31 +388,26 @@ Template.tagcloud.helpers({
 * Template Events
 *********************************************************************/
 Template.Dashboard.events({
-	'dblclick .idealist .idea' : function(){
-		$('#examples').append(event.target);
-		//need to show visually that idea is selected as example in idea list?
-	},
-
 	'click .gamechangestar' : function(){
 		var id = (this)._id;
-		var idea = IdeasToProcess.findOne({_id: id});
+		var idea = Ideas.findOne({_id: id});
 		var state = !idea.isGamechanger;
 
-		IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
+		Ideas.update({_id: id}, {$set: {isGamechanger: state}});
 	},
 
-	'click #filterGamechangers' : function(){
-		var filters = Session.get("idealistFilters");
-		if ($("#filterGamechangers").hasClass("fa-star-o")){
-			filters.gamchanger = [true];
-			$("#filterGamechangers").switchClass("fa-star-o", "fa-star")
-			return Session.set("idealistFilters", filters);
-		} else if ($("#filterGamechangers").hasClass("fa-star")){
-			filters.gamchanger = [true, false];
-			$("#filterGamechangers").switchClass("fa-star", "fa-star-o")
-			return Session.set("idealistFilters", filters);
-		}
-	},
+	// 'click #filterGamechangers' : function(){
+	// 	var filters = Session.get("idealistFilters");
+	// 	if ($("#filterGamechangers").hasClass("fa-star-o")){
+	// 		filters.gamchanger = [true];
+	// 		$("#filterGamechangers").switchClass("fa-star-o", "fa-star")
+	// 		return Session.set("idealistFilters", filters);
+	// 	} else if ($("#filterGamechangers").hasClass("fa-star")){
+	// 		filters.gamchanger = [true, false];
+	// 		$("#filterGamechangers").switchClass("fa-star", "fa-star-o")
+	// 		return Session.set("idealistFilters", filters);
+	// 	}
+	// },
 
 	'click #checkall' : function(event, template){
 		//event.target
@@ -479,22 +474,23 @@ Template.Dashboard.events({
 		//console.log(id);
 		var filters = Session.get("idealistFilters");
 
-		if(label.hasClass("partfilter-label")){
-			for (var i = 0; i < filters.partFilters.length; i++) {
-				if (filters.partFilters[i] === id){
-					filters.partFilters.splice(i,1);
-					return Session.set("idealistFilters", filters);
-				}
-			}
-		} else if(label.hasClass("clusterfilter-label")){
-			for (var i = 0; i < filters.clusterFilters.length; i++) {
-				console.log(filters.clusterFilters[i].id);
-				if (filters.clusterFilters[i].id === id){
-					filters.clusterFilters.splice(i,1);
-					return Session.set("idealistFilters", filters);
-				}
-			}
-		} else if (label.hasClass("part-label")) {
+		// if(label.hasClass("partfilter-label")){
+		// 	for (var i = 0; i < filters.partFilters.length; i++) {
+		// 		if (filters.partFilters[i] === id){
+		// 			filters.partFilters.splice(i,1);
+		// 			return Session.set("idealistFilters", filters);
+		// 		}
+		// 	}
+		// } else if(label.hasClass("clusterfilter-label")){
+		// 	for (var i = 0; i < filters.clusterFilters.length; i++) {
+		// 		console.log(filters.clusterFilters[i].id);
+		// 		if (filters.clusterFilters[i].id === id){
+		// 			filters.clusterFilters.splice(i,1);
+		// 			return Session.set("idealistFilters", filters);
+		// 		}
+		// 	}
+		// } else 
+		if (label.hasClass("part-label")) {
 			var selectedParts = Session.get("selectedParts");
 			for (var i = 0; i < selectedParts.length; i++) {
 				if (selectedParts[i] === id){
@@ -523,7 +519,7 @@ Template.Dashboard.events({
 	},
 
 	'click #sendexbutton' : function(){
-		$('.modal .idea').each(function(){
+		$('.modal .idea-item').each(function(){
 			$(this).removeClass("selected");
 		});
 	},
@@ -533,7 +529,7 @@ Template.Dashboard.events({
 		$('input[name="themeRadios"]').prop('checked', false);
 	},
 
-	'click .modal .idea' : function(event){
+	'click .modal .idea-item' : function(event){
 		var $target = $(event.target)
 		if ($target.hasClass("gamechangestar"))
 			return false;
@@ -541,7 +537,7 @@ Template.Dashboard.events({
 	},
 
 	'click #changemodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
-		var sender = Session.get("currentUser");
+		var sender = Session.get("currentUser")._id;
 		var recipients = Session.get("selectedParts");
 		var prompt = $('#new-prompt').val();
 
@@ -554,14 +550,17 @@ Template.Dashboard.events({
 	},
 
 	'click #sendExModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
-		var sender = Session.get("currentUser");
+		var sender = Session.get("currentUser")._id;
 		var recipients = Session.get("selectedParts");
 		var examples = [];
 
-		$('#sendExModal-idealist .idea.selected').each(function(i){
+
+		$('.modal .ideadeck .idea-item.selected').each(function(i){
+			console.log("getting idea");
 			var idea = {_id: $(this).attr('id'), content: $(this).text()}
 			examples.push(idea);
 		});
+		console.log(examples)
 
 		if(examples.length < 1)
 			return false;
@@ -572,7 +571,7 @@ Template.Dashboard.events({
 	},
 
 	'click #sendThemeModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
-		var sender = Session.get("currentUser");
+		var sender = Session.get("currentUser")._id;
 		var recipients = Session.get("selectedParts");
 		var theme = $('input[name=themeRadios]:checked').val();
 		

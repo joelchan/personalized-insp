@@ -18,6 +18,10 @@
 	display: inline-block;
 }
 
+.filter-drop-button{
+	font-weight: 600;
+}
+
 .filter-drop-button .caret{
 	pointer-events: none;
 }

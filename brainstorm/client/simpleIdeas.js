@@ -135,7 +135,7 @@ Template.IdeaBox.helpers({
 
 Template.simpleIdea.helpers({
   isStarred : function(){
-    var idea = IdeasToProcess.findOne({_id: this._id});
+    var idea = Ideas.findOne({_id: this._id});
     if (idea === undefined)
       return false;
     return idea.isGamechanger;
@@ -202,8 +202,8 @@ Template.senttheme.helpers({
   },
 
   themeexamples : function(){
-    var ideaIDs = Clusters.findOne({_id: this.theme}).ideas;
-    return IdeasToProcess.find({_id: {$in: ideaIDs}});
+    var ideaIDs = Clusters.findOne({_id: this.theme}).ideaIDs;
+    return Ideas.find({_id: {$in: ideaIDs}});
   }
 });
 

@@ -273,6 +273,7 @@ function createCluster(item) {
   var ideaID = item.attr('id');
   var ideas = [Ideas.findOne({_id: ideaID})];
   var cluster = new Cluster([ideaID]);//ClusterFactory.create(ideas);
+  //add jitter to position
   cluster.position = {top: 55, left:0};
   var clusterID = Clusters.insert(cluster);
   updateIdeas(ideaID, true);

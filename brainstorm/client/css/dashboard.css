@@ -71,6 +71,14 @@ html,body {
 #filters{
 	padding-left: 0px !important;
 }
+
+#filters .active-filters span{
+	display: inline-block;
+}
+
+#filters .active-filters span i{
+	padding-top: 0px;
+}
 /*.part-label, .partfilter-label, .clusterfilter-label{
 	padding-left: 0em;
 }

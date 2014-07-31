@@ -12,7 +12,7 @@ Template.filterbox.helpers({
 		return MyUsers.find({type: "Experiment Participant"});
 	},
 	ideas : function(){
-		return IdeasToProcess.find();
+		return Ideas.find();
 	},
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
@@ -104,8 +104,7 @@ Template.filterbox.events({
 	},
 
 	'click .select-parts-filters > div.apply-filter > button.apply' :function(){
-		console.log("applying participant filters");
-		var options = $('.select-participants option:selected');
+		var options = $('.select-parts-filters').find('.select-participants option:selected');
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
 			id = id.split("-")[1];
@@ -113,7 +112,7 @@ Template.filterbox.events({
 		    return id;
 		});
 
-		console.log(options);
+		console.log(ids);
 
 	},
 

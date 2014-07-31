@@ -1,9 +1,9 @@
 <template name="simpleIdea">
   <div class='list-item' draggable="true">
     {{ content }}
-  {{#if isStarred}}
-    <i class="fa fa-star gamechangestar"></i>
-  {{/if}}
+    {{#if isStarred}}
+      <i class="fa fa-star gamechangestar"></i>
+    {{/if}}
   </div>
 </template>
 
@@ -20,7 +20,7 @@
             </a>
           </h5>
         </div>
-        <div id="directions" class="panel-collapse collapse">
+        <div id="directions" class="panel-collapse collapse-in">
           <div class="panel-body">
             <p>This is a brainstorming task. There are a few rules for brainstorming:</p>
             <ol>
