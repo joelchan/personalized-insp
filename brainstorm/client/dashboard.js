@@ -200,7 +200,7 @@ Template.userseries.rendered = function(){
 						for (var i = 0; i < d.examples.length; i++) {
 							ideas += $.trim(d.examples[i].content) +", ";
 						};
-						return ideas;
+						return ideas.substring(0, ideas.length-2);
 					} else if (desc === "Dashboard user changed prompt")
 						return "Prompt: " + d.prompt;
 					else if (desc === "Dashboard user sent theme")

@@ -7,26 +7,28 @@
 				<!--Vizes-->
 				<div class="vizes row">
 					<!--Viz Selector-->
-					<ul id= "viz-menu" class="nav nav-tabs nav-justified" role="tablist">
+					<!-- <ul id= "viz-menu" class="nav nav-tabs nav-justified" role="tablist">
 						<li class="active"><a href="#tagcloudwrapper" data-toggle="tab">Themes</a></li>
-  						<li><a href="#chord" data-toggle="tab" class="disabled">Chord</a></li>
-  						<li><a href="#circlepack" data-toggle="tab" class="disabled">Circle Pack</a></li>
-					</ul>
-					<div class="tab-content">
-						<!--Tag Cloud Viz-->
-						<div class="viz tab-pane active" id="tagcloudwrapper">
-							{{> tagcloud}}
+  						<li><a id="chord" href="#chord" data-toggle="tab" class="disabled">Chord</a></li>
+  						<li><a id="circlepack" href="#circlepack" data-toggle="tab" class="disabled">Circle Pack</a></li>
+					</ul> -->
+					<div class="col-md-12"><h3>Themes</h3>
+						<div class="tab-content">
+							<!--Tag Cloud Viz-->
+							<div class="viz tab-pane active" id="tagcloudwrapper">
+								{{> tagcloud}}
+							</div>
+
+							<!--Chord Viz-->
+							<!-- <div class="tab-pane" id="chord">
+
+							</div> -->
+
+							<!--Circle Packing Viz-->
+							<!-- <div class="tab-pane" id="cirlcepack">
+
+							</div> -->
 						</div>
-
-						<!--Chord Viz-->
-						<!-- <div class="tab-pane" id="chord">
-
-						</div> -->
-
-						<!--Circle Packing Viz-->
-						<!-- <div class="tab-pane" id="cirlcepack">
-
-						</div> -->
 					</div>
 				</div>
 				<!--End Vizes-->
