@@ -207,7 +207,7 @@ Template.userseries.rendered = function(){
 
 	var leverEventsCursor = Events.find({recipient: userID, description: 
 		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
-		"Dashboard user sent theme"]}});
+		"Dashboard user sent theme"]}}); //this should be based off of filter object .performQuery
 	var leverEventMarks = svg.append("g")
 							.selectAll("circle");
 	var leverEvents = [];
@@ -216,7 +216,7 @@ Template.userseries.rendered = function(){
 		leverEventMarks.data(leverData)
 					.enter()
 					.append("circle")
-					.attr("radius", "20px")
+					.attr("r", "5px")
 					.attr("id", function(d){
 						return d._id;
 					})
@@ -224,13 +224,13 @@ Template.userseries.rendered = function(){
 						var time = new Date(d.time);
 						return x(time);
 					})
-					.attr("cy", "20px")
+					.attr("cy", "50px")
 					.attr("fill", function(d){
 						var desc = d.description;
 						if(desc === "Dashboard user sent examples")
 							return "#449d44";
 						else if (desc === "Dashboard user changed prompt")
-							return "#4cae4c";
+							return "#428bca";
 						else if (desc === "Dashboard user sent theme")
 							return "#d58512";
 					})
