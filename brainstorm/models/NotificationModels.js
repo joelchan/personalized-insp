@@ -13,6 +13,18 @@ Object.freeze(NotificationTypes);
 
 
 Notification = function(sender, recipient){
+	/******************************************************************
+   * Notification definition with parameters for sending data across 
+   * users 
+   *
+   * @params
+   *    sender - userID of user sending notifications
+   *    recipient - userID of user receiving notification
+   * @fields
+   *	time - time of creation
+   *	type - a NotifiacationTypes object containing message and value
+   *	
+   *****************************************************************/
 	this.sender = sender;
 	this.recipient = recipient; //imagine both will be some kind of id
 	this.time = new Date();
@@ -29,7 +41,7 @@ sendExamplesNotify = function(sender, recipient, examples){
 	notification.type = NotificationTypes.SEND_EXAMPLES;
 	notification.examples = examples;
 	Notifications.insert(notification);
-	//EventLogger.logSendExamples(notification);
+	EventLogger.logSendExamples(notification);
 	checkIfHelped(recipient);
 }
 
@@ -38,7 +50,7 @@ changePromptNotify = function(sender, recipient, prompt){
 	notification.type = NotificationTypes.CHANGE_PROMPT;
 	notification.prompt = prompt;
 	Notifications.insert(notification);
-	//EventLogger.logChangePrompt(notification);
+	EventLogger.logChangePrompt(notification);
 	checkIfHelped(recipient);
 }
 
@@ -47,7 +59,7 @@ sendThemeNotify = function(sender, recipient, clusterID){
 	notification.type = NotificationTypes.SEND_THEME;
 	notification.theme = clusterID;
 	Notifications.insert(notification);
-	//EventLogger.logSendTheme(notification);
+	EventLogger.logSendTheme(notification);
 	checkIfHelped(recipient);
 }
 
@@ -56,7 +68,7 @@ requestHelpNotify = function(sender, recipient){
 	notification.type = NotificationTypes.REQUEST_HELP;
 	notification.message = "Help Requested";
 	Notifications.insert(notification);
-	//EventLogger.logRequestHelp(notification);
+	EventLogger.logRequestHelp(notification);
 }
 
 chatNotify = function(sender, recipient, message){

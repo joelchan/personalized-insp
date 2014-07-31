@@ -181,7 +181,7 @@ EventLogger = (function () {
     logSendExamples: function(notification){
       var msg = "Dashboard user sent examples";
       var type = EventTypeManager.get(msg);
-      var data  = {"sender": notification.sender._id,
+      var data  = {"sender": notification.sender,
               "recipient": notification.recipient,
               "type": notification.type,
               "examples": notification.examples};
@@ -192,7 +192,7 @@ EventLogger = (function () {
       console.log(notification);
       var msg = "Dashboard user changed prompt";
       var type = EventTypeManager.get(msg);
-      var data  = {"sender": notification.sender._id,
+      var data  = {"sender": notification.sender,
               "recipient": notification.recipient,
               "type": notification.type,
               "prompt": notification.prompt};
@@ -209,7 +209,8 @@ EventLogger = (function () {
     logSendTheme: function(notification){
       var msg = "Dashboard user sent theme";
       var type = EventTypeManager.get(msg);
-      var data  = {"sender": notification.sender._id,
+      console.log(type);
+      var data  = {"sender": notification.sender,
               "recipient": notification.recipient,
               "type": notification.type,
               "theme": notification.theme};
@@ -225,7 +226,7 @@ EventLogger = (function () {
     logRequestHelp: function(notification){
       var msg = "Ideator requested help";
       var type = EventTypeManager.get(msg);
-      var data  = {"sender": notification.sender._id,
+      var data  = {"sender": notification.sender,
               "recipient": notification.recipient,
               "type": notification.type};
       this.log(type, data);
@@ -248,20 +249,25 @@ EventTypeManager = (function() {
     get: function(desc, fields) {
       var create = false;
       if (fields) {
+        logger.trace("Looking for EventType with matching fields");
         var results = EventTypes.find(
           {desc: desc,
             fields: fields
           });
         if (results.count() > 0) {
-          return results[0];
+          logger.trace("found " + results.count() + " matching results");
+          return results.fetch()[0];
         }
       } else {
+        logger.trace("Looking for EventType with matching desc");
         var results = EventTypes.find({desc: desc});
         if (results.count() > 0) {
-          return results[0];
+          logger.trace("found " + results.count() + " matching results");
+          return results.fetch()[0];
         }
       }
       //No result foudn, so return newly created type
+      logger.trace("no match creating new EventType");
       return this.create(desc, fields);
     },
     remove: function(types) {

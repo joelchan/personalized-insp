@@ -63,6 +63,10 @@ html,body {
 	height: 345px;
 }
 
+.dashboard .idea-item{
+	cursor: default;
+}
+
 #filterGamechangers{
 	float: right;
 	padding-right: 11px;
@@ -114,6 +118,11 @@ html,body {
 
 #new-prompt{
 
+}
+
+#sendThemeModal-clusterlist{
+	max-height: 200px;
+	overflow: auto;
 }
 
 #sendThemeModal .theme{

@@ -38,6 +38,7 @@ Template.Clustering.rendered = function(){
       }
       updateIdeas(myIdeaID, false);
       updateClusterList(myIdeaID, myClusterID, false);
+      ui.item.remove();
     }
   });
 }
@@ -274,10 +275,16 @@ function createCluster(item) {
   var ideas = [Ideas.findOne({_id: ideaID})];
   var cluster = new Cluster([ideaID]);//ClusterFactory.create(ideas);
   //add jitter to position
-  cluster.position = {top: 55, left:0};
+  var jitterTop = 30 + getRandomInt(0, 30);
+  var jitterLeft = getRandomInt(0, 30);
+  cluster.position = {top: jitterTop , left: jitterLeft};
   var clusterID = Clusters.insert(cluster);
   updateIdeas(ideaID, true);
   updateClusterList(ideaID, clusterID, true);
+}
+
+function getRandomInt (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /********************************************************************

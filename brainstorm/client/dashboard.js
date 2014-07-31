@@ -41,14 +41,7 @@ MS_PER_MINUTE = 60000;
 
 Template.Dashboard.rendered = function(){
 	$('.menu-link').bigSlide();
-	Session.set("currentPrompt", "Alternate uses for an iPod");
-
-	var myFilter = FilterFactory.create("Dashboard Participant Filter",
-    Session.get("currentUser"),
-    "ideas"
-    );
-
-	console.log(getCollection(myFilter.collection));
+	//Session.set("currentPrompt", "Alternate uses for an iPod");
 }
 
 Template.tagcloud.rendered = function(){
@@ -127,7 +120,7 @@ Template.userseries.rendered = function(){
 	//console.log(this);
 	var self = this;
 	var userID = self.data._id;
-	//console.log(userID);
+	console.log(userID);
 	//var part_ID = self.data.
 	var node = self.find(".series");
 	var svg = d3.select(node).append("svg");
@@ -236,7 +229,7 @@ Template.userseries.rendered = function(){
 						var desc = d.description;
 						if(desc === "Dashboard user sent examples")
 							return "#449d44";
-						else if (desc === "Dashboard user changed")
+						else if (desc === "Dashboard user changed prompt")
 							return "#4cae4c";
 						else if (desc === "Dashboard user sent theme")
 							return "#d58512";
@@ -249,6 +242,7 @@ Template.userseries.rendered = function(){
 	leverEventsCursor.observe({
 		added: function(doc){
 			leverEvents.push(doc);
+			console.log(leverEvents);
 			refreshLeverEvents(leverEvents);
 		}
 	});
@@ -426,19 +420,21 @@ Template.Dashboard.events({
 	'click .userprofilename' : function(e){
 		var id = $(e.currentTarget).parents('.profile').attr("id");
 		id = id.split("-")[1];
-		//var userName = MyUsers.findOne({_id: id}).name;
-		//var parts = Session.get("idealistFilters");
-		var filters = Session.get("idealistFilters");
-		var parts = filters.partFilters;
+		// //var userName = MyUsers.findOne({_id: id}).name;
+		// //var parts = Session.get("idealistFilters");
+		// // var filters = Session.get("idealistFilters");
+		// // var parts = filters.partFilters;
 
-		for (var i = 0; i < parts.length; i++) {
-			if(parts[i] === id) 
-				return false;
-		};
+		// // for (var i = 0; i < parts.length; i++) {
+		// // 	if(parts[i] === id) 
+		// // 		return false;
+		// // };
 
-		filters.partFilters.push(id);
-		//Session.set("partFilters", parts);
-		Session.set("idealistFilters", filters);
+		// // filters.partFilters.push(id);
+		// // //Session.set("partFilters", parts);
+		// Session.set("idealistFilters", filters);
+
+		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
 
 	},
 
@@ -446,33 +442,35 @@ Template.Dashboard.events({
 		var id = $(event.target).parent().attr("id");
 		id = id.split("-")[1];
 		
-		var filters = Session.get("idealistFilters");
-		var clusters = filters.clusterFilters;
+		// var filters = Session.get("idealistFilters");
+		// var clusters = filters.clusterFilters;
 
-		for (var i = 0; i < clusters.length; i++) {
-			if(clusters[i].id === id) 
-				return false;
-		};
+		// for (var i = 0; i < clusters.length; i++) {
+		// 	if(clusters[i].id === id) 
+		// 		return false;
+		// };
 
-		var clusterMap = {
-			ideas: [], //maps cluster id to its idea's ids
-		}
+		// var clusterMap = {
+		// 	ideas: [], //maps cluster id to its idea's ids
+		// }
 
-		var myCluster = Clusters.findOne({_id: id});
-		clusterMap.ideas = myCluster.ideas;
-		clusterMap.name = myCluster.name;
-		clusterMap.id = id;
+		// var myCluster = Clusters.findOne({_id: id});
+		// clusterMap.ideas = myCluster.ideas;
+		// clusterMap.name = myCluster.name;
+		// clusterMap.id = id;
 
-		filters.clusterFilters.push(clusterMap);
-		Session.set("idealistFilters", filters);		
+		// filters.clusterFilters.push(clusterMap);
+		// Session.set("idealistFilters", filters);
+
+		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);	
 	},
 
 	'click .fa-minus-circle' : function(){
 		var label = $(event.target).parent();
 		var id = label.attr("id");
 		id = id.split("-")[1];
-		//console.log(id);
-		var filters = Session.get("idealistFilters");
+		// //console.log(id);
+		// var filters = Session.get("idealistFilters");
 
 		// if(label.hasClass("partfilter-label")){
 		// 	for (var i = 0; i < filters.partFilters.length; i++) {

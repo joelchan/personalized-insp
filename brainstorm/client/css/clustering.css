@@ -58,7 +58,7 @@ i {
 	padding-left: 0px;
 }
 li.idea-item{
-	border: solid 1px black;
+	border: solid 1px #ddd;
 	margin: 5px;
 	padding: 5px;
 	background-color: #fff;

@@ -74,6 +74,9 @@ Meteor.startup(function(){
 		Meteor.publish("events", function(){
 			return Events.find();
 		});
+		Meteor.publish("eventTypes", function(){
+			return EventTypes.find();
+		});
 		/*****************************************************************
 		* Publish notificationModels.js collection
 		******************************************************************/

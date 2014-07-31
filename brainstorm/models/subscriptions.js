@@ -37,11 +37,13 @@ Meteor.startup(function(){
 		* Subscribe to loggingModels.js collection
 		************************************************************/
 		//Meteor.subscribe("events");
+		Meteor.subscribe("eventTypes");
 		/************************************************************
 		* Subscribe to notificationModels.js collection
 		************************************************************/
 		Meteor.subscribe("notifications");
     	Meteor.subscribe('exp-conditions');
+
   }
 });
 
