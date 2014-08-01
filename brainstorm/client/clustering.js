@@ -92,7 +92,7 @@ Template.cluster.rendered = function(){
       //update cluster by pushing idea onto ideas field
       Clusters.update({_id: myClusterID}, 
         {$addToSet: 
-          {ideas: myIdeaID}
+          {ideaIDs: myIdeaID}
       });
 
       updateClusterList(myIdeaID, myClusterID, true);
