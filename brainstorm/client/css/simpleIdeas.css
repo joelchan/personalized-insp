@@ -229,6 +229,13 @@
 }
 
 .notification-item.unhandled .panel-heading{
+  background-color: white;
+  /*background-color: #f0ad4e;*/
+  /*color: black;*/
+}
+
+.notification-item.unhandled .panel-heading.flash {
+  /*background-color: white;*/
   background-color: #f0ad4e;
   color: white;
 }

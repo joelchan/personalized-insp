@@ -307,11 +307,19 @@ Template.SubmitIdeas.rendered = function(){
 Template.NotificationDrawer.rendered = function(){
   //$('.menu-link').bigSlide();
 
+  messageAlertInterval = Meteor.setInterval(function(){
+        // console.log("toggle");
+        $('.notification-item.unhandled > div.panel-heading').toggleClass('flash');
+        // #accordion > div:nth-child(1) > div.panel-heading
+      }, 1000);
+
   Notifications.find({recipient: Session.get("currentUser"), handled: false}).observe({
     added : function(doc){
       newNotify = doc;//Notifications.findOne({_id: doc}); //holds new notification
+      // Meteor.clearInterval(messageAlertInterval);
     }
   });
+  // Meteor.clearInterval(messageAlertInterval);
 }
 
 //Helpers
