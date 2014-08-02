@@ -142,7 +142,7 @@
 
 #people{
 	/*height: 620px;*/
-	overflow: auto;
+	overflow: hidden;
 }
 
 #checkall-btn-group{
