@@ -154,43 +154,6 @@ Template.userseries.rendered = function(){
 
 	var marks = svg.append("g");
 
-	submissionEvents.observe({
-		added: function(doc){
-			results.push(doc);
-			refreshGraph(results);
-		}
-	});
-
-	function refreshGraph(r){
-		//console.log(r);
-		var m = marks.selectAll("rect")
-			.data(r);
-		m.enter()
-			.append("rect")
-			.attr("height", "50px")
-			.attr("width", "1.5px")
-			.attr("class", "bar")
-			.attr("id", function(d){
-				return d._id;
-			})
-			.attr("x", function(d){
-				var time = new Date(d.time);
-				return x(time);
-			})
-			.attr("y", 0)
-			.attr("fill", "#d43f3a")
-			.append("svg:title")
-			.text(function(d) { return d.content; });
-		m.exit()
-			.remove();
-	}
-
-	var leverEventsCursor = Events.find({recipient: userID, description: 
-		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
-		"Dashboard user sent theme"]}}); //this should be based off of filter object .performQuery
-	var leverEvents = [];
-	var leverEventMarks = svg.append("g");
-
 	var tip = d3.tip()
 				.attr('class', 'd3-tip')
 				.html(function(d) { 
@@ -205,9 +168,52 @@ Template.userseries.rendered = function(){
 						return "Prompt: " + d.prompt;
 					else if (desc === "Dashboard user sent theme")
 						return "Theme: " + Clusters.findOne(d.theme).name;
+					else if (desc === "Participant submitted idea")
+						return Ideas.findOne({_id: d.ideaID}).content;
 				});
 
 	svg.call(tip);
+
+	submissionEvents.observe({
+		added: function(doc){
+			results.push(doc);
+			refreshGraph(results);
+		}
+	});
+
+	function refreshGraph(r){
+		//console.log(r);
+		var m = marks.selectAll("rect")
+			.data(r);
+		m.enter()
+			.append("rect")
+			.attr("height", "50px")
+			.attr("width", "2px")
+			.attr("class", "bar")
+			.attr("id", function(d){
+				return d._id;
+			})
+			.attr("x", function(d){
+				var time = new Date(d.time);
+				return x(time);
+			})
+			.attr("y", 0)
+			.attr("fill", "#d43f3a")
+			// .append("svg:title")
+			// .text(function(d) { return d.content; })
+			.on('mouseover', tip.show)
+  			.on('mouseout', tip.hide);
+		m.exit()
+			.remove();
+	}
+
+	var leverEventsCursor = Events.find({recipient: userID, description: 
+		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
+		"Dashboard user sent theme"]}}); //this should be based off of filter object .performQuery
+	var leverEvents = [];
+	var leverEventMarks = svg.append("g");
+
+	
 
 	function refreshLeverEvents(leverData){
 		var lme = leverEventMarks.selectAll("circle")
