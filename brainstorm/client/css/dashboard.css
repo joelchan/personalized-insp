@@ -8,18 +8,29 @@
     vertical-align: top;
 }*/
 
-html,body {
+/*html,body {
     height:100%;
-}
+}*/
 
 .vizes, #people-view, .ideas, .leverbox{
 	border: solid 1px #ddd;
-	border-radius: 5px;
-	margin-bottom: 5px;
+	/*border-radius: 5px;
+	margin-bottom: 5px;*/
 }
 
 #people-view{
-	height: 747px;
+	/*height: 747px;*/
+}
+
+#lever-events-key{
+	/*height: 15px;*/
+	padding-top: 5px;
+}
+
+#lever-events-key svg{
+	display: inline-block;
+	/*width: 15px !important;*/
+	margin: 0px !important;
 }
 
 #viz-menu{
@@ -43,9 +54,9 @@ html,body {
 	margin-bottom: 10px;
 }
 
-.dashboard-panel-7 {
+/*.dashboard-panel-7 {
    width: 57.9%;
-}
+}*/
 
 .dashboard h3{
 	margin-top: 10px;
@@ -131,7 +142,7 @@ html,body {
 
 #people{
 	/*height: 620px;*/
-	overflow: auto;
+	overflow: hidden;
 }
 
 #checkall-btn-group{
@@ -213,4 +224,60 @@ html,body {
 
 .bar{
 	width: 4px;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Northward tooltips */
+.d3-tip.n:after {
+  content: "\25BC";
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+  text-align: center;
+}
+
+/* Eastward tooltips */
+.d3-tip.e:after {
+  content: "\25C0";
+  margin: -4px 0 0 0;
+  top: 50%;
+  left: -8px;
+}
+
+/* Southward tooltips */
+.d3-tip.s:after {
+  content: "\25B2";
+  margin: 0 0 1px 0;
+  top: -8px;
+  left: 0;
+  text-align: center;
+}
+
+/* Westward tooltips */
+.d3-tip.w:after {
+  content: "\25B6";
+  margin: -4px 0 0 -1px;
+  top: 50%;
+  left: 100%;
 }

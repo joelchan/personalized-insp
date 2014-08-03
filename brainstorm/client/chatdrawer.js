@@ -40,7 +40,9 @@ Template.chatdrawer.helpers({
 	messages: function(){
 		var currUser = Session.get("currentUser");
 		//console.log(Notifications.find({$or: [{sender: currUser._id}, {recipient: currUser._id}]}).fetch())
-		return Notifications.find({$or: [{sender: currUser._id}, {recipient: currUser._id}]});
+		return Notifications.find({$or: [{sender: currUser._id, recipient: "syn"}, 
+										{recipient: currUser._id, sender: "syn"},
+										{recipient: currUser._id, message: "Help Requested"}]});
 	},
 	username: function(){
 		return MyUsers.findOne({_id: this.sender}).name;
@@ -51,7 +53,7 @@ Template.chatdrawer.helpers({
 	},
 
 	helpRequest : function(){
-		if(this.type.val = 3)
+		if((this.type.val == 3) && (this.recipient == Session.get("currentUser")._id))
 			return true;
 		else
 			return false;

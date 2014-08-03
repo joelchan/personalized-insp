@@ -7,26 +7,28 @@
 				<!--Vizes-->
 				<div class="vizes row">
 					<!--Viz Selector-->
-					<ul id= "viz-menu" class="nav nav-tabs nav-justified" role="tablist">
+					<!-- <ul id= "viz-menu" class="nav nav-tabs nav-justified" role="tablist">
 						<li class="active"><a href="#tagcloudwrapper" data-toggle="tab">Themes</a></li>
-  						<li><a href="#chord" data-toggle="tab" class="disabled">Chord</a></li>
-  						<li><a href="#circlepack" data-toggle="tab" class="disabled">Circle Pack</a></li>
-					</ul>
-					<div class="tab-content">
-						<!--Tag Cloud Viz-->
-						<div class="viz tab-pane active" id="tagcloudwrapper">
-							{{> tagcloud}}
+  						<li><a id="chord" href="#chord" data-toggle="tab" class="disabled">Chord</a></li>
+  						<li><a id="circlepack" href="#circlepack" data-toggle="tab" class="disabled">Circle Pack</a></li>
+					</ul> -->
+					<div class="col-md-12"><h3>Themes</h3>
+						<div class="tab-content">
+							<!--Tag Cloud Viz-->
+							<div class="viz tab-pane active" id="tagcloudwrapper">
+								{{> tagcloud}}
+							</div>
+
+							<!--Chord Viz-->
+							<!-- <div class="tab-pane" id="chord">
+
+							</div> -->
+
+							<!--Circle Packing Viz-->
+							<!-- <div class="tab-pane" id="cirlcepack">
+
+							</div> -->
 						</div>
-
-						<!--Chord Viz-->
-						<!-- <div class="tab-pane" id="chord">
-
-						</div> -->
-
-						<!--Circle Packing Viz-->
-						<!-- <div class="tab-pane" id="cirlcepack">
-
-						</div> -->
 					</div>
 				</div>
 				<!--End Vizes-->
@@ -88,9 +90,24 @@
 				People</h3>
 				<hr>
 				<div id="people">
-					<div id="checkall-btn-group" class="btn-group btn-group-xs">
-						<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
-						<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
+					<div class="row">
+						<div id="checkall-btn-group" class="col-md-5 btn-group btn-group-xs">
+							<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
+							<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
+						</div>
+						<div id="lever-events-key" class="col-md-7">
+							<svg  height="20px">
+								<circle cx="7px" cy="7px" r="5px" fill="#428bca" fill-opacity="0.4" stroke-width="1px" stroke="#428bca"></circle>
+								<text x="17px" y="11px" fill="black">Changed Prompt</text>
+
+								<circle cx="128px" cy="7px" r="5px" fill="#449d44" fill-opacity="0.4" stroke-width="1px" stroke="#449d44"></circle>
+								<text x="138px" y="11px" fill="black">Sent Examples</text>
+
+								<circle cx="238px" cy="7px" r="5px" fill="#d58512" fill-opacity="0.4" stroke-width="1px" stroke="#d58512"></circle>
+								<text x="248px" y="11px" fill="black">Sent Theme</text>
+							</svg>
+							
+						</div>
 					</div>
 					{{#each users}}
 						{{> userprofile}}

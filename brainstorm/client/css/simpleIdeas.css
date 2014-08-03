@@ -18,7 +18,7 @@
 
 .prompt-box p{
   /*font-weight: bold;*/
-  font-size: 20px;
+  font-size: 14px;
 }
 
 .header .sample-ideas {
@@ -81,7 +81,7 @@
 
 
 .ideabox {
-   font-size: 20px;
+   font-size: 14px;
    padding: 10px;
 }
 
@@ -229,6 +229,13 @@
 }
 
 .notification-item.unhandled .panel-heading{
+  background-color: white;
+  /*background-color: #f0ad4e;*/
+  /*color: black;*/
+}
+
+.notification-item.unhandled .panel-heading.flash {
+  /*background-color: white;*/
   background-color: #f0ad4e;
   color: white;
 }

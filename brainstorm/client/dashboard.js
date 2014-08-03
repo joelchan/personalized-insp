@@ -145,9 +145,6 @@ Template.userseries.rendered = function(){
 						.scale(x)
 						.ticks(10)
 						.tickFormat(d3.time.format("%I:%M"))
-						// .tickFormat(function(d){
-						// 	return moment(d).fromNow();
-						// })
 						.orient("bottom");
 
 	var xAxisGroup = svg.append("g")
@@ -155,8 +152,27 @@ Template.userseries.rendered = function(){
 						.attr("transform", "translate(0," + (h - pad) + ")")
 						.call(xAxis);
 
-	var marks = svg.append("g")
-					.selectAll("rect")
+	var marks = svg.append("g");
+
+	var tip = d3.tip()
+				.attr('class', 'd3-tip')
+				.html(function(d) { 
+					var desc = d.description;
+					if(desc === "Dashboard user sent examples"){
+						var ideas = "Examples: ";
+						for (var i = 0; i < d.examples.length; i++) {
+							ideas += $.trim(d.examples[i].content) +", ";
+						};
+						return ideas.substring(0, ideas.length-2);
+					} else if (desc === "Dashboard user changed prompt")
+						return "Prompt: " + d.prompt;
+					else if (desc === "Dashboard user sent theme")
+						return "Theme: " + Clusters.findOne(d.theme).name;
+					else if (desc === "Participant submitted idea")
+						return Ideas.findOne({_id: d.ideaID}).content;
+				});
+
+	svg.call(tip);
 
 	submissionEvents.observe({
 		added: function(doc){
@@ -167,11 +183,12 @@ Template.userseries.rendered = function(){
 
 	function refreshGraph(r){
 		//console.log(r);
-		marks.data(r)
-			.enter()
+		var m = marks.selectAll("rect")
+			.data(r);
+		m.enter()
 			.append("rect")
 			.attr("height", "50px")
-			.attr("width", "1.5px")
+			.attr("width", "2px")
 			.attr("class", "bar")
 			.attr("id", function(d){
 				return d._id;
@@ -182,90 +199,91 @@ Template.userseries.rendered = function(){
 			})
 			.attr("y", 0)
 			.attr("fill", "#d43f3a")
-			.append("svg:title")
-			.text(function(d) { return d.content; });
-		marks.transition()
-			.duration(500)
-			.attr("height", "50px")
-			.attr("width", "1.5px")
-			.attr("class", "bar")
-			.attr("id", function(d){
-				return d._id;
-			})
-			.attr("x", function(d){
-				var time = new Date(d.time);
-				return x(time);
-			})
-			.attr("y", 0)
-			.attr("fill", "#d43f3a")
-		marks.exit()
-			.transition()
-			.duration(500)
-			.attr("x",w)
+			// .append("svg:title")
+			// .text(function(d) { return d.content; })
+			.on('mouseover', tip.show)
+  			.on('mouseout', tip.hide);
+		m.exit()
 			.remove();
 	}
 
 	var leverEventsCursor = Events.find({recipient: userID, description: 
 		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
-		"Dashboard user sent theme"]}});
-	var leverEventMarks = svg.append("g")
-							.selectAll("circle");
+		"Dashboard user sent theme"]}}); //this should be based off of filter object .performQuery
 	var leverEvents = [];
+	var leverEventMarks = svg.append("g");
+
+	
 
 	function refreshLeverEvents(leverData){
-		leverEventMarks.data(leverData)
-					.enter()
-					.append("circle")
-					.attr("radius", "20px")
-					.attr("id", function(d){
-						return d._id;
-					})
-					.attr("cx", function(d){
-						var time = new Date(d.time);
-						return x(time);
-					})
-					.attr("cy", "20px")
-					.attr("fill", function(d){
-						var desc = d.description;
-						if(desc === "Dashboard user sent examples")
-							return "#449d44";
-						else if (desc === "Dashboard user changed prompt")
-							return "#4cae4c";
-						else if (desc === "Dashboard user sent theme")
-							return "#d58512";
-					})
-					.append("svg:title")
-					.text(function(d) { return d.description; });
+		var lme = leverEventMarks.selectAll("circle")
+					.data(leverData);
+		lme.enter()
+			.append("circle")
+			.attr("r", "5px")
+			.attr("id", function(d){
+				return d._id;
+			})
+			.attr("cx", function(d){
+				var time = new Date(d.time);
+				return x(time);
+			})
+			.attr("cy", "50px")
+			.attr("fill", function(d){
+				var desc = d.description;
+					if(desc === "Dashboard user sent examples")
+						return "#449d44";
+					else if (desc === "Dashboard user changed prompt")
+						return "#428bca";
+					else if (desc === "Dashboard user sent theme")
+						return "#d58512";
+				return "#fff";
+			})
+			.attr("fill-opacity", "0.4")
+			.attr("stroke-width", "1px")
+			.attr("stroke", function(d){
+				var desc = d.description;
+					if(desc === "Dashboard user sent examples")
+						return "#449d44";
+					else if (desc === "Dashboard user changed prompt")
+						return "#428bca";
+					else if (desc === "Dashboard user sent theme")
+						return "#d58512";
+				return "#fff";
+			})
+			// .append("svg:title")
+			// .text(function(d) { return d.description; })
+			.on('mouseover', tip.show)
+  			.on('mouseout', tip.hide);
+		lme.exit()
+			.remove();
 
 	}
 
 	leverEventsCursor.observe({
 		added: function(doc){
 			leverEvents.push(doc);
-			console.log(leverEvents);
 			refreshLeverEvents(leverEvents);
 		}
 	});
-
-
 	
 	var nowWidth = (w-2*pad)/sessionlength; //1 minute
 	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
-	var nowLine = svg.append("g")
-					.selectAll("rect")
-	nowLine.data(nowData) // initialize nowLine
-		.enter()
-		.append("rect")
-		.attr("height", "50px")
-		.attr("width", function(){
-			return nowWidth;
-		})
-		.attr("class", "nowLine")
-		.attr("x", function(d){
-			return x(d)-nowWidth;
-		})
-		.attr("y", 0)
-		.attr("fill", "gray")
+	var nowLine = svg.append("g");
+					//.selectAll("rect")
+	// nowLine.data(nowData) // initialize nowLine
+	// 	.enter()
+	// 	.append("rect")
+	// 	.attr("height", "50px")
+	// 	.attr("width", function(){
+	// 		return nowWidth;
+	// 	})
+	// 	.attr("class", "nowLine")
+	// 	.attr("x", function(d){
+	// 		return x(d)-nowWidth;
+	// 	})
+	// 	.attr("y", 0)
+	// 	.attr("fill", "gray")
 
 	// function for updating and transitioning the nowLine
 	function drawNow(nd) {
@@ -374,7 +392,7 @@ Template.tagcloud.helpers({
 
   	getFontSize : function(){
   		//console.log(this);
-  		return 10 +(this.ideas.length * 4);
+  		return 10 +(this.ideaIDs.length * 4);
   	}
 })
 

@@ -12,8 +12,7 @@
 							<label>{{username}}: </label>
 							{{this.message}}
 						</span>
-					{{/unless}}
-					{{#if helpRequest}}
+					{{else}}
 						{{#unless this.handled}}
 							<span class="message-content helprequest">
 								<label>{{username}} is requesting help! </label>
@@ -23,7 +22,7 @@
 								<label>{{username}} has been helped</label>
 							</span>
 						{{/unless}}
-					{{/if}}
+					{{/unless}}
 				</div>
 			{{/each}}
 			</div>
