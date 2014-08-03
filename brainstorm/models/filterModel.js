@@ -33,6 +33,8 @@ Filter = function (name, user, collection, field, val, op) {
   }
 };
 
+
+
 FilterManager = (function () {
   return {
     create: function(name, user, col, field, val, op) {
@@ -398,6 +400,18 @@ FilterManager = (function () {
       /*****************   End Actual Implementation code **********/
 
     },
+    getFieldQueryString: function (filters) {
+    /******************************************************************
+    * Translate a set of filters into a field separeted set of filters
+    *****************************************************************/
+    //Result that will organize filters by field
+    var sortedFields = binByField(filters, 'field');
+    var sortedOps = {fields: sortedFields.fields};
+    sortedFields.fields.forEach(function(fieldName, sortedFields) {
+      sortedOps[fieldName] = binByField(sortedFields[fieldName], 'op');
+    });
+    return sortedOps;
+    },
     performQuery: function(name, user, collection) {
       /**************************************************************
        * Create a new filter
@@ -411,6 +425,7 @@ FilterManager = (function () {
       /*****************   Stub code *******************************/
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
+      //if field is not eventtype, then $or all fields of filters
       /*****************   End Actual Implementation code **********/
 
     },

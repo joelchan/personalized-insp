@@ -1,7 +1,10 @@
 // Configure logger for server tests
 var logger = new Logger('Test:Client:Filter');
 // Comment out to use global logging level
-Logger.setLevel('Test:Client:Filter', 'debug');
+//Logger.setLevel('Test:Client:Filter', 'trace');
+//Logger.setLevel('Test:Client:Filter', 'debug');
+Logger.setLevel('Test:Client:Filter', 'info');
+//Logger.setLevel('Test:Client:Filter', 'warn');
 
 describe("Filtering with FilterManager", function() {
   describe("Filter Retrieval", function () {
@@ -46,9 +49,10 @@ describe("Filtering with FilterManager", function() {
         var newType = EventTypeManager.create(desc);
         logger.debug("**********************************************");
         logger.debug("eventtype creation " + JSON.stringify(newType));
-        logger.debug("eventtype creation " + JSON.stringify(types));
-        logger.debug("**********************************************");
+        logger.debug("eventtype before push" + JSON.stringify(types));
         types.push(newType);
+        logger.debug("eventtype after push" + JSON.stringify(types));
+        logger.debug("**********************************************");
       }
       //Create Filters for EventTypes
       //types.forEach(function(type) {
