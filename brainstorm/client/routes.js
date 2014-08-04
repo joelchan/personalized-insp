@@ -87,7 +87,23 @@ Router.map(function () {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
   });
-  this.route('Clustering');
+  this.route('Clustering', {
+    onRun: function(){
+      Session.set("currentUser", MyUsers.findOne({_id: "syn"}));
+      Session.set("currentFilter",
+        Filters.findOne({user: MyUsers.findOne({_id: "syn"})}));
+    },
+    waitOn: function(){
+      return [Meteor.subscribe('notifications'), Meteor.subscribe('filters'), Meteor.subscribe('ideasToProcess')];
+    },
+
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    }  
+  });
   this.route('Forest', {
     path: 'Forest/:_id',
     template: 'Forest',
@@ -95,6 +111,9 @@ Router.map(function () {
   this.route('Dashboard', {
     path: 'Dashboard',
     template: 'Dashboard',
+    onRun: function() {
+      Session.set("currentUser", MyUsers.findOne({_id: "db"}));
+    },
     waitOn: function() {
         return Meteor.subscribe('events');
     }, 
@@ -105,9 +124,18 @@ Router.map(function () {
         this.render('loading');
     }
   });
+  this.route('filterbox', {
+    waitOn: function(){
+      return Meteor.subscribe('ideasToProcess');
+    }
+  });
   this.route('NoParticipation', {
     path: 'participation/', 
     template: 'NoParticipationPage',
+  });
+  this.route('TestSummary', {
+    path: 'test', 
+    template: 'TestSummary',
   });
 });
 

@@ -1,14 +1,48 @@
-Session.set("partFilters", []);
+//Session.set("partFilters", []);
 Session.set("selectedParts", []);
 Session.set("selectedIdeas", []);
 Session.set("sessionLength", 30);
-MS_PER_MINUTE = 60000;
-
-
-Template.Dashboard.rendered = function(){
-	Session.set("currentPrompt", "Alternate uses for an iPod");
+var filters = {
+	partFilters: [],
+	clusterFilters: [],
+	gamchanger: [true, false]
 }
 
+/////////////////////////// Demo code //////////////////////////
+
+
+///////// Sample Filtering code /////////////////////////////////
+//FilterFactory.addSort(myFilter, 'user', [1,2,3]);
+//FilterFactory.performQuery(myFilter);
+
+// var myFilter = FilterFactory.create("Dashboard Participant Filter",
+//     Session.get("currentUser"),
+//     "ideas"
+//     );
+
+// console.log(getCollection(myFilters));
+
+// myFilters = Filters.findOne({name: "Dashboard Participant Filter", 
+//               user: Session.get("currentUser")
+// });
+
+// filter.filter = [{key: "_id", val: {$in: clusterIdeas}},
+//       {key: "isGamechanger", val: {$in: filters.gamchanger}}];
+
+
+
+////////////////////////////////////////////////////////////////
+
+
+
+
+Session.set("idealistFilters", filters);
+MS_PER_MINUTE = 60000;
+
+Template.Dashboard.rendered = function(){
+	$('.menu-link').bigSlide();
+	//Session.set("currentPrompt", "Alternate uses for an iPod");
+}
 
 Template.tagcloud.rendered = function(){
 	// var self = this;
@@ -86,7 +120,7 @@ Template.userseries.rendered = function(){
 	//console.log(this);
 	var self = this;
 	var userID = self.data._id;
-	//console.log(userID);
+	console.log(userID);
 	//var part_ID = self.data.
 	var node = self.find(".series");
 	var svg = d3.select(node).append("svg");
@@ -97,19 +131,11 @@ Template.userseries.rendered = function(){
 
 
 	var submissionEvents = Events.find({userID: userID, description: "Participant submitted idea"}); //
-	var results = [];//submissionEvents.fetch();
-
-	//console.log(data);
+	var results = [];
 	var start = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time);
-	//console.log("start: ");
-	//console.log(start);
-	//console.log(start);
 	var sessionlength = Session.get("sessionLength");
 	var end = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time).add('m', sessionlength);//new Date(start + sessionlength*MS_PER_MINUTE);
-	//console.log("end: ");
-	//console.log(end);
-	// var now = new Date(Date.now());
-	// var minAgo = new Date(now - 15*MS_PER_MINUTE);
+
 	var x = d3.time.scale()
 					.domain([start, end])
 					.nice(d3.time.minute)
@@ -119,9 +145,6 @@ Template.userseries.rendered = function(){
 						.scale(x)
 						.ticks(10)
 						.tickFormat(d3.time.format("%I:%M"))
-						// .tickFormat(function(d){
-						// 	return moment(d).fromNow();
-						// })
 						.orient("bottom");
 
 	var xAxisGroup = svg.append("g")
@@ -129,49 +152,43 @@ Template.userseries.rendered = function(){
 						.attr("transform", "translate(0," + (h - pad) + ")")
 						.call(xAxis);
 
-	var marks = svg.append("g")
-					.selectAll("rect")
+	var marks = svg.append("g");
 
-	submissionEvents.observeChanges({
+	var tip = d3.tip()
+				.attr('class', 'd3-tip')
+				.html(function(d) { 
+					var desc = d.description;
+					if(desc === "Dashboard user sent examples"){
+						var ideas = "Examples: ";
+						for (var i = 0; i < d.examples.length; i++) {
+							ideas += $.trim(d.examples[i].content) +", ";
+						};
+						return ideas.substring(0, ideas.length-2);
+					} else if (desc === "Dashboard user changed prompt")
+						return "Prompt: " + d.prompt;
+					else if (desc === "Dashboard user sent theme")
+						return "Theme: " + Clusters.findOne(d.theme).name;
+					else if (desc === "Participant submitted idea")
+						return Ideas.findOne({_id: d.ideaID}).content;
+				});
+
+	svg.call(tip);
+
+	submissionEvents.observe({
 		added: function(doc){
-			// console.log("calling refreshGraph");
-			// console.log(data);
-			results.push(Events.findOne({_id: doc}));
-			// console.log(data);
+			results.push(doc);
 			refreshGraph(results);
 		}
 	});
 
 	function refreshGraph(r){
 		//console.log(r);
-		marks.data(r)
-			.enter()
+		var m = marks.selectAll("rect")
+			.data(r);
+		m.enter()
 			.append("rect")
 			.attr("height", "50px")
-			.attr("width", "1.5px")
-			.attr("class", "bar")
-			.attr("id", function(d){
-				return d._id;
-			})
-			.attr("x", function(d){
-				//console.log(now)
-				// var durToIdea = moment.duration(d.time);
-				// var ideaTime = moment(minAgo).add(durToIdea);
-				// return x(ideaTime);
-				//console.log(d);
-				var time = new Date(d.time);
-				//console.log(time);
-				//console.log(x(time));
-				return x(time);
-			})
-			.attr("y", 0)
-			.attr("fill", "#d43f3a")
-			.append("svg:title")
-			.text(function(d) { return d.content; });
-		marks.transition()
-			.duration(500)
-			.attr("height", "50px")
-			.attr("width", "1.5px")
+			.attr("width", "2px")
 			.attr("class", "bar")
 			.attr("id", function(d){
 				return d._id;
@@ -182,34 +199,91 @@ Template.userseries.rendered = function(){
 			})
 			.attr("y", 0)
 			.attr("fill", "#d43f3a")
-		marks.exit()
-			.transition()
-			.duration(500)
-			.attr("x",w)
+			// .append("svg:title")
+			// .text(function(d) { return d.content; })
+			.on('mouseover', tip.show)
+  			.on('mouseout', tip.hide);
+		m.exit()
 			.remove();
 	}
 
-	// var durScale =  d3.scale().linear()
-	// 				.domain([0, sessionlength])
-	// 				.range([pad, w-pad]);
-	var nowWidth = (w-2*pad)/sessionlength; //1 minute
+	var leverEventsCursor = Events.find({recipient: userID, description: 
+		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
+		"Dashboard user sent theme"]}}); //this should be based off of filter object .performQuery
+	var leverEvents = [];
+	var leverEventMarks = svg.append("g");
 
+	
+
+	function refreshLeverEvents(leverData){
+		var lme = leverEventMarks.selectAll("circle")
+					.data(leverData);
+		lme.enter()
+			.append("circle")
+			.attr("r", "5px")
+			.attr("id", function(d){
+				return d._id;
+			})
+			.attr("cx", function(d){
+				var time = new Date(d.time);
+				return x(time);
+			})
+			.attr("cy", "50px")
+			.attr("fill", function(d){
+				var desc = d.description;
+					if(desc === "Dashboard user sent examples")
+						return "#449d44";
+					else if (desc === "Dashboard user changed prompt")
+						return "#428bca";
+					else if (desc === "Dashboard user sent theme")
+						return "#d58512";
+				return "#fff";
+			})
+			.attr("fill-opacity", "0.4")
+			.attr("stroke-width", "1px")
+			.attr("stroke", function(d){
+				var desc = d.description;
+					if(desc === "Dashboard user sent examples")
+						return "#449d44";
+					else if (desc === "Dashboard user changed prompt")
+						return "#428bca";
+					else if (desc === "Dashboard user sent theme")
+						return "#d58512";
+				return "#fff";
+			})
+			// .append("svg:title")
+			// .text(function(d) { return d.description; })
+			.on('mouseover', tip.show)
+  			.on('mouseout', tip.hide);
+		lme.exit()
+			.remove();
+
+	}
+
+	leverEventsCursor.observe({
+		added: function(doc){
+			leverEvents.push(doc);
+			refreshLeverEvents(leverEvents);
+		}
+	});
+	
+	var nowWidth = (w-2*pad)/sessionlength; //1 minute
 	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
-	var nowLine = svg.append("g")
-					.selectAll("rect")
-	nowLine.data(nowData) // initialize nowLine
-		.enter()
-		.append("rect")
-		.attr("height", "50px")
-		.attr("width", function(){
-			return nowWidth;
-		})
-		.attr("class", "nowLine")
-		.attr("x", function(d){
-			return x(d)-nowWidth;
-		})
-		.attr("y", 0)
-		.attr("fill", "gray")
+	var nowLine = svg.append("g");
+					//.selectAll("rect")
+	// nowLine.data(nowData) // initialize nowLine
+	// 	.enter()
+	// 	.append("rect")
+	// 	.attr("height", "50px")
+	// 	.attr("width", function(){
+	// 		return nowWidth;
+	// 	})
+	// 	.attr("class", "nowLine")
+	// 	.attr("x", function(d){
+	// 		return x(d)-nowWidth;
+	// 	})
+	// 	.attr("y", 0)
+	// 	.attr("fill", "gray")
 
 	// function for updating and transitioning the nowLine
 	function drawNow(nd) {
@@ -254,77 +328,6 @@ Template.userseries.rendered = function(){
 		nowData.push(new moment(Date.now())); // pushing the new now in
 		drawNow(nowData);
 	}, 100);
-	//var timeDep = new Deps.Dependency();
-
-	// Events.find({userID: userID, description: "Participant submitted idea"}).observeChanges({
-	// 	added: function(doc){
-	// 		// console.log("calling refreshGraph");
-	// 		// console.log(data);
-	// 		data.push(Events.findOne({_id: doc}));
-	// 		// console.log(data);
-	// 		refreshGraph();
-	// 	}
-	// });
-
-	//refreshGraph();
-
-
-	// function refresh(){
-	// 	console.log("refresh");
-	// 	//timeDep.depend();
-	// 	data = Events.find({userID: userID, description: "Participant submitted idea"/*, time: {$lt: Date(now - 15*MS_PER_MINUTE)}*/}).fetch();
-	// 	console.log(data.length);
-	// 	// data = Events.find({userID: userID, description: "Participant submitted idea"}).fetch(); //
-	// 	// //data = Ideas.find({"participantID": part_ID}).fetch(); //change to events
-	// 	// var now = new Date(Date.now());
-	// 	// var minAgo = new Date(now - 15*MS_PER_MINUTE);
-	// 	// var x = d3.time.scale()
-	// 	// 				.domain([minAgo, now])
-	// 	// 				.nice(d3.time.minute)
-	// 	// 				.range([w-pad, pad]);
-
-	// 	// var xAxis = d3.svg.axis()
-	// 	// 					.scale(x)
-	// 	// 					.ticks(4)
-	// 	// 					.tickFormat(function(d){
-	// 	// 						return moment(d).fromNow();
-	// 	// 					})
-	// 	// 					.orient("bottom")
-
-	// 	// var xAxisGroup = svg.append("g")
-	// 	// 					.attr("class", "axis")
-	// 	// 					.attr("transform", "translate(0," + (h - pad) + ")")
-	// 	// 					.call(xAxis);
-	// 	//marks.remove();
-	// 	marks.attr("transform", "translate("+x(new Date(Date.now()+1000))+")")
-
-	// 	marks.data(data)
-	// 		.enter()
-	// 		.append("rect")
-	// 		.attr("height", "50px")
-	// 		.attr("width", "1.5px")
-	// 		.attr("class", "bar")
-	// 		.attr("id", function(d){
-	// 			return d._id;
-	// 		})
-	// 		.attr("x", function(d){
-	// 			//console.log(now)
-	// 			// var durToIdea = moment.duration(d.time);
-	// 			// var ideaTime = moment(minAgo).add(durToIdea);
-	// 			// return x(ideaTime);
-	// 			console.log("x");
-	// 			return x(d.time);
-	// 		})
-	// 		.attr("y", 0)
-	// 		.attr("fill", "#d43f3a")
-	// 		.append("svg:title")
- //   			.text(function(d) { return d.content; });
-
- //   	}
-
-	// Meteor.setInterval(function(){
-	// 	refresh()
-	// }, 1000);
 }
 
 /********************************************************************
@@ -332,19 +335,24 @@ Template.userseries.rendered = function(){
 *********************************************************************/
 Template.Dashboard.helpers({
 	ideas : function(){
-		var filters = Session.get("partFilters");
-		if(filters.length > 0){
-			return IdeasToProcess.find({userID: {$in: filters}});
-		} else
-   			return IdeasToProcess.find();
+		var filters = Session.get("idealistFilters");//Session.get("partFilters");
+		var clusterIdeas = [];
+		for (var i = 0; i < filters.clusterFilters.length; i++) {
+			clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
+		};
+		if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
+			return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}});
+		} else if (clusterIdeas.length > 0){
+   			return IdeasToProcess.find({_id: {$in: clusterIdeas}, isGamechanger: {$in: filters.gamchanger}});
+   		} else if (filters.partFilters.length > 0){
+   			return IdeasToProcess.find({userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}})
+   		} else {
+   			return IdeasToProcess.find({isGamechanger: {$in: filters.gamchanger}});
+   		}
   	},
 
   	numIdeas : function(){
-  		var filters = Session.get("partFilters");
-		if(filters.length > 0){
-			return IdeasToProcess.find({userName: {$in: filters}}).count();
-		} else
-   			return IdeasToProcess.find().count();
+  		return Template.Dashboard.ideas().count();
   	},
 
   	clusters : function(){
@@ -368,8 +376,12 @@ Template.Dashboard.helpers({
   		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
   	},
 
-  	filters : function(){
-  		return MyUsers.find({_id: {$in: Session.get("partFilters")}});
+  	partFilters : function(){
+  		return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
+  	},
+
+  	clusterFilters : function(){
+  		return Session.get("idealistFilters").clusterFilters;
   	}
 });
 
@@ -380,7 +392,7 @@ Template.tagcloud.helpers({
 
   	getFontSize : function(){
   		//console.log(this);
-  		return 10 +(this.ideas.length * 4);
+  		return 10 +(this.ideaIDs.length * 4);
   	}
 })
 
@@ -388,50 +400,113 @@ Template.tagcloud.helpers({
 * Template Events
 *********************************************************************/
 Template.Dashboard.events({
-	'dblclick .idealist .idea' : function(){
-		$('#examples').append(event.target);
-		//need to show visually that idea is selected as example in idea list?
-	},
-
 	'click .gamechangestar' : function(){
 		var id = (this)._id;
-		var idea = IdeasToProcess.findOne({_id: id});
+		var idea = Ideas.findOne({_id: id});
 		var state = !idea.isGamechanger;
 
-		IdeasToProcess.update({_id: id}, {$set: {isGamechanger: state}});
+		Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+	},
+
+	// 'click #filterGamechangers' : function(){
+	// 	var filters = Session.get("idealistFilters");
+	// 	if ($("#filterGamechangers").hasClass("fa-star-o")){
+	// 		filters.gamchanger = [true];
+	// 		$("#filterGamechangers").switchClass("fa-star-o", "fa-star")
+	// 		return Session.set("idealistFilters", filters);
+	// 	} else if ($("#filterGamechangers").hasClass("fa-star")){
+	// 		filters.gamchanger = [true, false];
+	// 		$("#filterGamechangers").switchClass("fa-star", "fa-star-o")
+	// 		return Session.set("idealistFilters", filters);
+	// 	}
+	// },
+
+	'click #checkall' : function(event, template){
+		//event.target
+		$("input[type=checkbox]").each(function(i){
+			$(this).prop('checked', true);
+		});
+	},
+
+	'click #uncheckall' : function(event, template){
+		//event.target
+		$("input[type=checkbox]").each(function(i){
+			$(this).prop('checked', false);
+		});
 	},
 
 	'click .userprofilename' : function(e){
 		var id = $(e.currentTarget).parents('.profile').attr("id");
 		id = id.split("-")[1];
-		//var userName = MyUsers.findOne({_id: id}).name;
-		var parts = Session.get("partFilters");
+		// //var userName = MyUsers.findOne({_id: id}).name;
+		// //var parts = Session.get("idealistFilters");
+		// // var filters = Session.get("idealistFilters");
+		// // var parts = filters.partFilters;
 
-		for (var i = 0; i < parts.length; i++) {
-			if(parts[i] === id) 
-				return false;
-		};
+		// // for (var i = 0; i < parts.length; i++) {
+		// // 	if(parts[i] === id) 
+		// // 		return false;
+		// // };
 
-		parts.push(id);
-		Session.set("partFilters", parts);
+		// // filters.partFilters.push(id);
+		// // //Session.set("partFilters", parts);
+		// Session.set("idealistFilters", filters);
+
+		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
+
+	},
+
+	'click .tagname' : function(){
+		var id = $(event.target).parent().attr("id");
+		id = id.split("-")[1];
+		
+		// var filters = Session.get("idealistFilters");
+		// var clusters = filters.clusterFilters;
+
+		// for (var i = 0; i < clusters.length; i++) {
+		// 	if(clusters[i].id === id) 
+		// 		return false;
+		// };
+
+		// var clusterMap = {
+		// 	ideas: [], //maps cluster id to its idea's ids
+		// }
+
+		// var myCluster = Clusters.findOne({_id: id});
+		// clusterMap.ideas = myCluster.ideas;
+		// clusterMap.name = myCluster.name;
+		// clusterMap.id = id;
+
+		// filters.clusterFilters.push(clusterMap);
+		// Session.set("idealistFilters", filters);
+
+		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);	
 	},
 
 	'click .fa-minus-circle' : function(){
 		var label = $(event.target).parent();
 		var id = label.attr("id");
 		id = id.split("-")[1];
-		//console.log(id);
-		if(label.hasClass("filter-label")){
-			//console.log("removeing filter label");
-			var partFilters = Session.get("partFilters");
-			for (var i = 0; i < partFilters.length; i++) {
-				if (partFilters[i] === id){
-					partFilters.splice(i,1);
-					//console.log("removed");
-					return Session.set("partFilters", partFilters);
-				}
-			};
-		} else if (label.hasClass("part-label")) {
+		// //console.log(id);
+		// var filters = Session.get("idealistFilters");
+
+		// if(label.hasClass("partfilter-label")){
+		// 	for (var i = 0; i < filters.partFilters.length; i++) {
+		// 		if (filters.partFilters[i] === id){
+		// 			filters.partFilters.splice(i,1);
+		// 			return Session.set("idealistFilters", filters);
+		// 		}
+		// 	}
+		// } else if(label.hasClass("clusterfilter-label")){
+		// 	for (var i = 0; i < filters.clusterFilters.length; i++) {
+		// 		console.log(filters.clusterFilters[i].id);
+		// 		if (filters.clusterFilters[i].id === id){
+		// 			filters.clusterFilters.splice(i,1);
+		// 			return Session.set("idealistFilters", filters);
+		// 		}
+		// 	}
+		// } else 
+		if (label.hasClass("part-label")) {
 			var selectedParts = Session.get("selectedParts");
 			for (var i = 0; i < selectedParts.length; i++) {
 				if (selectedParts[i] === id){
@@ -460,7 +535,7 @@ Template.Dashboard.events({
 	},
 
 	'click #sendexbutton' : function(){
-		$('.modal .idea').each(function(){
+		$('.modal .idea-item').each(function(){
 			$(this).removeClass("selected");
 		});
 	},
@@ -470,7 +545,7 @@ Template.Dashboard.events({
 		$('input[name="themeRadios"]').prop('checked', false);
 	},
 
-	'click .modal .idea' : function(event){
+	'click .modal .idea-item' : function(event){
 		var $target = $(event.target)
 		if ($target.hasClass("gamechangestar"))
 			return false;
@@ -478,7 +553,7 @@ Template.Dashboard.events({
 	},
 
 	'click #changemodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
-		var sender = Session.get("currentUser");
+		var sender = Session.get("currentUser")._id;
 		var recipients = Session.get("selectedParts");
 		var prompt = $('#new-prompt').val();
 
@@ -491,14 +566,17 @@ Template.Dashboard.events({
 	},
 
 	'click #sendExModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
-		var sender = Session.get("currentUser");
+		var sender = Session.get("currentUser")._id;
 		var recipients = Session.get("selectedParts");
 		var examples = [];
 
-		$('#sendExModal-idealist .idea.selected').each(function(i){
+
+		$('.modal .ideadeck .idea-item.selected').each(function(i){
+			console.log("getting idea");
 			var idea = {_id: $(this).attr('id'), content: $(this).text()}
 			examples.push(idea);
 		});
+		console.log(examples)
 
 		if(examples.length < 1)
 			return false;
@@ -509,7 +587,7 @@ Template.Dashboard.events({
 	},
 
 	'click #sendThemeModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
-		var sender = Session.get("currentUser");
+		var sender = Session.get("currentUser")._id;
 		var recipients = Session.get("selectedParts");
 		var theme = $('input[name=themeRadios]:checked').val();
 		
@@ -520,6 +598,4 @@ Template.Dashboard.events({
 			sendThemeNotify(sender, recipients[i], theme);
 		};
 	}
-
-	//send theme modal event
 });

@@ -1,0 +1,433 @@
+// Generic Filters for dynamic UI filtering
+//    -- currently only supports comparison filters
+Filters = new Meteor.Collection("filters");
+
+// Configure logger for Filters
+var logger = new Logger('Filter');
+// Comment out to use global logging level
+Logger.setLevel('Filter', 'info');
+
+Filter = function (name, user, collection, field, val, op) {
+  /******************************************************************
+   * Filter definition with parameters for filtering across a given
+   * collection> 
+   *
+   * @params
+   *    name - String describing the filter, useful as a lookup ref
+   *    user - user associated with a given filter
+   *    collection - string matching the collection name string
+   *    field - the field of the document to match
+   *    val - the value of the document
+   *    op - the query comparison operator. If none, then just 
+   *        matching is performed 
+   *****************************************************************/
+  this.name = name;
+  this.user = user;
+  this.collection = collection;
+  this.field = field;
+  this.val = val;
+  if (op) {
+    this.op = op
+  } else {
+    this.op = "eq";
+  }
+};
+
+
+
+FilterManager = (function () {
+  return {
+    create: function(name, user, col, field, val, op) {
+      /**************************************************************
+       * Create a new filter
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    col - the colleciton that will be queried
+       *    field - the document field to be operated on (using
+       *        dot notation for document subfields)
+       *    val  -  the value used for comparison with the field
+       *    op  - (optional) the comparison operator to be applied
+       *        with the given value (ie: eq, ne, gt, lt, gte, lte)
+       * @Return
+       *    boolean - true if successful creation of iflter that will
+       *        not conflict with existing queries
+       * ***********************************************************/
+      /*****************   Stub code *******************************/
+      /*****************   End Stub code ***************************/
+      /*****************   Actual Implementation code **************/
+      logger.trace("Beginning FilterManager.create");
+      //Need to check for conflicting operators on the same field
+      if (!op) {
+        logger.debug("no op provided to create filter");
+        op = "eq";
+      } 
+      var otherOps = Filters.find({name: name, 
+          user: user, 
+          collection: col, 
+          field: field,
+          op: {'$ne': op}});
+      logger.debug("found " + otherOps.count() + " filters with other ops");
+      //var allOps = Filters.find({name: name, 
+          //user: user, 
+          //collection: col, 
+          //field: field,
+          //});
+      //allOps = Filters.find({user: user, name: name});
+      //logger.debug("found " + allOps.count() + " filters with matching");
+      //logger.debug(allOps.fetch()[0]);
+
+      var createFilter = true;
+      if (otherOps.count() !== 0) { 
+        //Settle potentially conflicting ops
+        logger.trace("Found " + otherOps.count() + 
+            " filters with different ops from: " + op);
+        otherOps.forEach(function (filt) {
+        logger.trace("Comparing to filter with op " + filt.op);
+          switch (filt.op) {
+            case "eq":
+              //Only additional eq ops allowed
+              logger.trace("Filter op is eq");
+              createFilter = false;
+              break;
+            case "ne":
+              //Only additional ne ops allowed
+              logger.trace("Filter op is ne");
+              createFilter = false;
+              break;
+            default:
+              //Only eq & ne are conflicting
+              if (op === 'eq' || op === 'ne') {
+                logger.trace("Filter op is gt, lt, gte, lte");
+                createFilter = false;
+              }
+              break;
+          }
+        });
+      } 
+      if (createFilter) {
+        logger.trace("No Conflicting filters found. Creating new filter");
+        var newFilter = new Filter(name, user, col, field, val, op);
+        newFilter._id = Filters.insert(newFilter);
+        logger.debug("New Filter: ");
+        logger.debug(newFilter);
+        return true;
+      } else {
+        return false;
+      }
+
+
+      /*****************   End Actual Implementation code **********/
+    },
+    getFilterList: function(name, user, col) {
+      /**************************************************************
+       * Get the raw list of filters that will shape the query
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    col - the colleciton that will be queried
+       * @Return
+       *    cursor pointing to list of filters 
+       * ***********************************************************/
+      /*****************   Stub code *******************************/
+      /*****************   End Stub code ***************************/
+      /*****************   Actual Implementation code **************/
+      logger.trace("Beginning getFilterList");
+      var results = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+      });
+      logger.debug("Found " + results.count() + " filters matching");
+      return results;
+      /*****************   End Actual Implementation code **********/
+
+    },
+    createMappedFilterList: function(name, user, col, sessVar) {
+      /**************************************************************
+       * Gets a filter list and pushes the mapped result into a 
+       * session var
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    col - the colleciton that will be queried
+       *    sessVar - the name of the session variable to store the 
+       *        mapped filter result        
+       * @Return
+       *    object with 5 possible fields
+       *      users - a list of users referenced by filters
+       *      inCluster - a boolean referenced by filters
+       *      clusters - a list of clusters referenced by filters
+       *      eventTypes - the list of Event types
+       *      time - a single object with 2 possible fields: begin
+       *          and end, where begin and end are a javascript Date
+       *      misc - array of raw filters not translated into one of
+       *          the above categories 
+       * ***********************************************************/
+      /*****************   Stub code *******************************/
+      /*****************   End Stub code ***************************/
+      /*****************   Actual Implementation code **************/
+      logger.trace("Beginning getFilterList");
+      var result = {};
+      //var rawFilters = this.getFilterList(name, user, col);
+      //Get user filters
+      var userFilters = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: 'userID'
+      });
+      logger.debug("Found " + userFilters.count() + " matching user filters");
+      if (userFilters.count() !== 0) {
+        //Grab userIDs from filters and get associated user documents
+        var IDs = getValsFromField(userFilters, 'val');
+        logger.debug("IDs of users: " + JSON.stringify(IDs));
+        result['users'] = MyUsers.find({_id: {$in: IDs}}).fetch();
+      }
+      //Get inCluster Filters
+      var inClusterFilters = Filters.findOne({name: name,
+          user: user,
+          collection: col,
+          field: 'inCluster'
+        });
+      // logger.debug("Found " + inClusterFilters.count() + 
+      //     " matching inCluster filters");
+      if (inClusterFilters) {
+        //Grab clusterIDs from filters and get associated cluster documents
+        bool = inClusterFilters.val;
+        logger.debug("bools of inClusters: " + bool);
+        result['inCluster'] = bool;
+      }
+
+      //Get cluster filters
+      var clusterFilters = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: 'clusterIDs'
+      });
+      logger.debug("Found " + clusterFilters.count() + 
+          " matching cluster filters");
+      if (clusterFilters.count() !== 0) {
+        //Grab clusterIDs from filters and get associated cluster documents
+        IDs = getValsFromField(clusterFilters, 'val');
+        logger.debug("IDs of clusters: " + JSON.stringify(IDs));
+        result['clusters'] = Clusters.find({_id: {$in: IDs}}).fetch();
+      }
+      //Get time filters
+      var timeFilters = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: 'time'
+      });
+      logger.debug("Found " + timeFilters.count() + 
+          " matching time filters");
+      //Translate to begin and end times
+      if (timeFilters.count() !== 0) {
+        var time = {};
+        timeFilters.forEach(function(filt) {
+          if (filt.op === 'gt' || filt.op === 'gte') {
+            time['begin'] = filt.val;
+          } else if (filt.op === 'lt' || filt.op === 'lte') {
+            time['end'] = filt.val;
+          }
+        });
+        result['time'] = time;
+      }
+      //Get EventType Filters
+      var typeFilters = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: 'eventTypeIDs'
+      });
+      logger.debug("Found " + typeFilters.count() + 
+          " matching EventType filters");
+      if (typeFilters.count() !== 0) {
+        //Grab EventTypeIDs from filters and get associated 
+        //cluster documents
+        IDs = getValsFromField(typeFilters, 'val');
+        logger.debug("IDs of EventTypes: " + JSON.stringify(IDs));
+        result['eventTypes'] = EventTypes.find(
+            {_id: {$in: IDs}}).fetch();
+      }
+      //Return nonmatching filters as raw filters
+      var filts = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: {$nin: ['userID', 'clusterIDs', 'time']}
+      });
+      logger.debug("Found " + filts.count() + 
+          " matching misc filters");
+      if (filts.count() !== 0) {
+        result['misc'] = filts.fetch();
+      }
+      if (Meteor.isClient) {
+        logger.trace("Creating Session var with name: " + sessVar);
+        Session.set(sessVar, result);
+      }
+      return result;
+      /*****************   End Actual Implementation code **********/
+
+    },
+    remove: function(name, user, col, field, val) {
+      /**************************************************************
+       * Delete the specific filter matching the given params
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    collection - the colleciton that will be queried
+       *    field - the document field to be operated on (using
+       *        dot notation for document subfields)
+       *    val  - (optional) the value used for comparison with the field
+       *
+       * @Return
+       *    boolean if the filter was successfully removed
+       * ***********************************************************/
+      /*****************   Stub code *******************************/
+      /*****************   End Stub code ***************************/
+      /*****************   Actual Implementation code **************/
+      logger.trace("Beginning remove matching filters");
+      //var results = Filters.find({name: name, 
+          //user: user, 
+          //collection: col,
+          //field: field,
+          //val: val
+      //});
+      //logger.debug("Found " + results.count() + " filters to remove");
+      if (Meteor.isServer) {
+        if(val){
+          Filters.remove({name: name, 
+              user: user, 
+              collection: col,
+              field: field,
+              val: val
+          });
+        } else {
+          Filters.remove({name: name, 
+              user: user, 
+              collection: col,
+              field: field
+          });
+        }
+      } else {
+        //Can't delete data except by using individual IDs on client
+        if(val){ 
+          var filts = Filters.find({name: name, 
+            user: user, 
+            collection: col,
+            field: field,
+            val: val
+          });
+          filts.forEach(function(filt) {
+            Filters.remove({_id: filt._id});
+          });
+        } else {
+          var filts = Filters.find({name: name, 
+            user: user, 
+            collection: col,
+            field: field
+          });
+          filts.forEach(function(filt) {
+            Filters.remove({_id: filt._id});
+          });
+        }
+
+      }
+      if(val){
+        var results = Filters.find({name: name, 
+            user: user, 
+            collection: col,
+            field: field,
+            val: val
+        });
+      } else {
+        var results = Filters.find({name: name, 
+              user: user, 
+              collection: col,
+              field: field
+          });
+      }
+
+      logger.debug("Found " + results.count() + " filters after remove");
+      if (results.count() === 0) 
+        return true;
+      else
+        return false;
+      /*****************   End Actual Implementation code **********/
+
+    },
+    reset: function(name, user, col) {
+      /**************************************************************
+       * Delete all filters associated with the name, user, and
+       * collection
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    collection - the colleciton that will be queried
+       * @Return
+       *    boolean if all the filters was successfully removed
+       * ***********************************************************/
+      /*****************   Stub code *******************************/
+      /*****************   End Stub code ***************************/
+      /*****************   Actual Implementation code **************/
+      logger.trace("Beginning reset all matching filters");
+      var results = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+      });
+      logger.debug("Found " + results.count() + " filters to remove");
+      if (Meteor.isServer) {
+        Filters.remove({name: name, 
+            user: user, 
+            collection: col,
+        });
+      } else {
+        //Can't delete data except by using individual IDs on client
+        var filts = Filters.find({name: name, 
+          user: user, 
+          collection: col
+        });
+        filts.forEach(function(filt) {
+          Filters.remove({_id: filt._id});
+        });
+      }
+      results = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+      });
+      logger.debug("Found " + results.count() + " filters after remove");
+      if (results.count() === 0) 
+        return true;
+      else
+        return false;
+      /*****************   End Actual Implementation code **********/
+
+    },
+    getFieldQueryString: function (filters) {
+    /******************************************************************
+    * Translate a set of filters into a field separeted set of filters
+    *****************************************************************/
+    //Result that will organize filters by field
+    var sortedFields = binByField(filters, 'field');
+    var sortedOps = {fields: sortedFields.fields};
+    sortedFields.fields.forEach(function(fieldName, sortedFields) {
+      sortedOps[fieldName] = binByField(sortedFields[fieldName], 'op');
+    });
+    return sortedOps;
+    },
+    performQuery: function(name, user, collection) {
+      /**************************************************************
+       * Create a new filter
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    collection - the colleciton that will be queried
+       * @Return
+       *    Collection cursor of the collection specified
+       * ***********************************************************/
+      /*****************   Stub code *******************************/
+      /*****************   End Stub code ***************************/
+      /*****************   Actual Implementation code **************/
+      //if field is not eventtype, then $or all fields of filters
+      /*****************   End Actual Implementation code **********/
+
+    },
+  };
+}());

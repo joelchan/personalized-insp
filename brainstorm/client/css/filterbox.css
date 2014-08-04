@@ -1,0 +1,89 @@
+#filter-box{
+	margin-bottom: 5px;
+}
+
+#filter-box button{
+	margin: 0px;
+	margin-top: 0px;
+}
+
+
+#star-toggle-icon{
+	padding: 0px;
+}
+
+.fa-filter{
+	/*float: left;*/
+	padding-right: 5px;
+	display: inline-block;
+}
+
+.filter-drop-button{
+	font-weight: 600;
+}
+
+.filter-drop-button .caret{
+	pointer-events: none;
+}
+
+.filter-reset{
+	margin: 5px 5px 5px 0px;
+}
+
+.filter-dropdown {
+	width: 100%;
+	background-color: #fcfcfc;
+	display: none;
+	position:absolute;
+	border: 1px solid #ddd;
+	padding: 5px;
+	border-radius: 5px;
+	z-index: 10;
+}
+
+.filter-list{
+	overflow: auto;
+	max-height: 150px;
+	border-bottom: 1px solid #ddd;
+}
+
+.filter-checkbox{
+	height: 20px;
+}
+
+.time-select-box{
+	padding: 5px;
+}
+
+.time-select{
+	display: inline-block;
+	max-width: 50px;
+	padding: 5px; 
+}
+.apply-filter{
+	float: right;
+}
+.filter-dropdown button{
+	margin-top: 10px;
+	/*float: right;*/
+}
+
+.filter-label{
+	color: white;
+	border-radius: .25em;
+	max-width: 120px; 
+	padding:.2em .6em .3em;
+	font-size: 75%;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	margin: 5px 5px 5px 0px;
+}
+/*.active-filters span{
+	margin: 5px;
+}*/
+
+.cancel-filter{
+	cursor: pointer;
+	padding-left: 0px; 
+}

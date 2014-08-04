@@ -197,6 +197,43 @@ Meteor.startup(function() {
       MyUsers.insert(admin);
     }
 
+    var dbUsers = MyUsers.find({_id: "db"});
+    if (dbUsers.count() > 0) {
+      if (dbUsers.count() > 1) {
+        MyUsers.remove({_id: "db"});
+        var db = new User("DashboardUser", "anonDBUser");
+        db._id = "db";
+        MyUsers.insert(db);
+      }
+    } else {
+      var db = new User("DashboardUser", "anonDBUser");
+      db._id = "db";
+      MyUsers.insert(db);
+    }
+
+    var synUsers = MyUsers.find({_id: "syn"});
+    var syn = new User("SynthesisUser", "anonSynUser");
+    if (synUsers.count() > 0) {
+      if (dbUsers.count() > 1) {
+        MyUsers.remove({_id: "syn"});
+        
+        syn._id = "syn";
+        MyUsers.insert(syn);
+      }
+    } else {
+      var syn = new User("SynthesisUser", "anonSynUser");
+      syn._id = "syn";
+      MyUsers.insert(syn);
+    }
+
+    //var filter = Filters.findOne({name: "Syn Idea List Filter"});
+    //if(filter === undefined)
+      //FilterFactory.create("Syn Idea List Filter", syn, "ideas");
+    //else {
+      //Filters.remove({_id: filter._id});
+      //FilterFactory.create("Syn Idea List Filter", syn, "ideas");
+    //}
+
     if(Clusters.findOne({_id: "-1"})===undefined){
       Clusters.insert(root);
     }
@@ -207,11 +244,14 @@ Meteor.startup(function() {
 });
 
 //Meteor.startup(function() {
-  //testGroupManager();
+  //testGroupManager.testAll();
 //});
 //Meteor.startup(function() {
-  //testExperimentManager();
+  //testExperimentManager.testAll();
 //});
+// Meteor.startup(function() {
+//   testFilterFactory.testAll();
+// });
 
 Meteor.startup(function() {
   /****************************************************************

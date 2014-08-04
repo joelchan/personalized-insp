@@ -3,6 +3,8 @@
     "iron-router": {},
     "fontawesome4": {},
     "nvd3js": {},
-    "moment": {}
+    "moment": {},
+    "pince": {},
+    "mocha-web": {}
   }
 }

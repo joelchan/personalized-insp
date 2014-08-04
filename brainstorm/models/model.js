@@ -5,15 +5,17 @@ Prompts = new Meteor.Collection("prompts");
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
 ReplayIdeas = new Meteor.Collection("replayIdeas");
+IdeasToProcess = new Meteor.Collection("ideasToProcess");
+Clusters = new Meteor.Collection("clusters");
 // All system users
 MyUsers = new Meteor.Collection("myUsers");
+UserTypes = new Meteor.Collection("userTypes");
 // All roles
 Roles = new Meteor.Collection("roles");
 // Logs all formed groups
 Groups = new Meteor.Collection("groups");
 GroupTemplates = new Meteor.Collection("groupTemplates");
-Clusters = new Meteor.Collection("clusters");
-IdeasToProcess = new Meteor.Collection("ideasToProcess");
+
 
 IdeaToProcess = function(content, participant){
   this.content = content;
@@ -21,8 +23,34 @@ IdeaToProcess = function(content, participant){
   this.inCluster = false;
 }
 
-Cluster = function(ideas){
-  this.ideas = ideas;
+Idea = function (content, user, prompt, participant) {
+  /********************************************************************
+  * Encapsulation of ideas recorded by the system
+  *
+  * @return {object} GroupTemplate object 
+  ********************************************************************/
+  this.time = new Date();
+  this.content = content;
+  this.userID = user._id;
+  this.userName = user.name;
+  this.prompt = prompt;
+  this.isGamechanger = false;
+  this.inCluster = false;
+  this.clusterIDs = [];
+  //Optional fields not logged during non-experiments
+  if (participant) {
+    this.participantID = participant._id;
+  }
+};
+
+
+Cluster = function(ideaIDs){
+  if (!ideaIDs)
+  {
+    this.ideaIDs = [];
+  } else {
+    this.ideaIDs = ideaIDs;
+  }
   this.name = "Not named yet"; //default name for unnamed clusters
   this.position; //used only for clustering interface and tag cloud
   this.children = [];
@@ -35,8 +63,12 @@ root = {
   children : []
 }
 
-UserTypes = new Meteor.Collection("userTypes");
-
+//Class that encapsulates prompt and workflow/role + url to each and url to the set
+User = function(name, type){
+	this.name = name;
+  //Currently only "admin" is significant
+  this.type = type;
+};
 
 Prompt = function(question, template, exp, cond) {
   /********************************************************************
@@ -95,35 +127,35 @@ Group = function(template) {
 }
 
 //GroupAssignment = function(user, role) {
-    ///****************************************************************
-    //* Encapsulates the assignment of a user in a group to a role
-    //* @Params
-    //*   user - the user that is being assign
-    //*   role - the role the user is being assign to
-    //****************************************************************/
-    //this.userID = user._id;
-    //this.userName = user.name;
-    //this.roleID = role._id;
-    //this.roletitle = role.title;
+  ///****************************************************************
+  //* Encapsulates the assignment of a user in a group to a role
+  //* @Params
+  //*   user - the user that is being assign
+  //*   role - the role the user is being assign to
+  //****************************************************************/
+  //this.userID = user._id;
+  //this.userName = user.name;
+  //this.roleID = role._id;
+  //this.roletitle = role.title;
 //};
 
 GroupManager = (function () {
-  return {
+    return {
     /****************************************************************
-    * Object that allows for most group manipulations including 
-    *   assignment, creation, and modification
-    ****************************************************************/
-    copyGroup: function(group) {
-      /**************************************************************
-      * Creates a duplicate group based on a given group's template
-      * and adds it to the database. Intended to abstract mechanics
-      * of copying/creation of a group. Duplicating groups should
-      * be a common function
-      **************************************************************/
-      var newGroup = new Group(group.template);
-      newGroup._id = Groups.insert(newGroup);
-      return newGroup;
-    },
+     * Object that allows for most group manipulations including 
+     *   assignment, creation, and modification
+     ****************************************************************/
+     copyGroup: function(group) {
+       /**************************************************************
+        * Creates a duplicate group based on a given group's template
+        * and adds it to the database. Intended to abstract mechanics
+        * of copying/creation of a group. Duplicating groups should
+        * be a common function
+        **************************************************************/
+        var newGroup = new Group(group.template);
+        newGroup._id = Groups.insert(newGroup);
+        return newGroup;
+      },
 
     createGroup: function(template, users) {
       /**************************************************************
@@ -321,34 +353,27 @@ Role.prototype.nextFunc = function (current) {
   }
 };
 
+Role.prototype.nextFunc = function (current) {
+  for (var i=0; i<this.workflow.length; i++) {
+      var workflowPage = this.workflow[i]; 
+      if (workflowPage == current) {
+          //console.log("current function is: " + this.workflow[i]);
+          var workflowIndex = i;
+      }
+  }
+  if (workflowIndex + 1 < this.workflow.length) {
+      //console.log("next function is: " + this.workflow[workflowIndex + 1]);
+      return this.workflow[workflowIndex+1];
+  } else {
+      //console.log("No next function found");
+    return null;
+  }
+};
+
 Role.prototype.getRole = function(newRole) {
   return $.extend(true, new Role(), newRole);
 }
 
-
-Idea = function (content, user, prompt, participant) {
-  /********************************************************************
-  * Encapsulation of ideas recorded by the system
-  *
-  * @return {object} GroupTemplate object 
-  ********************************************************************/
-  this.time = new Date();
-  this.content = content;
-  this.userID = user._id;
-  this.userName = user.name;
-  this.prompt = prompt;
-  this.isGamechanger = false;
-  this.inCluster = false;
-  //Optional fields not logged during non-experiments
-  this.participantID = participant._id;
-};
-
-//Class that encapsulates prompt and workflow/role + url to each and url to the set
-User = function(name, type){
-	this.name = name;
-  //Currently only "admin" is significant
-  this.type = type;
-};
 
 //Javascript implementation of Java's hash code function 
 //Hash code function 

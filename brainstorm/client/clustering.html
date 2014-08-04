@@ -2,41 +2,66 @@
 <template name="Clustering">
 	<h1 class="page-header" id="clusterprompt">{{prompt}}</h1>
 	<div class="container-fluid clusterinterface">
+		
 		<div class="row">
+			{{> chatdrawer}}
 			<div id="left" class="col-md-3">
-				<div>
+				<!-- <div>
 						<span>Total Clusters: {{numClusters}}</span>
 						<br/>
 						<span>Number Not Yet Named: {{numUnnamed}}</span>
+				</div> -->
+
+				<!--Idea List-->
+				<div id="idealistwrapper">
+					<h3 id="idealistHeader">Idea List</h3>
+					<!-- <div class="btn-group">
+						<button id="sortMenuButton" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+							Sort By
+					    	<span class="caret"></span>
+					    	<span class="sr-only">Toggle Dropdown</span>
+					  	</button>
+					  	<ul class="dropdown-menu" role="menu">
+					    	<li><a href="" id="sortOldest">Oldest</a></li>
+					    	<li><a href="" id="sortMostRecent">Most Recent</a></li>
+					  	</ul>
+					</div> -->
+					{{> filterbox name=Cluster}}
+
+
+				<!-- <div> -->
+					<!-- <ul id="idealist" class="ideadeck ui-sortable">
+						<li class="sort-disabled"></li>
+						{{#each ideas}}
+							{{> ideaitem}}
+						{{/each}}
+					</ul> -->
 				</div>
+				<!--End Idea List-->
+
+				<h3>Theme List</h3>
+				<ul id="clusterlist" class="deck clusterdeck">
+					{{#each clusters}}
+						<li id="ci-{{_id}}" class="cluster-item idea-item">{{name}}</li>
+					{{/each}}
+				</ul>
+			</div>
+
+			<div id="middle" class="col-md-2">
 				<!--Create New Cluster-->
-				<h3>Create New Cluster</h3>
+				<h3>Create</h3>
 				<ul class="newcluster ui-sortable" id="node-drag-target">
 					Drag idea here to create a new cluster
 				</ul>
 				<!--End Create New Cluster-->
 
-				<!--Idea List-->
-				<h3>Idea List</h3>
-				<ul id="idealist" class="ideadeck ui-sortable">
-					<li class="sort-disabled"></li>
-					{{#each ideas}}
-						{{> ideaitem}}
-					{{/each}}
-				</ul>
-				<!--End Idea List-->
-
-				<h3>Cluster List</h3>
-				<ul id="clusterlist" class="deck clusterdeck">
-					{{#each clusters}}
-						<li id={{_id}} class="idea-item">{{name}}</li>
-					{{/each}}
-				</ul>
+				<h3>Applied Filters</h3>
+				{{> activefilters}}
 			</div>
 
-			<div id="right" class="col-md-9 container-fluid">
-				<div class="row">
-					<div class="col-md-9"><h3>Clusters</h3></div>
+			<div id="right" class="col-md-6 container-fluid">
+				<!-- <div class="row">
+					<div class="col-md-9"> --><h3>Clusters</h3><!-- </div> -->
 					<!-- <div class="col-md-3">
 						<span>Total Clusters: {{numClusters}}</span>
 						<br/>
@@ -45,7 +70,7 @@
 					<!-- <div class="col-md-3">
 						<button id='finish' class='btn btn-large btn-primary'>Finished</button>
 					</div> -->
-				</div>
+				<!-- </div> -->
 				<div  id="clusterarea">
 					{{> clusterarea}}
 				</div>
@@ -61,10 +86,10 @@
 </template>
 
 <template name="cluster">
-	<div class="cluster col-md-3" id={{_id}} style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
+	<div class="cluster col-md-4" id={{_id}} style="position: absolute; top:{{position.top}}px; left:{{position.left}}px">
 		<div class="form-group form-group-inline">
 			<i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
-			<label class="sort-disabled">Cluster Name:
+			<label class="sort-disabled">
 				<span id="clusterlabel" class="{{named}}">{{this.name}}</span>
 			</label>
 		</div>
@@ -79,10 +104,6 @@
 		{{/each}}-->
 		</ul>
 	</div>
-</template>
-
-<template name="ideaitem">
-	<li id={{_id}} class="idea-item">{{content}} <i class="sort-disabled fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}} gamechangestar"></i></li>
 </template>
 
 

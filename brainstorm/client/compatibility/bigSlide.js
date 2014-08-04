@@ -3,11 +3,10 @@
 * Copyright (c) 2014 Adam D. Scott; Licensed MIT */
 (function($) {
   'use strict';
-  console.log("bigslide loaded");
 
   $.fn.bigSlide = function(options) {
     var settings = $.extend({
-      'menu': ('#notifications'), //changed
+      'menu': ('#menu-link'), //changed
       'push': ('.push'),
       'side': 'left', 
       'menuWidth': '25%', //changed
@@ -49,18 +48,18 @@
       push.css(settings.side, width);
     };
 
-    // menu.close = function() {
-    //   menu._state = 'closed';
-    //   menu.css(settings.side, '-' + width);
-    //   push.css(settings.side, '0');
-    // };
+    menu.close = function() {
+      menu._state = 'closed';
+      menu.css(settings.side, '-' + width);
+      push.css(settings.side, '0');
+    };
 
     menuLink.on('click.bigSlide', function(e) {
       e.preventDefault();
       if (menu._state === 'closed') {
         menu.open();
       } else {
-        //menu.close();
+        menu.close();
       }
     });
 

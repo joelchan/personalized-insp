@@ -1,0 +1,37 @@
+<template name="chatdrawer">
+	<div>
+		<div id="chat-handle">
+			<i id="messageicon" class="fa fa-2x fa-comments-o menu-link"></i>
+		</div>
+		<nav id="chat-drawer" class="panel" role="navigation">
+			<div id="messageview">
+			{{#each messages}}
+				<div class="chatmessage">
+					{{#unless helpRequest}}
+						<span class="message-content {{#if isSender}} sender {{/if}}">
+							<label>{{username}}: </label>
+							{{this.message}}
+						</span>
+					{{else}}
+						{{#unless this.handled}}
+							<span class="message-content helprequest">
+								<label>{{username}} is requesting help! </label>
+							</span>
+						{{else}}
+							<span class="message-content">
+								<label>{{username}} has been helped</label>
+							</span>
+						{{/unless}}
+					{{/unless}}
+				</div>
+			{{/each}}
+			</div>
+		    <div id="write-message" class="input-group">
+		    	<input id="chatinput" type="text" class="form-control">
+				<span class="input-group-btn">
+					<button id="sendchat" class="btn btn-success" type="button">Send</button>
+				</span>
+			</div><!-- /input-group -->
+		</nav>
+	</div>
+</template>

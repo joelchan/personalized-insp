@@ -17,7 +17,7 @@
 }
 
 .donestack > .idea-item, .cluster-item{
-	display: none;
+	/*display: none;*/
 }
 
 .idea-item, .donestack, .stack{
@@ -54,7 +54,7 @@
 }
 
 label, .fa{
-	padding-left: 5px;
+	/*padding-left: 5px;*/
 	padding-top: 5px;
 }
 

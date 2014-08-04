@@ -133,6 +133,15 @@ Template.IdeaBox.helpers({
     },
 });
 
+Template.simpleIdea.helpers({
+  isStarred : function(){
+    var idea = Ideas.findOne({_id: this._id});
+    if (idea === undefined)
+      return false;
+    return idea.isGamechanger;
+  }
+})
+
 
 /********************************************************************
 * NotifyItem Template
@@ -193,8 +202,8 @@ Template.senttheme.helpers({
   },
 
   themeexamples : function(){
-    var ideaIDs = Clusters.findOne({_id: this.theme}).ideas;
-    return IdeasToProcess.find({_id: {$in: ideaIDs}});
+    var ideaIDs = Clusters.findOne({_id: this.theme}).ideaIDs;
+    return Ideas.find({_id: {$in: ideaIDs}});
   }
 });
 
@@ -208,7 +217,10 @@ Template.senttheme.events({
 ********************************************************************/
 //Rendered Callback    
 Template.IdeationPage.rendered = function() {
-  $('.menu-link').bigSlide().open();
+  $('.menu-link').bigSlide({
+    'menu': ('#notifications'),
+    'menuWidth': '25%'
+  }).open();
   //Debug statements
   //console.log("rendered");
   //console.log(Session.get('currentExp'));
@@ -234,7 +246,7 @@ Template.IdeationPage.rendered = function() {
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
       console.log("exiting study early")
-    Logger.logExitStudy(Session.get("currentParticipant"));
+    EventLogger.logExitStudy(Session.get("currentParticipant"));
     exitIdeation();
   });
 
@@ -247,7 +259,7 @@ Template.IdeationPage.rendered = function() {
   Session.set("currentParticipant", Participants.findOne({_id: participant._id}));
   var participant = Session.get("currentParticipant");
   //console.log(participant);
-  Logger.logBeginIdeation(participant);
+  EventLogger.logBeginIdeation(participant);
   //Set timer for page to transition after 15 minutes
   //Meteor.setTimeout('exitIdeation()', 900000);
   //Setup timer for decrementing onscreen timer
@@ -287,21 +299,33 @@ var newNotify = null; //stores a new notification
     });
 })();
 
+Template.SubmitIdeas.rendered = function(){
+  $("[data-toggle='tooltip']").tooltip({'placement': 'top'});
+}
+
 //Rendered Callback
 Template.NotificationDrawer.rendered = function(){
-  $('.menu-link').bigSlide();
+  //$('.menu-link').bigSlide();
 
-  Notifications.find({recipient: Session.get("currentUser"), handled: false}).observeChanges({
+  messageAlertInterval = Meteor.setInterval(function(){
+        // console.log("toggle");
+        $('.notification-item.unhandled > div.panel-heading').toggleClass('flash');
+        // #accordion > div:nth-child(1) > div.panel-heading
+      }, 1000);
+
+  Notifications.find({recipient: Session.get("currentUser"), handled: false}).observe({
     added : function(doc){
-      newNotify = Notifications.findOne({_id: doc}); //holds new notification
+      newNotify = doc;//Notifications.findOne({_id: doc}); //holds new notification
+      // Meteor.clearInterval(messageAlertInterval);
     }
   });
+  // Meteor.clearInterval(messageAlertInterval);
 }
 
 //Helpers
 Template.NotificationDrawer.helpers({
   notifications : function(){
-    return Notifications.find({recipient: Session.get("currentUser")._id});
+    return Notifications.find({recipient: Session.get("currentUser")._id}, {sort: {time: -1}});
   },
   directions : function(){
     return this.type.val === -1;
@@ -311,33 +335,43 @@ Template.NotificationDrawer.helpers({
 //Events
 Template.NotificationDrawer.events({
   'click a' : function(){
-    var $icon = $(event.target).children('i');
-
-    if($icon.hasClass('fa-chevron-circle-right')){
-      $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
-    } else if($icon.hasClass('fa-chevron-circle-down')){
-      $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
-    }
-
     var $notification = $(event.target).parent().parent().parent();
     var id = $notification.children('.panel-collapse').attr('id');
 
     if(!Notifications.findOne({_id: id}).handled){
       Notifications.update({_id: id}, {$set: {handled: true}});
-      Logger.logNotificationHandled(Session.get("currentParticipant"), id);
+      EventLogger.logNotificationHandled(Session.get("currentParticipant"), id);
       //return false; //handled event is same as first expansion event
     } else {
       var context = $(event.target).parent('.panel-heading').context;
       if($(context).hasClass("collapsed")){
-        Logger.logNotificationExpanded(Session.get("currentParticipant"), id);
+        EventLogger.logNotificationExpanded(Session.get("currentParticipant"), id);
         //console.log("logging expansion");
       } else {
-        Logger.logNotificationCollapsed(Session.get("currentParticipant"), id);
+        EventLogger.logNotificationCollapsed(Session.get("currentParticipant"), id);
         //console.log("logging collapse");
       }
     }
-
     $notification.removeClass("unhandled");
+
+    var $icon = $(event.target).children('i');
+    //target is expanded
+    if($icon.hasClass('fa-chevron-circle-down')){
+      $icon.switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
+      return;
+    }
+
+    //set all other arrows to closed
+    $('.fa-chevron-circle-down').each(function(i){
+      $(this).switchClass('fa-chevron-circle-down', 'fa-chevron-circle-right');
+      console.log($(this));
+    });
+
+    //target is collapsed
+    if($icon.hasClass('fa-chevron-circle-right')){
+      $icon.switchClass('fa-chevron-circle-right', 'fa-chevron-circle-down');
+      return;
+    }
   }
 });
 
@@ -379,14 +413,16 @@ Template.SubmitIdeas.events({
               );
           //console.log(idea); 
           var ideaID = Ideas.insert(idea); //returns _id of Idea after it is inserted
-          Logger.logIdeaSubmission(participant, ideaID); 
+          EventLogger.logIdeaSubmission(participant, ideaID); 
           // Clear the text field
           $('#nextIdea').val('');
+
+          $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
         }
     },
 
-    'click #notify-bulb' : function(){
-      $('#notifications-handle').toggleClass('moved');
+    'click #request-help' : function(){
+      requestHelpNotify(Session.get("currentUser")._id, "db");
     },
 
     //waits 3 seconds after user stops typing to change isTyping flag to false
@@ -413,7 +449,7 @@ exitIdeation = function exitIdeation() {
   ******************************************************************/
   //Logs a partial idea if user hasn't submitted it
   $('#submitIdea').click();
-  Logger.logEndIdeation(Session.get("currentParticipant"));
+  EventLogger.logEndIdeation(Session.get("currentParticipant"));
   $('.exitStudy').addClass("hidden");
   Router.goToNextPage("IdeationPage");
 };
