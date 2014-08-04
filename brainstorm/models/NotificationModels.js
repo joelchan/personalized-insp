@@ -36,6 +36,10 @@ directions = new Notification('ideagens','all');
 directions._id = 'directions';
 directions.type = NotificationTypes.DIRECTIONS;
 
+//priming = new Notification('ideagens','all');
+//priming._id = 'priming';
+//priming.type = NotificationTypes.PRIMING;
+
 sendExamplesNotify = function(sender, recipient, examples){
 	var notification = new Notification(sender, recipient);
 	notification.type = NotificationTypes.SEND_EXAMPLES;

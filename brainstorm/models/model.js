@@ -29,7 +29,7 @@ Idea = function (content, user, prompt, participant) {
   *
   * @return {object} GroupTemplate object 
   ********************************************************************/
-  this.time = new Date();
+  this.time = new Date().getTime();
   this.content = content;
   this.userID = user._id;
   this.userName = user.name;

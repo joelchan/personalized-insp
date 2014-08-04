@@ -5,7 +5,10 @@ Filters = new Meteor.Collection("filters");
 // Configure logger for Filters
 var logger = new Logger('Filter');
 // Comment out to use global logging level
+//Logger.setLevel('Filter', 'trace');
+//Logger.setLevel('Filter', 'debug');
 Logger.setLevel('Filter', 'info');
+//Logger.setLevel('Filter', 'warn');
 
 Filter = function (name, user, collection, field, val, op) {
   /******************************************************************
@@ -235,7 +238,7 @@ FilterManager = (function () {
       var typeFilters = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: 'eventTypeIDs'
+          field: 'type._id'
       });
       logger.debug("Found " + typeFilters.count() + 
           " matching EventType filters");
@@ -251,7 +254,7 @@ FilterManager = (function () {
       var filts = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: {$nin: ['userID', 'clusterIDs', 'time']}
+          field: {$nin: ['userID', 'clusterIDs', 'time', 'type._id']}
       });
       logger.debug("Found " + filts.count() + 
           " matching misc filters");
@@ -400,17 +403,161 @@ FilterManager = (function () {
       /*****************   End Actual Implementation code **********/
 
     },
-    getFieldQueryString: function (filters) {
+    parseFilterOps: function (filters) {
     /******************************************************************
     * Translate a set of filters into a field separeted set of filters
+    * @Params
+    *     filters - 
+    * @Return
+    *     
     *****************************************************************/
     //Result that will organize filters by field
     var sortedFields = binByField(filters, 'field');
+    //Result that will hold the sorted filters
     var sortedOps = {fields: sortedFields.fields};
-    sortedFields.fields.forEach(function(fieldName, sortedFields) {
-      sortedOps[fieldName] = binByField(sortedFields[fieldName], 'op');
+    sortedFields.fields.forEach(function(field) {
+      logger.debug("Field: " + field +
+        "filters: " + JSON.stringify(sortedFields[field]));
+      sortedOps[field] = binByField(sortedFields[field], 'op');
+      logger.debug("Sorted Result: " + JSON.stringify(sortedOps[field]));
     });
     return sortedOps;
+    },
+    getOpQuery: function(op, sortedOp) {
+      /**************************************************************
+       * Translate a set of filters over a common field and operation
+       * into a query subobject
+       * @Params
+       *    op - a string of the operation to be performed
+       *    sortedOp - an array of filters
+       * @Return
+       *    an object that will be passed as a query field parameter
+       *************************************************************/
+      var query;
+      var length = sortedOp.length;
+      switch (op) {
+        case 'eq':
+          if (length === 1) {
+            return sortedOp.val;
+          } else {
+            var vals = [];
+            sortedOp.forEach(function(filt) {
+              vals.push(filt.val);
+            });
+            return {'$in': vals};
+          }
+          break;
+        case 'ne': 
+          if (length === 1) {
+            return {'$ne': sortedOp.val};
+          } else {
+            var vals = [];
+            sortedOp.forEach(function(filt) {
+              vals.push(filt.val);
+            });
+            return {'$nin': vals};
+          }
+          break;
+        case 'gt':
+          //Should only be 1 filter in list
+          return {'$gt': sortedOp[0].val};
+          break;
+        case 'lt':
+          //Should only be 1 filter in list
+          return {'$lt': sortedOp[0].val};
+          break;
+        case 'gte':
+          //Should only be 1 filter in list
+          return {'$gte': sortedOp[0].val};
+          break;
+        case 'lte':
+          //Should only be 1 filter in list
+          return {'$lte': sortedOp[0].val};
+          break;
+      }
+    },
+    getSingleFieldQuery: function(qField, opSortedFilters) {
+        logger.trace("Forming a query over a single field");
+        //Get field specific filters sorted by ops
+        var ops = opSortedFilters['fields'];
+        var query = {};
+        if (ops.length === 1) {
+          logger.trace("Forming query with only 1 operation");
+          query[qField] = this.getOpQuery(ops[0], 
+              opSortedFilters[ops[0]]);
+        } else {
+          query['$and'] = [];
+          for (var i=0; i<ops.length; i++) {
+            var op = ops[i];
+            var filts = opSortedFilters[op];
+            var subQuery = {};
+            subQuery[qField] = this.getOpQuery(op, filts);
+            query['$and'].push(subQuery);
+          }
+        }
+        return query;
+
+    },
+    getQuery: function(parsed, collection) {
+      /**************************************************************
+       * Translate a set of filters parsed by field and then
+       * operation into a single query object that can be passed to
+       * Meteor.Collection.find()
+       * @Params
+       *    parsedFilters - the result of parseFilterOps
+       *    collection - the collection being queried (hack to filter
+       *        events differently)
+       * @Return
+       *    a object that can be passed directly to Collection.find()
+       *    that will filter a given filter
+       *************************************************************/
+      //Get and parse relevant filters
+      //var filters = this.getFilterList(name, user, collection);
+      //var parsed = this.parseFilterOps(filters);
+      //The result to be returned
+      var query = {};
+      var fields = parsed.fields;
+      if (fields.length === 0) {
+        logger.trace("No filters found, returning empty query");
+      } else if (fields.length === 1) {
+        logger.trace("Filtering over only 1 field");
+        //Get field specific filters sorted by ops
+        var fieldParsed = parsed[fields[0]];
+        //var ops = fieldParsed['fields'];
+        var field = fields[0];
+        query = this.getSingleFieldQuery(field, fieldParsed);
+        //if (ops.length === 1) {
+          //logger.trace("Forming query with only 1 operation");
+          //query[field] = this.getOpQuery(ops[0], fieldParsed[ops[0]);
+        //} else {
+          //query['$and'] = [];
+          //for (var i=0; i<ops.length; i++) {
+            //var op = ops[i];
+            //var filts = fieldParsed[op];
+            //query['$and'].push({field: this.getOpQuery(op, filts)});
+          //}
+          //return query;
+        //}
+      } else {
+        //Filtering over multiple fields
+        logger.trace("Filtering over " + parsed.fields.length + 
+          " fields");
+        //if field is not eventtype, then $or all fields of filters
+        var fieldParsed = parsed[fields[0]];
+        var ops = fieldParsed['fields'];
+        if (collection == "events") {
+          var query = {'$and': []};
+        } else {
+          query = {'$or': []};
+        }
+        for (var i=0; i<fields.length; i++) {
+          var field = fields[i];
+          var fieldParsed = parsed[field];
+          query['$or'].push(this.getSingleFieldQuery(field, fieldParsed));
+        }
+      }
+      return query;
+
     },
     performQuery: function(name, user, collection) {
       /**************************************************************
@@ -425,7 +572,15 @@ FilterManager = (function () {
       /*****************   Stub code *******************************/
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
-      //if field is not eventtype, then $or all fields of filters
+      //Get and parse relevant filters into query parameter object
+      var filters = this.getFilterList(name, user, collection);
+      var parsed = this.parseFilterOps(filters);
+      var query = this.getQuery(parsed);
+      logger.debug("got query string: " + JSON.stringify(query));
+      var col = getCollection(collection);
+      var result = col.find(query);
+      return result;
+
       /*****************   End Actual Implementation code **********/
 
     },

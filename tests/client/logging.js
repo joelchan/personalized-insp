@@ -1,7 +1,10 @@
 // Configure logger for server tests
 var logger = new Logger('Test:Client:Logging');
 // Comment out to use global logging level
-Logger.setLevel('Test:Client:Logging', 'trace');
+//Logger.setLevel('Test:Client:Logging', 'trace');
+//Logger.setLevel('Test:Client:Logging', 'debug');
+//Logger.setLevel('Test:Client:Logging', 'info');
+//Logger.setLevel('Test:Client:Logging', 'warn');
 
 /********************************************************************
  * Client behavior tests
@@ -32,8 +35,10 @@ describe("EventTypeManager", function() {
     EventTypes.remove({_id: event._id});
   });
   it("Get existing eventType", function() {
+    chai.assert.ok(true);
   });
   it("Get non-existing eventType", function() {
+    chai.assert.ok(true);
   });
   it("Remove eventTypes with db removal", function() {
     logger.trace("Testing EventType removal db insertion");

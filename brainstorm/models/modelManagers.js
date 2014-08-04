@@ -1,6 +1,7 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
+//Logger.setLevel('Model:Managers', 'trace');
 Logger.setLevel('Model:Managers', 'info');
 
 UserFactory  = (function() {
@@ -29,17 +30,14 @@ UserFactory  = (function() {
        return users;
      },
      remove: function(users) {
-       if (users instanceof Array) {
-        ids = [];
+       if (hasForEach(users)) {
+        ids = getIDs(users);
         if (Meteor.isServer) {
-          for (var i=0; i<users.length; i++) {
-            ids.push(users._id);
-          } 
           MyUsers.remove({"_id": {$in: ids}}); 
         } else {
-          for (var i=0; i<users.length; i++) {
-            MyUsers.remove({"_id": users[i]._id}); 
-          } 
+          ids.forEach(function(id) {
+            MyUsers.remove({"_id": id}); 
+          });
         }
       } else {
          //users is just a single user object if not an array
@@ -70,16 +68,16 @@ IdeaFactory = (function() {
       return ideas;
     },
     remove: function(ideas) {
-      if (ideas instanceof Array) {
-        ids = [];
-        for (var i=0; i<ideas.length; i++) {
-          ids.push(ideas._id);
-        } 
+      if (hasForEach(ideas)) {
+        ids = getIDs(ideas);
+        //for (var i=0; i<ideas.length; i++) {
+          //ids.push(ideas._id);
+        //} 
         if (Meteor.isServer) {
           Ideas.remove({_id: {$in: ids}});
         } else {
-          ideas.forEach(function(idea) {
-            Ideas.remove({_id: idea._id});
+          ids.forEach(function(id) {
+            Ideas.remove({_id: id});
           });
         }
       } else {
@@ -93,12 +91,13 @@ ClusterFactory = (function() {
   return {
     insertIdeaToCluster: function(idea, cluster) {
       logger.trace("Inserting idea into cluster");
-      clusterIdeas = cluster.ideaIDs;
-      clusterIdeas.push(idea._id);
+      cluster.ideaIDs.push(idea._id);
+      logger.debug(cluster);
       idea.clusterIDs.push(cluster._id);
+      logger.debug(idea);
       //Update the corresponding db entries for each idea and cluster
       Ideas.update({_id: idea._id}, {$push: {'clusterIDs': cluster._id}});
-      Clusters.update({_id: cluster._id}, {$push: {ideaIDs: idea._id}});
+      Clusters.update({_id: cluster._id}, {$push: {'ideaIDs': idea._id}});
     },
     create: function(ideas) {
       logger.trace("Creating new Cluster");
@@ -113,23 +112,23 @@ ClusterFactory = (function() {
     },
     removeIdeaFromCluster: function(idea, cluster) {
       //Not working and tested yet
-      // logger.trace("Removing idea from cluster");
-      // logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
-      // removeMember(cluster.ideas, idea);
+      logger.trace("Removing idea from cluster");
+      logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
+      removeMember(cluster.ideaIDs, idea._id);
       
-      // logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas after remove");
-      //idea.clusterIDs.push(cluster._id);
+      logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas after remove");
+      logger.debug("Idea has " + idea.clusterIDs.length + " clusters");
+      removeMember(idea.clusterIDs, cluster._id);
+      logger.debug("Idea has " + idea.clusterIDs.length + " clusters after remove");
       //Update the corresponding db entries for each idea and cluster
-      //Ideas.update({_id: idea._id}, {$push: {clusterIDs: cluster._id}});
-      // Ideas.update({_id: cluster._id},
-      //   {$pull:
-      //     {ideaIDs: ideaID}
-      // });
-      // //Clusters.update({_id: cluster._id}, {$push: {ideas: idea}});
-      // Clusters.update({_id: cluster._id},
-      //   {$pull:
-      //     {ideaIDs: ideaID}
-      // });
+      Ideas.update({_id: idea._id}, 
+          {$pull: 
+            {clusterIDs: cluster._id}
+      });
+      Clusters.update({_id: cluster._id},
+          {$pull:
+            {ideaIDs: idea._id}
+      });
     },
     updatePosition: function(cluster, position){
       Clusters.update({_id: cluster._id},
@@ -149,11 +148,8 @@ ClusterFactory = (function() {
       return clusters;
     },
     remove: function(clusters) {
-      if (clusters instanceof Array) {
-        ids = [];
-        for (var i=0; i<clusters.length; i++) {
-          ids.push(clusters._id);
-        } 
+      if (hasForEach(clusters)) {
+        ids = getIDs(clusters); 
         if (Meteor.isServer) {
           Clusters.remove({_id: {$in: ids}});
         } else {
@@ -165,6 +161,5 @@ ClusterFactory = (function() {
         Clusters.remove({_id: clusters._id});
       }
     }
-
   };
 }());
