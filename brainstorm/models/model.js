@@ -140,41 +140,94 @@ Group = function(template) {
 //};
 
 GroupManager = (function () {
-    return {
+  return {
     /****************************************************************
      * Object that allows for most group manipulations including 
      *   assignment, creation, and modification
      ****************************************************************/
-     copyGroup: function(group) {
-       /**************************************************************
-        * Creates a duplicate group based on a given group's template
-        * and adds it to the database. Intended to abstract mechanics
-        * of copying/creation of a group. Duplicating groups should
-        * be a common function
-        **************************************************************/
-        var newGroup = new Group(group.template);
-        newGroup._id = Groups.insert(newGroup);
-        return newGroup;
-      },
-
-    createGroup: function(template, users) {
+    create: function(template) {
       /**************************************************************
       * Create a new group from a tempalte and perform an necessary
       * initialization
       **************************************************************/
+      if (!template) {
+        template = this.getTemplate();
+      }
       var newGroup = new Group(template);
       newGroup._id = Groups.insert(newGroup);
-      // Assign users to group if users are given
-      if (users) {
-        for (var i=0; i<users.length; i++) {
-          if (group.isOpen) {
-            //Assign the user and update the db entry
-            this.addUser(group, users[i])
-          }
-        }
-      }
+      //// Assign users to group if users are given
+      //if (users) {
+        //for (var i=0; i<users.length; i++) {
+          //if (group.isOpen) {
+            ////Assign the user and update the db entry
+            //this.addUser(group, users[i])
+          //}
+        //}
+      //}
       return newGroup;
     },
+    getTemplate: function(roleTemps) {
+      /**************************************************************
+      * Create a group template with the given role templates
+      * @Params
+      *   roleTemps - (Optional) Array of RoleTemplates that will 
+      *     define the group template
+      * @Return
+      *   a GroupTemplate Object
+      **************************************************************/
+      var result = new GroupTemplate();
+      if (roleTemps) {
+        if (hasForEach(roleTemps)) {
+          logger.trace("Adding list of roles to group template");
+          roleTemps.forEach(function(roleTemp) {
+            this.addRole(result, roleTemp.role, roleTemp.num);
+          });
+        } else {
+          logger.trace("Adding a single role to group template");
+        }
+
+      }
+      //result._id = GroupTemplates.insert(result);
+      return result;
+    },
+    copy: function(group) {
+      /**************************************************************
+       * Creates a duplicate group based on a given group's template
+       * and adds it to the database. Intended to abstract mechanics
+       * of copying/creation of a group. Duplicating groups should
+       * be a common function
+       **************************************************************/
+       return this.create(group.template);
+    },
+    addRole: function (grpTemplate, role, num) {
+      /******************************************************************
+      * Adds a role to the set of roles in a group template
+      *
+      * @return null
+      ******************************************************************/
+      var newRole = new RoleTemplate(role, num);
+      grpTemplate.size += num;
+      grpTemplate.roles.push(newRole);
+    },
+
+    //create: function(template, users) {
+      ///**************************************************************
+      //* Create a new group from a tempalte and perform an necessary
+      //* initialization
+      //**************************************************************/
+      //var newGroup = new Group(template);
+      //newGroup._id = Groups.insert(newGroup);
+      //// Assign users to group if users are given
+      //if (users) {
+        //for (var i=0; i<users.length; i++) {
+          //if (group.isOpen) {
+            ////Assign the user and update the db entry
+            //this.addUser(group, users[i])
+          //}
+        //}
+      //}
+      //return newGroup;
+    //},
 
     numOpenSlots: function(group) {
       /****************************************************************
@@ -252,18 +305,36 @@ GroupManager = (function () {
       };
       return getRandomElement(openRoles);
     },
-
-    addRole: function (grpTemplate, role, num) {
-      /******************************************************************
-      * Adds a role to the set of roles in a group template
-      *
-      * @return null
-      ******************************************************************/
-      var newRole = new RoleTemplate(role, num);
-      grpTemplate.size += num;
-      grpTemplate.roles.push(newRole);
-    }
   }; 
+}());
+RoleManager = (function () {
+  return {
+    /****************************************************************
+     * Object that allows for most group manipulations including 
+     *   assignment, creation, and modification
+     ***************************************************************/
+    getNextFunc: function(role) {
+      /**************************************************************
+       * Get the next function/page that the role should transition
+       *************************************************************/
+      for (var i=0; i<role.workflow.length; i++) {
+          var workflowPage = role.workflow[i]; 
+          if (workflowPage == current) {
+              //console.log("current function is: " + this.workflow[i]);
+              var workflowIndex = i;
+          }
+      }
+      if (workflowIndex + 1 < role.workflow.length) {
+          //console.log("next function is: " + this.workflow[workflowIndex + 1]);
+          return role.workflow[workflowIndex+1];
+      } else {
+          //console.log("No next function found");
+        logger.warn("Attempted to go to next role function when " +
+          "none is defined");
+        return null;
+      }
+    },
+  };
 }());
 
 //Group.prototype.numSlots = function() {

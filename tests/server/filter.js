@@ -1,7 +1,7 @@
 // Configure logger for server tests
 var logger = new Logger('Test:Server:Filter');
 // Comment out to use global logging level
-Logger.setLevel('Test:Server:Filter', 'trace');
+//Logger.setLevel('Test:Server:Filter', 'trace');
 //Logger.setLevel('Test:Server:Model', 'debug');
 //Logger.setLevel('Test:Server:Model', 'info');
 //Logger.setLevel('Test:Server:Model', 'warn');

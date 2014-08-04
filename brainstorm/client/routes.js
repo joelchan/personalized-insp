@@ -143,12 +143,30 @@ Router.map(function () {
 Router.configure({
 	layoutTemplate: 'IdeaGen',
   waitOn: function() {
-      return [Meteor.subscribe('experiments'), Meteor.subscribe('roles')];
+      return [Meteor.subscribe('myUsers')];
+  },
+  onBeforeAction: function(pause) {
+    if (!Session.get("currentUser")) {
+      //if there is no user currently logged in, then render the login page
+      this.render('LoginPage');
+      //Pause rendering the given page until the user is set
+      pause();
+    }
+  },
+  action: function(){
+    if(this.ready())
+      this.render();
+    else
+      this.render('loading');
   }
 });
 
-Router.goToNextPage = function (currentPage) {
-      var role = $.extend(true, new Role(), Session.get("currentRole"));
-      Router.go(role.nextFunc(currentPage), 
-          {'_id': Session.get("currentExp")._id});
+Router.goToNextPage = function () {
+  var currentPage = Router.current().route.name;
+  var role = Session.get("currentRole");
+  if (!role) {
+    Router.go("PromptPage");
+  } else {
+    Router.go(RoleManager.getNextFunc(role));
+  }
 };
