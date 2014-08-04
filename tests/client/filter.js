@@ -1,9 +1,9 @@
 // Configure logger for server tests
 var logger = new Logger('Test:Client:Filter');
 // Comment out to use global logging level
-Logger.setLevel('Test:Client:Filter', 'trace');
+//Logger.setLevel('Test:Client:Filter', 'trace');
 //Logger.setLevel('Test:Client:Filter', 'debug');
-//Logger.setLevel('Test:Client:Filter', 'info');
+Logger.setLevel('Test:Client:Filter', 'info');
 //Logger.setLevel('Test:Client:Filter', 'warn');
 //
 describe("Filtering with FilterManager", function() {

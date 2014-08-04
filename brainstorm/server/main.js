@@ -212,9 +212,9 @@ Meteor.startup(function() {
       Notifications.insert(directions);
     }
 
-    if(Notifications.findOne({_id: "priming"})===undefined){
-      Notifications.insert(priming);
-    }
+    //if(Notifications.findOne({_id: "priming"})===undefined){
+      //Notifications.insert(priming);
+    //}
 });
 
 //Meteor.startup(function() {
