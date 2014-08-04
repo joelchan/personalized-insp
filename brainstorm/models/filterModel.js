@@ -7,7 +7,7 @@ var logger = new Logger('Filter');
 // Comment out to use global logging level
 //Logger.setLevel('Filter', 'trace');
 //Logger.setLevel('Filter', 'debug');
-//Logger.setLevel('Filter', 'info');
+Logger.setLevel('Filter', 'info');
 //Logger.setLevel('Filter', 'warn');
 
 Filter = function (name, user, collection, field, val, op) {
@@ -238,7 +238,7 @@ FilterManager = (function () {
       var typeFilters = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: 'eventTypeIDs'
+          field: 'type._id'
       });
       logger.debug("Found " + typeFilters.count() + 
           " matching EventType filters");
@@ -254,7 +254,7 @@ FilterManager = (function () {
       var filts = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: {$nin: ['userID', 'clusterIDs', 'time']}
+          field: {$nin: ['userID', 'clusterIDs', 'time', 'type._id']}
       });
       logger.debug("Found " + filts.count() + 
           " matching misc filters");
@@ -498,13 +498,15 @@ FilterManager = (function () {
         return query;
 
     },
-    getQuery: function(parsed) {
+    getQuery: function(parsed, collection) {
       /**************************************************************
        * Translate a set of filters parsed by field and then
        * operation into a single query object that can be passed to
        * Meteor.Collection.find()
        * @Params
        *    parsedFilters - the result of parseFilterOps
+       *    collection - the collection being queried (hack to filter
+       *        events differently)
        * @Return
        *    a object that can be passed directly to Collection.find()
        *    that will filter a given filter
@@ -543,7 +545,11 @@ FilterManager = (function () {
         //if field is not eventtype, then $or all fields of filters
         var fieldParsed = parsed[fields[0]];
         var ops = fieldParsed['fields'];
-        var query = {'$or': []};
+        if (collection == "events") {
+          var query = {'$and': []};
+        } else {
+          query = {'$or': []};
+        }
         for (var i=0; i<fields.length; i++) {
           var field = fields[i];
           var fieldParsed = parsed[field];

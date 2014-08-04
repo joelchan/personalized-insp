@@ -1,10 +1,10 @@
 // Configure logger for server tests
 var logger = new Logger('Test:Server:Filter');
 // Comment out to use global logging level
-//Logger.setLevel('Test:Server:Filter', 'trace');
-//Logger.setLevel('Test:Server:Model', 'debug');
-Logger.setLevel('Test:Server:Model', 'info');
-//Logger.setLevel('Test:Server:Model', 'warn');
+Logger.setLevel('Test:Server:Filter', 'trace');
+//Logger.setLevel('Test:Server:Filter', 'debug');
+//Logger.setLevel('Test:Server:Filter', 'info');
+//Logger.setLevel('Test:Server:Filter', 'warn');
 
 
 describe("Filtering with FilterManager", function() {
@@ -85,6 +85,8 @@ describe("Filtering with FilterManager", function() {
     var clusters;
     var time = {}
     var prompt;
+    var eventTypes;
+    var events;
     beforeEach(function() {
       logger.trace("Setting up for Filter Retrieval test");
       users = UserFactory.getTestUsers(numUsers);
@@ -118,6 +120,15 @@ describe("Filtering with FilterManager", function() {
           desc, users[0], collection, 'time', past, 'gt' );
       FilterManager.create(
           desc, users[0], collection, 'time', now, 'lt' );
+      //Create Test EventTypes
+      eventTypes = [EventTypeManager.create("Test Event1"),
+        EventTypeManager.create("Test Event2")];
+      //Create filters for eventTypes
+      for (var i=0; i<eventTypes.length; i++) {
+        FilterManager.create(
+            desc, users[0], collection, 'type._id', eventTypes[i]._id);
+      }
+
     });
     afterEach(function() {
       logger.trace("Cleaning up after Filter Retrieval test");
@@ -127,6 +138,7 @@ describe("Filtering with FilterManager", function() {
       ClusterFactory.remove(clusters);
       IdeaFactory.remove(ideas);
       UserFactory.remove(users);
+      EventTypeManager.remove(eventTypes);
     });
     it("Simple Retrieving raw filter list", function() {
       logger.trace("Testing Raw Filter List retrieval");
@@ -137,7 +149,8 @@ describe("Filtering with FilterManager", function() {
       });
       logger.debug("Found " + query.count() + " filters with query");
       //Check query has expected count
-      chai.assert.equal(query.count(), numUsers - 1 + clusters.length + 2);
+      chai.assert.equal(query.count(), 
+        numUsers - 1 + clusters.length + 2 + eventTypes.length);
       var filters = FilterManager.getFilterList(
           desc, users[0], collection);
       logger.debug("Found " + filters.count() + 
@@ -170,6 +183,12 @@ describe("Filtering with FilterManager", function() {
       //Check for equal time
       chai.assert.deepEqual(mappedFilters['time']['begin'], time['begin']);
       chai.assert.deepEqual(mappedFilters['time']['end'], time['end']);
+      //Check for eventTypes
+      eventTypes.forEach(function(type) {
+        //logger.debug(mappedFilters['clusters']);
+        chai.assert.ok(isInList(type, mappedFilters['eventTypes'], '_id'));  
+      });
+      eventTypes.for
       //Check for no misc filters
       chai.assert.isUndefined(mappedFilters['misc'], 
           "Found misc filters where none should be found");

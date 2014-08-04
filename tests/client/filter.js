@@ -1,9 +1,9 @@
 // Configure logger for server tests
 var logger = new Logger('Test:Client:Filter');
 // Comment out to use global logging level
-//Logger.setLevel('Test:Client:Filter', 'trace');
+Logger.setLevel('Test:Client:Filter', 'trace');
 //Logger.setLevel('Test:Client:Filter', 'debug');
-Logger.setLevel('Test:Client:Filter', 'info');
+//Logger.setLevel('Test:Client:Filter', 'info');
 //Logger.setLevel('Test:Client:Filter', 'warn');
 //
 describe("Filtering with FilterManager", function() {
@@ -587,6 +587,217 @@ describe("Filtering with FilterManager", function() {
           logger.debug("Checking idea with ID: " + idea._id + 
             " is in queryIdeas result");
           chai.assert.ok(isInList(idea, queryIdeas, '_id'));
+        });
+        //Cleanup Created filters
+        FilterManager.reset(desc, user, collection);
+      });
+    });
+    describe("Performing Queries on Events", function() {
+      var desc = "Test Filter";
+      var collection = "events"; 
+      var numUsers = 5;
+      var users;
+      var time = {};
+      var eventTypes;
+      var eventTypeName = "Test Event";
+      var numTypes = 3;
+      var events;
+      beforeEach(function() {
+        logger.trace("Setting up for Events Filter Query test");
+        time['begin'] = new Date().getTime();
+        users = UserFactory.getTestUsers(numUsers);
+        //Create test eventTypes
+        eventTypes = [];
+        for (var i=0; i<numTypes; i++) {
+          eventTypes.push(EventTypeManager.create(eventTypeName + i));
+        }
+        //Log Events for each user of each type
+        events = [];
+        for (var i=0; i<numUsers; i++) {
+          Session.set("currentUser", users[i]);
+          for (var j=0; j<eventTypes.length; j++) {
+            events.push(EventLogger.log(eventTypes[j]));
+          }
+        }
+        //Setup time to filter between ideas creation
+        time['middle'] = new Date().getTime();
+        //Log Events for each user of each type
+        for (var i=0; i<numUsers; i++) {
+          Session.set("currentUser", users[i]);
+          for (var j=0; j<eventTypes.length; j++) {
+            events.push(EventLogger.log(eventTypes[j]));
+          }
+        }
+        time['end'] = new Date().getTime();
+      });
+      afterEach(function() {
+        logger.trace("Cleaning up after Event Filter Query test");
+        EventLogger.remove(events);
+        EventTypeManager.remove(eventTypes);
+        UserFactory.remove(users);
+      });
+      it("Query events with no filters", function() {
+        logger.trace("Testing query with no filters over events");
+        var user = users[0];
+        ////Get total ideas
+        var totalEvents = Events.find();
+        var queryEvents = FilterManager.performQuery(
+          desc, user, collection);
+        logger.debug("Total event count: " + totalEvents.count());
+        logger.debug("Total query event count: " + queryEvents.count());
+        chai.assert.equal(queryEvents.count(), totalEvents.count(),
+          "No Filter count did not match expected");
+      });
+      it("Query events with user filters", function() {
+        logger.trace("Testing query with user filters over events");
+        var user = users[0];
+        //Create user Filters
+        for (var i=0; i<numUsers; i++) {
+          FilterManager.create(
+              desc, user, collection, 'userID', users[i]._id);
+        }
+        for (var i=0; i<numUsers-1; i++) {
+          //Get total ideas matching users
+          var totalEvents = Events.find({'userID': 
+            {'$in': getIDs(users.slice(i))}});
+          var queryEvents = FilterManager.performQuery(
+            desc, user, collection);
+          logger.debug("Total event count: " + totalEvents.count());
+          logger.debug("Total query event count: " + queryEvents.count());
+          chai.assert.equal(queryEvents.count(), totalEvents.count(),
+            "Filter Query didn't match expected length");
+          FilterManager.remove(
+            desc, user, collection, 'userID', users[i]._id);
+        }
+        //Cleanup Created filters
+        FilterManager.reset(desc, user, collection);
+      });
+      it("Query events with time filters", function() {
+        logger.trace("Testing query with time filters over events");
+        var user = users[0];
+        //Create filters for time
+        FilterManager.create(
+            desc, user, collection, 'time', time['begin'], 'gt' );
+        //Get all events
+        FilterManager.create(
+            desc, user, collection, 'time', time['end'], 'lt' );
+        var totalEvents = Events.find({'$and': 
+          [{'time': {'$gt': time['begin']}}, 
+            {'time': {'$lt': time['end']}}]});
+        var queryEvents = FilterManager.performQuery(
+          desc, user, collection);
+        chai.assert.equal(queryEvents.count(), totalEvents.count(),
+          "Filter Query didn't match expected length");
+        //Check all events are present
+        totalEvents.forEach(function(event) {
+          logger.debug("Checking event with ID: " + event._id + 
+            " is in queryEvents result");
+          chai.assert.ok(isInList(event, queryEvents, '_id'));
+        });
+        FilterManager.remove(
+            desc, user, collection, 'time', time['end'], 'lt' );
+        FilterManager.create(
+            desc, user, collection, 'time', time['middle'], 'lt' );
+        var totalEvents = Events.find({'$and': 
+          [{'time': {'$gt': time['begin']}}, {'time': {'$lt': time['middle']}}]});
+        var queryEvents = FilterManager.performQuery(
+          desc, user, collection);
+        chai.assert.equal(queryEvents.count(), totalEvents.count(),
+          "Filter Query didn't match expected length");
+        //Check all events are present
+        totalEvents.forEach(function(event) {
+          logger.debug("Checking event with ID: " + event._id + 
+            " is in queryEvents result");
+          chai.assert.ok(isInList(event, queryEvents, '_id'));
+        });
+        FilterManager.remove(
+            desc, user, collection, 'time', time['begin'], 'gt' );
+        var totalEvents = Events.find({'time': {'$lt': time['middle']}});
+        var queryEvents = FilterManager.performQuery(
+          desc, user, collection);
+        chai.assert.equal(queryEvents.count(), totalEvents.count(),
+          "Filter Query didn't match expected length");
+        //var user = users[0];
+        ////Create user Filters
+        //for (var i=0; i<numUsers; i++) {
+          //FilterManager.create(
+              //desc, user, collection, 'userID', users[i]._id);
+        //}
+        //for (var i=0; i<numUsers-1; i++) {
+          ////Get total ideas matching users
+          //var totalEvents = Events.find({'userID': 
+            //{'$in': getIDs(users.slice(i))}});
+          //var queryEvents = FilterManager.performQuery(
+            //desc, user, collection);
+          //chai.assert.equal(queryEvents.count(), totalEvents.count(),
+            //"Filter Query didn't match expected length");
+        //}
+        //Cleanup Created filters
+        FilterManager.reset(desc, user, collection);
+      });
+      it("Query events with eventType filters", function() {
+        logger.trace("Testing query with eventType filters over events");
+        var user = users[0];
+        //Create eventType Filters
+        for (var i=0; i<eventTypes.length; i++) {
+          FilterManager.create(
+              desc, user, collection, 'type._id', eventTypes[i]._id);
+        }
+        for (var i=0; i<eventTypes.length-1; i++) {
+          //Get total ideas matching users
+          var totalEvents = Events.find({'type._id': 
+            {'$in': getIDs(eventTypes.slice(i))}});
+          var queryEvents = FilterManager.performQuery(
+            desc, user, collection);
+          logger.debug("Total event count: " + totalEvents.count());
+          logger.debug("Total query event count: " + queryEvents.count());
+          chai.assert.equal(queryEvents.count(), totalEvents.count(),
+            "Filter Query didn't match expected length");
+          FilterManager.remove(
+            desc, user, collection, 'type._id', eventTypes[i]._id);
+        }
+        //Cleanup Created filters
+        FilterManager.reset(desc, user, collection);
+      });
+      it("Filter all fields over events", function() {
+        logger.trace("Testing query of all filters over events");
+        var desc = "Test Filter";
+        var collection = "events"; 
+        var user = users[0];
+        //Create filters for numUsers-3 users over collection for query
+        //by user[0]
+        for (var i=1; i<numUsers-2; i++) {
+          FilterManager.create(
+              desc, user, collection, 'userID', users[i]._id);
+        }
+        //Create filters for clusters over collection for query by
+        //user[0]
+        for (var i=0; i<eventTypes.length-1; i++) {
+          FilterManager.create(
+              desc, user, collection, 'type._id', eventTypes[i]._id);
+        }
+        //Create filters for time
+        FilterManager.create(
+            desc, user, collection, 'time', time['begin'], 'gt' );
+        FilterManager.create(
+            desc, user, collection, 'time', time['middle'], 'lt' );
+        var totalEvents = Events.find({'$or': 
+          [{'userID': {'$in': getIDs(users.slice(1,numUsers-2))}}, 
+            {'type._id': {'$in': getIDs(eventTypes.slice(0,eventTypes.length-1))}},
+            {'$and': [{'time': {'$gt': time['begin']}}, 
+              {'time': {'$lt': time['middle']}}]}
+          ]
+        });
+        var queryEvents = FilterManager.performQuery(
+          desc, user, collection);
+        //Check expected counts match
+        chai.assert.equal(queryEvents.count(), totalEvents.count(),
+          "Filter Query didn't match expected length");
+        //Check all events are present
+        totalEvents.forEach(function(event) {
+          logger.debug("Checking event with ID: " + event._id + 
+            " is in queryEvents result");
+          chai.assert.ok(isInList(event, queryEvents, '_id'));
         });
         //Cleanup Created filters
         FilterManager.reset(desc, user, collection);

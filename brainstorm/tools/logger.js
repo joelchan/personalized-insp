@@ -273,12 +273,9 @@ EventTypeManager = (function() {
       return this.create(desc, fields);
     },
     remove: function(types) {
-      if (types instanceof Array) {
-        ids = [];
+      if (hasForEach(types)) {
+        ids = getIDs(types);
         if (Meteor.isServer) {
-          for (var i=0; i<types.length; i++) {
-            ids.push(types._id);
-          } 
           EventTypes.remove({"_id": {$in: ids}}); 
         } else {
           types.forEach(function(type) {

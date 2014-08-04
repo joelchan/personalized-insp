@@ -20,11 +20,12 @@ Meteor.startup(function(){
 		Meteor.subscribe("roles");
 		Meteor.subscribe("groups");
 		Meteor.subscribe("userTypes");
-    	Meteor.subscribe("filters");
+    Meteor.subscribe("filters");
 		/************************************************************
 		* Subscribe to experimentModels.js collections
 		************************************************************/
 		Meteor.subscribe("experiments");
+    Meteor.subscribe('exp-conditions');
 		Meteor.subscribe("consents");
 		Meteor.subscribe("participants");
 		Meteor.subscribe("SurveyResponses");
@@ -38,11 +39,11 @@ Meteor.startup(function(){
 		************************************************************/
 		//Meteor.subscribe("events");
 		Meteor.subscribe("eventTypes");
+		Meteor.subscribe("events");
 		/************************************************************
 		* Subscribe to notificationModels.js collection
 		************************************************************/
 		Meteor.subscribe("notifications");
-    	Meteor.subscribe('exp-conditions');
 
   }
 });
