@@ -54,30 +54,31 @@ EventLogger = (function () {
       event._id = Events.insert(event);
       return event;
     },
-    //logEvent: function(msg, user, type, misc) {
-      /*
-      *  log any event
-      *   Input:
-      *   msg - a string describing the event
-      *   user - the user who generated the event
-      *   type - the type/level of the event logged (default = info)
-      *   misc - an array of objects to log where each object
-      *         has 2 fields, name and data
-      */ 
-      //var event;
-      //if (type) {
-        //event = new Event(msg, user);
-      //} else {
-        //event = new Event(msg, user);
-      //}
-      //if (misc) {
-        ////Write all misc data fields into the event
-        //for (var i=0; i<misc.length; i++) {
-          //event[misc[i].name] = misc[i].data
-        //}
-      //}
-      //Events.insert(event);
-    //},
+
+    remove: function(events) {
+      /**************************************************************
+       * Remove a set of logged events
+       *    This is primarily to support tests and needs to eventually
+       *    be secured.
+       * @params
+       *    events: an array or cursor of events to be removed
+       * @return
+       *    n/a
+       *************************************************************/
+      if (hasForEach(events)) {
+        ids = getIDs(events); 
+        if (Meteor.isServer) {
+          Events.remove({_id: {$in: ids}});
+        } else {
+          events.forEach(function(event) {
+            Events.remove({_id: event._id});
+          });
+        }
+      } else {
+        Events.remove({_id: events._id});
+      }
+
+    },
   
     logExpEvent: function(msg, part, type, misc) {
       /*
@@ -236,6 +237,7 @@ EventLogger = (function () {
               //{name: "type", data: notification.type}];
       //this.logEvent(msg, user, "notification", misc);
     },
+
   };
 }());
 

@@ -32,8 +32,10 @@ describe("EventTypeManager", function() {
     EventTypes.remove({_id: event._id});
   });
   it("Get existing eventType", function() {
+    chai.assert.ok(false);
   });
   it("Get non-existing eventType", function() {
+    chai.assert.ok(false);
   });
   it("Remove eventTypes with db removal", function() {
     logger.trace("Testing EventType removal db insertion");

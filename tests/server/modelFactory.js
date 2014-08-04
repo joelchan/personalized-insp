@@ -185,15 +185,24 @@ describe("Testing Data Factories", function() {
       });
       logger.trace("ideas and cluster from db match ID lists");
     });
-    //it("Idea removal from clusters with updates to db", function() {
-      //logger.trace("Testing db updates with cluster idea removal");
-      //var cluster = ClusterFactory.create(ideas);
-      //var idea = ideas[0];
-      //var numIdeas = cluster.ideaIDs.length;
-      //ClusterFactory.removeIdeaFromCluster(idea, cluster);
-      //chai.assert.equal(cluster.ideaIDs.length, numIdeas - 1);
-     // 
-    //});
+    it("Idea removal from clusters with updates to db", function() {
+      logger.trace("Testing db updates with cluster idea removal");
+      var cluster = ClusterFactory.create(ideas);
+      var idea = ideas[0];
+      var numIdeas = cluster.ideaIDs.length;
+      var numClusters = idea.clusterIDs.length;
+      ClusterFactory.removeIdeaFromCluster(idea, cluster);
+      //Check if original objects are modified
+      chai.assert.equal(cluster.ideaIDs.length, numIdeas - 1);
+      chai.assert.equal(idea.clusterIDs.length, numClusters - 1);
+      //Check if db documents are updated
+      var dbCluster = Clusters.findOne({_id: cluster._id});
+      var dbIdea = Ideas.findOne({_id: idea._id});
+      chai.assert.equal(dbCluster.ideaIDs.length, numIdeas - 1);
+      chai.assert.equal(dbIdea.clusterIDs.length, numClusters - 1);
+      //Cleanup clusters
+      ClusterFactory.remove(cluster);
+    });
     it("create dummy clusters", function() {
       logger.trace("Testing creation of dummy clusters");
       //For one user

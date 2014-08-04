@@ -112,23 +112,23 @@ ClusterFactory = (function() {
     },
     removeIdeaFromCluster: function(idea, cluster) {
       //Not working and tested yet
-      // logger.trace("Removing idea from cluster");
-      // logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
-      // removeMember(cluster.ideas, idea);
+      logger.trace("Removing idea from cluster");
+      logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
+      removeMember(cluster.ideaIDs, idea._id);
       
-      // logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas after remove");
-      //idea.clusterIDs.push(cluster._id);
+      logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas after remove");
+      logger.debug("Idea has " + idea.clusterIDs.length + " clusters");
+      removeMember(idea.clusterIDs, cluster._id);
+      logger.debug("Idea has " + idea.clusterIDs.length + " clusters after remove");
       //Update the corresponding db entries for each idea and cluster
-      //Ideas.update({_id: idea._id}, {$push: {clusterIDs: cluster._id}});
-      // Ideas.update({_id: cluster._id},
-      //   {$pull:
-      //     {ideaIDs: ideaID}
-      // });
-      // //Clusters.update({_id: cluster._id}, {$push: {ideas: idea}});
-      // Clusters.update({_id: cluster._id},
-      //   {$pull:
-      //     {ideaIDs: ideaID}
-      // });
+      Ideas.update({_id: idea._id}, 
+          {$pull: 
+            {clusterIDs: cluster._id}
+      });
+      Clusters.update({_id: cluster._id},
+          {$pull:
+            {ideaIDs: idea._id}
+      });
     },
     updatePosition: function(cluster, position){
       Clusters.update({_id: cluster._id},
