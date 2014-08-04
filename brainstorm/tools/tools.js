@@ -1,7 +1,10 @@
 // Configure logger for Tools
 var logger = new Logger('Tools:Tools');
 // Comment out to use global logging level
+//Logger.setLevel('Tools:Tools', 'trace');
+//Logger.setLevel('Tools:Tools', 'debug');
 Logger.setLevel('Tools:Tools', 'info');
+//Logger.setLevel('Tools:Tools', 'warn');
 
 
 getRandomElement = function (array) {
@@ -32,7 +35,7 @@ function getRandomArbitary (min, max) {
 /**
  * Returns a random integer between min and max
  */
-function getRandomInt (min, max) {
+getRandomInt = function getRandomInt (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -57,7 +60,11 @@ getTime = function(t){
 //Returns meteor collection based on string name. Only works in client(?)
 getCollection = function (name) {
   //console.log(Meteor.connection._mongo_livedata_collections["ideas"]);
-  return Meteor.connection._mongo_livedata_collections[name];
+  if (Meteor.isServer) {
+    return MyCollections[name];
+  } else {
+    return Meteor.connection._mongo_livedata_collections[name];
+  }
   // for (var globalObject in global) {
   //     if (global[globalObject] instanceof Meteor.Collection) {
   //         if (globalObject === string) {
@@ -84,12 +91,23 @@ removeMember = function(list, member) {
   return list;
 };
 
-isInList = function(member, list, field) {
+isInList = function(member, list, field, compare) {
+  /******************************************************************
+   * Check if a given object is in the list
+   * @params
+   *    member - the object to compare
+   *    list - the list that shoudl contain the object
+   *    field - (optional) a subfield of the member and list objects
+   *        on which to compare
+   *    compare - (optional) comparison function to use
+   *****************************************************************/
   if (!(list instanceof Array)) {
-    logger.trace("Checking in cursor list for member: " + JSON.stringify(member));
+    logger.trace("Checking in cursor list for member: " + 
+        JSON.stringify(member));
     list = list.fetch();
   } else {
-    logger.trace("Checking in array list for member: " + JSON.stringify(member));
+    logger.trace("Checking in array list for member: " + 
+        JSON.stringify(member));
   }
   for (var i=0; i< list.length; i++) {
     if (field) {
@@ -147,13 +165,80 @@ binByField = function(objs, field, op) {
    *    an object with a fields paramter which contains an array of 
    *    field names that the object has storing sorted objects
    *****************************************************************/
+  logger.trace("Binning by field: " + field);
   var results = {fields: []};
-  objs.forEach(function(obj, field, op) {
+  objs.forEach(function(obj) {
+    logger.trace("Object is: " + JSON.stringify(obj));
+    logger.trace("Object has value: " + 
+        JSON.stringify(obj[field]));
+    logger.trace("results fields is: " + 
+        JSON.stringify(results.fields));
     if (isInList(obj[field], results.fields)) {
-      results[field].push(obj);
+      logger.trace("Pushing result into list");
+      results[obj[field]].push(obj);
     } else {
-      results[field] = [obj];
+      logger.trace("Pushing result into list");
+      results['fields'].push(obj[field]);
+      results[obj[field]] = [obj];
     }
   });
   return results;
+};
+
+hasForEach = function(obj) {
+  var result = (isInList('forEach', _.functions(obj)) ||
+    (obj instanceof Array));
+  return result;
+};
+
+dates = {
+  convert: function(d) {
+  // Converts the date in d to a date-object. The input can be:
+  //   a date object: returned without modification
+  //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
+  //   a number     : Interpreted as number of milliseconds
+  //                  since 1 Jan 1970 (a timestamp) 
+  //   a string     : Any format supported by the javascript engine, like
+  //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+  //  an object     : Interpreted as an object with year, month and date
+  //                  attributes.  **NOTE** month is 0-11.
+  return (
+      d.constructor === Date ? d :
+      d.constructor === Array ? new Date(d[0],d[1],d[2]) :
+      d.constructor === Number ? new Date(d) :
+      d.constructor === String ? new Date(d) :
+      typeof d === "object" ? new Date(d.year,d.month,d.date) :
+      NaN
+    );
+  },
+  compare: function(a,b) {
+    // Compare two dates (could be of any type supported by the convert
+    // function above) and returns:
+    //  -1 : if a < b
+    //   0 : if a = b
+    //   1 : if a > b
+    // NaN : if a or b is an illegal date
+    // NOTE: The code inside isFinite does an assignment (=).
+    return (
+      isFinite(a=this.convert(a).valueOf()) &&
+      isFinite(b=this.convert(b).valueOf()) ?
+      (a>b)-(a<b) :
+      NaN
+    );
+  },
+  inRange:function(d,start,end) {
+    // Checks if date in d is between dates in start and end.
+    // Returns a boolean or NaN:
+    //    true  : if d is between start and end (inclusive)
+    //    false : if d is before start or after end
+    //    NaN   : if one or more of the dates is illegal.
+    // NOTE: The code inside isFinite does an assignment (=).
+    return (
+      isFinite(d=this.convert(d).valueOf()) &&
+      isFinite(start=this.convert(start).valueOf()) &&
+      isFinite(end=this.convert(end).valueOf()) ?
+      start <= d && d <= end :
+      NaN
+    );
+  }
 };

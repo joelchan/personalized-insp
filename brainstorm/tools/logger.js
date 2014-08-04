@@ -6,12 +6,12 @@
  * system monitoring to console
  *******************************************************************/
 //Set global message logging level
-Logger.setLevel('debug');
+Logger.setLevel('info');
 
 // Configure logger for event logging 
 var logger = new Logger('Tools:Logging');
 // Comment out to use global logging level
-Logger.setLevel('Tools:Logging', 'debug');
+Logger.setLevel('Tools:Logging', 'info');
 
 EventLogger = (function () {
   return {
