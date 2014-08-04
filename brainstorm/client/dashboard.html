@@ -1,30 +1,33 @@
 <template name="Dashboard">
 	<div class="container-fluid dashboard">
+		{{> chatdrawer}}
 		<div class="row">
 			<!--Ideas View (Vizes + Ideas)-->
 			<div class="ideasview col-md-5 dashboard-panel-5">
 				<!--Vizes-->
 				<div class="vizes row">
 					<!--Viz Selector-->
-					<ul id= "viz-menu" class="nav nav-tabs nav-justified" role="tablist">
-						<li class="active"><a href="#tagcloudwrapper" data-toggle="tab">Tag Cloud</a></li>
-  						<li><a href="#chord" data-toggle="tab">Chord</a></li>
-  						<li><a href="#circlepack" data-toggle="tab">Circle Pack</a></li>
-					</ul>
-					<div class="tab-content">
-						<!--Tag Cloud Viz-->
-						<div class="viz tab-pane active" id="tagcloudwrapper">
-							{{> tagcloud}}
-						</div>
+					<!-- <ul id= "viz-menu" class="nav nav-tabs nav-justified" role="tablist">
+						<li class="active"><a href="#tagcloudwrapper" data-toggle="tab">Themes</a></li>
+  						<li><a id="chord" href="#chord" data-toggle="tab" class="disabled">Chord</a></li>
+  						<li><a id="circlepack" href="#circlepack" data-toggle="tab" class="disabled">Circle Pack</a></li>
+					</ul> -->
+					<div class="col-md-12"><h3>Themes</h3>
+						<div class="tab-content">
+							<!--Tag Cloud Viz-->
+							<div class="viz tab-pane active" id="tagcloudwrapper">
+								{{> tagcloud}}
+							</div>
 
-						<!--Chord Viz-->
-						<div class="tab-pane" id="chord">
+							<!--Chord Viz-->
+							<!-- <div class="tab-pane" id="chord">
 
-						</div>
+							</div> -->
 
-						<!--Circle Packing Viz-->
-						<div class="tab-pane" id="cirlcepack">
+							<!--Circle Packing Viz-->
+							<!-- <div class="tab-pane" id="cirlcepack">
 
+							</div> -->
 						</div>
 					</div>
 				</div>
@@ -37,18 +40,20 @@
 					<div class="col-md-8">
 						<h3>Ideas 
 							<span class="quantity">({{numIdeas}})</span>
-							<i class="fa fa-star-o" id="filterGamechangers"></i>
-						</h3>  
-						<div class="idealist">
+						</h3>
+							{{> filterbox}}
+							<!-- <i class="fa fa-star-o" id="filterGamechangers"></i> -->
+						
+						<!-- <div class="idealist">
 							{{#each ideas}}
 								{{> idea}}
 							{{/each}}	
-						</div>
+						</div> -->
 					</div>
 					<div id="filters" class="col-md-4">
-						<h3>Filters</h3>
-
-						<h5>Showing Ideas by: </h5>
+						<h3>Applied Filters</h3>
+							{{>activefilters}}
+						<!-- <h5>Showing Ideas by: </h5>
 						{{#each partFilters}}
 						<div>
 							<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
@@ -60,7 +65,7 @@
 						<div>
 							<span class="clusterfilter-label label label-info" id="cf-{{this.id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						</div>
-						{{/each}}
+						{{/each}} -->
 					</div>
 				</div>
 				<!--End Ideas-->
@@ -85,9 +90,24 @@
 				People</h3>
 				<hr>
 				<div id="people">
-					<div id="checkall-btn-group" class="btn-group btn-group-xs">
-						<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
-						<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
+					<div class="row">
+						<div id="checkall-btn-group" class="col-md-5 btn-group btn-group-xs">
+							<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
+							<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
+						</div>
+						<div id="lever-events-key" class="col-md-7">
+							<svg  height="20px">
+								<circle cx="7px" cy="7px" r="5px" fill="#428bca" fill-opacity="0.4" stroke-width="1px" stroke="#428bca"></circle>
+								<text x="17px" y="11px" fill="black">Changed Prompt</text>
+
+								<circle cx="128px" cy="7px" r="5px" fill="#449d44" fill-opacity="0.4" stroke-width="1px" stroke="#449d44"></circle>
+								<text x="138px" y="11px" fill="black">Sent Examples</text>
+
+								<circle cx="238px" cy="7px" r="5px" fill="#d58512" fill-opacity="0.4" stroke-width="1px" stroke="#d58512"></circle>
+								<text x="248px" y="11px" fill="black">Sent Theme</text>
+							</svg>
+							
+						</div>
 					</div>
 					{{#each users}}
 						{{> userprofile}}
@@ -151,7 +171,9 @@
             	<div class="modal-body">
                 	<h3>Choose examples to send to the selected participants</h3>
                 	<div>
-                		<label>Showing Ideas by: </label>
+                		{{>filterbox}}
+                		{{>activefilters}}
+                		<!-- <label>Showing Ideas by: </label>
 						{{#each partFilters}}
 							<span class="partfilter-label label label-default" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
@@ -159,14 +181,15 @@
 						<label>That Appear in Themes: </label>
 						{{#each clusterFilters}}
 							<span class="clusterfilter-label label label-info" id="cf-{{this.id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
-						{{/each}}
+						{{/each}} -->
                 	</div>
 
-					<div id="sendExModal-idealist" class="idealist">
+                	
+					<!-- <div id="sendExModal-idealist" class="idealist">
 						{{#each ideas}}
 							{{> idea}}
 						{{/each}}	
-					</div>
+					</div> -->
 					<div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
@@ -251,5 +274,9 @@
 </template>
 
 <template name="loading">
-	<h5>Loading</h5>
+	<h4>Loading</h4>
+</template>
+
+<template name="filter-UI">
+
 </template>

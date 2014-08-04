@@ -5,7 +5,9 @@
       "iron-router": {},
       "fontawesome4": {},
       "nvd3js": {},
-      "moment": {}
+      "moment": {},
+      "pince": {},
+      "mocha-web": {}
     },
     "packages": {
       "iron-router": {
@@ -27,6 +29,16 @@
         "git": "https://github.com/acreeger/meteor-moment.git",
         "tag": "v2.6.0",
         "commit": "26156df681750fd6e6ed77043eef32b6653ebbdf"
+      },
+      "pince": {
+        "git": "https://github.com/mad-eye/pince.git",
+        "tag": "v0.0.5",
+        "commit": "4524ecc0bdf043c49dc62e91bbd8a99c661081ed"
+      },
+      "mocha-web": {
+        "git": "https://github.com/mad-eye/meteor-mocha-web.git",
+        "tag": "v0.2.4",
+        "commit": "97194bc90ea9b32047973ff44562a3da3b4e7477"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

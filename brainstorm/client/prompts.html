@@ -7,17 +7,16 @@
 <template name="brainstorm">
   <div id="prompt-{{_id}}" class="menu-box clickable panel panel-info">
     <div class="panel-heading">
-      {{ prompt.question }}
+      {{ question }}
     </div>
-    <div class="panel-row">
-      <strong>Status: </strong>{{ prompt.status }}
-    </div>
+    <!--
     <div class="panel-row">
     <strong>Participants: </strong>
     {{#each prompt.participants}}
       {{> namebox }}
     {{/each}}
     </div>
+    -->
   </div>
 </template>
 
@@ -45,7 +44,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button id="createPrompt" type="button" class="createPrompt btn btn-primary" data-toggle="modal" data-target="#newPromptModal">Save</button>
+            <button id="createPrompt" type="button" class="createPrompt btn btn-primary" data-toggle="modal" data-dismiss="modal">Save</button>
           </div> <!-- End modal footer -->
         </div> <!-- End modal content -->
       </div> <!-- End modal dialog -->

@@ -63,7 +63,7 @@ Template.LoginPage.events({
               Session.set("currentParticipant", part);
               //console.log("set participant and role");
               //Log login event
-              Logger.logParticipantLogin(part);
+              EventLogger.logParticipantLogin(part);
               //Testing balance of conditions
               var x = Experiments.findOne({_id: exp._id});
               console.log("condition1: " + x.groups[1].length +

@@ -10,7 +10,7 @@ Template.ConsentPage.events({
         //loginUser(myUser);
         var part = Session.get("currentParticipant")
         Consents.insert(new Consent(part));
-        Logger.logConsent(part);
+        EventLogger.logConsent(part);
 
         //Go to next page
         Router.goToNextPage("MTurkConsentPage");

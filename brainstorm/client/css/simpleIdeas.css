@@ -118,6 +118,7 @@
 .list-item .gamechangestar{
   float: right;
   padding-top: 3px;
+  padding-left: 3px;
   color: #f0ad4e;
   text-shadow: 1px 1px #ddd; /*#eea236;*/
 }
@@ -144,22 +145,22 @@
   font-size: 22px;
 }
 
-#notify-bulb{
+#request-help{
+  cursor: pointer;
   transition: color 0.5s ease;
   -webkit-transition: color 0.5s ease;
   -moz-transition: color 0.5s ease;
   -o-transition: color 0.5s ease;
-  padding-top: 20px;
+  padding-top: 30px;
   /*padding-left: 15px;*/
   padding-left: 0px;
   color: #A1A1A1;
   text-shadow: 1px 1px #ededed;
-  cursor: default;
 }
 
-/*#notify-bulb:hover{
+#request-help:hover{
   color: #6e6e6e;
-}*/
+}
 
 .badge{
   font-size: 14px;
@@ -170,8 +171,8 @@
   margin: 0;
   border-radius: 50%;
   position:absolute;
-  top: 18px;
-  left: 35px;
+  top: 28px;
+  left: 14px;
 }
 
 /*#notifications-handle{
@@ -237,6 +238,13 @@
 }
 
 .notification-item.unhandled .panel-heading{
+  background-color: white;
+  /*background-color: #f0ad4e;*/
+  /*color: black;*/
+}
+
+.notification-item.unhandled .panel-heading.flash {
+  /*background-color: white;*/
   background-color: #f0ad4e;
   color: white;
 }
