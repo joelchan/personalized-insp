@@ -12,7 +12,10 @@ Template.filterbox.helpers({
 		return MyUsers.find({type: "Experiment Participant"});
 	},
 	ideas : function(){
-		return Ideas.find();
+		// return Ideas.find();
+		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
+		console.log("FilterBoxHelper" + cursor.count());
+		return cursor;
 	},
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});

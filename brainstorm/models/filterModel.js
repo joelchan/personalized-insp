@@ -5,9 +5,9 @@ Filters = new Meteor.Collection("filters");
 // Configure logger for Filters
 var logger = new Logger('Filter');
 // Comment out to use global logging level
-//Logger.setLevel('Filter', 'trace');
+Logger.setLevel('Filter', 'trace');
 //Logger.setLevel('Filter', 'debug');
-Logger.setLevel('Filter', 'info');
+// Logger.setLevel('Filter', 'info');
 //Logger.setLevel('Filter', 'warn');
 
 Filter = function (name, user, collection, field, val, op) {
@@ -438,18 +438,20 @@ FilterManager = (function () {
       switch (op) {
         case 'eq':
           if (length === 1) {
-            return sortedOp.val;
+            logger.trace("eq single vals: " + JSON.stringify(sortedOp.val));
+            return sortedOp[0].val;
           } else {
             var vals = [];
             sortedOp.forEach(function(filt) {
               vals.push(filt.val);
             });
+            logger.trace("eq multiple vals: " + JSON.stringify(vals));
             return {'$in': vals};
           }
           break;
         case 'ne': 
           if (length === 1) {
-            return {'$ne': sortedOp.val};
+            return {'$ne': sortedOp[0].val};
           } else {
             var vals = [];
             sortedOp.forEach(function(filt) {
@@ -483,6 +485,8 @@ FilterManager = (function () {
         var query = {};
         if (ops.length === 1) {
           logger.trace("Forming query with only 1 operation");
+          logger.trace("query op: " + ops[0]);
+          logger.trace("Filter: " + JSON.stringify(opSortedFilters[ops[0]]));
           query[qField] = this.getOpQuery(ops[0], 
               opSortedFilters[ops[0]]);
         } else {
@@ -548,12 +552,12 @@ FilterManager = (function () {
         if (collection == "events") {
           var query = {'$and': []};
         } else {
-          query = {'$or': []};
+          query = {'$and': []};
         }
         for (var i=0; i<fields.length; i++) {
           var field = fields[i];
           var fieldParsed = parsed[field];
-          query['$or'].push(this.getSingleFieldQuery(field, fieldParsed));
+          query['$and'].push(this.getSingleFieldQuery(field, fieldParsed));
         }
       }
       return query;

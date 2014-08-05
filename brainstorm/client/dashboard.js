@@ -335,20 +335,23 @@ Template.userseries.rendered = function(){
 *********************************************************************/
 Template.Dashboard.helpers({
 	ideas : function(){
-		var filters = Session.get("idealistFilters");//Session.get("partFilters");
-		var clusterIdeas = [];
-		for (var i = 0; i < filters.clusterFilters.length; i++) {
-			clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
-		};
-		if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
-			return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}});
-		} else if (clusterIdeas.length > 0){
-   			return IdeasToProcess.find({_id: {$in: clusterIdeas}, isGamechanger: {$in: filters.gamchanger}});
-   		} else if (filters.partFilters.length > 0){
-   			return IdeasToProcess.find({userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}})
-   		} else {
-   			return IdeasToProcess.find({isGamechanger: {$in: filters.gamchanger}});
-   		}
+		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
+		console.log(cursor.count());
+		return cursor;
+		// var filters = Session.get("idealistFilters");//Session.get("partFilters");
+		// var clusterIdeas = [];
+		// for (var i = 0; i < filters.clusterFilters.length; i++) {
+		// 	clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
+		// };
+		// if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
+		// 	return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}});
+		// } else if (clusterIdeas.length > 0){
+  //  			return IdeasToProcess.find({_id: {$in: clusterIdeas}, isGamechanger: {$in: filters.gamchanger}});
+  //  		} else if (filters.partFilters.length > 0){
+  //  			return IdeasToProcess.find({userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}})
+  //  		} else {
+  //  			return IdeasToProcess.find({isGamechanger: {$in: filters.gamchanger}});
+  //  		}
   	},
 
   	numIdeas : function(){
