@@ -438,7 +438,7 @@ FilterManager = (function () {
       switch (op) {
         case 'eq':
           if (length === 1) {
-            return sortedOp.val;
+            return sortedOp[0].val;
           } else {
             var vals = [];
             sortedOp.forEach(function(filt) {
@@ -449,7 +449,7 @@ FilterManager = (function () {
           break;
         case 'ne': 
           if (length === 1) {
-            return {'$ne': sortedOp.val};
+            return {'$ne': sortedOp[0].val};
           } else {
             var vals = [];
             sortedOp.forEach(function(filt) {

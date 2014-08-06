@@ -37,8 +37,21 @@ describe("Group Management", function() {
          //}
        //console.log(group.isOpen);
   describe("Group Creation", function () {
-    it("Object creation with collection insertion and removal", function() {
+    it("Simple group with no roles create and remove", function() {
+      logger.debug("Testing create and remove group with no roles");
+      var group = GroupManager.create();
+      GroupManager.remove(group);
       chai.assert.ok(true);
     });
+    it("Add Roles to empty group", function() {
+      logger.debug("Testing adding roles to group");
+      //GroupManager.create();
+      chai.assert.ok(true);
+    });
+    it("Add users to group with unlimited each role", function() {
+      logger.debug("Testing adding users to unlimited group");
+      chai.assert.ok(true);
+    });
+  });
   });
 });

@@ -3,7 +3,7 @@ var logger = new Logger('Test:Server:Filter');
 // Comment out to use global logging level
 //Logger.setLevel('Test:Server:Filter', 'trace');
 //Logger.setLevel('Test:Server:Filter', 'debug');
-Logger.setLevel('Test:Server:Filter', 'info');
+//Logger.setLevel('Test:Server:Filter', 'info');
 //Logger.setLevel('Test:Server:Filter', 'warn');
 
 

@@ -125,26 +125,105 @@ Group = function(template) {
       } 
     }
 }
+GroupTemplate = function () {
+  /******************************************************************
+  * Defines a template for membership of each group in a brainstorm
+  *
+  * @return {object} GroupTemplate object 
+  ******************************************************************/
+ 
+  // list of RoleTemplates
+  this.rolesTemplates = [];
+  // The number of members in the group where -1 is unlimited
+  this.size = 0;
+  // Dictionary where key=Role._id; value=number of people of that role
+  //this.numRoles = {};
 
-//GroupAssignment = function(user, role) {
-  ///****************************************************************
-  //* Encapsulates the assignment of a user in a group to a role
-  //* @Params
-  //*   user - the user that is being assign
-  //*   role - the role the user is being assign to
-  //****************************************************************/
-  //this.userID = user._id;
-  //this.userName = user.name;
-  //this.roleID = role._id;
-  //this.roletitle = role.title;
-//};
+};
+
+RoleTemplate = function (role, num) {
+  this.role = role;
+  this.num = num;
+}
+
+
+Role = function (title) {
+  /********************************************************************
+  * defines a function or sequence of functions performed by an
+  * individual
+  *
+  * @return {object} GroupTemplate object 
+  ********************************************************************/
+
+  this.title = title;
+  this.workflow = [];
+
+};
+
+RoleManager = (function () {
+  //Change deafultRoles to object with list of roles + each role
+  //accessible by name
+  var defaultRoles = [];
+  var newRole = new Role("Ideator");
+  newRole.workflow = ['IdeationPage', 'SurveyPage'];
+  defaultRoles.push(newRole);
+  var newRole = new Role("Synthesizer");
+  newRole.workflow = ['Clustering', 'SurveyPage'];
+  defaultRoles.push(newRole);
+  var newRole = new Role("Facilitator");
+  newRole.workflow = ['Dashboard', 'SurveyPage'];
+  defaultRoles.push(newRole);
+  var newRole = new Role("Unassigned");
+  newRole.workflow = ['PromptPage', 'RoleSelectPage'];
+  defaultRoles.push(newRole);
+
+  return {
+    /****************************************************************
+     * Object that allows for most group manipulations including 
+     *   assignment, creation, and modification
+     ***************************************************************/
+    //Enum of all default roles
+    defaults: defaultRoles,
+    getNextFunc: function(role) {
+      /**************************************************************
+       * Get the next function/page that the role should transition
+       *************************************************************/
+      for (var i=0; i<role.workflow.length; i++) {
+          var workflowPage = role.workflow[i]; 
+          if (workflowPage == current) {
+              //console.log("current function is: " + this.workflow[i]);
+              var workflowIndex = i;
+          }
+      }
+      if (workflowIndex + 1 < role.workflow.length) {
+          //console.log("next function is: " + this.workflow[workflowIndex + 1]);
+          return role.workflow[workflowIndex+1];
+      } else {
+          //console.log("No next function found");
+        logger.warn("Attempted to go to next role function when " +
+          "none is defined");
+        return null;
+      }
+    },
+  };
+}());
+
 
 GroupManager = (function () {
+  var defaultTempl = new GroupTemplate();
+  var roles = [new RoleTemplate(RoleManager.defaults['Ideator'], -1),
+    new RoleTemplate(RoleManager.defaults['Synthesizer'], -1),
+    new RoleTemplate(RoleManager.defaults['Facilitator'], -1)
+  ];
+  defaultTempl.roles = roles;
+  defaultTempl.size = -1;
   return {
     /****************************************************************
      * Object that allows for most group manipulations including 
      *   assignment, creation, and modification
      ****************************************************************/
+    defaults: defaultTempl,
+
     create: function(template) {
       /**************************************************************
       * Create a new group from a tempalte and perform an necessary
@@ -307,155 +386,4 @@ GroupManager = (function () {
     },
   }; 
 }());
-RoleManager = (function () {
-  return {
-    /****************************************************************
-     * Object that allows for most group manipulations including 
-     *   assignment, creation, and modification
-     ***************************************************************/
-    getNextFunc: function(role) {
-      /**************************************************************
-       * Get the next function/page that the role should transition
-       *************************************************************/
-      for (var i=0; i<role.workflow.length; i++) {
-          var workflowPage = role.workflow[i]; 
-          if (workflowPage == current) {
-              //console.log("current function is: " + this.workflow[i]);
-              var workflowIndex = i;
-          }
-      }
-      if (workflowIndex + 1 < role.workflow.length) {
-          //console.log("next function is: " + this.workflow[workflowIndex + 1]);
-          return role.workflow[workflowIndex+1];
-      } else {
-          //console.log("No next function found");
-        logger.warn("Attempted to go to next role function when " +
-          "none is defined");
-        return null;
-      }
-    },
-  };
-}());
-
-//Group.prototype.numSlots = function() {
-    ///****************************************************************
-    //* Determine if the group can accept more members according to 
-    //* the template definition 
-    //****************************************************************/
-    //var numOpen = 0;
-    //var roles = this.template.roles;
-    //for (var i=0; i<roles.length; i++) {
-        //var numUsers = this.assignments[roles[i].roleID].length;
-        //var numSlots = roles[i].num;
-        //numOpen += numSlots - numUsers;
-    //}
-    //return numOpen;
-//};
-//
-//
-//Group.prototype.addUser = function(user) {
-    //var role = this.getRandomRole();
-    //this.users[user._id] = role;
-    //this.assignments[role._id] = user;
-    //return role;
-//}
-
-GroupTemplate = function () {
-  /******************************************************************
-  * Defines a template for membership of each group in a brainstorm
-  *
-  * @return {object} GroupTemplate object 
-  ******************************************************************/
- 
-  // list of RoleTemplates
-  this.roles = [];
-  // The number of members in the group where -1 is unlimited
-  this.size = 0;
-  // Dictionary where key=Role._id; value=number of people of that role
-  //this.numRoles = {};
-
-};
-
-//GroupTemplate.prototype.addRole = function (role, num){
-  ///******************************************************************
-  //* Adds a role to the set of roles in a group template
-  //*
-  //* @return null
-  //******************************************************************/
-  //var newRole = new RoleTemplate(role, num);
-  //this.size += num;
-  //this.roles.push(newRole);
-//};
-
-RoleTemplate = function (role, num) {
-  this.roleID = role._id;
-  this.title = role.title;
-  this.num = num;
-}
-
-
-Role = function (title) {
-  /********************************************************************
-  * defines a function or sequence of functions performed by an
-  * individual
-  *
-  * @return {object} GroupTemplate object 
-  ********************************************************************/
-
-  this.title = title;
-  this.workflow = [];
-
-};
-
-Role.prototype.nextFunc = function (current) {
-  for (var i=0; i<this.workflow.length; i++) {
-      var workflowPage = this.workflow[i]; 
-      if (workflowPage == current) {
-          //console.log("current function is: " + this.workflow[i]);
-          var workflowIndex = i;
-      }
-  }
-  if (workflowIndex + 1 < this.workflow.length) {
-      //console.log("next function is: " + this.workflow[workflowIndex + 1]);
-      return this.workflow[workflowIndex+1];
-  } else {
-      //console.log("No next function found");
-    return null;
-  }
-};
-
-Role.prototype.nextFunc = function (current) {
-  for (var i=0; i<this.workflow.length; i++) {
-      var workflowPage = this.workflow[i]; 
-      if (workflowPage == current) {
-          //console.log("current function is: " + this.workflow[i]);
-          var workflowIndex = i;
-      }
-  }
-  if (workflowIndex + 1 < this.workflow.length) {
-      //console.log("next function is: " + this.workflow[workflowIndex + 1]);
-      return this.workflow[workflowIndex+1];
-  } else {
-      //console.log("No next function found");
-    return null;
-  }
-};
-
-Role.prototype.getRole = function(newRole) {
-  return $.extend(true, new Role(), newRole);
-}
-
-
-//Javascript implementation of Java's hash code function 
-//Hash code function 
-String.prototype.hashCode = function() {
-  var hash = 0, i, chr, len;
-  if (this.length == 0) return hash;
-  for (i = 0, len = this.length; i < len; i++) {
-    chr   = this.charCodeAt(i);
-    hash  = ((hash << 5) - hash) + chr;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
-};
 
