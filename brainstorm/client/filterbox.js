@@ -160,11 +160,11 @@ Template.filterbox.events({
 
 	'click .gamechange-filter' : function(){
 		var $icon = $('.gamechange-filter').children('i');
-		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "isGamchanger");		
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "isGamechanger");		
 
 		if($icon.hasClass('fa-star-o')){
 			$icon.switchClass('fa-star-o', 'fa-star');
-			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "isGamchanger", true);
+			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "isGamechanger", true);
 		} else if($icon.hasClass('fa-star')){
 			$icon.switchClass('fa-star', 'fa-star-o');
 		}
