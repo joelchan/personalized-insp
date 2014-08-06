@@ -204,15 +204,16 @@ FilterManager = (function () {
       var clusterFilters = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: 'clusterIDs'
+          field: 'clusters'
       });
       logger.debug("Found " + clusterFilters.count() + 
-          " matching cluster filters");
+          " matching [cluster] filters");
       if (clusterFilters.count() !== 0) {
         //Grab clusterIDs from filters and get associated cluster documents
         IDs = getValsFromField(clusterFilters, 'val');
         logger.debug("IDs of clusters: " + JSON.stringify(IDs));
         result['clusters'] = Clusters.find({_id: {$in: IDs}}).fetch();
+        console.log(result['clusters']);
       }
       //Get time filters
       var timeFilters = Filters.find({name: name, 
@@ -254,7 +255,7 @@ FilterManager = (function () {
       var filts = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: {$nin: ['userID', 'clusterIDs', 'time', 'type._id']}
+          field: {$nin: ['userID', 'clusters', 'time', 'type._id']}
       });
       logger.debug("Found " + filts.count() + 
           " matching misc filters");

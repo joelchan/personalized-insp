@@ -14,7 +14,7 @@ Template.filterbox.helpers({
 	ideas : function(){
 		// return Ideas.find();
 		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		console.log("FilterBoxHelper" + cursor.count());
+		console.log("FilterBoxHelper says there are " + cursor.count() + " ideas");
 		return cursor;
 	},
 	currentClusters: function(){
@@ -137,7 +137,7 @@ Template.filterbox.events({
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
 			id = id.split("-")[1];
-			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);
+			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);
 		    return id;
 		});
 	},
@@ -182,7 +182,7 @@ Template.activefilters.events({
 	},
 
 	'click .cancel-cluster': function(){
-		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", this._id);
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", this._id);
 	},
 
 	'click .cancel-themed': function(){

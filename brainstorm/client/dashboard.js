@@ -483,7 +483,7 @@ Template.Dashboard.events({
 		// filters.clusterFilters.push(clusterMap);
 		// Session.set("idealistFilters", filters);
 
-		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);	
+		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);	
 	},
 
 	'click .fa-minus-circle' : function(){
