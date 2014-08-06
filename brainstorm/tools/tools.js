@@ -104,6 +104,7 @@ isInList = function(member, list, field, compare) {
   if (!(list instanceof Array)) {
     logger.trace("Checking in cursor list for member: " + 
         JSON.stringify(member));
+    //Not sure why forEach is not working with cursors
     list = list.fetch();
   } else {
     logger.trace("Checking in array list for member: " + 

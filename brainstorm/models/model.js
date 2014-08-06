@@ -1,3 +1,11 @@
+// Configure logger for Tools
+var logger = new Logger('Models:Data');
+// Comment out to use global logging level
+Logger.setLevel('Models:Data', 'trace');
+//Logger.setLevel('Models:Data', 'debug');
+//Logger.setLevel('Models:Data', 'info');
+//Logger.setLevel('Models:Data', 'warn');
+
 /********************************************************************
 Brainstorming prompts data models 
 ********************************************************************/
@@ -111,8 +119,6 @@ Group = function(template) {
       for (var i=0; i<this.template.roles.length; i++) {
         //Use roleID as the key toe the object containing assignments
         var roleID = this.template.roles[i].roleID;
-        //console.log(this.template.roles[i].roleID);
-        //var newRoleAssign = {'roleID': roleID};
         this.assignments[roleID] = [];
         //The title of the role associated with these assignments
         //newRoleAssign['roleTitle'] = this.template.roles[i].title;
@@ -132,19 +138,13 @@ GroupTemplate = function () {
   * @return {object} GroupTemplate object 
   ******************************************************************/
  
-  // list of RoleTemplates
-  this.rolesTemplates = [];
+  // list of Roles with role.num defined as the number of that role in
+  // the group
+  this.roles = [];
   // The number of members in the group where -1 is unlimited
   this.size = 0;
-  // Dictionary where key=Role._id; value=number of people of that role
-  //this.numRoles = {};
 
 };
-
-RoleTemplate = function (role, num) {
-  this.role = role;
-  this.num = num;
-}
 
 
 Role = function (title) {
@@ -157,25 +157,28 @@ Role = function (title) {
 
   this.title = title;
   this.workflow = [];
+  // this.num used by GroupTemplates
+  // this.misc used by individual page logic to load page specific
+  // variables in form [{name: "name", val: "value"}, ...] 
 
 };
 
 RoleManager = (function () {
   //Change deafultRoles to object with list of roles + each role
   //accessible by name
-  var defaultRoles = [];
+  var defaultRoles = {};
   var newRole = new Role("Ideator");
   newRole.workflow = ['IdeationPage', 'SurveyPage'];
-  defaultRoles.push(newRole);
+  defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Synthesizer");
   newRole.workflow = ['Clustering', 'SurveyPage'];
-  defaultRoles.push(newRole);
+  defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Facilitator");
   newRole.workflow = ['Dashboard', 'SurveyPage'];
-  defaultRoles.push(newRole);
+  defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Unassigned");
   newRole.workflow = ['PromptPage', 'RoleSelectPage'];
-  defaultRoles.push(newRole);
+  defaultRoles[newRole.title] = newRole;
 
   return {
     /****************************************************************
@@ -184,6 +187,21 @@ RoleManager = (function () {
      ***************************************************************/
     //Enum of all default roles
     defaults: defaultRoles,
+    getTemplate: function(title, num) {
+      /**************************************************************
+       * Return a roleTemplate with using a role with a given title
+       * and the number specified
+       *************************************************************/
+      logger.trace("Creating template with role: " + title);
+      var role = this.defaults[title];
+      if (!role) {
+        logger.warn(
+            "Failed attempt to create roleTemplate with role title: " +
+            title);
+      }
+      role['num'] = num;
+      return role;
+    },
     getNextFunc: function(role) {
       /**************************************************************
        * Get the next function/page that the role should transition
@@ -210,20 +228,19 @@ RoleManager = (function () {
 
 
 GroupManager = (function () {
+  //Define a default group template
   var defaultTempl = new GroupTemplate();
-  var roles = [new RoleTemplate(RoleManager.defaults['Ideator'], -1),
-    new RoleTemplate(RoleManager.defaults['Synthesizer'], -1),
-    new RoleTemplate(RoleManager.defaults['Facilitator'], -1)
+  defaultTempl.roles = [RoleManager.getTemplate("Ideator", -1),
+    RoleManager.getTemplate('Synthesizer', -1),
+    RoleManager.getTemplate('Facilitator', -1)
   ];
-  defaultTempl.roles = roles;
   defaultTempl.size = -1;
   return {
     /****************************************************************
      * Object that allows for most group manipulations including 
      *   assignment, creation, and modification
      ****************************************************************/
-    defaults: defaultTempl,
-
+    defaultTemplate: defaultTempl,
     create: function(template) {
       /**************************************************************
       * Create a new group from a tempalte and perform an necessary
@@ -234,7 +251,7 @@ GroupManager = (function () {
       }
       var newGroup = new Group(template);
       newGroup._id = Groups.insert(newGroup);
-      //// Assign users to group if users are given
+      // Assign users to group if users are given
       //if (users) {
         //for (var i=0; i<users.length; i++) {
           //if (group.isOpen) {
@@ -244,6 +261,9 @@ GroupManager = (function () {
         //}
       //}
       return newGroup;
+    },
+    createDefault: function() {
+      return this.create(this.defaultTemplate);
     },
     getTemplate: function(roleTemps) {
       /**************************************************************
@@ -278,15 +298,48 @@ GroupManager = (function () {
        **************************************************************/
        return this.create(group.template);
     },
-    addRole: function (grpTemplate, role, num) {
+    addRole: function (grp, title, num) {
       /******************************************************************
       * Adds a role to the set of roles in a group template
       *
       * @return null
       ******************************************************************/
-      var newRole = new RoleTemplate(role, num);
-      grpTemplate.size += num;
-      grpTemplate.roles.push(newRole);
+      var newRole = RoleManager.getTemplate(title, num);
+      var updateDb = false;
+      //Check if group is a template
+      if (!grp.template) {
+        logger.trace("Adding role to a GroupTemplate");
+        var target = grp;
+      } else {
+        logger.trace("Adding role to template of a group");
+        updateDb = true; 
+        target = grp.template;
+      }
+      var newRole = RoleManager.getTemplate(title, num);
+      if (!isInList(newRole, target.roles, 'title')) {
+        target.roles.push(newRole);
+        //Update group size
+        if (target.size >= 0) {
+          if (num < 0) {
+            target.size = -1;
+          } else {
+            target.size += num;
+          }
+        }
+        //Update db fields
+        if (updateDb) {
+          Groups.update({_id: grp._id}, 
+              {
+                $push: {'template.roles': newRole},
+                $set: {'template.size': target.size}
+              }
+          );
+        }
+      } else {
+        logger.warn("GroupTemplate already contains given role," +
+            " no change made");
+      }
+      return newRole;
     },
 
     //create: function(template, users) {
@@ -334,12 +387,15 @@ GroupManager = (function () {
       return numSlots - numAssigned;
     },
   
-    addUser: function(group, user) {
+    addUser: function(group, user, role) {
       /**************************************************************
       * Adds a user to the group assumes group has capacity unless
       *   isOpen flag is set to false, also updates database entry
       * @Params
+      *   group - the group the user will be inserted if there is space
       *   user - user to be added to the group
+      *   role - (optional) the role the user will be assigned. 
+      *       If none is given, then a random role will be selected
       * @Return
       *   role - the role that the user was assigned or undefined if 
       *       no assignment was successfully made
@@ -367,7 +423,9 @@ GroupManager = (function () {
       }
       return role;
     },
-
+    getSize: function(group) {
+      return group.template.size;
+    },
     getRandomRole: function (group) {
       /**************************************************************
       * Returns from the group a random role that has open slots
@@ -384,6 +442,24 @@ GroupManager = (function () {
       };
       return getRandomElement(openRoles);
     },
+    remove: function(groups) {
+      if (hasForEach(groups)) {
+        ids = getIDs(groups);
+        if (Meteor.isServer) {
+          logger.trace("Removing a set of groups using $in");
+          Groups.remove({"_id": {$in: ids}}); 
+        } else {
+          logger.trace("Removing a set of groups individually");
+          ids.forEach(function(id) {
+            Groups.remove({"_id": id}); 
+          });
+        }
+      } else {
+         //groups is just a single group object if not an array
+         logger.trace("Removing a single group by ID");
+         Groups.remove({_id: groups._id});  
+      }
+    }
   }; 
 }());
 

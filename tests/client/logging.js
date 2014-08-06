@@ -3,7 +3,7 @@ var logger = new Logger('Test:Client:Logging');
 // Comment out to use global logging level
 //Logger.setLevel('Test:Client:Logging', 'trace');
 //Logger.setLevel('Test:Client:Logging', 'debug');
-//Logger.setLevel('Test:Client:Logging', 'info');
+Logger.setLevel('Test:Client:Logging', 'info');
 //Logger.setLevel('Test:Client:Logging', 'warn');
 
 /********************************************************************
