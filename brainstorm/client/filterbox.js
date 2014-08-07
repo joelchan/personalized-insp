@@ -17,7 +17,6 @@ Template.filterbox.helpers({
 		var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
 		// sort the array
 		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
-		sortedIdeas.forEach(function(i) { console.log(i.content); });
 		// return the sorted array
 		// console.log("FilterBoxHelper says there are " + filteredIdeas.count() + " ideas");
 		return sortedIdeas;

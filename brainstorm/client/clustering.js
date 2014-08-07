@@ -128,7 +128,10 @@ Template.cluster.rendered = function(){
 Template.Clustering.helpers({
   ideas : function(){
     //var filter = Session.get("currentFilter");//Filters.findOne({name: "Syn Idea List Filter", user: Session.get("currentUser")});
-    return Ideas.find();//FilterFactory.performQuery(filter);//
+    var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
+    var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+    return sortedIdeas;
+    // return Ideas.find();//FilterFactory.performQuery(filter);//
   },
 
   clusters : function(){
