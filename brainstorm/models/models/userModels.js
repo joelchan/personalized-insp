@@ -6,7 +6,6 @@ var logger = new Logger('Models:User');
 Logger.setLevel('Models:User', 'info');
 //Logger.setLevel('Models:User', 'warn');
 
-
 // All system users
 MyUsers = new Meteor.Collection("myUsers");
 UserTypes = new Meteor.Collection("userTypes");
