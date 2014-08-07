@@ -442,7 +442,7 @@ FilterManager = (function () {
       switch (op) {
         case 'eq':
           if (length === 1) {
-            logger.trace("eq single vals: " + JSON.stringify(sortedOp.val));
+            logger.trace("eq single vals: " + JSON.stringify(sortedOp[0].val));
             return sortedOp[0].val;
           } else {
             var vals = [];

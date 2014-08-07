@@ -124,7 +124,7 @@ Template.filterbox.events({
 
 		var selected = $(".filter-list input[type='radio']:checked");
 			if (selected.length > 0) {
-			    selectedVal = selected.val();
+			    selectedVal = $.parseJSON(selected.val());
 			}
 
 		if (selectedVal !== "neither") {
