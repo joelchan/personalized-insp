@@ -229,10 +229,10 @@ FilterManager = (function () {
         var time = {};
         timeFilters.forEach(function(filt) {
           if (filt.op === 'gt' || filt.op === 'gte') {
-            time['begin'] = Date.parse(filt.val);
+            time['begin'] = filt.val;
             console.log("begin: " + time['begin']);
           } else if (filt.op === 'lt' || filt.op === 'lte') {
-            time['end'] = Date.parse(filt.val);
+            time['end'] = filt.val;
             console.log("end: " + time['end']);
           }
         });

@@ -153,8 +153,8 @@ Template.filterbox.events({
 		console.log("endDur: " + endDur);
 		// var start = moment(Date.now()).subtract('minutes', startDur)._d;
 		// var end = moment(Date.now()).subtract('minutes', endDur)._d;
-		var start = moment(Date.now()).subtract('minutes', startDur)._d;
-		var end = moment(Date.now()).subtract('minutes', endDur)._d;
+		var start = moment(Date.now()).subtract('minutes', startDur).valueOf();
+		var end = moment(Date.now()).subtract('minutes', endDur).valueOf();
 		console.log("start: " + start);
 		console.log("end: " + end);
 		// console.log(start.unix());
