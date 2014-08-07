@@ -165,13 +165,56 @@ describe("Group Management", function() {
     it("Add users to group with unlimited size roles", function() {
       logger.debug("Testing adding users to unlimited group");
       var group = GroupManager.createDefault();
-      var user = UserFactory.getTestUser();
-      GroupManager.addUser(group, user, "Ideator");
-
+      var users = UserFactory.getTestUsers(20);
+      for (var i=0; i<users.length; i++) {
+        logger.debug("adding user with id: " + users[i]._id);
+        GroupManager.addUser(group, users[i], "Ideator");
+        logger.debug("group has userIDs: " + JSON.stringify(getIDs(group.users)));
+        chai.assert.ok(isInList(users[i], group.users, '_id'),
+          "User was not found in group");
+        chai.assert.ok(isInList(users[i], group.assignments["Ideator"], 
+            '_id'), "User was not found in group role assignment");
+      }
       //Cleanup Db
       GroupManager.remove(group);
-      UserFactory.remove(user);
-      chai.assert.ok(true);
+      UserFactory.remove(users);
     });
+    it("Add users to group with limited size roles", function() {
+      logger.debug("Testing adding users to limited group");
+      var group = GroupManager.create();
+      var sizes = [5,2,1];
+      var roles = ["Ideator", "Synthesizer", "Facilitator"];
+      var role = GroupManager.addRole(group, roles[0], sizes[0]);
+      role = GroupManager.addRole(group, roles[1], sizes[1]);
+      role = GroupManager.addRole(group, roles[2], sizes[2]);
+      var groupSize = 0;
+      for (var i=0; i<sizes.length; i++) {
+        groupSize += sizes[i];
+      }
+      var users = UserFactory.getTestUsers(groupSize + 3);
+      var index = 0;
+      for (var i=0; i<sizes.length; i++) {
+        for (var j=0; j<=sizes[i]; j++) {
+          var user = users[index];
+          role = GroupManager.addUser(group, user, roles[i]);
+          if (j == sizes[i]) {
+            logger.trace("Checking if user was not assigned to group");
+            chai.assert.isNull(role);
+          } else {
+            logger.debug("j=" + j);
+            chai.assert.equal(role.title, roles[i]);
+          }
+          if (role) {
+            index++;
+          } else {
+            logger.info("attempted to add user to role over capacity");
+          }
+        }
+      }
+      //Cleanup Db
+      GroupManager.remove(group);
+      UserFactory.remove(users);
+    });
+
   });
 });

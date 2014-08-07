@@ -118,8 +118,8 @@ Group = function(template) {
     if (template) {
       for (var i=0; i<this.template.roles.length; i++) {
         //Use roleID as the key toe the object containing assignments
-        var roleID = this.template.roles[i].roleID;
-        this.assignments[roleID] = [];
+        var role = this.template.roles[i];
+        this.assignments[role.title] = [];
         //The title of the role associated with these assignments
         //newRoleAssign['roleTitle'] = this.template.roles[i].title;
         //this.assignments[roleID]['roleTitle'] = this.template.roles[i].title;
@@ -305,17 +305,16 @@ GroupManager = (function () {
       * @return null
       ******************************************************************/
       var newRole = RoleManager.getTemplate(title, num);
-      var updateDb = false;
+      var isGroup = false;
       //Check if group is a template
       if (!grp.template) {
         logger.trace("Adding role to a GroupTemplate");
         var target = grp;
       } else {
         logger.trace("Adding role to template of a group");
-        updateDb = true; 
+        isGroup = true; 
         target = grp.template;
       }
-      var newRole = RoleManager.getTemplate(title, num);
       if (!isInList(newRole, target.roles, 'title')) {
         target.roles.push(newRole);
         //Update group size
@@ -326,12 +325,15 @@ GroupManager = (function () {
             target.size += num;
           }
         }
-        //Update db fields
-        if (updateDb) {
+        if (isGroup) {
+          grp.assignments[newRole.title] = [];
+          //Update db fields
           Groups.update({_id: grp._id}, 
               {
                 $push: {'template.roles': newRole},
-                $set: {'template.size': target.size}
+                $set: {'template.size': target.size, 
+                    'assignments': []
+                }
               }
           );
         }
@@ -366,25 +368,29 @@ GroupManager = (function () {
       * Determine if the group can accept more members according to 
       * the template definition 
       ****************************************************************/
-      var numSlots = 0;
-      var numAssigned = 0;
-      //Sum all the assignemnts for each role
-      //for (var i=0; i<group.assignments.length; i++) {
-        //numAssigned += group.assignments[i].roleAssignments.length;
-      //}
-      for (var role in group.assignments) {
-        if (group.assignments.hasOwnProperty(role)) {
-          //numAssigned += group.assignements[role].roleAssignments.length;
-          numAssigned += group.assignments[role].length;
+      if (group.template.size < 0) {
+        return -1;
+      } else {
+        var numSlots = 0;
+        var numAssigned = 0;
+        //Sum all the assignemnts for each role
+        //for (var i=0; i<group.assignments.length; i++) {
+          //numAssigned += group.assignments[i].roleAssignments.length;
+        //}
+        for (var role in group.assignments) {
+          if (group.assignments.hasOwnProperty(role)) {
+            //numAssigned += group.assignements[role].roleAssignments.length;
+            numAssigned += group.assignments[role].length;
+          }
         }
+        //Sum all the potential slots for each role
+        //var roles = group.template.roles;
+        //for (var i=0; i<roles.length; i++) {
+          //numSlots += roles[i].num;
+        //}
+        //Return the difference
+        return group.template.size - numAssigned;
       }
-      //Sum all the potential slots for each role
-      var roles = group.template.roles;
-      for (var i=0; i<roles.length; i++) {
-        numSlots += roles[i].num;
-      }
-      //Return the difference
-      return numSlots - numAssigned;
     },
   
     addUser: function(group, user, role) {
@@ -400,13 +406,34 @@ GroupManager = (function () {
       *   role - the role that the user was assigned or undefined if 
       *       no assignment was successfully made
       **************************************************************/
-      var role;
-      if (group.isOpen) {
-        //Get role and add user and assignment info
-        role = this.getRandomRole(group);
-        group.users.push(user)
+      logger.debug("number of assigned to role, " + role + " " + 
+          group.assignments[role].length);
+      logger.debug("number of possible to role, " + role + " " + 
+          this.getSize(group, role));
+      if (group.isOpen && 
+          ((this.getSize(group, role) > group.assignments[role].length) ||
+           (this.getSize(group) < 0))) {
+        if (!role) {
+          //Get role if not already given
+          role = this.getRandomRole(group);
+        } else {
+          //Get role based on role title given
+          role = RoleManager.defaults[role];
+        }
+        if (!isInList(user, group.users, '_id')) {
+          logger.debug("adding new user to group with id: " + user._id);
+          group.users.push(user);
+        } else {
+          logger.warn("Attempting to add already present user to group");
+          //Return the role already assigned to the user
+          return this.getRole(group, user); 
+        }
+        //logger.debug("list of userIDs: " +JSON.stringify(getIDs(group.users)));
+        //Add group to user
+        user.groupID = group._id;
         //Add User to the list of users assigned to a specific fole
-        group.assignments[role.roleID].push(user);
+        logger.debug(group.assignments);
+        group.assignments[role.title].push(user);
         //group.assignments[role.roleID].roleAssignments.push(user);
         // Mark closed if no more slots are open after assignment
         if (this.numOpenSlots(group) == 0) {
@@ -420,11 +447,57 @@ GroupManager = (function () {
                   isOpen: group.isOpen}
             }
         );
+        //Update user in db
+        MyUsers.update({_id: user._id},
+            {$set: {'groupID': group._id}}
+        );
+        return role;
+      } else {
+        if (isInList(user, group.users, '_id')) {
+          //Return the role already assigned to the user
+          logger.trace("user already in full group");
+          return this.getRole(group, user); 
+        } else {
+          logger.trace("Group or role is full, could not assign user");
+          return null;
+        }
       }
-      return role;
     },
-    getSize: function(group) {
+    getSize: function(group, title) {
+      /**************************************************************
+       * Get the size of the group, or the number of slots for a 
+       * given role with title
+       ************************************************************/
+      if (title) {
+        //If a role title is given, find the size fo the role
+        logger.trace("Getting size of role in group: " + title);
+        logger.debug(group.template.roles);
+        var result = 0;
+        group.template.roles.forEach(function(role) {
+          if (role.title.trim() == title.trim()) {
+            logger.debug("size of role is: " + role.num);
+            result =  role.num;
+          }
+        });
+        return result;
+      }
+      //Get the size fo the full group
+      logger.trace("Getting size of group");
       return group.template.size;
+    },
+    getRole: function(group, user) {
+      /**************************************************************
+       * Retieve the role assigned to a given user in the group.
+       * Null if user is not assigned
+       *************************************************************/
+      var roles = group.template.roles;
+      for (var i=0; i<roles.length; i++) {
+        var title = roles[i].title;
+        if (isInList(group[title], user, '_id')) {
+          return roles[i];
+        }
+      }
+      return null;
     },
     getRandomRole: function (group) {
       /**************************************************************
