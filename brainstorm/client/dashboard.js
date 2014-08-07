@@ -42,6 +42,19 @@ MS_PER_MINUTE = 60000;
 Template.Dashboard.rendered = function(){
 	$('.menu-link').bigSlide();
 	//Session.set("currentPrompt", "Alternate uses for an iPod");
+	//Add Exit study button to top right
+	if ($('.exitStudy').length == 0) {
+		$('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Study</button>');
+	} else {
+		$('.exitStudy').removeClass('hidden');
+	}
+
+	//Add event handler for the exit study button
+	$('.exitStudy').click(function() {
+		console.log("exiting study early")
+		EventLogger.logExitStudy(Session.get("currentParticipant"));
+		exitStudyFromDash();
+	});
 }
 
 Template.tagcloud.rendered = function(){
@@ -623,3 +636,11 @@ Template.Dashboard.events({
 		};
 	}
 });
+
+exitStudyFromDash = function exitStudyFromDash() {
+  /******************************************************************
+  * switch to next view to end study
+  ******************************************************************/
+	$('.exitStudy').addClass("hidden");
+	Router.goToNextPage("Dashboard");
+};
