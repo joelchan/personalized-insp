@@ -396,6 +396,10 @@ Template.tagcloud.helpers({
   	getFontSize : function(){
   		//console.log(this);
   		return 10 +(this.ideaIDs.length * 4);
+  	},
+
+  	getClusterSize : function(){
+  		return this.ideaIDs.length;
   	}
 })
 

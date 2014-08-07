@@ -196,6 +196,7 @@ FilterManager = (function () {
       if (inClusterFilters) {
         //Grab clusterIDs from filters and get associated cluster documents
         bool = inClusterFilters.val;
+        console.log(bool);
         logger.debug("bools of inClusters: " + bool);
         result['inCluster'] = bool;
       }
@@ -228,9 +229,11 @@ FilterManager = (function () {
         var time = {};
         timeFilters.forEach(function(filt) {
           if (filt.op === 'gt' || filt.op === 'gte') {
-            time['begin'] = filt.val;
+            time['begin'] = Date.parse(filt.val);
+            console.log("begin: " + time['begin']);
           } else if (filt.op === 'lt' || filt.op === 'lte') {
-            time['end'] = filt.val;
+            time['end'] = Date.parse(filt.val);
+            console.log("end: " + time['end']);
           }
         });
         result['time'] = time;

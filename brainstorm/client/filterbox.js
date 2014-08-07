@@ -147,12 +147,17 @@ Template.filterbox.events({
 
 		var $menu = $(event.target).parents('.select-time-filters');
 
-		var startDur= $menu.find("select.select-start option:selected").text();
-		var endDur= $menu.find("select.select-end option:selected").text();
-
+		var startDur= parseInt($menu.find("select.select-start option:selected").text());
+		var endDur= parseInt($menu.find("select.select-end option:selected").text());
+		console.log("startDur: " + startDur);
+		console.log("endDur: " + endDur);
+		// var start = moment(Date.now()).subtract('minutes', startDur)._d;
+		// var end = moment(Date.now()).subtract('minutes', endDur)._d;
 		var start = moment(Date.now()).subtract('minutes', startDur)._d;
 		var end = moment(Date.now()).subtract('minutes', endDur)._d;
-		
+		console.log("start: " + start);
+		console.log("end: " + end);
+		// console.log(start.unix());
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", 'time', start, 'lt');
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", 'time', end, 'gt');
 	},
