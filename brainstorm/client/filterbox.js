@@ -13,9 +13,15 @@ Template.filterbox.helpers({
 	},
 	ideas : function(){
 		// return Ideas.find();
-		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		console.log("FilterBoxHelper says there are " + cursor.count() + " ideas");
-		return cursor;
+		// var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
+		var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
+		// sort the array
+		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+		sortedIdeas.forEach(function(i) { console.log(i.content); });
+		// return the sorted array
+		// console.log("FilterBoxHelper says there are " + filteredIdeas.count() + " ideas");
+		return sortedIdeas;
+		// return cursor;
 	},
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
