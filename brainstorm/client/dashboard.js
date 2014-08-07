@@ -292,7 +292,7 @@ Template.userseries.rendered = function(){
 		nLine
 			.enter()
 			.append("rect")
-			.attr("height", "50px")
+			.attr("height", "45px")
 			.attr("width", function(){
 				return nowWidth;
 			})
@@ -303,18 +303,18 @@ Template.userseries.rendered = function(){
 			.attr("x", function(d){
 				return x(d)-nowWidth;
 			})
-			.attr("y", 0)
+			.attr("y", 5)
 			.attr("fill", "gray")
 		nLine.transition()
 			.duration(0)
-			.attr("height", "50px")
+			.attr("height", "45px")
 			.attr("width", function(){
 				return nowWidth
 			})
 			.attr("x", function(d){
 				return x(d)-nowWidth;
 			})
-			.attr("y", 0)
+			.attr("y", 5)
 			.attr("fill", "gray")
 		nLine.exit()
 			.transition()
