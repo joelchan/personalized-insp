@@ -214,7 +214,7 @@ FilterManager = (function () {
         IDs = getValsFromField(clusterFilters, 'val');
         logger.debug("IDs of clusters: " + JSON.stringify(IDs));
         result['clusters'] = Clusters.find({_id: {$in: IDs}}).fetch();
-        console.log(result['clusters']);
+        // console.log(result['clusters']);
       }
       //Get time filters
       var timeFilters = Filters.find({name: name, 
@@ -230,10 +230,10 @@ FilterManager = (function () {
         timeFilters.forEach(function(filt) {
           if (filt.op === 'gt' || filt.op === 'gte') {
             time['begin'] = filt.val;
-            console.log("begin: " + time['begin']);
+            // console.log("begin: " + time['begin']);
           } else if (filt.op === 'lt' || filt.op === 'lte') {
             time['end'] = filt.val;
-            console.log("end: " + time['end']);
+            // console.log("end: " + time['end']);
           }
         });
         result['time'] = time;
