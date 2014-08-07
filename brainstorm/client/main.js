@@ -23,7 +23,7 @@ var user;
 Template.IdeaGen.events({
     'click button.submitLogin': function () {
         var user = {'name': $('#header input#userLogin').val().trim()};
-        LoginUser(user);
+        LoginManager.loginUser(user);
     },
 
     'keyup input#userLogin': function (evt) {
@@ -37,8 +37,8 @@ Template.IdeaGen.events({
 
     'click button.submitLogout': function () {
         console.log("logging out");
-        Session.set("currentUser", null);
-        Meteor.logout();
+        LoginManager.logout();
+        //Meteor.logout();
     },
 
 });

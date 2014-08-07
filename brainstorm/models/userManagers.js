@@ -1,10 +1,62 @@
 // Configure logger for Tools
 var logger = new Logger('Models:UserManager');
 // Comment out to use global logging level
-//Logger.setLevel('Models:UserManager', 'trace');
+Logger.setLevel('Models:UserManager', 'trace');
 //Logger.setLevel('Models:UserManager', 'debug');
-Logger.setLevel('Models:UserManager', 'info');
+//Logger.setLevel('Models:UserManager', 'info');
 //Logger.setLevel('Models:UserManager', 'warn');
+
+UserFactory  = (function() {
+   return {
+     testusers: [],
+     testName: "TestUser",
+     testType: "Test User",
+     create: function(name, type) {
+       if (!type) {
+         type = "Anonymous User";
+       }
+       var user = new User(name, type);
+       user._id = MyUsers.insert(user);
+       return user;
+     },
+     getAdmin: function() {
+       var admin = MyUsers.find({"type": "admin"});
+       if (admin.count() == 0) {
+         return this.create("ProtoAdmin", "admin");
+       } else {
+         return admin.fetch()[0];
+       }
+     },
+     getTestUser: function() {
+       var userName = this.testName;
+       return this.create(userName, this.testType);
+     },
+     getTestUsers: function(num) {
+       users = [];
+       for (var i=0; i<num; i++) {
+         var userName = this.testName + i;
+         users.push(this.create(userName, this.testType));
+       }
+       return users;
+     },
+     remove: function(users) {
+       if (hasForEach(users)) {
+        ids = getIDs(users);
+        if (Meteor.isServer) {
+          MyUsers.remove({"_id": {$in: ids}}); 
+        } else {
+          ids.forEach(function(id) {
+            MyUsers.remove({"_id": id}); 
+          });
+        }
+      } else {
+         //users is just a single user object if not an array
+         MyUsers.remove({_id: users._id});  
+       }
+     }, 
+   };
+ }());
+
 
 RoleManager = (function () {
   //Change deafultRoles to object with list of roles + each role
@@ -21,6 +73,9 @@ RoleManager = (function () {
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Unassigned");
   newRole.workflow = ['PromptPage', 'RoleSelectPage'];
+  defaultRoles[newRole.title] = newRole;
+  var newRole = new Role("Admin");
+  newRole.workflow = ['ExpAdminPage'];
   defaultRoles[newRole.title] = newRole;
 
   return {
@@ -45,10 +100,11 @@ RoleManager = (function () {
       role['num'] = num;
       return role;
     },
-    getNextFunc: function(role) {
+    getNextFunc: function(role, current) {
       /**************************************************************
        * Get the next function/page that the role should transition
        *************************************************************/
+      var workflowIndex = -1;
       for (var i=0; i<role.workflow.length; i++) {
           var workflowPage = role.workflow[i]; 
           if (workflowPage == current) {
@@ -56,11 +112,17 @@ RoleManager = (function () {
               var workflowIndex = i;
           }
       }
+      logger.debug("index of current in workflow " + workflowIndex);
+      logger.debug("role workflow is: " + JSON.stringify(role.workflow));
+      //if (workflowIndex === 0) {
+        //logger.trace("next function is: " + role.workflow[0]);
+        //return role.workflow[0];
+      //} else if (workflowIndex + 1 < role.workflow.length) {
       if (workflowIndex + 1 < role.workflow.length) {
-          //console.log("next function is: " + this.workflow[workflowIndex + 1]);
-          return role.workflow[workflowIndex+1];
+        logger.trace("next function is: " + role.workflow[workflowIndex + 1]);
+        return role.workflow[workflowIndex+1];
       } else {
-          //console.log("No next function found");
+        //console.log("No next function found");
         logger.warn("Attempted to go to next role function when " +
           "none is defined");
         return null;
@@ -379,3 +441,54 @@ GroupManager = (function () {
   }; 
 }());
 
+LoginManager = (function () {
+  return {
+    loginUser: function (userName) {
+      /******************************************************************
+      * Convenience function for logging in users
+      * ****************************************************************/
+      var myUser;
+      if (this.loginAdmin(userName)) {
+        myUser = UserFactory.getAdmin();
+        Session.set("currentRole", RoleManager.defaults['Admin']);
+      } else {
+        var matches = MyUsers.find({name: userName});
+        if (matches.count() > 0) {
+          myUser = matches.fetch()[0]
+        } else {
+          myUser = new User(userName, "Brainstorm user");
+          myUser._id = MyUsers.insert(myUser);
+        }
+      }
+      Session.set("currentUser", myUser);
+      if (Session.get("currentRole") == null) {
+        logger.trace("Setting current role to unassigned");
+        logger.debug(RoleManager.defaults['Unassigned']);
+        Session.set("currentRole", RoleManager.defaults['Unassigned']);
+      } else {
+        logger.trace("currentRole is already set");
+      }
+      return myUser
+    },
+    loginAdmin: function (userName) {
+      /***************************************************************
+      * Quick hack for detecting an admin login
+      ***************************************************************/
+      if (userName.toLowerCase() == "protoadmin") {
+        logger.trace("logged in admin User");
+        return true;
+      } else {
+        return false;
+      }
+    },
+    logout: function () {
+      /**************************************************************
+       * Simply user logout clearing user session variables
+       *************************************************************/
+      //Clear user session tracking
+      Session.set("currentUser", null);
+      Session.set("currentRole", null);
+      //Router.go("LoginPage");
+    }
+  };
+}());

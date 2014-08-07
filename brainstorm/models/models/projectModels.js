@@ -22,15 +22,18 @@ Prompt = function(question, template, exp, cond) {
    * @return {object} Prompt object 
   ********************************************************************/
   this.question = question;
+  this.groupIDs = [];
   // Temporary modifications to prompt to quickly associate with an experiment
   if (template) {
     this.template = template;
-  }
+  } 
   if (exp) {
     this.expID = exp._id;
   }
   if (cond) {
     this.condID = cond._id;
   }
+  this.length = -1;
+  //Stores optional time of brainstorm
 };
 

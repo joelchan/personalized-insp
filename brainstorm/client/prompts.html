@@ -4,19 +4,22 @@
   </div>
 </template>
 
-<template name="brainstorm">
+<template name="Brainstorm">
   <div id="prompt-{{_id}}" class="menu-box clickable panel panel-info">
     <div class="panel-heading">
       {{ question }}
     </div>
-    <!--
     <div class="panel-row">
-    <strong>Participants: </strong>
-    {{#each prompt.participants}}
-      {{> namebox }}
-    {{/each}}
+      {{#if hasTime}}
+        <strong>Session Length: {{ length }}</strong><br/>
+      {{/if}}
+      <strong>Participants: </strong>
+      {{#if hasUsers}}
+        {{#each participants}}
+          {{> namebox }}
+        {{/each}}
+      {{/if}}
     </div>
-    -->
   </div>
 </template>
 
@@ -41,6 +44,8 @@
           <div class="modal-body">
             <h5>Brainstorming prompt:</h5>
             <input type="text" id="prompt-text" class="modal-box" placeholder="New Question">
+            <h4>Brainstorm Length(minutes):</h4>
+            <input type="number" id="prompt-length" class="modal-number-input" placeholder="minutes">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -53,7 +58,7 @@
     <div class="row"> 
       <div name="prompt-list">
         {{#each prompts}}
-          {{> brainstorm }}
+          {{> Brainstorm }}
         {{/each}}
       </div>
     </div>

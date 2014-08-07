@@ -4,48 +4,6 @@ var logger = new Logger('Model:Managers');
 //Logger.setLevel('Model:Managers', 'trace');
 Logger.setLevel('Model:Managers', 'info');
 
-UserFactory  = (function() {
-   return {
-     testusers: [],
-     testName: "TestUser",
-     testType: "Test User",
-     create: function(name, type) {
-       if (!type) {
-         type = "Anonymous User";
-       }
-       var user = new User(name, type);
-       user._id = MyUsers.insert(user);
-       return user;
-     },
-     getTestUser: function() {
-       var userName = this.testName;
-       return this.create(userName, this.testType);
-     },
-     getTestUsers: function(num) {
-       users = [];
-       for (var i=0; i<num; i++) {
-         var userName = this.testName + i;
-         users.push(this.create(userName, this.testType));
-       }
-       return users;
-     },
-     remove: function(users) {
-       if (hasForEach(users)) {
-        ids = getIDs(users);
-        if (Meteor.isServer) {
-          MyUsers.remove({"_id": {$in: ids}}); 
-        } else {
-          ids.forEach(function(id) {
-            MyUsers.remove({"_id": id}); 
-          });
-        }
-      } else {
-         //users is just a single user object if not an array
-         MyUsers.remove({_id: users._id});  
-       }
-     }, 
-   };
- }());
 
 IdeaFactory = (function() {
   return {

@@ -1,3 +1,10 @@
+// Configure logger for Tools
+var logger = new Logger('Client:Routes');
+// Comment out to use global logging level
+Logger.setLevel('Client:Routes', 'trace');
+//Logger.setLevel('Client:Routes', 'debug');
+//Logger.setLevel('Client:Routes', 'info');
+//Logger.setLevel('Client:Routes', 'warn');
 
 //Maps routes to templates
 Router.map(function () {
@@ -49,6 +56,10 @@ Router.map(function () {
   this.route('PromptPage', {
       path: 'Brainstorms/',
       template: 'PromptPage'
+  });
+  this.route('RoleSelectPage', {
+      path: 'select/',
+      template: 'RoleSelectPage'
   });
   this.route('ExpAdminPage', {
       path: 'ExpAdmin/',
@@ -165,8 +176,10 @@ Router.goToNextPage = function () {
   var currentPage = Router.current().route.name;
   var role = Session.get("currentRole");
   if (!role) {
+    logger.trace("Going to PromptPage");
     Router.go("PromptPage");
   } else {
-    Router.go(RoleManager.getNextFunc(role));
+    logger.trace("Going to: " + JSON.stringify(role.workflow));
+    Router.go(RoleManager.getNextFunc(role, currentPage));
   }
 };
