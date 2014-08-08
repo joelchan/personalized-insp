@@ -290,7 +290,7 @@ Template.NotificationDrawer.rendered = function(){
         // #accordion > div:nth-child(1) > div.panel-heading
       }, 1000);
 
-  Notifications.find({recipient: Session.get("currentUser"), handled: false}).observe({
+  Notifications.find({recipient: Session.get("currentUser")._id, handled: false}).observe({
     added : function(doc){
       newNotify = doc;//Notifications.findOne({_id: doc}); //holds new notification
       // Meteor.clearInterval(messageAlertInterval);
@@ -383,7 +383,10 @@ Template.SubmitIdeas.events({
     },
 
     'click #request-help' : function(){
-      requestHelpNotify(Session.get("currentUser")._id, "db");
+      var dbUsers = MyUsers.find({type: 'Facilitator'});
+      dbUsers.forEach(function(user) {
+        requestHelpNotify(Session.get("currentUser")._id, user._id);
+      });
     },
 
     //waits 3 seconds after user stops typing to change isTyping flag to false

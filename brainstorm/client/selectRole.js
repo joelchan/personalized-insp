@@ -30,6 +30,10 @@ Template.RoleSelectPage.events({
     var id = $(event.target).attr('id');
     var roleTitle = trimFromString(id, 'role-');
     var role = RoleManager.getTemplate(roleTitle);
+    var user = Session.get("currentUser");
+    user.type = role.title;
+    Session.set("currentUser", user);
+    MyUsers.update({_id: user._id}, {$set: {type: role.title}});
     logger.debug(role);
     Session.set("currentRole", role);
     EventLogger.logBeginRole();

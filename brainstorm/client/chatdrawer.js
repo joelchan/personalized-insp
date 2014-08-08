@@ -30,6 +30,7 @@ Template.chatdrawer.rendered = function(){
   
   Notifications.find({recipient: Session.get("currentUser")._id}).observe({
   	added: function(message){
+      console.log("Noficiation observe found new msg");
   		Meteor.clearInterval(messageAlertInterval);
 
   		if($('#chat-handle').hasClass('moved')){
@@ -37,6 +38,7 @@ Template.chatdrawer.rendered = function(){
   			return false;
   		}
   		messageAlertInterval = Meteor.setInterval(function(){
+        console.log("message alert interval");
   			$('#chat-handle').toggleClass('flash');
   		}, 750);
   	}
@@ -48,11 +50,17 @@ Template.chatdrawer.rendered = function(){
 Template.chatdrawer.helpers({
 	messages: function(){
 		var currUser = Session.get("currentUser");
+    console.log("Getting mesages for chat drawer");
 		//console.log(Notifications.find({$or: [{sender: currUser._id}, {recipient: currUser._id}]}).fetch())
     var role = Session.get("currentRole");
     if (role.title === "Facilitator") {
       logger.trace("Getting notifications for facilitator user");
-		  return Notifications.find({$or: [{sender: currUser._id}, 
+		  return Notifications.find({$or: [
+                    {$and: [{sender: currUser._id}, 
+                      {type: {$nin: [NotificationTypes.SEND_EXAMPLES,
+                        NotificationTypes.CHANGE_PROMPT,
+                        NotificationTypes.SEND_THEMES]}
+                      }]},
 										{recipient: currUser._id},
 										{message: "Help Requested"}]});
     } else if (role.title === "Synthesizer") {
@@ -108,7 +116,7 @@ Template.chatdrawer.events({
 		$("#chatinput").val("");
 		//chatNotify(Session.get("currentUser")._id, "syn", message);
 
-		MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["anonDBUser", "anonSynUser"]}}).forEach(function(user){
+		MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["Synthesizer", "Facilitator"]}}).forEach(function(user){
 			console.log(user)
 			chatNotify(Session.get("currentUser")._id, user._id, message);
 		});
