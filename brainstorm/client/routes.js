@@ -66,7 +66,7 @@ Router.map(function () {
       template: 'ExpAdminPage'
   });
   //Defines the beginning of a route for each experiment
-  this.route('IdeationPage', {
+  this.route('Ideation', {
   	path: 'Ideation/',
   	template: 'IdeationPage',
     waitOn: function() {
@@ -119,6 +119,18 @@ Router.map(function () {
   this.route('SurveyPage', {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
+  });
+  this.route('IdeationSurvey', {
+    path: 'IdeationSurvey/',
+    template: 'IdeationSurvey'
+  });
+  this.route('SynthesisSurvey', {
+    path: 'SysnthesisSurvey/',
+    template: 'SynthesisSurvey'
+  });
+  this.route('FacilitatorSurvey', {
+    path: 'FacilitatorSurvey/',
+    template: 'FacilitatorSurvey'
   });
   this.route('Clustering', {
     onRun: function(){
@@ -227,7 +239,7 @@ var initRolePage = function() {
       //Setup timer for decrementing onscreen timer with 17 minute timeout
       Session.set("timeLeft", prompt.length + 1);
       $('#time').text(prompt.length);
-      Meteor.setTimeout(decrementTimer, 60000);
+      Meteor.setTimeout(decrementTimer, 6000);
     }
   }
 }

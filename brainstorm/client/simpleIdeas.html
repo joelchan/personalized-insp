@@ -80,7 +80,7 @@
 
 <template name="sentexamples">
   <h5 class="notify-label">Consider these ideas: </h5>
-    {{#each primeIdeas}}
+    {{#each examples}}
       <div id={{this._id}} class="idea">
         <i class="idea-bullet fa fa-lightbulb-o"></i> 
         {{this.content}} 
@@ -200,7 +200,7 @@ complete idea)"></textarea>
         {{/if}} -->
       </a>
     </div> 
-    <div class="col-md-9">
+    <div class="col-md-8">
         <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
 (press the &lt;Enter&gt; key or the &quot;Enter Idea&quot; button to the right after each 
 complete idea)"></textarea>

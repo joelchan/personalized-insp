@@ -5,9 +5,9 @@ Filters = new Meteor.Collection("filters");
 // Configure logger for Filters
 var logger = new Logger('Filter');
 // Comment out to use global logging level
-//Logger.setLevel('Filter', 'trace');
+Logger.setLevel('Filter', 'trace');
 //Logger.setLevel('Filter', 'debug');
-Logger.setLevel('Filter', 'info');
+// Logger.setLevel('Filter', 'info');
 //Logger.setLevel('Filter', 'warn');
 
 Filter = function (name, user, collection, field, val, op) {
@@ -196,6 +196,7 @@ FilterManager = (function () {
       if (inClusterFilters) {
         //Grab clusterIDs from filters and get associated cluster documents
         bool = inClusterFilters.val;
+        console.log(bool);
         logger.debug("bools of inClusters: " + bool);
         result['inCluster'] = bool;
       }
@@ -204,15 +205,16 @@ FilterManager = (function () {
       var clusterFilters = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: 'clusterIDs'
+          field: 'clusters'
       });
       logger.debug("Found " + clusterFilters.count() + 
-          " matching cluster filters");
+          " matching [cluster] filters");
       if (clusterFilters.count() !== 0) {
         //Grab clusterIDs from filters and get associated cluster documents
         IDs = getValsFromField(clusterFilters, 'val');
         logger.debug("IDs of clusters: " + JSON.stringify(IDs));
         result['clusters'] = Clusters.find({_id: {$in: IDs}}).fetch();
+        // console.log(result['clusters']);
       }
       //Get time filters
       var timeFilters = Filters.find({name: name, 
@@ -228,8 +230,10 @@ FilterManager = (function () {
         timeFilters.forEach(function(filt) {
           if (filt.op === 'gt' || filt.op === 'gte') {
             time['begin'] = filt.val;
+            // console.log("begin: " + time['begin']);
           } else if (filt.op === 'lt' || filt.op === 'lte') {
             time['end'] = filt.val;
+            // console.log("end: " + time['end']);
           }
         });
         result['time'] = time;
@@ -254,7 +258,7 @@ FilterManager = (function () {
       var filts = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: {$nin: ['userID', 'clusterIDs', 'time', 'type._id']}
+          field: {$nin: ['userID', 'clusters', 'time', 'type._id']}
       });
       logger.debug("Found " + filts.count() + 
           " matching misc filters");
@@ -438,12 +442,14 @@ FilterManager = (function () {
       switch (op) {
         case 'eq':
           if (length === 1) {
+            logger.trace("eq single vals: " + JSON.stringify(sortedOp[0].val));
             return sortedOp[0].val;
           } else {
             var vals = [];
             sortedOp.forEach(function(filt) {
               vals.push(filt.val);
             });
+            logger.trace("eq multiple vals: " + JSON.stringify(vals));
             return {'$in': vals};
           }
           break;
@@ -483,6 +489,8 @@ FilterManager = (function () {
         var query = {};
         if (ops.length === 1) {
           logger.trace("Forming query with only 1 operation");
+          logger.trace("query op: " + ops[0]);
+          logger.trace("Filter: " + JSON.stringify(opSortedFilters[ops[0]]));
           query[qField] = this.getOpQuery(ops[0], 
               opSortedFilters[ops[0]]);
         } else {
@@ -548,12 +556,12 @@ FilterManager = (function () {
         if (collection == "events") {
           var query = {'$and': []};
         } else {
-          query = {'$or': []};
+          query = {'$and': []};
         }
         for (var i=0; i<fields.length; i++) {
           var field = fields[i];
           var fieldParsed = parsed[field];
-          query['$or'].push(this.getSingleFieldQuery(field, fieldParsed));
+          query['$and'].push(this.getSingleFieldQuery(field, fieldParsed));
         }
       }
       return query;

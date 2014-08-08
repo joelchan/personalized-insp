@@ -12,7 +12,15 @@ Template.filterbox.helpers({
 		return MyUsers.find({type: "Experiment Participant"});
 	},
 	ideas : function(){
-		return Ideas.find();
+		// return Ideas.find();
+		// var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
+		var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
+		// sort the array
+		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+		// return the sorted array
+		// console.log("FilterBoxHelper says there are " + filteredIdeas.count() + " ideas");
+		return sortedIdeas;
+		// return cursor;
 	},
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
@@ -121,7 +129,7 @@ Template.filterbox.events({
 
 		var selected = $(".filter-list input[type='radio']:checked");
 			if (selected.length > 0) {
-			    selectedVal = selected.val();
+			    selectedVal = $.parseJSON(selected.val());
 			}
 
 		if (selectedVal !== "neither") {
@@ -134,7 +142,7 @@ Template.filterbox.events({
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
 			id = id.split("-")[1];
-			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);
+			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);
 		    return id;
 		});
 	},
@@ -144,12 +152,17 @@ Template.filterbox.events({
 
 		var $menu = $(event.target).parents('.select-time-filters');
 
-		var startDur= $menu.find("select.select-start option:selected").text();
-		var endDur= $menu.find("select.select-end option:selected").text();
-
-		var start = moment(Date.now()).subtract('minutes', startDur)._d;
-		var end = moment(Date.now()).subtract('minutes', endDur)._d;
-		
+		var startDur= parseInt($menu.find("select.select-start option:selected").text());
+		var endDur= parseInt($menu.find("select.select-end option:selected").text());
+		console.log("startDur: " + startDur);
+		console.log("endDur: " + endDur);
+		// var start = moment(Date.now()).subtract('minutes', startDur)._d;
+		// var end = moment(Date.now()).subtract('minutes', endDur)._d;
+		var start = moment(Date.now()).subtract('minutes', startDur).valueOf();
+		var end = moment(Date.now()).subtract('minutes', endDur).valueOf();
+		console.log("start: " + start);
+		console.log("end: " + end);
+		// console.log(start.unix());
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", 'time', start, 'lt');
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", 'time', end, 'gt');
 	},
@@ -157,11 +170,11 @@ Template.filterbox.events({
 
 	'click .gamechange-filter' : function(){
 		var $icon = $('.gamechange-filter').children('i');
-		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "isGamchanger");		
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "isGamechanger");		
 
 		if($icon.hasClass('fa-star-o')){
 			$icon.switchClass('fa-star-o', 'fa-star');
-			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "isGamchanger", true);
+			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "isGamechanger", true);
 		} else if($icon.hasClass('fa-star')){
 			$icon.switchClass('fa-star', 'fa-star-o');
 		}
@@ -179,7 +192,7 @@ Template.activefilters.events({
 	},
 
 	'click .cancel-cluster': function(){
-		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", this._id);
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", this._id);
 	},
 
 	'click .cancel-themed': function(){

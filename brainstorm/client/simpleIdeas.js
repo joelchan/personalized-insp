@@ -187,6 +187,7 @@ Template.NotifyItem.helpers({
 
 Template.sentexamples.helpers({
   examples : function(){
+    // console.log(examples[0].content);
     return this.examples;
   }
 });

@@ -41,6 +41,19 @@ Template.Clustering.rendered = function(){
       ui.item.remove();
     }
   });
+
+  //Add Exit study button to top right
+  if ($('.exitStudy').length == 0) {
+    $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Study</button>');
+  } else {
+      $('.exitStudy').removeClass('hidden');
+  }
+  //Add event handler for the exit study button
+  $('.exitStudy').click(function() {
+    console.log("exiting study early")
+    EventLogger.logExitStudy(Session.get("currentParticipant"));
+    exitStudyFromSynth();
+  });
 }
 
 Template.clusterarea.rendered = function(){
@@ -128,7 +141,10 @@ Template.cluster.rendered = function(){
 Template.Clustering.helpers({
   ideas : function(){
     //var filter = Session.get("currentFilter");//Filters.findOne({name: "Syn Idea List Filter", user: Session.get("currentUser")});
-    return Ideas.find();//FilterFactory.performQuery(filter);//
+    var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
+    var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+    return sortedIdeas;
+    // return Ideas.find();//FilterFactory.performQuery(filter);//
   },
 
   clusters : function(){
@@ -338,3 +354,11 @@ function updateClusterList(ideaID, clusterID, adding){
     });
   }
 }
+
+exitStudyFromSynth = function exitStudyFromSynth() {
+/******************************************************************
+* switch to next view to end study
+******************************************************************/
+  $('.exitStudy').addClass("hidden");
+  Router.goToNextPage("Clustering");
+};

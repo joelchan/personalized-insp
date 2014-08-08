@@ -1,24 +1,26 @@
 <template name="filterbox">
 	<div>
 		<!-- <i class="fa fa-filter"></i> -->
-		<label>Filter by: </label>
-		<span id="filter-box" class="btn-group btn-group-xs">
-			<button class="parts-filters filter-drop-button btn btn-primary">
-				User <span class="caret"></span>
-			</button>
-			<button class="memberOf-filters filter-drop-button btn btn-primary">
-				Theme <span class="caret"></span>
-			</button>
-			<button class="themed-filters filter-drop-button btn btn-primary">
-				Status <span class="caret"></span>
-			</button>
-			<button class="time-filters filter-drop-button btn btn-primary">
-				Time<span class="caret"></span>
-			</button>
-			<button class="gamechange-filter filter-drop-button btn btn-primary">
-				<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
-			</button>
-		</span>
+		<div id="filterbox-header">
+			<label>Filter by: </label>
+			<span id="filter-box" class="btn-group btn-group-xs">
+				<button class="parts-filters filter-drop-button btn btn-primary">
+					User <span class="caret"></span>
+				</button>
+				<button class="memberOf-filters filter-drop-button btn btn-primary">
+					Theme <span class="caret"></span>
+				</button>
+				<button class="themed-filters filter-drop-button btn btn-primary">
+					Status <span class="caret"></span>
+				</button>
+				<button class="time-filters filter-drop-button btn btn-primary">
+					Time<span class="caret"></span>
+				</button>
+				<button class="gamechange-filter filter-drop-button btn btn-primary">
+					<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
+				</button>
+			</span>
+		</div>
 	</div>
 
 	<!--Participant Filter Dropdown-->

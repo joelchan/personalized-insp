@@ -42,6 +42,19 @@ MS_PER_MINUTE = 60000;
 Template.Dashboard.rendered = function(){
 	$('.menu-link').bigSlide();
 	//Session.set("currentPrompt", "Alternate uses for an iPod");
+	//Add Exit study button to top right
+	if ($('.exitStudy').length == 0) {
+		$('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Study</button>');
+	} else {
+		$('.exitStudy').removeClass('hidden');
+	}
+
+	//Add event handler for the exit study button
+	$('.exitStudy').click(function() {
+		console.log("exiting study early")
+		EventLogger.logExitStudy(Session.get("currentParticipant"));
+		exitStudyFromDash();
+	});
 }
 
 Template.tagcloud.rendered = function(){
@@ -292,7 +305,7 @@ Template.userseries.rendered = function(){
 		nLine
 			.enter()
 			.append("rect")
-			.attr("height", "50px")
+			.attr("height", "45px")
 			.attr("width", function(){
 				return nowWidth;
 			})
@@ -303,18 +316,18 @@ Template.userseries.rendered = function(){
 			.attr("x", function(d){
 				return x(d)-nowWidth;
 			})
-			.attr("y", 0)
+			.attr("y", 5)
 			.attr("fill", "gray")
 		nLine.transition()
 			.duration(0)
-			.attr("height", "50px")
+			.attr("height", "45px")
 			.attr("width", function(){
 				return nowWidth
 			})
 			.attr("x", function(d){
 				return x(d)-nowWidth;
 			})
-			.attr("y", 0)
+			.attr("y", 5)
 			.attr("fill", "gray")
 		nLine.exit()
 			.transition()
@@ -335,20 +348,23 @@ Template.userseries.rendered = function(){
 *********************************************************************/
 Template.Dashboard.helpers({
 	ideas : function(){
-		var filters = Session.get("idealistFilters");//Session.get("partFilters");
-		var clusterIdeas = [];
-		for (var i = 0; i < filters.clusterFilters.length; i++) {
-			clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
-		};
-		if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
-			return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}});
-		} else if (clusterIdeas.length > 0){
-   			return IdeasToProcess.find({_id: {$in: clusterIdeas}, isGamechanger: {$in: filters.gamchanger}});
-   		} else if (filters.partFilters.length > 0){
-   			return IdeasToProcess.find({userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}})
-   		} else {
-   			return IdeasToProcess.find({isGamechanger: {$in: filters.gamchanger}});
-   		}
+		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
+		console.log(cursor.count());
+		return cursor;
+		// var filters = Session.get("idealistFilters");//Session.get("partFilters");
+		// var clusterIdeas = [];
+		// for (var i = 0; i < filters.clusterFilters.length; i++) {
+		// 	clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
+		// };
+		// if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
+		// 	return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}});
+		// } else if (clusterIdeas.length > 0){
+  //  			return IdeasToProcess.find({_id: {$in: clusterIdeas}, isGamechanger: {$in: filters.gamchanger}});
+  //  		} else if (filters.partFilters.length > 0){
+  //  			return IdeasToProcess.find({userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}})
+  //  		} else {
+  //  			return IdeasToProcess.find({isGamechanger: {$in: filters.gamchanger}});
+  //  		}
   	},
 
   	numIdeas : function(){
@@ -387,12 +403,33 @@ Template.Dashboard.helpers({
 
 Template.tagcloud.helpers({
 	clusters : function(){
+    	// console.log(ideas);
+    	// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
+    	// console.log("Filtered ideas: " + filteredIdeas.length);
+    	// var filteredClusters = [];
+    	// filteredIdeas.forEach(function(idea) {
+    	// 	var thisClusterIDs = idea.clusters;
+    	// 	thisClusterIDs.forEach(function(clusterID) {
+    	// 		if(filteredClusters.indexOf(clusterID) < 0) {
+    	// 			filteredClusters.push(clusterID);
+    	// 		}	
+    	// 	});
+    	// });
+    	// console.log("Filtered clusters: " + filteredClusters.length);
+    	// filteredClusters.forEach(function(cluster) {
+    	// 	console.log(cluster.name);
+    	// });
+    	// return Clusters.find({isRoot: {$ne: true}}, {_id: {$in: filteredClusters}}, {sort: {name: 1}});
     	return Clusters.find({isRoot: {$ne: true}}, {sort: {name: 1}});
   	},
 
   	getFontSize : function(){
   		//console.log(this);
   		return 10 +(this.ideaIDs.length * 4);
+  	},
+
+  	getClusterSize : function(){
+  		return this.ideaIDs.length;
   	}
 })
 
@@ -480,7 +517,7 @@ Template.Dashboard.events({
 		// filters.clusterFilters.push(clusterMap);
 		// Session.set("idealistFilters", filters);
 
-		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);	
+		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);	
 	},
 
 	'click .fa-minus-circle' : function(){
@@ -599,3 +636,11 @@ Template.Dashboard.events({
 		};
 	}
 });
+
+exitStudyFromDash = function exitStudyFromDash() {
+  /******************************************************************
+  * switch to next view to end study
+  ******************************************************************/
+	$('.exitStudy').addClass("hidden");
+	Router.goToNextPage("Dashboard");
+};

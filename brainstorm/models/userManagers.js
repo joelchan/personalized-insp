@@ -63,13 +63,13 @@ RoleManager = (function () {
   //accessible by name
   var defaultRoles = {};
   var newRole = new Role("Ideator");
-  newRole.workflow = ['IdeationPage', 'SurveyPage'];
+  newRole.workflow = ['Ideation', 'IdeationSurvey'];
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Synthesizer");
-  newRole.workflow = ['Clustering', 'SurveyPage'];
+  newRole.workflow = ['Clustering', 'SynthesisSurvey'];
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Facilitator");
-  newRole.workflow = ['Dashboard', 'SurveyPage'];
+  newRole.workflow = ['Dashboard', 'FacilitatorSurvey'];
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Unassigned");
   newRole.workflow = ['PromptPage', 'RoleSelectPage'];

@@ -167,11 +167,17 @@
 .series{
 	width:540px;
 	height:100%;
+	/*z-index: 100;*/
+}
+
+.bar {
+	z-index: 100;
 }
 
 .nowLine{
 	opacity: 0.30;
 	fill: gray;
+	z-index: -100;
 }
 
 #examples {
