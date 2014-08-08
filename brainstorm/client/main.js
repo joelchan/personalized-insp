@@ -42,3 +42,48 @@ Template.IdeaGen.events({
     },
 
 });
+
+
+decrementTimer = function decrementTimer() {
+  /******************************************************************
+  * Decrement the onscreen timer
+  ******************************************************************/
+  var nextTime = Session.get("timeLeft") - 1;
+  Session.set("timeLeft", nextTime);
+  var time = $('#time').text(nextTime);
+  if (nextTime != 0) {
+    Meteor.setTimeout(decrementTimer, 60000);
+    // console.log("Decrementing timer")
+  } else {
+    logger.info("Exitting current page");
+    exitPage();
+  }
+};
+
+exitPage = function () {
+  /******************************************************************
+  * switch to next view to end ideation
+  ******************************************************************/
+  //Run end of page functions
+  //$('#submitIdea').click();
+  
+  //Log exit
+  //EventLogger.logEndIdeation(Session.get("currentParticipant"));
+  
+  //Cleanup Navbar
+  if ($('.exitStudy').length > 0) {
+    $('.exitStudy').remove();
+  }
+  //Removing timer from ideation
+  if (Session.get("hasTimer")) {
+    $('.timer').remove();
+    Session.set("hasTimer", false);
+  }
+  //Transition to next page
+  if (Session.get("loggingOut")) {
+    Router.go("Home");
+    Session.set("loggingOut", false);
+  } else {
+    Router.goToNextPage();
+  }
+};

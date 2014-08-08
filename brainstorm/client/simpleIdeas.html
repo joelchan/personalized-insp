@@ -28,21 +28,21 @@
         </div>
       </div>
       <!-- for priming -->
-      <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}">
+      <!-- <div class="panel panel-default notification-item {{#unless handled}} unhandled {{/unless}}"> -->
       <!-- <div class="panel panel-default notification-item"> -->
-        <div class="panel-heading">
-          <h5 class="panel-title">
-            <a data-toggle="collapse" data-target="#priming" href="#priming">  
-              <i class="fa fa-info-circle"></i> Initial inspiration
-            </a>
-          </h5>
-        </div>
-        <div id="priming" class="panel-collapse collapse in">
-          <div class="panel-body">
-            {{ > Priming }}
-          </div>
-        </div>
-      </div>
+        <!-- <div class="panel-heading"> -->
+          <!-- <h5 class="panel-title"> -->
+            <!-- <a data-toggle="collapse" data-target="#priming" href="#priming">   -->
+              <!-- <i class="fa fa-info-circle"></i> Initial inspiration -->
+              <!-- </a> -->
+            <!-- </h5> -->
+          <!-- </div> -->
+        <!-- <div id="priming" class="panel-collapse collapse in"> -->
+          <!-- <div class="panel-body"> -->
+            <!-- {{ > Priming }} -->
+            <!-- </div> -->
+          <!-- </div> -->
+        <!-- </div> -->
       {{#each notifications}}
         {{#unless directions}}
           {{> NotifyItem}}
@@ -137,12 +137,6 @@
   </div><!-- end sidebar -->
 </template>
 
-<!-- currently unused -->
-<template name="Timer">
-  <div class="timer">
-    <span id="time">15</span><span> minutes remaining</span>
-  </div> 
-</template>
 
 <template name="Prompt">
   <div class="prompt-box">

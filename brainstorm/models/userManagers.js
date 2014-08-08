@@ -97,7 +97,9 @@ RoleManager = (function () {
             "Failed attempt to create roleTemplate with role title: " +
             title);
       }
-      role['num'] = num;
+      if (num) {
+        role['num'] = num;
+      }
       return role;
     },
     getNextFunc: function(role, current) {
@@ -488,6 +490,11 @@ LoginManager = (function () {
       //Clear user session tracking
       Session.set("currentUser", null);
       Session.set("currentRole", null);
+      Session.set("currentPrompt", null);
+      Session.set("loggingOut", true);
+      exitPage();
+
+
       //Router.go("LoginPage");
     }
   };

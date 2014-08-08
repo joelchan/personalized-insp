@@ -1,11 +1,22 @@
 // Configure logger for Tools
 var logger = new Logger('Tools:Tools');
 // Comment out to use global logging level
-//Logger.setLevel('Tools:Tools', 'trace');
+Logger.setLevel('Tools:Tools', 'trace');
 //Logger.setLevel('Tools:Tools', 'debug');
-Logger.setLevel('Tools:Tools', 'info');
+//Logger.setLevel('Tools:Tools', 'info');
 //Logger.setLevel('Tools:Tools', 'warn');
 
+trimFromString = function(target, substring) {
+  logger.debug("triming " + substring + " from target: " + target);
+  var split = target.split(substring);
+  var result = "";
+  split.forEach(function(str) {
+    result += str;
+    logger.debug("after trim got: " + result);
+  });
+  return result;
+
+}
 
 getRandomElement = function (array) {
     /****************************************************************

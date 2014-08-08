@@ -119,20 +119,13 @@ Template.Priming.helpers({
 
 Template.Prompt.helpers({
     prompt: function() {
-      var part = Session.get("currentParticipant");
-      if (part) {
-        var condition = 
-            Conditions.findOne({_id: part.conditionID});
-        return condition.prompt.question;
-      } else {
-        return "";
-      }
+      return Session.get("currentPrompt").question
     }
 });
 
 Template.IdeaBox.helpers({
     ideas: function() {
-      return Ideas.find({participantID: Session.get("currentParticipant")._id});
+      return Ideas.find({userID: Session.get("currentUser")._id});
     },
 });
 
@@ -238,38 +231,16 @@ Template.IdeationPage.rendered = function() {
     }
   });
   
-  //Add Exit study button to top right
-  if ($('.exitStudy').length == 0) {
-    $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
-  }
-
-  //Add timer\
-  Session.set("hasTimer", true);
-  var timerTemplate = UI.render(Template.Timer);
-  UI.insert(timerTemplate, $('#nav-right')[0]);
-  //Setup timer for decrementing onscreen timer with 17 minute timeout
-  var time = 17;
-  Session.set("timeLeft", time);
-  $('#time').text(time);
-  Meteor.setTimeout(decrementTimer, 60000);
-
-  //Add event handler for the exit study button
-  $('.exitStudy').click(function() {
-      console.log("exiting study early")
-    EventLogger.logExitStudy(Session.get("currentParticipant"));
-    exitIdeation();
-  });
-
   //Insert ideas into database depnding on experimental condition
-  var primes = getPrimingIdeas();
-  var participant = Session.get("currentParticipant");
+  //var primes = getPrimingIdeas();
+  //var participant = Session.get("currentParticipant");
   //participant.misc = primes;
-  Participants.update({_id: participant._id}, {$set: {misc: primes}});
+  //Participants.update({_id: participant._id}, {$set: {misc: primes}});
   //Update the participant misc fields in the session variable
-  Session.set("currentParticipant", Participants.findOne({_id: participant._id}));
-  var participant = Session.get("currentParticipant");
+  //Session.set("currentParticipant", Participants.findOne({_id: participant._id}));
+  //var participant = Session.get("currentParticipant");
   //console.log(participant);
-  EventLogger.logBeginIdeation(participant);
+  //EventLogger.logBeginIdeation(participant);
 };
 
 //Events
@@ -451,33 +422,33 @@ getUser = function() {
 
 };
 
-exitIdeation = function exitIdeation() {
-  /******************************************************************
-  * switch to next view to end ideation
-  ******************************************************************/
-  //Logs a partial idea if user hasn't submitted it
-  $('#submitIdea').click();
-  EventLogger.logEndIdeation(Session.get("currentParticipant"));
-  $('.exitStudy').remove();
-  //Removing timer from ideation
-  if (Session.get("hasTimer")) {
-    $('.timer').remove();
-    Session.set("hasTimer", false);
-  }
-  Router.goToNextPage("IdeationPage");
-};
+//exitIdeation = function exitIdeation() {
+  ///******************************************************************
+  //* switch to next view to end ideation
+  //******************************************************************/
+  ////Logs a partial idea if user hasn't submitted it
+  //$('#submitIdea').click();
+  //EventLogger.logEndIdeation(Session.get("currentParticipant"));
+  //$('.exitStudy').remove();
+  ////Removing timer from ideation
+  //if (Session.get("hasTimer")) {
+    //$('.timer').remove();
+    //Session.set("hasTimer", false);
+  //}
+  //Router.goToNextPage("IdeationPage");
+//};
 
-decrementTimer = function decrementTimer() {
-  /******************************************************************
-  * Decrement the onscreen timer
-  ******************************************************************/
-  var nextTime = Session.get("timeLeft") - 1;
-  Session.set("timeLeft", nextTime);
-  var time = $('#time').text(nextTime);
-  if (nextTime != 0) {
-    Meteor.setTimeout(decrementTimer, 60000);
-    // console.log("Decrementing timer")
-  } else {
-    exitIdeation();
-  }
-};
+//decrementTimer = function decrementTimer() {
+  ///******************************************************************
+  //* Decrement the onscreen timer
+  //******************************************************************/
+  //var nextTime = Session.get("timeLeft") - 1;
+  //Session.set("timeLeft", nextTime);
+  //var time = $('#time').text(nextTime);
+  //if (nextTime != 0) {
+    //Meteor.setTimeout(decrementTimer, 60000);
+    //// console.log("Decrementing timer")
+  //} else {
+    //exitIdeation();
+  //}
+//};

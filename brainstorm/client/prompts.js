@@ -115,12 +115,15 @@ Template.PromptPage.events({
       // Set the current prompt
       var prompt = Prompts.findOne({'_id': this._id});
 
+
       if (prompt) {
+        logger.trace("found current prompt with id: " + prompt._id);
         Session.set("currentPrompt", prompt);
         logger.debug("Prompt selected");
         Router.goToNextPage();
-
-        //console.log();
+      } else {
+        logger.error("couldn't find current prompt with id: " + 
+            prompt._id);
       }
     },
 
