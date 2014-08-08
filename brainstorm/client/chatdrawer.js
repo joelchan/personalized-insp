@@ -1,3 +1,12 @@
+// Configure logger for Tools
+var logger = new Logger('Client:Widgets:ChatDrawer');
+// Comment out to use global logging level
+Logger.setLevel('Client:Widgets:ChatDrawer', 'trace');
+//Logger.setLevel('Client:Widgets:ChatDrawer', 'debug');
+//Logger.setLevel('Client:Widgets:ChatDrawer', 'info');
+//Logger.setLevel('Client:Widgets:ChatDrawer', 'warn');
+
+
 var messageAlertInterval;
 var messageWaiting = false;
 
@@ -40,9 +49,22 @@ Template.chatdrawer.helpers({
 	messages: function(){
 		var currUser = Session.get("currentUser");
 		//console.log(Notifications.find({$or: [{sender: currUser._id}, {recipient: currUser._id}]}).fetch())
-		return Notifications.find({$or: [{sender: currUser._id, recipient: "syn"}, 
-										{recipient: currUser._id, sender: "syn"},
-										{recipient: currUser._id, message: "Help Requested"}]});
+    var role = Session.get("currentRole");
+    if (role.title === "Facilitator") {
+      logger.trace("Getting notifications for facilitator user");
+		  return Notifications.find({$or: [{sender: currUser._id}, 
+										{recipient: currUser._id},
+										{message: "Help Requested"}]});
+    } else if (role.title === "Synthesizer") {
+      logger.trace("Getting notifications for synthesis user");
+		  return Notifications.find({$or: [{sender: currUser._id}, 
+										{recipient: currUser._id},
+										]});
+    } else {
+      logger.warn("Getting notifications for non-synthesis or facilitator user");
+      return null;
+    }
+
 	},
 	username: function(){
 		return MyUsers.findOne({_id: this.sender}).name;

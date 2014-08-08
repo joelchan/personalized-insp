@@ -60,7 +60,7 @@ decrementTimer = function decrementTimer() {
   Session.set("timeLeft", nextTime);
   var time = $('#time').text(nextTime);
   if (nextTime > 0) {
-    Meteor.setTimeout(decrementTimer, 6000);
+    Meteor.setTimeout(decrementTimer, 60000);
     // console.log("Decrementing timer")
   } else {
     logger.info("Exitting current page");
