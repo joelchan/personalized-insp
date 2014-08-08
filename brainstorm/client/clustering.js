@@ -42,18 +42,6 @@ Template.Clustering.rendered = function(){
     }
   });
 
-  //Add Exit study button to top right
-  if ($('.exitStudy').length == 0) {
-    $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Study</button>');
-  } else {
-      $('.exitStudy').removeClass('hidden');
-  }
-  //Add event handler for the exit study button
-  $('.exitStudy').click(function() {
-    console.log("exiting study early")
-    EventLogger.logExitStudy(Session.get("currentParticipant"));
-    exitStudyFromSynth();
-  });
 }
 
 Template.clusterarea.rendered = function(){
@@ -355,10 +343,3 @@ function updateClusterList(ideaID, clusterID, adding){
   }
 }
 
-exitStudyFromSynth = function exitStudyFromSynth() {
-/******************************************************************
-* switch to next view to end study
-******************************************************************/
-  $('.exitStudy').addClass("hidden");
-  Router.goToNextPage("Clustering");
-};

@@ -44,25 +44,25 @@ EventType = function (desc, fields) {
 Meteor.startup(function() {
   //Initializes if not already present
   var fields;
-  EventTypeManager.get("Participant logged into experiment");
+  EventTypeManager.get("User logged into experiment");
   EventTypeManager.get("User was denied participation in experiment");
-  EventTypeManager.get("Participant consented to experiment");
+  EventTypeManager.get("User consented to experiment");
   _.keys(RoleManager.defaults).forEach(function(title) {
     fields = ['role'];
-    EventTypeManager.get("Participant began role " + title, fields);
-    EventTypeManager.get("Participant finished role " + title, fields);
+    EventTypeManager.get("User began role " + title, fields);
+    EventTypeManager.get("User finished role " + title, fields);
   });
-  //EventTypeManager.get("Participant began ideation");
-  EventTypeManager.get("Participant exited study early");
+  //EventTypeManager.get("User began ideation");
+  EventTypeManager.get("User exited study early");
   fields = ['ideaID', 'promptID'];
-  EventTypeManager.get("Participant submitted idea", fields);
-  //EventTypeManager.get("Participant finished ideation");
+  EventTypeManager.get("User submitted idea", fields);
+  //EventTypeManager.get("User finished ideation");
   fields = ['responseID'];
-  EventTypeManager.get("Participant submitted survey", fields);
+  EventTypeManager.get("User submitted survey", fields);
   fields = ['notificationID', 'promptID'];
-  EventTypeManager.get("Participant handled a notification", fields);
-  EventTypeManager.get("Participant expanded a notification", fields);
-  EventTypeManager.get("Participant collapsed a notification", fields);
+  EventTypeManager.get("User handled a notification", fields);
+  EventTypeManager.get("User expanded a notification", fields);
+  EventTypeManager.get("User collapsed a notification", fields);
   fields = ['sender', 'recipient', 'type', 'examples', 'promptID'];
   EventTypeManager.get("Dashboard user sent examples", fields);
   fields = ['sender', 'recipient', 'type', 'prompt', 'promptID'];

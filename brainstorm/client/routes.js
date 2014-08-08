@@ -226,8 +226,8 @@ var initRolePage = function() {
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
     logger.info("exiting study early");
-  EventTypeManager.get("Participant exited study early");
-    Logger.logExitStudy();
+    EventLogger.logExitStudy();
+    EventLogger.logEndRole();
     //EventLogger.logExitStudy(Session.get("currentParticipant"));
     exitPage();
   });

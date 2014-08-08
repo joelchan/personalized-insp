@@ -40,21 +40,8 @@ Session.set("idealistFilters", filters);
 MS_PER_MINUTE = 60000;
 
 Template.Dashboard.rendered = function(){
+  window.scrollTo(0,0);
 	$('.menu-link').bigSlide();
-	//Session.set("currentPrompt", "Alternate uses for an iPod");
-	//Add Exit study button to top right
-	if ($('.exitStudy').length == 0) {
-		$('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Study</button>');
-	} else {
-		$('.exitStudy').removeClass('hidden');
-	}
-
-	//Add event handler for the exit study button
-	$('.exitStudy').click(function() {
-		console.log("exiting study early")
-		EventLogger.logExitStudy(Session.get("currentParticipant"));
-		exitStudyFromDash();
-	});
 }
 
 Template.tagcloud.rendered = function(){
@@ -143,11 +130,11 @@ Template.userseries.rendered = function(){
 	var pad = 20;
 
 
-	var submissionEvents = Events.find({userID: userID, description: "Participant submitted idea"}); //
+	var submissionEvents = Events.find({userID: userID, description: "User submitted idea"}); //
 	var results = [];
-	var start = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time);
+	var start = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time);
 	var sessionlength = Session.get("sessionLength");
-	var end = new moment(Events.findOne({userID: userID, description: "Participant began ideation"}).time).add('m', sessionlength);//new Date(start + sessionlength*MS_PER_MINUTE);
+	var end = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time).add('m', sessionlength);//new Date(start + sessionlength*MS_PER_MINUTE);
 
 	var x = d3.time.scale()
 					.domain([start, end])
@@ -181,7 +168,7 @@ Template.userseries.rendered = function(){
 						return "Prompt: " + d.prompt;
 					else if (desc === "Dashboard user sent theme")
 						return "Theme: " + Clusters.findOne(d.theme).name;
-					else if (desc === "Participant submitted idea")
+					else if (desc === "User submitted idea")
 						return Ideas.findOne({_id: d.ideaID}).content;
 				});
 
@@ -380,12 +367,12 @@ Template.Dashboard.helpers({
   	},
 
   	users : function(){
-  		var beganIdeation = Events.find({description: "Participant began ideation"});
+  		var beganIdeation = Events.find({description: "User began role Ideator"});
   		var userIDs = [];
   		beganIdeation.forEach(function(event){
   			userIDs.push(event.userID);
   		})
-  		return MyUsers.find({name: {$ne: "ProtoAdmin"}, _id: {$in: userIDs}});
+  		return MyUsers.find({name: {$ne: ["ProtoAdmin", 'TestAdmin']}, _id: {$in: userIDs}});
   	},
 
   	selectedparts : function(){
@@ -637,10 +624,3 @@ Template.Dashboard.events({
 	}
 });
 
-exitStudyFromDash = function exitStudyFromDash() {
-  /******************************************************************
-  * switch to next view to end study
-  ******************************************************************/
-	$('.exitStudy').addClass("hidden");
-	Router.goToNextPage("Dashboard");
-};
