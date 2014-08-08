@@ -184,6 +184,7 @@ describe("Testing Data Factories", function() {
         chai.assert.ok(isInList(idea._id, dbCluster.ideaIDs, '_id'));
       });
       logger.trace("ideas and cluster from db match ID lists");
+      ClusterFactory.remove(cluster);
     });
     it("Idea removal from clusters with updates to db", function() {
       logger.trace("Testing db updates with cluster idea removal");

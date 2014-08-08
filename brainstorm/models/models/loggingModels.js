@@ -47,24 +47,29 @@ Meteor.startup(function() {
   EventTypeManager.get("Participant logged into experiment");
   EventTypeManager.get("User was denied participation in experiment");
   EventTypeManager.get("Participant consented to experiment");
-  EventTypeManager.get("Participant began ideation");
-  fields = ['ideaID'];
-  EventTypeManager.get("Participant submitted idea", fields);
-  EventTypeManager.get("Participant finished ideation");
+  _.keys(RoleManager.defaults).forEach(function(title) {
+    fields = ['role'];
+    EventTypeManager.get("Participant began role " + title, fields);
+    EventTypeManager.get("Participant finished role " + title, fields);
+  });
+  //EventTypeManager.get("Participant began ideation");
   EventTypeManager.get("Participant exited study early");
+  fields = ['ideaID', 'promptID'];
+  EventTypeManager.get("Participant submitted idea", fields);
+  //EventTypeManager.get("Participant finished ideation");
   fields = ['responseID'];
   EventTypeManager.get("Participant submitted survey", fields);
-  fields = ['notificationID'];
+  fields = ['notificationID', 'promptID'];
   EventTypeManager.get("Participant handled a notification", fields);
   EventTypeManager.get("Participant expanded a notification", fields);
   EventTypeManager.get("Participant collapsed a notification", fields);
-  fields = ['sender', 'recipient', 'type', 'examples'];
+  fields = ['sender', 'recipient', 'type', 'examples', 'promptID'];
   EventTypeManager.get("Dashboard user sent examples", fields);
-  fields = ['sender', 'recipient', 'type', 'prompt'];
+  fields = ['sender', 'recipient', 'type', 'prompt', 'promptID'];
   EventTypeManager.get("Dashboard user changed prompt", fields);
-  fields = ['sender', 'recipient', 'type', 'theme' ];
+  fields = ['sender', 'recipient', 'type', 'theme', 'promptID' ];
   EventTypeManager.get("Dashboard user sent theme", fields);
-  fields = ['sender', 'recipient', 'type'];
+  fields = ['sender', 'recipient', 'type', 'promptID'];
   EventTypeManager.get("Ideator requested help", fields);
 });
   

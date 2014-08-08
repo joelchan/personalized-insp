@@ -87,7 +87,7 @@ EventLogger = (function () {
       *   Input:
       *   msg - a string describing the event
       *   type - the type/level of the event logged (default = info)
-      *   part - a participant in the participant to associate
+      *   part - a participant in the user to associate
       *   misc - an array of objects to log where each object
       *         has 2 fields, name and data
       */ 
@@ -97,106 +97,142 @@ EventLogger = (function () {
       if (!type) {
         type = "info"
       }
-      //Push relevant participant fields into misc array
-      misc.push({name: 'participantID', data: part._id});
+      //Push relevant user fields into misc array
+      misc.push({name: 'userID', data: part._id});
       misc.push({name: 'expID', data: part.experimentID});
-      //Retrieve user from participant fields
+      //Retrieve user from user fields
       user = MyUsers.findOne({_id: part.userID});
       //Log Event
       this.logEvent(msg, user, type, misc);
     },
    
-    logParticipantLogin: function (participant) {
-      var msg = "Participant logged into experiment";
+    logUserLogin: function () {
+      var msg = "User logged into experiment";
       var type = EventTypeManager.get(msg);
       this.log(type);
     },
    
-    logDenyParticipation: function(user) {
+    logDenyParticipation: function() {
       var msg = "User was denied participation in experiment";
       var type = EventTypeManager.get(msg);
       this.log(type);
     },
    
-    logConsent: function (participant) {
-      var msg = "Participant consented to experiment";
+    logConsent: function () {
+      var msg = "User consented to experiment";
       var type = EventTypeManager.get(msg);
       this.log(type);
     },
-   
-    logBeginIdeation: function(participant) {
-      var msg = "Participant began ideation";
+
+    logIdeaSubmission: function(idea) {
+      var msg = "User submitted idea";
+      var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
-      this.log(type);
-    },
-   
-    logIdeaSubmission: function(participant, ideaID) {
-      var msg = "Participant submitted idea";
-      var type = EventTypeManager.get(msg);
-      var data = {"ideaID": ideaID};
+      var data = {"ideaID": idea._id,
+          'promptID': prompt._id,
+      };
       this.log(type, data);
     },
-   
-    logEndIdeation: function(participant) {
-      var msg = "Participant finished ideation";
+
+    logBeginRole: function() {
+      var role = Session.get("currentRole");
+      var prompt = Session.get("currentPrompt");
+      var msg = "User began role " + role.title;
       var type = EventTypeManager.get(msg);
-      this.log(type);
+      var data = {'promptID': prompt._id,
+          'role': role.title
+      };
+      this.log(type, data);
     },
-   
-    logExitStudy: function(participant) {
-      var msg = "Participant exited study early";
+
+    logEndRole: function() {
+      var role = Session.get("currentRole");
+      var prompt = Session.get("currentPrompt");
+      var msg = "User ended role " + role.title;
       var type = EventTypeManager.get(msg);
-      this.log(type);
+      var data = {'promptID': prompt._id,
+          'role': role.title
+      };
+      this.log(type, data);
     },
-   
-    logSubmittedSurvey: function(participant, response) {
-      var msg = "Participant submitted survey";
+
+    logExitStudy: function() {
+      var msg = "User exited study early";
+      var prompt = Session.get("currentPrompt");
+      var role = Session.get("currentRole");
       var type = EventTypeManager.get(msg);
-      var data = {'responseID': response._id};
+      var data = {'promptID': prompt._id,
+          'role': role.title
+      };
+      this.log(type, data);
+    },
+  
+    logSubmittedSurvey: function(response) {
+      var msg = "User submitted survey";
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {'responseID': response._id,
+          'promptID': prompt._id
+      };
       this.log(type, data);
     },
 
   /** Notification Drawer Events**/
-    logNotificationHandled: function(participant, notificationID){
-      var msg = "Participant handled a notification";
+    logNotificationHandled: function(notification){
+      var msg = "User handled a notification";
+      var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
-      var data = {"notificationID": notificationID};
+      var data = {"notificationID": notification._id,
+          'promptID': prompt._id
+      };
       this.log(type, data);
     },
     
-    logNotificationExpanded: function(participant, notificationID){
-      var msg = "Participant expanded a notification";
+    logNotificationExpanded: function(notification){
+      var msg = "User expanded a notification";
+      var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
-      var data = {"notificationID": notificationID};
+      var data = {"notificationID": notification._id,
+          'promptID': prompt._id
+      };
       this.log(type, data);
     },
 
-    logNotificationCollapsed: function(participant, notificationID){
-      var msg = "Participant collapsed a notification";
+    logNotificationCollapsed: function(notification){
+      var msg = "User collapsed a notification";
+      var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
-      var data = {"notificationID": notificationID};
+      var data = {"notificationID": notification._id,
+          'promptID': prompt._id
+      };
       this.log(type, data);
     },
 
     /** Notification events**/
     logSendExamples: function(notification){
       var msg = "Dashboard user sent examples";
+      var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
               "recipient": notification.recipient,
               "type": notification.type,
-              "examples": notification.examples};
+              "examples": notification.examples,
+              'promptID': prompt._id
+      };
       this.log(type, data);
     },
 
     logChangePrompt: function(notification){
       console.log(notification);
       var msg = "Dashboard user changed prompt";
+      var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
               "recipient": notification.recipient,
               "type": notification.type,
-              "prompt": notification.prompt};
+              "prompt": notification.prompt,
+              'promptID': prompt._id
+      };
       this.log(type, data);
       //var user = notification.sender;
       //console.log(user);
@@ -209,12 +245,15 @@ EventLogger = (function () {
 
     logSendTheme: function(notification){
       var msg = "Dashboard user sent theme";
+      var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       console.log(type);
       var data  = {"sender": notification.sender,
               "recipient": notification.recipient,
               "type": notification.type,
-              "theme": notification.theme};
+              "theme": notification.theme,
+              'promptID': prompt._id
+      };
       this.log(type, data);
       //var user = notification.sender;
       //misc = [{name: "sender", data: notification.sender._id},
@@ -226,10 +265,13 @@ EventLogger = (function () {
 
     logRequestHelp: function(notification){
       var msg = "Ideator requested help";
+      var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
               "recipient": notification.recipient,
-              "type": notification.type};
+              "type": notification.type,
+              'promptID': prompt._id
+      };
       this.log(type, data);
       //var user = notification.sender;
       //misc = [{name: "sender", data: notification.sender._id},

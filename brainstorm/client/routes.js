@@ -226,6 +226,8 @@ var initRolePage = function() {
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
     logger.info("exiting study early");
+  EventTypeManager.get("Participant exited study early");
+    Logger.logExitStudy();
     //EventLogger.logExitStudy(Session.get("currentParticipant"));
     exitPage();
   });
@@ -239,7 +241,7 @@ var initRolePage = function() {
       //Setup timer for decrementing onscreen timer with 17 minute timeout
       Session.set("timeLeft", prompt.length + 1);
       $('#time').text(prompt.length);
-      Meteor.setTimeout(decrementTimer, 6000);
+      Meteor.setTimeout(decrementTimer, 60000);
     }
   }
 }

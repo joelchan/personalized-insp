@@ -368,37 +368,18 @@ Template.SubmitIdeas.helpers({
 var timer;
 Template.SubmitIdeas.events({
     'click button.submitIdea': function () {
-        //console.log("event submitted");
-        var newIdea = $('#nextIdea').val();
-        //Check if idea already has been proposed
-        //Ideas.find().forEach(function (idea) {
-            //if (newIdea == idea.content) {
-                //newIdea = "";
-            //}
-        //});
-        //Add idea to database
-        if (newIdea.trim() != "") {
-          var participant = Session.get("currentParticipant");
-          var user = Session.get("currentUser");
-          var cond = Session.get("currentCond");
-          //Set a session variable to convenience
-          if (!cond) {
-            cond = Conditions.findOne({_id: participant.conditionID});
-            Session.set("currentCond", cond);
-          }
-          var idea = new Idea(newIdea,
-              user,
-              cond.prompt,
-              participant
-              );
-          //console.log(idea); 
-          var ideaID = Ideas.insert(idea); //returns _id of Idea after it is inserted
-          EventLogger.logIdeaSubmission(participant, ideaID); 
-          // Clear the text field
-          $('#nextIdea').val('');
-
-          $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
-        }
+      //console.log("event submitted");
+      var content = $('#nextIdea').val();
+      //Add idea to database
+      var idea = IdeaFactory.create(content, 
+          Session.get("currentUser"),
+          Session.get("currentPrompt")
+      );
+      EventLogger.logIdeaSubmission(idea); 
+      // Clear the text field
+      $('#nextIdea').val('');
+      //Scroll window to new idea
+      $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
     },
 
     'click #request-help' : function(){
@@ -414,42 +395,3 @@ Template.SubmitIdeas.events({
     }
 });
 
-
-
-getUser = function() {
-  /******************************************************************
-  * Grab the userid from MTurk
-  ******************************************************************/
-
-};
-
-//exitIdeation = function exitIdeation() {
-  ///******************************************************************
-  //* switch to next view to end ideation
-  //******************************************************************/
-  ////Logs a partial idea if user hasn't submitted it
-  //$('#submitIdea').click();
-  //EventLogger.logEndIdeation(Session.get("currentParticipant"));
-  //$('.exitStudy').remove();
-  ////Removing timer from ideation
-  //if (Session.get("hasTimer")) {
-    //$('.timer').remove();
-    //Session.set("hasTimer", false);
-  //}
-  //Router.goToNextPage("IdeationPage");
-//};
-
-//decrementTimer = function decrementTimer() {
-  ///******************************************************************
-  //* Decrement the onscreen timer
-  //******************************************************************/
-  //var nextTime = Session.get("timeLeft") - 1;
-  //Session.set("timeLeft", nextTime);
-  //var time = $('#time').text(nextTime);
-  //if (nextTime != 0) {
-    //Meteor.setTimeout(decrementTimer, 60000);
-    //// console.log("Decrementing timer")
-  //} else {
-    //exitIdeation();
-  //}
-//};

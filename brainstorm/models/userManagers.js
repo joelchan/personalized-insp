@@ -20,9 +20,19 @@ UserFactory  = (function() {
        return user;
      },
      getAdmin: function() {
-       var admin = MyUsers.find({"type": "admin"});
+       var admin = MyUsers.find({"name": "ProtoAdmin",
+           "type": "admin"});
        if (admin.count() == 0) {
          return this.create("ProtoAdmin", "admin");
+       } else {
+         return admin.fetch()[0];
+       }
+     },
+     getTestAdmin: function() {
+       var admin = MyUsers.find({"name": "TestAdmin",
+           "type": "admin"});
+       if (admin.count() == 0) {
+         return this.create("TestAdmin", "admin");
        } else {
          return admin.fetch()[0];
        }
@@ -76,6 +86,9 @@ RoleManager = (function () {
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Admin");
   newRole.workflow = ['ExpAdminPage'];
+  defaultRoles[newRole.title] = newRole;
+  var newRole = new Role("Test");
+  newRole.workflow = ['test'];
   defaultRoles[newRole.title] = newRole;
 
   return {
@@ -451,8 +464,15 @@ LoginManager = (function () {
       * ****************************************************************/
       var myUser;
       if (this.loginAdmin(userName)) {
-        myUser = UserFactory.getAdmin();
-        Session.set("currentRole", RoleManager.defaults['Admin']);
+        if (userName.toLowerCase() == "protoadmin") {
+          myUser = UserFactory.getAdmin();
+          Session.set("currentRole", RoleManager.defaults['Admin']);
+          logger.trace("logged in admin User");
+        } else {
+          myUser = UserFactory.getTestAdmin();
+          Session.set("currentRole", RoleManager.defaults['Test']);
+          logger.trace("logged in Test Admin User");
+        }
       } else {
         var matches = MyUsers.find({name: userName});
         if (matches.count() > 0) {
@@ -478,6 +498,8 @@ LoginManager = (function () {
       ***************************************************************/
       if (userName.toLowerCase() == "protoadmin") {
         logger.trace("logged in admin User");
+        return true;
+      } else if (userName.toLowerCase() == "testadmin") {
         return true;
       } else {
         return false;

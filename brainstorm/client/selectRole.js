@@ -32,6 +32,7 @@ Template.RoleSelectPage.events({
     var role = RoleManager.getTemplate(roleTitle);
     logger.debug(role);
     Session.set("currentRole", role);
+    EventLogger.logBeginRole();
     Router.goToNextPage();
 
   }

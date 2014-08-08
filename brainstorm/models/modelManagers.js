@@ -107,12 +107,15 @@ ClusterFactory = (function() {
     },
     remove: function(clusters) {
       if (hasForEach(clusters)) {
-        ids = getIDs(clusters); 
+        ids = getIDs(clusters);
+        //for (var i=0; i<clusters.length; i++) {
+          //ids.push(clusters._id);
+        //} 
         if (Meteor.isServer) {
           Clusters.remove({_id: {$in: ids}});
         } else {
-          clusters.forEach(function(cluster) {
-            Clusters.remove({_id: cluster._id});
+          ids.forEach(function(id) {
+            Clusters.remove({_id: id});
           });
         }
       } else {
