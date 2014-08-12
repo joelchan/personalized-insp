@@ -46,7 +46,8 @@
 }
 
 .tagname a, .userprofilename{
-	text-decoration: underline;
+	text-decoration: none;
+	vertical-align: middle;
 }
 
 .db-title{
@@ -121,6 +122,11 @@
 
 .dashboard button{
 	margin-top: 0px;
+}
+
+.dashboard #people-view #actions .btn-group .btn {
+	font-weight: bold;
+	border:none;
 }
 
 .profile .name-icon{

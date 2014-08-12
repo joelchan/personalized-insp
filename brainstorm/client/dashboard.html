@@ -74,9 +74,25 @@
 
 			<!--People View-->
 			<div id="people-view" class="col-md-7 dashboard-panel-7 pull-right">
-				<h3>
-				<span class="btn-group">
-					<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+				<!-- <h3> -->
+				<div class="row" id="actions">
+					<div class="col-md-2"><h3>Actions</h3></div>
+					<div class="col-md-9" style="padding-top:10px">
+						<span class="btn-group">
+			                <a href="#" class="show-modal" id="changebutton" data-toggle="modal" data-target="#changemodal"><button type="button" class="btn btn-primary" style="background-color:#428bca;">Send Message</button></a>
+			                <a href="#" class="show-modal" id="sendexbutton" data-toggle="modal" data-target="#sendExModal"><button type="button" class="btn btn-primary" style="background-color:#449d44;">Send Examples</button></a>
+			                <a href="#" class="show-modal" id="sendthemebutton" data-toggle="modal" data-target="#sendThemeModal"><button type="button" class="btn btn-primary" style="background-color:#d58512;">Send Theme</button></a>
+			            </span>
+			        </div>
+	        	</div>
+				<!-- <span class="btn-group">
+					<ul>
+						<li><a href="#" class="show-modal" id="changebutton" data-toggle="modal" data-target="#changemodal"><button type="button" class="btn btn-primary">Send Message</button></a></li>
+						<li><a href="#" class="show-modal" id="sendexbutton" data-toggle="modal" data-target="#sendExModal"><button type="button" class="btn btn-primary">Send Examples</button></a></li>
+						<li><a href="#" class="show-modal" id="sendthemebutton" data-toggle="modal" data-target="#sendThemeModal"><button type="button" class="btn btn-primary">Send Theme</button></a></li>
+					</ul>
+				</span> -->
+					<!-- <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
 						Action
 				    	<span class="caret"></span>
 				    	<span class="sr-only">Toggle Dropdown</span>
@@ -86,19 +102,20 @@
 				    	<li><a href="#" class="show-modal" id="sendexbutton" data-toggle="modal" data-target="#sendExModal">Send Examples</a></li>
 				    	<li><a href="#" class="show-modal" id="sendthemebutton" data-toggle="modal" data-target="#sendThemeModal">Send Theme</a></li>
 				  	</ul>
-				</span>
-				People</h3>
+				</span> -->
+				<!-- People</h3> -->
 				<hr>
 				<div id="people">
 					<div class="row">
-						<div id="checkall-btn-group" class="col-md-5 btn-group btn-group-xs">
+						<div class="col-md-2" style="margin-bottom:15px"><h3>People</h3></div>
+						<!-- <div id="checkall-btn-group" class="col-md-5 btn-group btn-group-xs">
 							<button id="checkall" type="button" class="btn btn-primary btn-xs">Check All</button>
 							<button id="uncheckall" type="button" class="btn btn-primary btn-xs">Uncheck All</button>
-						</div>
-						<div id="lever-events-key" class="col-md-7">
+						</div> -->
+						<!-- <div id="lever-events-key" class="col-md-7 pull-right">
 							<svg  height="20px">
 								<circle cx="7px" cy="7px" r="5px" fill="#428bca" fill-opacity="0.4" stroke-width="1px" stroke="#428bca"></circle>
-								<text x="17px" y="11px" fill="black">Changed Prompt</text>
+								<text x="17px" y="11px" fill="black">Sent Message</text>
 
 								<circle cx="128px" cy="7px" r="5px" fill="#449d44" fill-opacity="0.4" stroke-width="1px" stroke="#449d44"></circle>
 								<text x="138px" y="11px" fill="black">Sent Examples</text>
@@ -107,7 +124,7 @@
 								<text x="248px" y="11px" fill="black">Sent Theme</text>
 							</svg>
 							
-						</div>
+						</div> -->
 					</div>
 					{{#each users}}
 						{{> userprofile}}
@@ -141,6 +158,14 @@
             		<h4 class="modal-title" id="myModalLabel">Change Prompt</h4>
             	</div>
             	<div class="modal-body">
+                	<h5>Select Participants</h5>
+                	<div class="filter-list">
+                		<select multiple class="select-participants form-control">
+                			{{#each participants}}
+                				<option val="pf-{{this._id}}">{{this.name}}</option>
+                			{{/each}}
+                		</select>
+                	</div>
                 	<h3>Send a new prompt, spin of the current prompt, or hint to the selected participants</h3>
                 	<div class="form-group">
 						<input type="text" class="form-control" id="new-prompt" placeholder="Enter New Prompt">
@@ -258,10 +283,12 @@
 <template name="userprofile">
 	<div class="profile" id="userprofile-{{_id}}">
 		<form class="form-inline" role="form">
-  			<div class="checkbox">
+  			<span style="display:inline-block;vertical-align:middle;">{{this.name}}</span>
+  			<!-- <span class="userprofilename" href="">{{this.name}}</span> -->
+  			<!-- <div class="checkbox">
       			<input class="selectpart" type="checkbox" value="{{this._id}}">
       			<a class="userprofilename" href=""><label>{{this.name}}</label></a>
-  			</div>
+  			</div> -->
   			<!--<div class="name-icon"><i class="fa fa-user fa-2x"></i></div>-->
   		</form>
 		{{> userseries this}}

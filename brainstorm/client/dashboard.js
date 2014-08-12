@@ -379,6 +379,11 @@ Template.Dashboard.helpers({
   		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
   	},
 
+  	participants : function(){
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
+	},
+
   	partFilters : function(){
   		return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
   	},
