@@ -1,6 +1,6 @@
 
 <template name="ClusterIdeaItem">
-<li id=idea-{{_id}} class="idea-item draggable {{#if isNotInCluster}} unsorted-idea {{/if}}">
+<li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
   {{ content }} 
   <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
   </i>
@@ -11,8 +11,7 @@
 	<!--Idea List-->
   <div id="idealistwrapper">
     <h3 id="idealistHeader">Idea List</h3>
-    <ul id="idealist" class="ideadeck ui-sortable">
-      <li class="sort-disabled"></li>
+    <ul id="idealist" class="ideadeck">
       {{#each ideas}}
         {{> ClusterIdeaItem}}
       {{/each}}
@@ -76,7 +75,7 @@
 </template>
 
 <template name="Clustering">
-	<div class="clusterinterface">
+	<div id="cluster-interface" class="clusterinterface">
     <h1 class="page-header" id="clusterprompt">{{prompt}}</h1>
     <div class="container-fluid">
 		  <div class="row">
