@@ -19,7 +19,7 @@ IdeaFactory = (function() {
         {$set: {isGamechanger: idea.isGamechanger}
       });
     },
-    getFromIDs: function(ids) {
+    getWithIDs: function(ids) {
       if (hasForEach(ids)) {
         return Ideas.find({_id: {$in: ids}});
       } else {
@@ -87,11 +87,14 @@ ClusterFactory = (function() {
       return cluster;
     },
     removeIdeaFromCluster: function(idea, cluster) {
-      //Not working and tested yet
+      var deleteCluster = false;
       logger.trace("Removing idea from cluster");
       logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
       removeMember(cluster.ideaIDs, idea._id);
-      
+
+      if (cluster.ideaIDs.length === 0) {
+        deleteCluster = true;
+      }
       logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas after remove");
       logger.debug("Idea has " + idea.clusterIDs.length + " clusters");
       removeMember(idea.clusterIDs, cluster._id);
@@ -101,10 +104,21 @@ ClusterFactory = (function() {
           {$pull: 
             {clusterIDs: cluster._id}
       });
-      Clusters.update({_id: cluster._id},
-          {$pull:
-            {ideaIDs: idea._id}
-      });
+      if (deleteCluster) {
+        this.remove(cluster);
+      } else {
+        Clusters.update({_id: cluster._id},
+            {$pull:
+              {ideaIDs: idea._id}
+        });
+      }
+    },
+    getWithIDs: function(ids) {
+      if (hasForEach(ids)) {
+        return Clusters.find({_id: {$in: ids}});
+      } else {
+        return Clusters.findOne({_id: ids});
+      }
     },
     updatePosition: function(cluster, position){
       Clusters.update({_id: cluster._id},

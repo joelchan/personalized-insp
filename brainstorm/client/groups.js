@@ -14,7 +14,7 @@ Template.GroupPage.helpers({
     * *****************************************************************/
     //Get only the groups related to the current prompt
     var prompt = Prompts.findOne({_id: Session.get("currentPrompt")._id});
-    return Groups.find({_id: {$in: prompt.groupIDs}});
+    return Groups.find({promptIDs: prompt._id});
   }, 
 });
 

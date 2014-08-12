@@ -11,7 +11,7 @@
 	<!--Idea List-->
   <div id="idealistwrapper">
     <h3 id="idealistHeader">Idea List</h3>
-    <ul id="idealist" class="ideadeck">
+    <ul id="idealist" class="ideadeck cluster-idea-list">
       {{#each ideas}}
         {{> ClusterIdeaItem}}
       {{/each}}
@@ -39,7 +39,7 @@
     <!-- <ul class="newcluster ui-sortable" id="node-drag-target"> -->
       <!-- </ul> -->
     <ul id="clusterlist" class="deck clusterdeck">
-      <li class="newcluster ui-sortable" id="new-cluster"> 
+      <li class="newcluster cluster-idea-list" id="new-cluster"> 
         Drag idea here to create a new cluster
       </li>
       {{#each clusters}}
@@ -57,18 +57,18 @@
 
 <template name="cluster">
 <!-- <div class="cluster col-md-4" id={{_id}} style="position: absolute; top:{{position.top}}px; left:{{position.left}}px"> -->
-  <div class="cluster col-md-4" id={{_id}}>
+  <div class="cluster col-md-4" id=cluster-{{_id}}>
     <div class="form-group form-group-inline">
       <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
       <label class="sort-disabled">
         <span id="clusterlabel" class="{{named}}">{{this.name}}</span>
       </label>
     </div>
-    <ul class="clusterul {{#if isCollapsed}} hidden {{else}} show {{/if}}" id={{_id}}>
+    <ul class="clusterul cluster-idea-list {{#if isCollapsed}} hidden {{else}} show {{/if}}" id="cluster-list-{{_id}}">
       <input type="text" class="namecluster form-control input-sm sort-disabled" 
         placeholder="Name this cluster"/>
       {{#each clusterideas}}
-        {{> ideaitem}}
+        {{> ClusterIdeaItem}}
       {{/each}}
     </ul>
 </div>

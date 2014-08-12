@@ -25,6 +25,7 @@ Prompt = function(question, template, title, exp, cond) {
   this.groupIDs = [];
   this.template = template;
   this.title = title;
+  this.promptIDs = [];
   // Temporary modifications to prompt to quickly associate with an experiment
   if (exp) {
     this.expID = exp._id;

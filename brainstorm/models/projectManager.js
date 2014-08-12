@@ -38,7 +38,8 @@ PromptManager  = (function() {
         Prompts.update({_id: prompt._id}, 
           {$push: {groupIDs: group._id}});
         //Maybe eventually update group with prompt
-        //Groups.update({$push: {promptIDs: prompt._id}});
+        Groups.update({_id: group._id}, 
+          {$addToSet: {promptIDs: prompt._id}});
       });
     },
     setTitle: function(prompt, title) {
@@ -53,6 +54,9 @@ PromptManager  = (function() {
       prompt.length = time;
       Prompts.update({_id: prompt._id}, 
         {$set: {length: time}});
+    },
+    hasLengthSet: function(prompt) {
+      return (prompt.length > 0) ? true : false;
     },
     remove: function(prompts) {
       if (hasForEach(prompts)) {
