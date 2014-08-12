@@ -146,8 +146,7 @@ Template.Clustering.helpers({
   },
     
   prompt : function(){
-    //return Session.get("currentCond").prompt;
-    return "Names for Niki & Jeff's Company";//Session.get("currentExp").conditions[0].prompt.question;
+    return Session.get("currentPrompt").title;
   },
 
   numClusters : function(){

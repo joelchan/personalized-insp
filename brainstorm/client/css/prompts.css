@@ -8,13 +8,20 @@
 .modal-box {
   width: 100%;
   overflow: scroll;
-  min-height: 100px;
   padding-bottom: 0px;
+  padding-left: 10px;
+}
+
+#prompt-text {
+  min-height: 100px;
+}
+
+#prompt-title {
+  height: 30px;
 }
 
 .modal-number-input {
-
-
+  padding-left: 10px;
 }
 
 .modal-body {
