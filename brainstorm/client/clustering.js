@@ -11,11 +11,32 @@
  * ****************************************************************/
 // Name for filters applied to idea list of unclustered ideas
 var ideaFilterName = "Unclustered Ideas"; 
+var clusterFilterName = "Clustering droppable";
 
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
 ********************************************************************/
 Template.Clustering.rendered = function(){
+  //Make new cluster area droppable
+  $('#new-cluster').droppable({accept: ".unsorted-idea",
+      drop: function(event, ideaItem) {
+        //Called when an unsorted idea is dropped to create a cluster
+        logger.trace("Creating new cluster with idea: \n");
+        logger.trace(ideaItem.draggable[0]);
+        var ideaID = trimFromString(ideaItem.draggable[0].id,
+          "idea-");
+        logger.debug("Creating cluster with idea ID: " + ideaID);
+        var idea = IdeaFactory.getFromIDs(ideaID);
+        logger.debug("Creating cluster with idea: " + 
+          JSON.stringify(idea));
+        var cluster = ClusterFactory.create(idea,
+          Session.get("currentUser"),
+          Session.get("currentPrompt")
+        );
+        logger.trace("Created new cluster: " + 
+          JSON.stringify(cluster));
+      }
+  });
   //Attach sortable to the new cluster creation drop area
   $('ul.newcluster').sortable({
     items : '',
@@ -50,25 +71,27 @@ Template.Clustering.rendered = function(){
       ui.item.remove();
     }
   });
-
-  //Setup filters for users and filter update listener
-  var ideators = GroupManager.getUsersInRole(
-      Session.get("currentGroup"), 'Ideator');
+  
+  //Create isInCluster filter
+  FilterManager.create(ideaFilterName,
+      Session.get("currentUser"),
+      "ideas",
+      "clusterIDs",
+      []
+  );
   Session.set("currentIdeators", []);
-
+  Session.set("currentSynthesizers", []);
+  //Setup filters for users and filter update listener
   updateFilters();
 
   //Update filters every 5 seconds
   Meteor.setInterval(updateFilters, 5000);
-
-
-
 };
 
 /********************************************************************
-* Clustering Interface template Helpers
+* IdeaList template Helpers
 ********************************************************************/
-Template.Clustering.helpers({
+Template.IdeaList.helpers({
   ideas : function(){
     //var filter = Session.get("currentFilter");//Filters.findOne({name: "Syn Idea List Filter", user: Session.get("currentUser")});
     var filteredIdeas = FilterManager.performQuery(ideaFilterName, 
@@ -80,10 +103,37 @@ Template.Clustering.helpers({
 
     // return Ideas.find();//FilterFactory.performQuery(filter);//
   },
+});
 
-  clusters : function(){
-    return Clusters.find({isRoot: {$ne: true}});
+/********************************************************************
+* ClusterIdeaItem template Helpers
+********************************************************************/
+Template.ClusterIdeaItem.helpers({
+  gameChangerStatus : function(){
+    return this.isGamechanger;
   },
+  isNotInCluster: function() {
+    return (this.clusterIDs.length === 0) ? true : false;
+  },
+})
+
+/********************************************************************
+* ClusterList template Helpers
+********************************************************************/
+Template.ClusterList.helpers({
+  clusters : function(){
+    //return Clusters.find({isRoot: {$ne: true}});
+    var filteredClusters = FilterManager.performQuery(clusterFilterName, 
+      Session.get("currentUser"), 
+      "clusters");
+    return filteredClusters;
+  },
+});
+
+/********************************************************************
+* Clustering Interface template Helpers
+********************************************************************/
+Template.Clustering.helpers({
 
   clustername : function(){
     var clu = Clusters.findOne({_id: this.toString()});
@@ -138,12 +188,9 @@ Template.Clustering.events({
   },
 
   'click .gamechangestar' : function(){
-    console.log(this);
-    var id = (this)._id;
-    var idea = Ideas.findOne({_id: id});
-    var state = !idea.isGamechanger;
-
-    Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+    logger.trace("clicked gamechangestar of: " +
+        JSON.stringify(this));
+    IdeaFactory.toggleGameChanger(this);
   },
 
   'click .cluster-item': function(){
@@ -180,11 +227,6 @@ Template.clusterarea.helpers({
   },
 });
 
-Template.ideaitem.helpers({
-  gameChangerStatus : function(){
-    return this.isGamechanger;
-  }
-})
 
 
 /*******************************************************************
@@ -192,6 +234,7 @@ Template.ideaitem.helpers({
  * ****************************************************************/
 Template.cluster.rendered = function(){
     // apply sortable to new cluster
+    //
   $('.cluster ul').sortable({
     items: ":not(.sort-disabled)",
     connectWith : 'ul.ideadeck, ul.newcluster, .cluster ul, ul.clusterdeck',
@@ -303,6 +346,7 @@ function createCluster(item) {
   var ideaID = item.attr('id');
   var ideas = [Ideas.findOne({_id: ideaID})];
   var cluster = new Cluster([ideaID]);//ClusterFactory.create(ideas);
+  var cluster = ClusterFactory.create(ideas);
   //add jitter to position
   var jitterTop = 30 + getRandomInt(0, 30);
   var jitterLeft = getRandomInt(0, 30);
@@ -387,11 +431,25 @@ updateFilters = function() {
       update = true;
     }
   });
+  var prevCluster = Session.get("currentSynthesizers");
+  logger.trace("current synthesizers stored in session are: " + 
+      JSON.stringify(prevCluster));
+  var newClusterers = [];
+  var clusterers = GroupManager.getUsersInRole(group, 'Synthesizer'); 
+  clusterers.forEach(function(user) {
+    if (!isInList(user, prevCluster, '_id')) {
+      logger.trace("Found new clusterer: " + 
+        JSON.stringify(user));
+      newClusterers.push(user);
+      update = true;
+    }
+  });
+
   if (update) {
     logger.trace("Updating session variable and filter");
     //Create filter for user
     newUsers.forEach(function(user) {
-      logger.debug("Creating new filter for user: " + user.name);
+      logger.debug("Creating new filter for ideator user: " + user.name);
       var newFilter = FilterManager.create(ideaFilterName,
           Session.get("currentUser"),
           "ideas",
@@ -400,8 +458,21 @@ updateFilters = function() {
       );
       prev.push(user);
     });
+    newClusterers.forEach(function(user) {
+      logger.debug("Creating new filter for cluster user: " + user.name);
+      var newFilter = FilterManager.create(clusterFilterName,
+          Session.get("currentUser"),
+          "clusters",
+          "userID",
+          user._id
+      );
+      prevCluster.push(user);
+    });
     logger.debug("Setting list of ideators: " + 
         JSON.stringify(prev));
     Session.set("currentIdeators", prev);
+    logger.debug("Setting list of synthesizers: " + 
+        JSON.stringify(prevCluster));
+    Session.set("currentSynthesizers", prevCluster);
  }
 };

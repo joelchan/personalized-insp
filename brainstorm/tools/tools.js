@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Tools:Tools');
 // Comment out to use global logging level
-Logger.setLevel('Tools:Tools', 'trace');
+//Logger.setLevel('Tools:Tools', 'trace');
 //Logger.setLevel('Tools:Tools', 'debug');
-//Logger.setLevel('Tools:Tools', 'info');
+Logger.setLevel('Tools:Tools', 'info');
 //Logger.setLevel('Tools:Tools', 'warn');
 
 trimFromString = function(target, substring) {

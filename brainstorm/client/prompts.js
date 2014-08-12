@@ -89,7 +89,7 @@ Template.PromptPage.events({
       logger.debug("Session will be: " + minutes + " long");
       var newPrompt = PromptManager.create(newQuestion);
       if (newTitle.trim() !== "") {
-        PromptManager.setTitle(newTitle);
+        PromptManager.setTitle(newPrompt, newTitle);
       }
       if (!isNaN(minutes)) {
         PromptManager.setLength(newPrompt, parseInt(minutes));

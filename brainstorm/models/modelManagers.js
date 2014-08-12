@@ -13,6 +13,19 @@ IdeaFactory = (function() {
       idea._id = Ideas.insert(idea);
       return idea;
     },
+    toggleGameChanger: function(idea) {
+      idea.isGamechanger = !idea.isGamechanger;
+      Ideas.update({_id: idea._id}, 
+        {$set: {isGamechanger: idea.isGamechanger}
+      });
+    },
+    getFromIDs: function(ids) {
+      if (hasForEach(ids)) {
+        return Ideas.find({_id: {$in: ids}});
+      } else {
+        return Ideas.findOne({_id: ids});
+      }
+    },
     createDummy: function(user, prompt, num) {
       if (!num) {
         num = 1;
@@ -57,15 +70,20 @@ ClusterFactory = (function() {
       Ideas.update({_id: idea._id}, {$push: {'clusterIDs': cluster._id}});
       Clusters.update({_id: cluster._id}, {$push: {'ideaIDs': idea._id}});
     },
-    create: function(ideas) {
+    create: function(ideas, user, prompt) {
       logger.trace("Creating new Cluster");
-      var cluster = new Cluster();
+      var cluster = new Cluster(user, prompt);
       cluster._id = Clusters.insert(cluster);
       var factory = this;
-      ideas.forEach(function(idea) {
-        logger.trace("Adding idea with id + " + idea._id + " to cluster");
-        ClusterFactory.insertIdeaToCluster(idea, cluster);
-      });
+      if (hasForEach(ideas)) {
+        ideas.forEach(function(idea) {
+          logger.trace("Adding idea with id + " + idea._id + " to cluster");
+          ClusterFactory.insertIdeaToCluster(idea, cluster);
+        });
+      } else {
+        logger.trace("Adding idea with id + " + ideas._id + " to cluster");
+        ClusterFactory.insertIdeaToCluster(ideas, cluster);
+      }
       return cluster;
     },
     removeIdeaFromCluster: function(idea, cluster) {

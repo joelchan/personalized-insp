@@ -1,26 +1,26 @@
-#idealist, #clusterlist{
+.forest #idealist, #clusterlist{
 	border: 1px solid #ddd;
 	border-radius: 5px;
 	background-color: #f5f5f5;
 	margin-left: 0px;
 }
 
-#confirmModal, #nameModal {
+.forest #confirmModal, #nameModal {
   top: 15%;
   left: 50%;
   height: 1px;
   width: 600px;
 }
 
-#node-drag-target, .stack, .donestack{
-	margin-left: 0px;
+.forest #node-drag-target, .stack, .donestack{
+	/* margin-left: 0px; */
 }
 
-.donestack > .idea-item, .cluster-item{
+.forest .donestack > .idea-item, .cluster-item{
 	/*display: none;*/
 }
 
-.idea-item, .donestack, .stack{
+.forest .idea-item, .donestack, .stack{
 	border: solid 1px #ddd;
 	border-radius: 5px;
 	list-style: none;
@@ -48,7 +48,8 @@
 	border-radius: 5px;
 	padding: 5px;
 }
-.clusternodename{
+
+.forest .clusternodename{
 	width: 242px;
 	margin: 5px;
 }

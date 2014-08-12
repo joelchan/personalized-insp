@@ -10,35 +10,36 @@
 	visibility: hidden;
 }*/
 
-#idealist, #clusterlist{
+.clusterinterface #idealist, #clusterlist{
 	background-color: #f5f5f5;
-	height: 300px;
+	/* height: 300px; */
+  min-height: 500px;
 	overflow: auto;
 	list-style: none;
 	list-style-type: none;
 	padding-left: 0px;
 }
 
-#idealistHeader{
+.clusterinterface #idealistHeader{
 	display: inline-block;
 	/*width: 50%;*/
 }
 
-#left{
+.clusterinterface #left-clustering{
 	padding: 0px;
 	margin: 5px;
 }
 
-#left > div:nth-child(4) > div{
+.clusterinterface #left-clustering > div:nth-child(4) > div{
 	/*float: right;*/
 	/*width: 50%;*/
 }
 
-#sortMenuButton{
+.clusterinterface #sortMenuButton{
 	margin: 20px 0px 5px 15px;
 }
 
-.cluster{
+.clusterinterface .cluster{
 	border: 1px solid black;
 	border-radius: 5px;
 	background-color: #f5f5f5;
@@ -47,7 +48,7 @@
 	cursor: move;
 }
 
-.cluster .form-group{
+.clusterinterface .cluster .form-group{
 	margin-bottom: 0px;
 }
 
@@ -55,13 +56,13 @@ i {
 	cursor: pointer;
 }
 
-.clusterul{
+.clusterinterface .clusterul{
 	height: 100%;
 	list-style: none;
 	list-style-type: none;
 	padding-left: 0px;
 }
-li.idea-item{
+.clusterinterface li.idea-item{
 	border: solid 1px #ddd;
 	margin: 5px;
 	padding: 5px;
@@ -76,7 +77,7 @@ li.idea-item .gamechangestar{
 	text-shadow: 1px 1px #ddd; /*#eea236;*/
 }
 
-li.cluster-item{
+.clusterinterface li.cluster-item{
 	background-color: #fcf8e3;
 	border: solid 1px black;
 	margin: 5px;
@@ -85,21 +86,22 @@ li.cluster-item{
 	cursor: pointer;
 }
 
-.newcluster{
+.clusterinterface .newcluster{
 	border: dashed 1px;
 	border-radius: 5px;
 	padding: 10px;
+  margin: 10px 10px 10px 10px;
 }
 
-.namecluster{
+.clusterinterface .namecluster{
 	width: 100%;
 }
 
-#finish{
+.clusterinterface #finish{
 	margin-top: 10px;
 	float: right;
 }
 
-#clusterprompt{
+.clusterinterface #clusterprompt{
 	margin-top: 0px;
 }

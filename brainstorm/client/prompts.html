@@ -7,9 +7,10 @@
 <template name="Brainstorm">
   <div id="prompt-{{_id}}" class="menu-box clickable panel panel-info">
     <div class="panel-heading">
-      {{ question }}
+      {{ title }}
     </div>
     <div class="panel-row">
+      <strong>Prompt: </strong> {{ question }}<br/>
       {{#if hasTime}}
         <strong>Session Length: {{ length }} minutes</strong><br/>
       {{/if}}
