@@ -1,7 +1,16 @@
-// // Configure logger for server tests
-// var logger = new Logger('Client:Clustering');
-// // Comment out to use global logging level
-// Logger.setLevel('Client:Clustering', 'trace');
+ // Configure logger for server tests
+ var logger = new Logger('Client:Clustering');
+ // Comment out to use global logging level
+ Logger.setLevel('Client:Clustering', 'trace');
+ //Logger.setLevel('Client:Clustering', 'debug');
+ //Logger.setLevel('Client:Clustering', 'info');
+ //Logger.setLevel('Client:Clustering', 'warn');
+
+/*******************************************************************
+ * ******************  Clustering Template ************************
+ * ****************************************************************/
+// Name for filters applied to idea list of unclustered ideas
+var ideaFilterName = "Unclustered Ideas"; 
 
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
@@ -42,12 +51,145 @@ Template.Clustering.rendered = function(){
     }
   });
 
-}
+  //Setup filters for users and filter update listener
+  var ideators = GroupManager.getUsersInRole(
+      Session.get("currentGroup"), 'Ideator');
+  Session.set("currentIdeators", []);
 
+  updateFilters();
+
+  //Update filters every 5 seconds
+  Meteor.setInterval(updateFilters, 5000);
+
+
+
+};
+
+/********************************************************************
+* Clustering Interface template Helpers
+********************************************************************/
+Template.Clustering.helpers({
+  ideas : function(){
+    //var filter = Session.get("currentFilter");//Filters.findOne({name: "Syn Idea List Filter", user: Session.get("currentUser")});
+    var filteredIdeas = FilterManager.performQuery(ideaFilterName, 
+      Session.get("currentUser"), 
+      "ideas");
+    return filteredIdeas;
+    //var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+    //return sortedIdeas;
+
+    // return Ideas.find();//FilterFactory.performQuery(filter);//
+  },
+
+  clusters : function(){
+    return Clusters.find({isRoot: {$ne: true}});
+  },
+
+  clustername : function(){
+    var clu = Clusters.findOne({_id: this.toString()});
+    if(clu === undefined) return false
+    return clu.name;
+  },
+    
+  prompt : function(){
+    return Session.get("currentPrompt").title;
+  },
+
+  numClusters : function(){
+    return Clusters.find({isRoot: {$ne: true}}).count();
+  },
+
+  numUnnamed : function(){
+    var nullNames = ["Not named yet", "", " ", "  ", "   ", undefined];
+    return Clusters.find({isRoot: {$ne: true}, name: {$in: nullNames}}).count();
+  }
+});
+
+/********************************************************************
+* Template event functions. Much of the heavy lifting in the interface*
+* is done by the mouseover event.
+********************************************************************/
+Template.Clustering.events({
+  //updates name field in cluster as user types
+  'keyup .namecluster' : function(event, template){
+    var $myCluster = $(event.target).parent().parent();
+    console.log($(event.target).val());
+
+    Clusters.update({_id:$myCluster.attr('id')},
+      {$set: {name: $(event.target).val()}
+    });
+  },
+
+  //Collapse clusters and makes them unsortable until expanded
+  'click .collapser' : function(){
+    var id = $(event.target).parent().parent().attr('id');
+    var cluster = Clusters.findOne({_id: id});
+    var state = !cluster.isCollapsed;
+
+    Clusters.update({_id: id}, {$set: {isCollapsed: state}});
+    /*if($(event.target).hasClass('fa-angle-double-up')){
+      $(event.target).switchClass('fa-angle-double-up', 
+        'fa-angle-double-down');
+    } else {
+      $(event.target).switchClass('fa-angle-double-down', 
+        'fa-angle-double-up');
+    }
+    $(event.target).parent().parent().children('li').slideToggle("fast");*/
+  },
+
+  'click .gamechangestar' : function(){
+    console.log(this);
+    var id = (this)._id;
+    var idea = Ideas.findOne({_id: id});
+    var state = !idea.isGamechanger;
+
+    Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+  },
+
+  'click .cluster-item': function(){
+    //console.log(event.target);
+    var id = $(event.target).attr("id");
+    id = id.split("-")[1];
+    var cluster = Clusters.findOne({_id: id});
+    var top = cluster.position.top;
+    window.scrollTo(0, top+100);
+  },
+
+  // 'click #sortOldest' : function(){
+  //   Session.set("sortByTime", 1);
+  // },
+
+  // 'click #sortMostRecent' : function(){
+  //   Session.set("sortByTime", -1);
+  // }
+
+  //Attaches sortable and draggable to clusters when mouse moves into cluster area
+});
+
+
+/*******************************************************************
+ * ******************  ClusterArea Template ************************
+ * ****************************************************************/
 Template.clusterarea.rendered = function(){
      
 }
 
+Template.clusterarea.helpers({
+  clusters : function(){
+    return Clusters.find({isRoot: {$ne: true}});
+  },
+});
+
+Template.ideaitem.helpers({
+  gameChangerStatus : function(){
+    return this.isGamechanger;
+  }
+})
+
+
+/*******************************************************************
+ * ******************  Cluster Template ************************
+ * ****************************************************************/
 Template.cluster.rendered = function(){
     // apply sortable to new cluster
   $('.cluster ul').sortable({
@@ -123,61 +265,6 @@ Template.cluster.rendered = function(){
   });
 }
 
-/********************************************************************
-* Clustering Interface template Helpers
-********************************************************************/
-Template.Clustering.helpers({
-  ideas : function(){
-    //var filter = Session.get("currentFilter");//Filters.findOne({name: "Syn Idea List Filter", user: Session.get("currentUser")});
-    var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
-    var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
-    return sortedIdeas;
-    // return Ideas.find();//FilterFactory.performQuery(filter);//
-  },
-
-  clusters : function(){
-    return Clusters.find({isRoot: {$ne: true}});
-  },
-
-  clustername : function(){
-    var clu = Clusters.findOne({_id: this.toString()});
-    if(clu === undefined) return false
-    return clu.name;
-  },
-    
-  prompt : function(){
-    return Session.get("currentPrompt").title;
-  },
-
-  numClusters : function(){
-    return Clusters.find({isRoot: {$ne: true}}).count();
-  },
-
-  numUnnamed : function(){
-    var nullNames = ["Not named yet", "", " ", "  ", "   ", undefined];
-    return Clusters.find({isRoot: {$ne: true}, name: {$in: nullNames}}).count();
-  }
-});
-
-/********************************************************************
-* Cluster Area template Helpers
-********************************************************************/
-Template.clusterarea.helpers({
-  clusters : function(){
-    return Clusters.find({isRoot: {$ne: true}});
-  },
-});
-
-Template.ideaitem.helpers({
-  gameChangerStatus : function(){
-    return this.isGamechanger;
-  }
-})
-
-
-/********************************************************************
-* Cluster objecct template Helpers
-********************************************************************/
 Template.cluster.helpers({
   clusterideas : function(){
     // logger.trace("Getting Cluster Ideas");
@@ -208,67 +295,6 @@ Template.cluster.helpers({
 
 });
 
-/********************************************************************
-* Template event functions. Much of the heavy lifting in the interface*
-* is done by the mouseover event.
-********************************************************************/
-Template.Clustering.events({
-  //updates name field in cluster as user types
-  'keyup .namecluster' : function(event, template){
-    var $myCluster = $(event.target).parent().parent();
-    console.log($(event.target).val());
-
-    Clusters.update({_id:$myCluster.attr('id')},
-      {$set: {name: $(event.target).val()}
-    });
-  },
-
-  //Collapse clusters and makes them unsortable until expanded
-  'click .collapser' : function(){
-    var id = $(event.target).parent().parent().attr('id');
-    var cluster = Clusters.findOne({_id: id});
-    var state = !cluster.isCollapsed;
-
-    Clusters.update({_id: id}, {$set: {isCollapsed: state}});
-    /*if($(event.target).hasClass('fa-angle-double-up')){
-      $(event.target).switchClass('fa-angle-double-up', 
-        'fa-angle-double-down');
-    } else {
-      $(event.target).switchClass('fa-angle-double-down', 
-        'fa-angle-double-up');
-    }
-    $(event.target).parent().parent().children('li').slideToggle("fast");*/
-  },
-
-  'click .gamechangestar' : function(){
-    console.log(this);
-    var id = (this)._id;
-    var idea = Ideas.findOne({_id: id});
-    var state = !idea.isGamechanger;
-
-    Ideas.update({_id: id}, {$set: {isGamechanger: state}});
-  },
-
-  'click .cluster-item': function(){
-    //console.log(event.target);
-    var id = $(event.target).attr("id");
-    id = id.split("-")[1];
-    var cluster = Clusters.findOne({_id: id});
-    var top = cluster.position.top;
-    window.scrollTo(0, top+100);
-  },
-
-  // 'click #sortOldest' : function(){
-  //   Session.set("sortByTime", 1);
-  // },
-
-  // 'click #sortMostRecent' : function(){
-  //   Session.set("sortByTime", -1);
-  // }
-
-  //Attaches sortable and draggable to clusters when mouse moves into cluster area
-});
-
 
 /********************************************************************
 * Creates new cluster, adds it to collection, and updates Ideas list*
@@ -286,9 +312,6 @@ function createCluster(item) {
   updateClusterList(ideaID, clusterID, true);
 }
 
-function getRandomInt (min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 /********************************************************************
 * Takes a ui and id of idea being moved. Returns an idea and updates
@@ -342,3 +365,43 @@ function updateClusterList(ideaID, clusterID, adding){
   }
 }
 
+updateFilters = function() {
+  /***************************************************************
+    * Check group ideators and update user filters
+    **************************************************************/
+  var group = Groups.findOne({_id: Session.get("currentGroup")._id});
+  logger.trace("Updating filters for group: " + group);
+  var ideators = GroupManager.getUsersInRole(group, 'Ideator');
+  logger.trace("current group has ideators: " + 
+      JSON.stringify(ideators));
+  var prev = Session.get("currentIdeators");
+  logger.trace("current ideators stored in session are: " + 
+      JSON.stringify(prev));
+  var newUsers = [];
+  var update = false;
+  ideators.forEach(function(user) {
+    if (!isInList(user, prev, '_id')) {
+      logger.trace("Found new ideator: " + 
+        JSON.stringify(user));
+      newUsers.push(user);
+      update = true;
+    }
+  });
+  if (update) {
+    logger.trace("Updating session variable and filter");
+    //Create filter for user
+    newUsers.forEach(function(user) {
+      logger.debug("Creating new filter for user: " + user.name);
+      var newFilter = FilterManager.create(ideaFilterName,
+          Session.get("currentUser"),
+          "ideas",
+          "userID",
+          user._id
+      );
+      prev.push(user);
+    });
+    logger.debug("Setting list of ideators: " + 
+        JSON.stringify(prev));
+    Session.set("currentIdeators", prev);
+ }
+};
