@@ -580,10 +580,25 @@ Template.Dashboard.events({
 			return false;
 		$target.toggleClass("selected");
 	},
+	
+	// 'click .modal > div > div > div.radio': function(event){
+
+	// },
 
 	'click #changemodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
 		var sender = Session.get("currentUser")._id;
-		var recipients = Session.get("selectedParts");
+		// var recipients = Session.get("selectedParts");
+		var recipients = [$('input[name=userSelectRadios]:checked').val()];
+		if(recipients[0] === "allUsers") {
+			// clear the recipients array
+			while(recipients.length > 0) {
+			    recipients.pop();
+			}
+			selectedRecipients = MyUsers.find({type: "Ideator"}).fetch();
+			selectedRecipients.forEach(function(r) {
+				recipients.push(r._id);
+			});
+		}
 		var prompt = $('#new-prompt').val();
 
 		if(prompt === "" || prompt === " ")
@@ -596,7 +611,18 @@ Template.Dashboard.events({
 
 	'click #sendExModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
 		var sender = Session.get("currentUser")._id;
-		var recipients = Session.get("selectedParts");
+		// var recipients = Session.get("selectedParts");
+		var recipients = [$('input[name=userSelectRadios]:checked').val()];
+		if(recipients[0] === "allUsers") {
+			// clear the recipients array
+			while(recipients.length > 0) {
+			    recipients.pop();
+			}
+			selectedRecipients = MyUsers.find({type: "Ideator"}).fetch();
+			selectedRecipients.forEach(function(r) {
+				recipients.push(r._id);
+			});
+		}
 		var examples = [];
 
 
@@ -617,7 +643,18 @@ Template.Dashboard.events({
 
 	'click #sendThemeModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
 		var sender = Session.get("currentUser")._id;
-		var recipients = Session.get("selectedParts");
+		// var recipients = Session.get("selectedParts");
+		var recipients = [$('input[name=userSelectRadios]:checked').val()];
+		if(recipients[0] === "allUsers") {
+			// clear the recipients array
+			while(recipients.length > 0) {
+			    recipients.pop();
+			}
+			selectedRecipients = MyUsers.find({type: "Ideator"}).fetch();
+			selectedRecipients.forEach(function(r) {
+				recipients.push(r._id);
+			});
+		}
 		var theme = $('input[name=themeRadios]:checked').val();
 		
 		if(theme === undefined)

@@ -146,6 +146,10 @@
 	margin: 5px;
 }
 
+.modal > div > div > div.modal-body > div.userSelectList {
+	padding-left: 5px;
+}
+
 #people{
 	/*height: 620px;*/
 	overflow: hidden;

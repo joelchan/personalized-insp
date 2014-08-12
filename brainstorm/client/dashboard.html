@@ -155,27 +155,33 @@
         	<div class="modal-content">
             	<div class="modal-header">
             		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            		<h4 class="modal-title" id="myModalLabel">Change Prompt</h4>
+            		<h3 class="modal-title" id="myModalLabel">Send Message</h3>
             	</div>
             	<div class="modal-body">
-                	<h5>Select Participants</h5>
-                	<div class="filter-list">
-                		<select multiple class="select-participants form-control">
+                	<h4>Select Users</h4>
+                	<div class="userSelectList">
+                		<!-- <select multiple class="select-participants form-control"> -->
+                			<div class="radio userSelection">
+                				<label><input type="radio" name="userSelectRadios" id="allUsers" value="allUsers">
+                					Everyone
+                				</label>
+                			</div>
                 			{{#each participants}}
-                				<option val="pf-{{this._id}}">{{this.name}}</option>
+                				{{> userSelection}}
+                				<!-- <option val="pf-{{this._id}}">{{this.name}}</option> -->
                 			{{/each}}
-                		</select>
+                		<!-- </select> -->
                 	</div>
-                	<h3>Send a new prompt, spin of the current prompt, or hint to the selected participants</h3>
+                	<h4>Send some guidance, feedback, hints, or general encouragement (or anything else you think might help) to the selected users</h4>
                 	<div class="form-group">
-						<input type="text" class="form-control" id="new-prompt" placeholder="Enter New Prompt">
+						<textarea class="form-control" rows="3" id="new-prompt" placeholder="Type message here..."></textarea>
 					</div>
-					<div id="selectedparts">
+					<!-- <div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
 							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
-					</div>
+					</div> -->
             	</div>
             	<div class="modal-footer">
                 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -191,10 +197,24 @@
         	<div class="modal-content">
             	<div class="modal-header">
             		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            		<h4 class="modal-title" id="myModalLabel">Send Examples</h4>
+            		<h3 class="modal-title" id="myModalLabel">Send Examples</h3>
             	</div>
             	<div class="modal-body">
-                	<h3>Choose examples to send to the selected participants</h3>
+                	<h4>Select Users</h4>
+                	<div class="userSelectList">
+                		<!-- <select multiple class="select-participants form-control"> -->
+                			<div class="radio userSelection">
+                				<label><input type="radio" name="userSelectRadios" id="allUsers" value="allUsers">
+                					Everyone
+                				</label>
+                			</div>
+                			{{#each participants}}
+                				{{> userSelection}}
+                				<!-- <option val="pf-{{this._id}}">{{this.name}}</option> -->
+                			{{/each}}
+                		<!-- </select> -->
+                	</div>
+                	<h4>Choose examples to send to the selected users</h4>
                 	<div>
                 		{{>filterbox}}
                 		{{>activefilters}}
@@ -215,12 +235,12 @@
 							{{> idea}}
 						{{/each}}	
 					</div> -->
-					<div id="selectedparts">
+					<!-- <div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
 							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
-					</div>
+					</div> -->
             	</div>
             	<div class="modal-footer">
                 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -235,21 +255,35 @@
         	<div class="modal-content">
             	<div class="modal-header">
             		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            		<h4 class="modal-title" id="myModalLabel">Send Theme</h4>
+            		<h3 class="modal-title" id="myModalLabel">Send Theme</h3>
             	</div>
             	<div class="modal-body">
-                	<h3>Choose a theme to send to participants</h3>
+                	<h4>Select Users</h4>
+                	<div class="userSelectList">
+                		<!-- <select multiple class="select-participants form-control"> -->
+                			<div class="radio userSelection">
+                				<label><input type="radio" name="userSelectRadios" id="allUsers" value="allUsers">
+                					Everyone
+                				</label>
+                			</div>
+                			{{#each participants}}
+                				{{> userSelection}}
+                				<!-- <option val="pf-{{this._id}}">{{this.name}}</option> -->
+                			{{/each}}
+                		<!-- </select> -->
+                	</div>
+                	<h4>Choose a theme to send to the selected users</h4>
                 	<div id="sendThemeModal-clusterlist">
 						{{#each clusters}}
 							{{> theme}}
 						{{/each}}	
 					</div>
-					<div id="selectedparts">
+					<!-- <div id="selectedparts">
 						<label>Selected Participants: </label>
 						{{#each selectedparts}}
 							<span class="part-label label label-primary" id="pf-{{this._id}}"><i class="fa fa-minus-circle"></i>{{this.name}}</span>
 						{{/each}}
-					</div>
+					</div> -->
             	</div>
             	<div class="modal-footer">
                 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -267,6 +301,14 @@
 <template name="theme">
 	<div id={{this._id}} class="radio theme">
 		<label><input type="radio" name="themeRadios" id="themeRadios{{this._id}}" value="{{this._id}}">
+			{{this.name}}
+		</label>
+	</div>
+</template>
+
+<template name="userSelection">
+	<div id={{this._id}} class="radio userSelection">
+		<label><input type="radio" name="userSelectRadios" id="userSelectRadios{{this._id}}" value="{{this._id}}">
 			{{this.name}}
 		</label>
 	</div>
