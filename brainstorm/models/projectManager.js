@@ -9,13 +9,19 @@ Logger.setLevel('Models:ProjectManager', 'info');
 
 PromptManager  = (function() {
   return {
-    create: function(question, template) {
+    create: function(question, template, title) {
       var newPrompt = new Prompt(question);
       //For now, just associate default group template with all prompts
       if (template) {
         newPrompt.template = template;
       } else {
         newPrompt.template = GroupManager.defaultTemplate;
+      }
+      //Store a shortened title
+      if (title) {
+        newPrompt.title = title;
+      } else {
+        newPrompt.title = question;
       }
       newPrompt._id = Prompts.insert(newPrompt);
       return newPrompt;
@@ -34,6 +40,11 @@ PromptManager  = (function() {
         //Maybe eventually update group with prompt
         //Groups.update({$push: {promptIDs: prompt._id}});
       });
+    },
+    setTitle: function(prompt, title) {
+      prompt.title = title;
+      Prompts.update({_id: prompt._id}, {$set: {title: title}});
+      return prompt;
     },
     addToGroup: function(prompt, user) {
 

@@ -379,6 +379,11 @@ Template.Dashboard.helpers({
   		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
   	},
 
+  	participants : function(){
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
+	},
+
   	partFilters : function(){
   		return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
   	},
@@ -575,10 +580,16 @@ Template.Dashboard.events({
 			return false;
 		$target.toggleClass("selected");
 	},
+	
+	// 'click .modal > div > div > div.radio': function(event){
+
+	// },
 
 	'click #changemodal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
 		var sender = Session.get("currentUser")._id;
-		var recipients = Session.get("selectedParts");
+		// var recipients = Session.get("selectedParts");
+		var recipientSelection = $('input[name=userSelectRadios]:checked').val();
+		var recipients = getUserSelection(recipientSelection);
 		var prompt = $('#new-prompt').val();
 
 		if(prompt === "" || prompt === " ")
@@ -591,7 +602,9 @@ Template.Dashboard.events({
 
 	'click #sendExModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
 		var sender = Session.get("currentUser")._id;
-		var recipients = Session.get("selectedParts");
+		// var recipients = Session.get("selectedParts");
+		var recipientSelection = $('input[name=userSelectRadios]:checked').val();
+		var recipients = getUserSelection(recipientSelection);
 		var examples = [];
 
 
@@ -612,7 +625,9 @@ Template.Dashboard.events({
 
 	'click #sendThemeModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
 		var sender = Session.get("currentUser")._id;
-		var recipients = Session.get("selectedParts");
+		// var recipients = Session.get("selectedParts");
+		var recipientSelection = $('input[name=userSelectRadios]:checked').val();
+		var recipients = getUserSelection(recipientSelection);
 		var theme = $('input[name=themeRadios]:checked').val();
 		
 		if(theme === undefined)

@@ -46,7 +46,8 @@
 }
 
 .tagname a, .userprofilename{
-	text-decoration: underline;
+	text-decoration: none;
+	vertical-align: middle;
 }
 
 .db-title{
@@ -123,6 +124,11 @@
 	margin-top: 0px;
 }
 
+.dashboard #people-view #actions .btn-group .btn {
+	font-weight: bold;
+	border:none;
+}
+
 .profile .name-icon{
 	display: inline-block;
 }
@@ -138,6 +144,10 @@
 
 #sendThemeModal .theme{
 	margin: 5px;
+}
+
+.modal > div > div > div.modal-body > div.userSelectList {
+	padding-left: 5px;
 }
 
 #people{

@@ -9,7 +9,8 @@ Template.filterbox.helpers({
 		//doesn't work
 	},
 	participants : function(){
-		return MyUsers.find({type: "Experiment Participant"});
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
 	},
 	ideas : function(){
 		// return Ideas.find();

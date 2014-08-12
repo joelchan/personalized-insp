@@ -84,9 +84,13 @@ Template.PromptPage.events({
     'click button.createPrompt': function () {
       //Create a new Experiment with 1 condition and a default group template
       var newQuestion = $("input#prompt-text").val();
+      var newTitle = $("input#prompt-title").val();
       var minutes = parseInt($("input#prompt-length").val());
       logger.debug("Session will be: " + minutes + " long");
       var newPrompt = PromptManager.create(newQuestion);
+      if (newTitle.trim() !== "") {
+        PromptManager.setTitle(newTitle);
+      }
       if (!isNaN(minutes)) {
         PromptManager.setLength(newPrompt, parseInt(minutes));
       }

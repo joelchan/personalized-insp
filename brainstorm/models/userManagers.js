@@ -404,6 +404,18 @@ GroupManager = (function () {
       logger.trace("Getting size of group");
       return group.template.size;
     },
+    getUsersinRole: function(group, title) {
+      /**************************************************************
+       * Get a list of users that have been assigned to role with given
+       * title
+       *************************************************************/
+      if (group.assignments[title]) {
+        return group.assignments[title];
+      } else {
+        return null;
+      }
+    },
+
     getRole: function(group, user) {
       /**************************************************************
        * Retieve the role assigned to a given user in the group.

@@ -179,6 +179,24 @@ getIDs = function(objs) {
   return ids;
 };
 
+getUserSelection = function(userRadioValue) {
+  /******************************************************************
+   * Get the user _id's to send facilitator action to
+   * @params:
+   *    userRadioValue - value from user selection radio button
+   *****************************************************************/
+   var recipients = []
+   if(userRadioValue === "allUsers") {
+    selectedRecipients = MyUsers.find({type: "Ideator"}).fetch();
+    selectedRecipients.forEach(function(r) {
+      recipients.push(r._id);
+    });
+    return recipients;
+   } else {
+    return [userRadioValue];
+   }
+}
+
 binByField = function(objs, field, op) {
   /******************************************************************
    * Sorts the objects into a list of lists using a given comparison

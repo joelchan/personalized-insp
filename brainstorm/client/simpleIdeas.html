@@ -57,7 +57,7 @@
     <div class="panel-heading">
       <h4 class="panel-title">
         <label class="time-label">{{time}}</label>
-        <a data-toggle="collapse" data-parent="#accordion" href="#{{_id}}">
+        <a data-toggle="collapse" data-parent="#{{_id}}" href="#{{_id}}">
           <i class="fa fa-chevron-circle-right"></i> {{title}}  
         </a>
       </h4>
@@ -100,9 +100,9 @@
 </template>
 
 <template name="sentprompt">
-  <h5 class="notify-label">Consider the following: </h5>
+  <h5 class="notify-label">The facilitator says: </h5>
   <div class="notify-prompt">
-    <i class="fa fa-question-circle"></i>
+    <!-- <i class="fa fa-question-circle"></i> -->
     {{prompt}}
   </div>
 </template>
@@ -192,22 +192,24 @@ complete idea)"></textarea>
 
 <template name="SubmitIdeas">
   <div class="row">
-    <div class="col-md-1">
-      <a href="" data-toggle="modal" data-target="#acknowledgeModal">
-        <i id="request-help" class="fa fa-question-circle fa-5x" title="Click to request help"></i>
-        <!-- {{#if number}}
-          <span class="badge">{{number}}</span>
-        {{/if}} -->
-      </a>
-    </div> 
     <div class="col-md-8">
         <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
 (press the &lt;Enter&gt; key or the &quot;Enter Idea&quot; button to the right after each 
 complete idea)"></textarea>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <button id="submitIdea" class="submitIdea btn-default btn-primary"> Enter Idea </button>
+        <a href="" data-toggle="modal" data-target="#acknowledgeModal">
+          <button id="request-help" class="getHelp btn-default btn-danger" style=""> Get Help </button></a>
     </div>
+    <!-- <div class="col-md-2"> -->
+      
+        <!-- <i id="request-help" class="fa fa-question-circle fa-5x" title="Click to request help"></i> -->
+        <!-- {{#if number}}
+          <span class="badge">{{number}}</span>
+        {{/if}} -->
+      
+    <!-- </div>  -->
   </div>
 </template>
 
