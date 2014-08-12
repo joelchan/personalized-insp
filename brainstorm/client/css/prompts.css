@@ -54,3 +54,8 @@
 .clickable:hover {
   background: #efefef;
 }
+
+.prompt-list .username {
+  margin: 0 7px 0 7px;
+
+}

@@ -22,12 +22,15 @@ Template.Brainstorm.helpers({
     return this.question;
   },
   participants: function() {
-    var groups = Groups.find({_id: this.groupIDs});
+    logger.debug("current prompt: " + JSON.stringify(this));
+    var groups = Groups.find({_id: {$in: this.groupIDs}});
     var users = [];
     groups.forEach(function(group) {
-      users.concat(group.users);
+      users = users.concat(group.users);
     });
-    return users;
+    return users.map(function(user) {
+      return user.name;
+    });
   },
   hasTime: function() {
     if (this.hasOwnProperty("length")) {
@@ -43,11 +46,15 @@ Template.Brainstorm.helpers({
     }
   },
   hasUsers: function() {
-    var groups = Groups.find({_id: this.groupIDs});
+    var groups = Groups.find({_id: {$in: this.groupIDs}});
     var users = [];
     groups.forEach(function(group) {
-      users.concat(group.users);
+    logger.debug("Looking at groups: " + JSON.stringify(group));
+      logger.debug("group has users: " + JSON.stringify(group.users));
+      users = users.concat(group.users);
+      logger.debug("users list is now: " + JSON.stringify(users));
     });
+    logger.debug("list of users:" + JSON.stringify(users));
     if (users.length > 0) {
       logger.trace("Prompt has users");
       return true;

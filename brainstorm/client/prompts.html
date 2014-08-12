@@ -1,5 +1,5 @@
 <template name="namebox">
-  <div class="label label-primary">
+  <div class="username label label-primary">
     {{ this }}
   </div>
 </template>
@@ -25,7 +25,7 @@
 
 
 <template name="PromptPage">
-  <div class="row">
+  <div class="row ">
     <center>  
       <button id="new-bs" class="new-bs btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newPromptModal">
         New Brainstorm
@@ -34,32 +34,30 @@
   </div> <!-- End Row -->
 
   <!-- Modal -->
-    <div class="modal fade" id="newPromptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content"> 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="newPromptLabel">Create New Brainstorming Prompt</h4>
-          </div>
-          <div class="modal-body">
-            <h5>Brainstorming prompt:</h5>
-            <input type="text" id="prompt-text" class="modal-box" placeholder="New Question">
-            <h4>Brainstorm Length(minutes):</h4>
-            <input type="number" id="prompt-length" class="modal-number-input" placeholder="minutes">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button id="createPrompt" type="button" class="createPrompt btn btn-primary" data-toggle="modal" data-dismiss="modal">Save</button>
-          </div> <!-- End modal footer -->
-        </div> <!-- End modal content -->
-      </div> <!-- End modal dialog -->
-    </div> <!-- End modal -->
-  
-    <div class="row"> 
-      <div name="prompt-list">
-        {{#each prompts}}
-          {{> Brainstorm }}
-        {{/each}}
-      </div>
-    </div>
+  <div class="modal fade" id="newPromptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content"> 
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="newPromptLabel">Create New Brainstorming Prompt</h4>
+        </div>
+        <div class="modal-body">
+          <h5>Brainstorming prompt:</h5>
+          <input type="text" id="prompt-text" class="modal-box" placeholder="New Question">
+          <h4>Brainstorm Length(minutes):</h4>
+          <input type="number" id="prompt-length" class="modal-number-input" placeholder="minutes">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button id="createPrompt" type="button" class="createPrompt btn btn-primary" data-toggle="modal" data-dismiss="modal">Save</button>
+        </div> <!-- End modal footer -->
+      </div> <!-- End modal content -->
+    </div> <!-- End modal dialog -->
+  </div> <!-- End modal -->
+ 
+  <div class="row prompt-list"> 
+      {{#each prompts}}
+        {{> Brainstorm }}
+      {{/each}}
+  </div>
 </template>

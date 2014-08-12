@@ -1,6 +1,6 @@
 <template name="RoleMembers">
   <li class="list-group-item">
-  <h5><strong>{{ title }}s </strong>(max users: <em>{{ size num }})</em>:</h5>
+  <span class="role-label"><strong>{{ title }}s </strong>(max users: <em>{{ size num }})</em>:</span>
     {{#each assigned}}
       <span class='label label-default'>{{name}}</span>
     {{/each}}
@@ -10,9 +10,10 @@
 <template name="GroupPanel">
   <div id="group-{{_id}}" class="menu-box clickable panel panel-info">
     <div class="panel-heading">
+      <span>Join this group</span>
     </div>
     <div class="panel-row">
-      <ul class="list-group">
+      <ul class="list-group role-list-group">
         {{#each assignedRoles this}}
           {{> RoleMembers }}
         {{/each}}
@@ -65,11 +66,9 @@
       </div> <!-- End modal dialog -->
     </div> <!-- End modal -->
   
-    <div class="row"> 
-      <div name="group-list">
+    <div class="row group-list"> 
         {{#each groups}}
           {{> GroupPanel }}
         {{/each}}
-      </div>
     </div>
 </template>
