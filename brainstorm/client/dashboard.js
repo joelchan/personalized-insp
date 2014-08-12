@@ -1,7 +1,13 @@
 //Session.set("partFilters", []);
 Session.set("selectedParts", []);
 Session.set("selectedIdeas", []);
-Session.set("sessionLength", 30);
+var sessionPrompt = Session.get("currentPrompt");
+if (sessionPrompt.length > 0) {
+	Session.set("sessionLength", sessionPrompt.length);	
+} else {
+	Session.set("sessionLength", 30);
+}
+
 var filters = {
 	partFilters: [],
 	clusterFilters: [],
@@ -45,74 +51,7 @@ Template.Dashboard.rendered = function(){
 }
 
 Template.tagcloud.rendered = function(){
-	// var self = this;
-	// self.node = self.find("svg");
-	// var w = 453;
-	// var h = 280;
-	// var hPad = 20;
-	// var wPad = 30;
-	// var svg = d3.select("#tagcloud")
-	// 			.append("svg")
-	// 			.attr("height", h)
-	// 			.attr("width", w);
 
-	// var timeDep = new Deps.Dependency();
-	// Deps.autorun(function () {
-	// 	timeDep.depend();
-	// 	var clusters = Clusters.find().fetch();
-
- //    	var xScale = d3.scale.linear()
-	// 					.domain([d3.min(clusters, function(d){
-	// 						if(d.position !== undefined) return d.position.left;
-	// 					}), d3.max(clusters, function(d) {
-	// 						if(d.position !== undefined) return d.position.left; 
-	// 					})])
-	// 					.range([wPad, w - wPad*3]);
-
-	// 	var yScale = d3.scale.linear()
-	// 					.domain([d3.min(clusters, function(d){
-	// 						if(d.position !== undefined) return d.position.top;
-	// 					}), d3.max(clusters, function(d) {
-	// 						if(d.position !== undefined) return d.position.top;
-	// 					})])
-	// 					.range([hPad, h - hPad]);
-
-	// 	var wsScale = d3.scale.linear()
-	// 					.domain([0, d3.max(clusters, function(d){
-	// 						if(d.ideas !== undefined) return d.ideas.length;
-	// 					})])
-	// 					.range([10, 25]);
-
- //    	var tags = svg.selectAll("text")
- //    				.data(clusters);
-
- //    	tags.enter()
- //   			.append("text")
- //    		.attr("x", function(d){
- //    			if(d.position !== undefined)
- //    				return xScale(d.position.left);
- //   			})
- // 			.attr("y", function(d){
- //    			if(d.position !== undefined)
- //    				return yScale(d.position.top);
- //    		})
- //    		.style("font-size", function(d){
- //    			if(d.ideas !== undefined){
- //    				//console.log(wsScale(d.ideas.length));
- //    				return wsScale(d.ideas.length);}
- //    		})
-	// 		.text(function(d){
-	// 		   	return d.name;
-	// 		});
-
-	// 	tags.exit()
-	// 		.remove();
-	// });
-
-	// timeDep.changed(); //run once at beginning
-	// setInterval(function(){
-	// 	timeDep.changed();
-	// }, 5000);
 }
 
 Template.userseries.rendered = function(){
@@ -430,11 +369,12 @@ Template.tagcloud.helpers({
 *********************************************************************/
 Template.Dashboard.events({
 	'click .gamechangestar' : function(){
-		var id = (this)._id;
-		var idea = Ideas.findOne({_id: id});
-		var state = !idea.isGamechanger;
+		// var id = (this)._id;
+		// var idea = Ideas.findOne({_id: id});
+		// var state = !idea.isGamechanger;
 
-		Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+		// Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+		IdeaFactory.toggleGameChanger(this);
 	},
 
 	// 'click #filterGamechangers' : function(){

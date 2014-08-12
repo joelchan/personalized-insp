@@ -28,6 +28,12 @@ Template.filterbox.helpers({
 	},
 });
 
+Template.FilterBoxIdeaItem.helpers({
+	gameChangerStatus: function() {
+		return this.isGamechanger;
+	}
+});
+
 Template.activefilters.helpers({
 	getMappedFilters : function(){
 		var mappedFilts = FilterManager.createMappedFilterList("Ideas Filter", Session.get("currentUser"), "ideas", "mappedFilters");

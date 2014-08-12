@@ -146,7 +146,7 @@
 }
 
 #request-help{
-  margin: 25px 0 20px 15px;
+  margin: 25px 0 20px -5px;
   font-size: 18px;
   /*cursor: pointer;
   transition: color 0.5s ease;
