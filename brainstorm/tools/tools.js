@@ -112,27 +112,42 @@ isInList = function(member, list, field, compare) {
    *        on which to compare
    *    compare - (optional) comparison function to use
    *****************************************************************/
-  if (!(list instanceof Array)) {
-    logger.trace("Checking in cursor list for member: " + 
-        JSON.stringify(member));
-    //Not sure why forEach is not working with cursors
-    list = list.fetch();
-  } else {
-    logger.trace("Checking in array list for member: " + 
-        JSON.stringify(member));
-  }
-  for (var i=0; i< list.length; i++) {
+  //if (!(list instanceof Array)) {
+    //logger.trace("Checking in cursor list for member: " + 
+        //JSON.stringify(member));
+    ////Not sure why forEach is not working with cursors
+    //list = list.fetch();
+  //} else {
+    //logger.trace("Checking in array list for member: " + 
+        //JSON.stringify(member));
+  //}
+  //for (var i=0; i< list.length; i++) {
+  logger.debug("Searching for " + 
+      JSON.stringify(member) + " in list with contents: " + 
+      JSON.stringify(list));
+  var result = false;
+  list.forEach(function(obj) {
+    logger.trace("Checking for match with: " + JSON.stringify(obj));
     if (field) {
-      if (list[i][field] == member[field]) {
-        return true;
+      if (typeof(obj[field]) === 'string' && 
+          typeof(member[field]) === 'string') {
+        logger.trace("comparing 2 strings");
+        if (obj[field].localeCompare(member[field]) === 0) {
+          result = true; 
+        }
+      } else {
+        if (obj[field] == member[field]) {
+          result = true;
+        }
       }
+
     } else {
-      if (list[i] == member) {
-        return true;
+      if (obj == member) {
+        result = true;
       }
     }
-  }
-  return false;
+  });
+  return result;
 };
 
 getValsFromField = function(objs, field) {

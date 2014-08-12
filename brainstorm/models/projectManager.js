@@ -20,6 +20,21 @@ PromptManager  = (function() {
       newPrompt._id = Prompts.insert(newPrompt);
       return newPrompt;
     },
+    addGroups: function(prompt, groups) {
+      /**************************************************************
+       * Add a group to the given prompt
+       * @Params:
+       *    prompt: the prompt document to be updated
+       *    groups: an array of groups to be added to the prompt
+       *************************************************************/
+      groups.forEach(function(group) {
+        prompt.groupIDs.push(group._id);
+        Prompts.update({_id: prompt._id}, 
+          {$push: {groupIDs: group._id}});
+        //Maybe eventually update group with prompt
+        //Groups.update({$push: {promptIDs: prompt._id}});
+      });
+    },
     addToGroup: function(prompt, user) {
 
     },

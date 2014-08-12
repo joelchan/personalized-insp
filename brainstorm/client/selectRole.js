@@ -26,19 +26,26 @@ Template.RoleSelectPage.helpers({
 
 Template.RoleSelectPage.events({
   'click button.select-role-btn': function(event) {
-    logger.debug("Pressed button with id: " + $(event.target).attr('id'));
-    var id = $(event.target).attr('id');
-    var roleTitle = trimFromString(id, 'role-');
-    var role = RoleManager.getTemplate(roleTitle);
+    logger.debug("Pressed button with id: " + 
+      $(event.target).attr('id'));
+    //var id = $(event.target).attr('id');
+    //var roleTitle = trimFromString(id, 'role-');
+    //var role = RoleManager.getTemplate(roleTitle);
+      //logger.debug("role from role manager lookup: " + 
+        //JSON.stringify(role));
+      //logger.debug("role from this" + 
+        //JSON.stringify(this));
+    var group = Session.get("currentGroup");
     var user = Session.get("currentUser");
-    user.type = role.title;
+    user.type = this.title;
     Session.set("currentUser", user);
-    MyUsers.update({_id: user._id}, {$set: {type: role.title}});
-    logger.debug(role);
-    Session.set("currentRole", role);
+    MyUsers.update({_id: user._id}, {$set: {type: this.title}});
+    logger.debug(this);
+    Session.set("currentRole", this);
+    GroupManager.addUser(group, user, this.title);
+    Session.set("currentGroup", Groups.findOne({_id: group._id}));
     EventLogger.logBeginRole();
     Router.goToNextPage();
-
   }
 });
 

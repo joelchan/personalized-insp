@@ -52,10 +52,13 @@ Router.map(function () {
       path: 'Screens/',
       template: 'ScreensReviewPage'
   });
-
   this.route('PromptPage', {
       path: 'Brainstorms/',
       template: 'PromptPage'
+  });
+  this.route('GroupPage', {
+      path: 'Groups/',
+      template: 'GroupPage'
   });
   this.route('RoleSelectPage', {
       path: 'select/',

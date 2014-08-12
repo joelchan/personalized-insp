@@ -20,19 +20,9 @@ UserFactory  = (function() {
        return user;
      },
      getAdmin: function() {
-       var admin = MyUsers.find({"name": "ProtoAdmin",
-           "type": "admin"});
+       var admin = MyUsers.find({"type": "admin"});
        if (admin.count() == 0) {
          return this.create("ProtoAdmin", "admin");
-       } else {
-         return admin.fetch()[0];
-       }
-     },
-     getTestAdmin: function() {
-       var admin = MyUsers.find({"name": "TestAdmin",
-           "type": "admin"});
-       if (admin.count() == 0) {
-         return this.create("TestAdmin", "admin");
        } else {
          return admin.fetch()[0];
        }
@@ -82,13 +72,10 @@ RoleManager = (function () {
   newRole.workflow = ['Dashboard', 'FacilitatorSurvey'];
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Unassigned");
-  newRole.workflow = ['PromptPage', 'RoleSelectPage'];
+  newRole.workflow = ['PromptPage', 'GroupPage', 'RoleSelectPage'];
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Admin");
   newRole.workflow = ['ExpAdminPage'];
-  defaultRoles[newRole.title] = newRole;
-  var newRole = new Role("Test");
-  newRole.workflow = ['test'];
   defaultRoles[newRole.title] = newRole;
 
   return {
@@ -383,6 +370,18 @@ GroupManager = (function () {
         }
       }
     },
+    hasUser: function(group, user) {
+      var users = group.users;
+      logger.debug(user);
+      logger.debug(users);
+      if (isInList(user, users, '_id')) {
+        logger.trace("user is in group");
+        return true;
+      } else {
+        logger.trace("user is not in group");
+        return false;
+      }
+    },
     getSize: function(group, title) {
       /**************************************************************
        * Get the size of the group, or the number of slots for a 
@@ -413,7 +412,7 @@ GroupManager = (function () {
       var roles = group.template.roles;
       for (var i=0; i<roles.length; i++) {
         var title = roles[i].title;
-        if (isInList(group[title], user, '_id')) {
+        if (isInList(user, group.assignments[title], '_id')) {
           return roles[i];
         }
       }
@@ -464,15 +463,8 @@ LoginManager = (function () {
       * ****************************************************************/
       var myUser;
       if (this.loginAdmin(userName)) {
-        if (userName.toLowerCase() == "protoadmin") {
-          myUser = UserFactory.getAdmin();
-          Session.set("currentRole", RoleManager.defaults['Admin']);
-          logger.trace("logged in admin User");
-        } else {
-          myUser = UserFactory.getTestAdmin();
-          Session.set("currentRole", RoleManager.defaults['Test']);
-          logger.trace("logged in Test Admin User");
-        }
+        myUser = UserFactory.getAdmin();
+        Session.set("currentRole", RoleManager.defaults['Admin']);
       } else {
         var matches = MyUsers.find({name: userName});
         if (matches.count() > 0) {
@@ -498,8 +490,6 @@ LoginManager = (function () {
       ***************************************************************/
       if (userName.toLowerCase() == "protoadmin") {
         logger.trace("logged in admin User");
-        return true;
-      } else if (userName.toLowerCase() == "testadmin") {
         return true;
       } else {
         return false;

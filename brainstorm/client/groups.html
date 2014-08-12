@@ -1,0 +1,75 @@
+<template name="RoleMembers">
+  <li class="list-group-item">
+  <h5><strong>{{ title }}s </strong>(max users: <em>{{ size num }})</em>:</h5>
+    {{#each assigned}}
+      <span class='label label-default'>{{name}}</span>
+    {{/each}}
+  </li>
+</template>
+
+<template name="GroupPanel">
+  <div id="group-{{_id}}" class="menu-box clickable panel panel-info">
+    <div class="panel-heading">
+    </div>
+    <div class="panel-row">
+      <ul class="list-group">
+        {{#each assignedRoles this}}
+          {{> RoleMembers }}
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+</template>
+
+<template name="RoleSize">
+  <div>
+    <h4>Number of {{ title }}: (-1 = unlimited):</h4>
+    <input type="number" id="{{title}}-num" class="modal-number-input" placeholder="# of {{Title}}s">
+  </div>
+</template>
+
+<template name="GroupPage">
+  <div class="row">
+    <h1>{{ title }}</h1>
+    <h3>{{ question }}</h3>
+  </div> <!-- End Row -->
+  <div class="row">
+    <center>  
+      <!--<button id="new-group-btn" class="createGroup new-group-btn btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newGroupModal"> -->
+      <button id="new-group-btn" class="createGroup new-group-btn btn btn-xlarge2 btn-default btn-primary">
+        New Group
+      </button> 
+    </center>
+  </div> <!-- End Row -->
+
+  <!-- Modal -->
+    <div class="modal fade" id="newGroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content"> 
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="newGroupLabel">Create New Brainstorming Group</h4>
+          </div>
+          <div class="modal-body">
+            <h5>Brainstorming group:</h5>
+            <input type="text" id="group-text" class="modal-box" placeholder="New Question">
+            {{#each groupRole}}
+              {{> RoleSize }}
+            {{/each}}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <!--<button id="createGroup" type="button" class="createGroup btn btn-primary" data-toggle="modal" data-dismiss="modal">Save</button> -->
+          </div> <!-- End modal footer -->
+        </div> <!-- End modal content -->
+      </div> <!-- End modal dialog -->
+    </div> <!-- End modal -->
+  
+    <div class="row"> 
+      <div name="group-list">
+        {{#each groups}}
+          {{> GroupPanel }}
+        {{/each}}
+      </div>
+    </div>
+</template>
