@@ -13,45 +13,136 @@
 var ideaFilterName = "Unclustered Ideas"; 
 var clusterFilterName = "Clustering droppable";
 
+var getDroppableSource = function(item) {
+  /*****************************************************************
+   * Return the Cluster associated with origin of item. Return null 
+   * if item is from unsorted list
+   *****************************************************************/
+  var itemSource = $(item.draggable).parent();
+  logger.trace("idea source: ******************************");
+  logger.trace(itemSource);
+  if (itemSource.hasClass("clusterul")) {
+    logger.trace("idea came from cluster");
+    var clusterID = trimFromString(itemSource.attr('id'),
+        "cluster-list-");
+    logger.trace("found cluster with ID: " + clusterID);
+    var cluster = ClusterFactory.getWithIDs(clusterID);
+    logger.trace(cluster);
+    return cluster
+  } else {
+    return null;
+  }
+};
+
+getDraggableIdea = function(item) {
+  //Called when an unsorted idea is dropped to create a cluster
+  logger.trace("Creating new cluster with idea: \n");
+  logger.trace(item.draggable[0]);
+  var ideaID = trimFromString(item.draggable[0].id,
+    "idea-");
+  logger.debug("Creating cluster with idea ID: " + ideaID);
+  var idea = IdeaFactory.getWithIDs(ideaID);
+  logger.debug("Creating cluster with idea: " + 
+    JSON.stringify(idea));
+  return idea;
+};
+
+getSortableIdea = function(ui) {
+  logger.debug("dealing with ui element: ");
+  logger.debug(ui);
+  var ideaID = trimFromString($(ui.item).attr('id'),
+    "idea-");
+  var idea = IdeaFactory.getWithIDs(ideaID);
+  logger.trace("sortable idea: " + 
+    JSON.stringify(idea));
+  return idea;
+};
+
+getSortableSource = function(ui) {
+  var source = $(ui.sender)
+  logger.debug("sortable source: " + source);
+  if (source.hasClass("clusterul")) {
+    var clusterID = trimFromString(source.attr('id'),
+      "cluster-list-"); 
+    logger.debug("got clusterID from source: " + clusterID);
+    var cluster = ClusterFactory.getWithIDs(clusterID);
+    logger.debug("got cluster: " + JSON.stringify(cluster));
+    return cluster;
+  } else if (source.hasClass("ideadeck")) {
+    return null;
+  } else {
+    return null;
+  }
+  //var sourceID = trimFromString($(ui.sender).attr('id'),
+    //"cluster-list-"); 
+  //logger.debug("got sourceID: " + sourceID);
+  //var source = ClusterFactory.getWithIDs(sourceID);
+  //logger.debug("got cluster: " + JSON.stringify(source));
+  //return source;
+  //ClusterFactory.removeIdeaFromCluster(idea, cluster);
+
+};
+
+receiveSortable = function(event, ui, context) {
+      logger.trace("idealist received idea**********************");
+      logger.trace(context);
+      var idea = getSortableIdea(ui);
+      logger.debug("************* idea *************");
+      logger.debug(idea);
+      var source = getSortableSource(ui);
+      logger.debug("************* source *************");
+      logger.debug(source);
+      var target = $(context)
+      logger.debug("************* target *************");
+      logger.debug(target);
+      if (target.hasClass("ideadeck")) {
+        logger.info("Removing idea from cluster and unsorting idea");
+        ClusterFactory.removeIdeaFromCluster(idea, source);
+        ui.item.remove();
+      } else if (target.hasClass("clusterul")) {
+        logger.info("Moving idea to a cluster");
+        if (source !== null) {
+          logger.trace("Removing idea from source cluster: " +
+            JSON.stringify(source));
+          ClusterFactory.removeIdeaFromCluster(idea, source);
+        }
+        var targetID = trimFromString(target.attr('id'), 
+            "cluster-list-");
+        logger.debug("Adding to cluster with ID: " + targetID);
+        target = ClusterFactory.getWithIDs(targetID);
+        logger.debug("Cluster: " + JSON.stringify(target));
+        ClusterFactory.insertIdeaToCluster(idea, target);
+        ui.item.remove();
+      } else if (target.hasClass("newcluster")) {
+        logger.info("Creating a new cluster for idea");
+        var cluster = ClusterFactory.create(idea,
+          Session.get("currentUser"),
+          Session.get("currentPrompt")
+        );
+        ui.item.remove();
+      }
+
+};
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
 ********************************************************************/
 Template.Clustering.rendered = function(){
   //Make new cluster area droppable
-  $('#new-cluster').droppable({accept: ".idea-item",
-      drop: function(event, ideaItem) {
-        //Called when an unsorted idea is dropped to create a cluster
-        logger.trace("Creating new cluster with idea: \n");
-        logger.trace(ideaItem.draggable[0]);
-        var ideaID = trimFromString(ideaItem.draggable[0].id,
-          "idea-");
-        logger.debug("Creating cluster with idea ID: " + ideaID);
-        var idea = IdeaFactory.getWithIDs(ideaID);
-        logger.debug("Creating cluster with idea: " + 
-          JSON.stringify(idea));
-        var cluster = ClusterFactory.create(idea,
-          Session.get("currentUser"),
-          Session.get("currentPrompt")
-        );
-        var ideaSource = $(ideaItem.draggable).parent();
-        logger.trace("idea source: ******************************");
-        logger.trace(ideaSource);
-        if (ideaSource.hasClass("clusterul")) {
-          logger.trace("idea came from cluster");
-          var clusterID = trimFromString(ideaSource.attr('id'),
-            "cluster-list-");
-          logger.trace("found cluster with ID: " + clusterID);
-          var cluster = ClusterFactory.getWithIDs(clusterID);
-          logger.trace(cluster);
-          ClusterFactory.removeIdeaFromCluster(idea, cluster);
-        }
-        logger.trace("Created new cluster: " + 
-          JSON.stringify(cluster));
-        //Dirty way to leverage sortable to manage drag-n-drop while 
-        //also leveraging metoer reactive rendering
-        ideaItem.draggable.remove();
-      }
-  });
+  //$('#new-cluster').droppable({accept: ".idea-item",
+      //drop: function(event, ui) {
+        //var idea = getDraggableIdea(ui)
+        //var cluster = ClusterFactory.create(idea,
+          //Session.get("currentUser"),
+          //Session.get("currentPrompt")
+        //);
+        //var source = getDroppableSource(ui)
+        //if (source !== null) {
+          //ClusterFactory.removeIdeaFromCluster(idea, source);
+        //}
+        ////Dirty way to cleanup sortables with reactive meteor
+        //ui.draggable[0].remove();
+      //}
+  //});
   //Attach sortable to the new cluster creation drop area
   //$('ul.newcluster').sortable({
     //items : '',
@@ -68,29 +159,11 @@ Template.Clustering.rendered = function(){
     //}
   //});
 
-  //$('#idealist').sortable({revert: true,
-      //containment: "window",
-      //connectWith: ".cluster-idea-list"
-  //});
-  $('.cluster-idea-list').sortable({revert: true,
-      //containment: "window",
-      //connectWith: ".cluster-idea-list"
-  });
-  $('ul.ideadeck').sortable({accept: ".sorted-idea",
+  $('.cluster-idea-list').sortable({
+    connectWith: ".cluster-idea-list",
+    revert: true,
     receive: function(event, ui) {
-      logger.debug("dealing with ui element: ");
-      logger.debug(ui);
-      var ideaID = trimFromString($(ui.item).attr('id'),
-        "idea-");
-      var idea = IdeaFactory.getWithIDs(ideaID);
-      logger.trace("Unclustered idealist received idea: " + 
-        JSON.stringify(idea));
-      //Need to replace processIdeaSender
-      var clusterID = trimFromString($(ui.sender).attr('id'),
-        "cluster-"); 
-      var cluster = ClusterFactory.getWithIDs(clusterID);
-      ClusterFactory.removeIdeaFromCluster(idea, cluster);
-      ui.item.remove()
+      receiveSortable(event, ui, this);
     }
   });
   
@@ -131,8 +204,8 @@ Template.IdeaList.helpers({
 * ClusterIdeaItem template Helpers
 ********************************************************************/
 Template.ClusterIdeaItem.rendered = function() {
-  logger.trace("rendered idea item: \n");
-  logger.trace(this);
+  //logger.trace("rendered idea item: \n");
+  //logger.trace(this);
   //$('.idea-item').sortable({revert: true,
       //containment: "window",
       //connectWith: "#new-cluster",
@@ -162,6 +235,27 @@ Template.ClusterList.helpers({
     return filteredClusters;
   },
 });
+
+Template.ClusterList.rendered = function() {
+  $('.cluster-item').droppable({accept: ".idea-item",
+    drop: function(event, ui) {
+      logger.trace("*********************************************");
+      logger.trace("*********************************************");
+      logger.trace("*********************************************");
+      logger.trace("Theme list cluster received idea");
+      var idea = getDraggableIdea(ui)
+      var source = getDroppableSource(ui)
+      var clusterID = trimFromString(this.id, 'ci-');
+      var target = ClusterFactory.getWithIDs(clusterID);
+      if (source !== null) {
+        logger.trace("Removing idea from source cluster: " +
+          JSON.stringify(source));
+        ClusterFactory.removeIdeaFromCluster(idea, source);
+      }
+      ClusterFactory.insertIdeaToCluster(idea, target);
+    }
+  });
+};
 
 /********************************************************************
 * Clustering Interface template Helpers
@@ -193,15 +287,6 @@ Template.Clustering.helpers({
 * is done by the mouseover event.
 ********************************************************************/
 Template.Clustering.events({
-  //updates name field in cluster as user types
-  'keyup .namecluster' : function(event, template){
-    var $myCluster = $(event.target).parent().parent();
-    console.log($(event.target).val());
-
-    Clusters.update({_id:$myCluster.attr('id')},
-      {$set: {name: $(event.target).val()}
-    });
-  },
 
   //Collapse clusters and makes them unsortable until expanded
   'click .collapser' : function(){
@@ -220,30 +305,15 @@ Template.Clustering.events({
     $(event.target).parent().parent().children('li').slideToggle("fast");*/
   },
 
-  'click .gamechangestar' : function(){
-    logger.trace("clicked gamechangestar of: " +
-        JSON.stringify(this));
-    IdeaFactory.toggleGameChanger(this);
-  },
 
-  'click .cluster-item': function(){
-    //console.log(event.target);
-    var id = $(event.target).attr("id");
-    id = id.split("-")[1];
-    var cluster = Clusters.findOne({_id: id});
-    var top = cluster.position.top;
-    window.scrollTo(0, top+100);
-  },
-
-  // 'click #sortOldest' : function(){
-  //   Session.set("sortByTime", 1);
-  // },
-
-  // 'click #sortMostRecent' : function(){
-  //   Session.set("sortByTime", -1);
-  // }
-
-  //Attaches sortable and draggable to clusters when mouse moves into cluster area
+  //'click .cluster-item': function(){
+    ////console.log(event.target);
+    //var id = $(event.target).attr("id");
+    //id = id.split("-")[1];
+    //var cluster = Clusters.findOne({_id: id});
+    //var top = cluster.position.top;
+    //window.scrollTo(0, top+100);
+  //},
 });
 
 
@@ -265,85 +335,26 @@ Template.clusterarea.helpers({
 /*******************************************************************
  * ******************  Cluster Template ************************
  * ****************************************************************/
+Template.cluster.events({
+  //updates name field in cluster as user types
+  'keyup .namecluster' : function(event, template){
+    logger.debug(this);
+    var clusterName = $(event.target).val();
+    logger.debug("new cluster name: " + clusterName);
+    var cluster =  ClusterFactory.setName(this, clusterName);
+    //Clusters.update({_id:$myCluster.attr('id')},
+      //{$set: {name: $(event.target).val()}
+    //});
+  },
+});
 Template.cluster.rendered = function(){
-
-  $('.clusterul').sortable({revert: true,
-      containment: "window",
-      connectWith: ".cluster-idea-list"
+  $('.clusterul').sortable({
+    connectWith: ".cluster-idea-list",
+    revert: true,
+    receive: function(event, ui) {
+      receiveSortable(event, ui, this);
+    }
   });
-    // apply sortable to new cluster
-    //
-  //$('.cluster ul').sortable({
-    //items: ":not(.sort-disabled)",
-    //connectWith : 'ul.ideadeck, ul.newcluster, .cluster ul, ul.clusterdeck',
-    //receive : function(event, ui){
-      //var myIdeaID = $(ui.item).attr('id');
-      //var myIdea;
-      //var myClusterID = $(this).attr('id'); //get cluster being modified
-//
-      ////if item is coming from cluster list
-      ///*if ($(ui.sender).hasClass('clusterdeck')){
-        //if(myClusterID === $(ui.item).attr('id')){ //if item being added has ID of cluster being added to
-          //alert("A cluster cannot be a member of itself. Sorry!");
-          //$(ui.sender).sortable('cancel');
-          ////ui.item.remove();
-          //return false;
-        //} else {
-          //Clusters.update({_id: myClusterID}, 
-            //{$addToSet:
-              //{children: $(ui.item).attr('id')} 
-          //});
-          ////if cluster item is coming from another cluster, pull it from the senders children
-          //if($(ui.item).hasClass('cluster-item')){
-            //Clusters.update({_id: $(ui.sender).attr('id')},
-              //{$pull: 
-                //{children: $(ui.item).attr('id')}
-            //});
-          //}
-        //return false;
-        //}
-      ////if item is coming from the idealist
-      //} else*/ if ($(ui.sender).hasClass('ideadeck')){
-        //myIdea = Ideas.findOne({_id: myIdeaID});
-        //updateIdeas(myIdeaID, true);
-//
-      ////if item is idea coming from another cluster
-      //} else if ($(ui.sender).hasClass('clusterul') && 
-        //$(ui.item).hasClass('idea-item')){
-        //myIdea = processIdeaSender(ui, myIdeaID);
-      //}
-//
-      ////update cluster by pushing idea onto ideas field
-      //Clusters.update({_id: myClusterID}, 
-        //{$addToSet: 
-          //{ideaIDs: myIdeaID}
-      //});
-//
-      //updateClusterList(myIdeaID, myClusterID, true);
-      //ui.item.remove();
-    //},
-    //remove: function(event, ui){
-      //var myIdeaID = $(ui.item).attr('id');
-      //var myClusterID = $(this).attr('id');
-//
-      //updateClusterList(myIdeaID, myClusterID, false);
-    //}
-  //});
-
-  //$('.cluster').draggable({
-    //stop: function() {
-      //var id = $(this).attr('id');
-      //var cluster = Clusters.findOne({_id: id});
-      //var pos = $(this).position();
-      ////ClusterFactory.updatePosition(cluster, pos)
-      //Clusters.update({_id: cluster._id},
-        //{$set: {position: pos}
-      //});
-    //},
-    ////snap: "#clusterarea ul", 
-    ////snapMode: "outer", 
-    //grid: [5, 5] 
-  //});
 }
 
 Template.cluster.helpers({
@@ -361,14 +372,6 @@ Template.cluster.helpers({
     else return false
   },
 
-  // clusterchildren : function(){
-  //   var children = $(this)[0].children;
-  //   if (children === undefined)
-  //     return false;
-  //   if(children.length > 0)
-  //     return $(this)[0].children;
-  //   else return false;
-  // },
 
   isCollapsed : function(){
     return $(this)[0].isCollapsed;

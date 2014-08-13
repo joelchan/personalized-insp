@@ -86,6 +86,11 @@ ClusterFactory = (function() {
       }
       return cluster;
     },
+    setName: function(cluster, name) {
+      Clusters.update({_id: cluster._id},
+        {$set: {name: name}}
+      );
+    },
     removeIdeaFromCluster: function(idea, cluster) {
       var deleteCluster = false;
       logger.trace("Removing idea from cluster");
