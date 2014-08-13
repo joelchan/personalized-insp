@@ -328,7 +328,7 @@ FilterManager = (function () {
       /*****************   End Actual Implementation code **********/
 
     },
-    reset: function(name, user, col) {
+    reset: function(name, user, col, exceptionFilters) {
       /**************************************************************
        * Delete all filters associated with the name, user, and
        * collection
@@ -336,6 +336,7 @@ FilterManager = (function () {
        *    name - An identifier used but the filtering component
        *    user - the user that is using the query
        *    collection - the colleciton that will be queried
+       *    exceptionFilters - (optional) list of filters to NOT remove
        * @Return
        *    boolean if all the filters was successfully removed
        * ***********************************************************/
@@ -359,9 +360,17 @@ FilterManager = (function () {
           user: user, 
           collection: col
         });
-        filts.forEach(function(filt) {
-          Filters.remove({_id: filt._id});
-        });
+        if (exceptionFilters) {
+          filts.forEach(function(filt) {
+            if (!isInList(filt,exceptionFilters,"_id")) {
+              Filters.remove({_id: filt._id});  
+            }
+          });
+        } else {
+          filts.forEach(function(filt) {
+            Filters.remove({_id: filt._id});
+          });
+        }
       }
       results = Filters.find({name: name, 
           user: user, 
