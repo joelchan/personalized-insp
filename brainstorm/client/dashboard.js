@@ -40,14 +40,28 @@ var filters = {
 ////////////////////////////////////////////////////////////////
 
 
-
+var userSeriesFilter = "Group Users Filter";
 
 Session.set("idealistFilters", filters);
 MS_PER_MINUTE = 60000;
 
 Template.Dashboard.rendered = function(){
-  window.scrollTo(0,0);
+  	window.scrollTo(0,0);
 	$('.menu-link').bigSlide();
+
+	var group = Groups.findOne({_id: Session.get("currentGroup")._id});
+	var ideators = GroupManager.getUsersInRole(group, 'Ideator');
+	Session.set("currentIdeators", ideators);
+	FilterManager.create(userSeriesFilter,
+	    Session.get("currentUser"),
+	    "myUsers",
+	    "_id",
+	    getIDs(Session.get("currentIdeators"))
+	);
+	console.log(ideators);
+	updateDashboardUserSeriesFilters();
+
+	Meteor.setInterval(updateDashboardUserSeriesFilters, 5000);
 }
 
 Template.tagcloud.rendered = function(){
@@ -275,7 +289,7 @@ Template.userseries.rendered = function(){
 Template.Dashboard.helpers({
 	ideas : function(){
 		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		console.log(cursor.count());
+		// console.log(cursor.count());
 		return cursor;
 		// var filters = Session.get("idealistFilters");//Session.get("partFilters");
 		// var clusterIdeas = [];
@@ -312,6 +326,10 @@ Template.Dashboard.helpers({
   			userIDs.push(event.userID);
   		})
   		return MyUsers.find({name: {$ne: ["ProtoAdmin", 'TestAdmin']}, _id: {$in: userIDs}});
+  		// var cursor = FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+  		// console.log("Dashboard users: ");
+  		// console.log(cursor.fetch());
+  		// return cursor;
   	},
 
   	selectedparts : function(){
@@ -319,8 +337,8 @@ Template.Dashboard.helpers({
   	},
 
   	participants : function(){
-		// return MyUsers.find({type: "Experiment Participant"});
-		return MyUsers.find({type: "Ideator"});
+		return MyUsers.find({type: "Experiment Participant"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
 	},
 
   	partFilters : function(){
@@ -579,3 +597,36 @@ Template.Dashboard.events({
 	}
 });
 
+updateDashboardUserSeriesFilters = function() {
+  /***************************************************************
+    * Check group ideators and update user filters
+    **************************************************************/
+  var group = Groups.findOne({_id: Session.get("currentGroup")._id});
+  var ideators = GroupManager.getUsersInRole(group, 'Ideator');
+  var prev = Session.get("currentIdeators");
+  // console.log(prev);
+  var newUsers = [];
+  var update = false;
+  ideators.forEach(function(user) {
+    if (!isInList(user, prev, '_id')) {
+      // logger.trace("Found new ideator: " + 
+      //   JSON.stringify(user));
+      newUsers.push(user);
+      update = true;
+    }
+  });
+  if (update) {
+    newUsers.forEach(function(user) {
+      // logger.debug("Creating new filter for ideator user: " + user.name);
+      var newFilter = FilterManager.create(userSeriesFilter,
+          Session.get("currentUser"),
+          "myUsers",
+          "_id",
+          user._id
+      );
+      prev.push(user);
+    });
+    // console.log("prev");
+    Session.set("currentIdeators", prev);
+ }
+};
