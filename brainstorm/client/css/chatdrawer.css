@@ -3,6 +3,7 @@
 	-webkit-box-shadow: 2px 0px 5px 1px rgba(50, 50, 50, 0.05);
 	-moz-box-shadow:    2px 0px 5px 1px rgba(50, 50, 50, 0.05);
 	box-shadow:         2px 0px 5px 1px rgba(50, 50, 50, 0.05);
+  border-right: 2px solid #ddd;
 	padding-top: 51px;
 	z-index: 2;
 }
@@ -42,11 +43,11 @@
   width: 3%;
   height: 8%;
   text-shadow: 1px 1px #ededed;
-  background-color: white;
+  background-color: #5cb85c;
   opacity: 1; 
-  border-right: 1px solid #ddd;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  border-right: 2px solid #ddd;
+  border-top: 2px solid #ddd;
+  border-bottom: 2px solid #ddd;
   /*border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;*/
   border-top-right-radius: 15px;
