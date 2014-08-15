@@ -165,7 +165,7 @@ Template.userseries.rendered = function(){
 						};
 						return ideas.substring(0, ideas.length-2);
 					} else if (desc === "Dashboard user changed prompt")
-						return "Prompt: " + d.prompt;
+						return "Message: " + d.prompt;
 					else if (desc === "Dashboard user sent theme")
 						return "Theme: " + Clusters.findOne(d.theme).name;
 					else if (desc === "User submitted idea")
