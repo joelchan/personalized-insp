@@ -509,6 +509,42 @@ Template.Dashboard.events({
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);	
 	},
 
+	'mouseover .tagname' : function(){
+		var id = $(event.target).parent().attr("id");
+		id = id.split("-")[1];
+		var thisTheme = Clusters.findOne({_id: id});
+		var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+		var thisThemeIdeas = [];
+		thisTheme.ideaIDs.forEach(function(i){
+			if (isInList(i,filteredIdeaIDs)) {
+				thisThemeIdeas.push(Ideas.findOne({_id: i}).content);	
+			}
+			// var thisIdea = Ideas.findOne({_id: i}).content
+			// ideaText = ideaText + thisIdea + "\n";
+		});
+		// $('<span class="tag-tip"></span>').text(ideaText)
+		$('<span class="tag-tip"></span>')
+			.appendTo('#tagcloud')
+			.css('top', (event.pageY-100) + 'px')
+			.css('left', (event.pageX-130) + 'px')
+			.fadeIn('slow');
+		$('<span></span>').text("Ideas in " + thisTheme.name + ":")
+			.appendTo('.tag-tip');
+		$('<br>')
+			.appendTo('.tag-tip');
+		thisThemeIdeas.forEach(function(i){
+			iText = "- " + i;
+			$('<span></span>').text(iText)
+				.appendTo('.tag-tip');
+			$('<br>')
+				.appendTo('.tag-tip');
+		})
+	},
+
+	'mouseout .tagname' : function(){
+		$('.tag-tip').remove();
+	},
+
 	'click .fa-minus-circle' : function(){
 		var label = $(event.target).parent();
 		var id = label.attr("id");
