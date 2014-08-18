@@ -1,7 +1,13 @@
 //Session.set("partFilters", []);
 Session.set("selectedParts", []);
 Session.set("selectedIdeas", []);
-Session.set("sessionLength", 30);
+// Session.set("sessionLength", 30);
+var sessionPrompt = Session.get("currentPrompt");
+if (sessionPrompt.length > 0) {
+	Session.set("sessionLength", sessionPrompt.length);	
+} else {
+	Session.set("sessionLength", 30);
+}
 var filters = {
 	partFilters: [],
 	clusterFilters: [],
