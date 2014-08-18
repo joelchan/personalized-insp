@@ -395,24 +395,21 @@ Template.Dashboard.helpers({
 
 Template.tagcloud.helpers({
 	clusters : function(){
-    	// console.log(ideas);
-    	// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
-    	// console.log("Filtered ideas: " + filteredIdeas.length);
-    	// var filteredClusters = [];
-    	// filteredIdeas.forEach(function(idea) {
-    	// 	var thisClusterIDs = idea.clusters;
-    	// 	thisClusterIDs.forEach(function(clusterID) {
-    	// 		if(filteredClusters.indexOf(clusterID) < 0) {
-    	// 			filteredClusters.push(clusterID);
-    	// 		}	
-    	// 	});
-    	// });
-    	// console.log("Filtered clusters: " + filteredClusters.length);
-    	// filteredClusters.forEach(function(cluster) {
-    	// 	console.log(cluster.name);
-    	// });
-    	// return Clusters.find({isRoot: {$ne: true}}, {_id: {$in: filteredClusters}}, {sort: {name: 1}});
-    	return Clusters.find({isRoot: {$ne: true}}, {sort: {name: 1}});
+    	var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+    	cursor = Clusters.find({isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, {sort: {name: 1}}).fetch();
+    	
+    	// update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
+    	cursor.forEach(function(c) {
+    		c.ideaIDs.forEach(function(i){
+    			if (!isInList(i,filteredIdeaIDs)) {
+    				c.ideaIDs.pop(i);
+    			}
+    		})
+    	})
+    	
+    	return cursor;
+    	// return Clusters.find({isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, {sort: {name: 1}});
+    	// return Clusters.find({isRoot: {$ne: true}}, {sort: {name: 1}});
   	},
 
   	getFontSize : function(){
