@@ -9,9 +9,12 @@ IdeaFactory = (function() {
   return {
     create: function(content, user, prompt) {
       logger.trace("Creating new Idea");
-      var idea = new Idea(content, user, prompt);
-      idea._id = Ideas.insert(idea);
-      return idea;
+      var trimmed = $.trim(content);
+      if (trimmed !== "") {
+        var idea = new Idea(trimmed, user, prompt);
+        idea._id = Ideas.insert(idea);
+        return idea;
+      }
     },
     toggleGameChanger: function(idea) {
       idea.isGamechanger = !idea.isGamechanger;
