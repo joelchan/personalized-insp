@@ -1,124 +1,45 @@
-//Session.set("partFilters", []);
-Session.set("selectedParts", []);
-Session.set("selectedIdeas", []);
-// Session.set("sessionLength", 30);
-var sessionPrompt = Session.get("currentPrompt");
-if (sessionPrompt.length > 0) {
-	Session.set("sessionLength", sessionPrompt.length);	
-} else {
-	Session.set("sessionLength", 30);
-}
 var filters = {
 	partFilters: [],
 	clusterFilters: [],
 	gamchanger: [true, false]
 }
 
-/////////////////////////// Demo code //////////////////////////
+var userSeriesFilter = "Group Users Filter";
 
-
-///////// Sample Filtering code /////////////////////////////////
-//FilterFactory.addSort(myFilter, 'user', [1,2,3]);
-//FilterFactory.performQuery(myFilter);
-
-// var myFilter = FilterFactory.create("Dashboard Participant Filter",
-//     Session.get("currentUser"),
-//     "ideas"
-//     );
-
-// console.log(getCollection(myFilters));
-
-// myFilters = Filters.findOne({name: "Dashboard Participant Filter", 
-//               user: Session.get("currentUser")
-// });
-
-// filter.filter = [{key: "_id", val: {$in: clusterIdeas}},
-//       {key: "isGamechanger", val: {$in: filters.gamchanger}}];
-
-
-
-////////////////////////////////////////////////////////////////
-
-
-
-
-Session.set("idealistFilters", filters);
 MS_PER_MINUTE = 60000;
 
 Template.Dashboard.rendered = function(){
-  window.scrollTo(0,0);
+
+  Session.set("idealistFilters", filters);
+  Session.set("selectedParts", []);
+  Session.set("selectedIdeas", []);
+  var sessionPrompt = Session.get("currentPrompt");
+  if (sessionPrompt.length > 0) {
+	  Session.set("sessionLength", sessionPrompt.length);	
+  } else {
+	  Session.set("sessionLength", 30);
+  }
+  
+  	window.scrollTo(0,0);
 	$('.menu-link').bigSlide();
+
+	var group = Groups.findOne({_id: Session.get("currentGroup")._id});
+	var ideators = GroupManager.getUsersInRole(group, 'Ideator');
+	Session.set("currentIdeators", ideators);
+	FilterManager.create(userSeriesFilter,
+	    Session.get("currentUser"),
+	    "myUsers",
+	    "_id",
+	    getIDs(Session.get("currentIdeators"))
+	);
+	console.log(ideators);
+	updateDashboardUserSeriesFilters();
+
+	Meteor.setInterval(updateDashboardUserSeriesFilters, 5000);
 }
 
 Template.tagcloud.rendered = function(){
-	// var self = this;
-	// self.node = self.find("svg");
-	// var w = 453;
-	// var h = 280;
-	// var hPad = 20;
-	// var wPad = 30;
-	// var svg = d3.select("#tagcloud")
-	// 			.append("svg")
-	// 			.attr("height", h)
-	// 			.attr("width", w);
 
-	// var timeDep = new Deps.Dependency();
-	// Deps.autorun(function () {
-	// 	timeDep.depend();
-	// 	var clusters = Clusters.find().fetch();
-
- //    	var xScale = d3.scale.linear()
-	// 					.domain([d3.min(clusters, function(d){
-	// 						if(d.position !== undefined) return d.position.left;
-	// 					}), d3.max(clusters, function(d) {
-	// 						if(d.position !== undefined) return d.position.left; 
-	// 					})])
-	// 					.range([wPad, w - wPad*3]);
-
-	// 	var yScale = d3.scale.linear()
-	// 					.domain([d3.min(clusters, function(d){
-	// 						if(d.position !== undefined) return d.position.top;
-	// 					}), d3.max(clusters, function(d) {
-	// 						if(d.position !== undefined) return d.position.top;
-	// 					})])
-	// 					.range([hPad, h - hPad]);
-
-	// 	var wsScale = d3.scale.linear()
-	// 					.domain([0, d3.max(clusters, function(d){
-	// 						if(d.ideas !== undefined) return d.ideas.length;
-	// 					})])
-	// 					.range([10, 25]);
-
- //    	var tags = svg.selectAll("text")
- //    				.data(clusters);
-
- //    	tags.enter()
- //   			.append("text")
- //    		.attr("x", function(d){
- //    			if(d.position !== undefined)
- //    				return xScale(d.position.left);
- //   			})
- // 			.attr("y", function(d){
- //    			if(d.position !== undefined)
- //    				return yScale(d.position.top);
- //    		})
- //    		.style("font-size", function(d){
- //    			if(d.ideas !== undefined){
- //    				//console.log(wsScale(d.ideas.length));
- //    				return wsScale(d.ideas.length);}
- //    		})
-	// 		.text(function(d){
-	// 		   	return d.name;
-	// 		});
-
-	// 	tags.exit()
-	// 		.remove();
-	// });
-
-	// timeDep.changed(); //run once at beginning
-	// setInterval(function(){
-	// 	timeDep.changed();
-	// }, 5000);
 }
 
 Template.userseries.rendered = function(){
@@ -342,7 +263,7 @@ Template.userseries.rendered = function(){
 Template.Dashboard.helpers({
 	ideas : function(){
 		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		console.log(cursor.count());
+		// console.log(cursor.count());
 		return cursor;
 		// var filters = Session.get("idealistFilters");//Session.get("partFilters");
 		// var clusterIdeas = [];
@@ -379,6 +300,10 @@ Template.Dashboard.helpers({
   			userIDs.push(event.userID);
   		})
   		return MyUsers.find({name: {$ne: ["ProtoAdmin", 'TestAdmin']}, _id: {$in: userIDs}});
+  		// var cursor = FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+  		// console.log("Dashboard users: ");
+  		// console.log(cursor.fetch());
+  		// return cursor;
   	},
 
   	selectedparts : function(){
@@ -386,8 +311,8 @@ Template.Dashboard.helpers({
   	},
 
   	participants : function(){
-		// return MyUsers.find({type: "Experiment Participant"});
-		return MyUsers.find({type: "Ideator"});
+		return MyUsers.find({type: "Experiment Participant"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
 	},
 
   	partFilters : function(){
@@ -433,11 +358,12 @@ Template.tagcloud.helpers({
 *********************************************************************/
 Template.Dashboard.events({
 	'click .gamechangestar' : function(){
-		var id = (this)._id;
-		var idea = Ideas.findOne({_id: id});
-		var state = !idea.isGamechanger;
+		// var id = (this)._id;
+		// var idea = Ideas.findOne({_id: id});
+		// var state = !idea.isGamechanger;
 
-		Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+		// Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+		IdeaFactory.toggleGameChanger(this);
 	},
 
 	// 'click #filterGamechangers' : function(){
@@ -484,7 +410,7 @@ Template.Dashboard.events({
 		// // //Session.set("partFilters", parts);
 		// Session.set("idealistFilters", filters);
 
-		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
+		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
 
 	},
 
@@ -512,7 +438,7 @@ Template.Dashboard.events({
 		// filters.clusterFilters.push(clusterMap);
 		// Session.set("idealistFilters", filters);
 
-		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);	
+		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);	
 	},
 
 	'mouseover .tagname' : function(){
@@ -678,3 +604,36 @@ Template.Dashboard.events({
 	}
 });
 
+updateDashboardUserSeriesFilters = function() {
+  /***************************************************************
+    * Check group ideators and update user filters
+    **************************************************************/
+  var group = Groups.findOne({_id: Session.get("currentGroup")._id});
+  var ideators = GroupManager.getUsersInRole(group, 'Ideator');
+  var prev = Session.get("currentIdeators");
+  // console.log(prev);
+  var newUsers = [];
+  var update = false;
+  ideators.forEach(function(user) {
+    if (!isInList(user, prev, '_id')) {
+      // logger.trace("Found new ideator: " + 
+      //   JSON.stringify(user));
+      newUsers.push(user);
+      update = true;
+    }
+  });
+  if (update) {
+    newUsers.forEach(function(user) {
+      // logger.debug("Creating new filter for ideator user: " + user.name);
+      var newFilter = FilterManager.create(userSeriesFilter,
+          Session.get("currentUser"),
+          "myUsers",
+          "_id",
+          user._id
+      );
+      prev.push(user);
+    });
+    // console.log("prev");
+    Session.set("currentIdeators", prev);
+ }
+};

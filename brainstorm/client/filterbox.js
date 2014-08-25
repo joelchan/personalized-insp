@@ -1,5 +1,26 @@
-Template.filterbox.rendered = function(){
+var filterBoxIdeaFilter = "Ideas Filter"; 
 
+Template.filterbox.rendered = function(){
+	//Create isInCluster filter
+	// console.log("rendering");
+	FilterManager.create(filterBoxIdeaFilter,
+	    Session.get("currentUser"),
+	    "ideas",
+	    "clusterIDs",
+	    []
+	);
+	Session.set("currentIdeators", []);
+	console.log("Current ideators: ");
+	Session.get("currentIdeators").forEach(function(i) {
+		console.log(i._id);
+	});
+	Session.set("currentSynthesizers", []);
+	Session.set("groupIdeasFilter",[])
+	//Setup filters for users and filter update listener
+	updateFilterBoxFilters();
+
+	//Update filters every 5 seconds
+	Meteor.setInterval(updateFilterBoxFilters, 5000);
 }
 var filterName;
 Template.filterbox.helpers({
@@ -11,11 +32,18 @@ Template.filterbox.helpers({
 	participants : function(){
 		// return MyUsers.find({type: "Experiment Participant"});
 		return MyUsers.find({type: "Ideator"});
+		// return MyUsers.find({_id: 
+		// 	{$in: getIDs(Session.get("currentIdeators"))}
+		// });
 	},
 	ideas : function(){
 		// return Ideas.find();
 		// var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
+		var filteredIdeas = FilterManager.performQuery(filterBoxIdeaFilter, 
+		  Session.get("currentUser"), 
+		  "ideas").fetch();
+		// return filteredIdeas;
+		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
 		// sort the array
 		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
 		// return the sorted array
@@ -26,6 +54,12 @@ Template.filterbox.helpers({
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
 	},
+});
+
+Template.FilterBoxIdeaItem.helpers({
+	gameChangerStatus: function() {
+		return this.isGamechanger;
+	}
 });
 
 Template.activefilters.helpers({
@@ -185,7 +219,7 @@ Template.filterbox.events({
 Template.activefilters.events({
 	'click .reset-filters' : function(){
 		//console.log("resetting filters");
-		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas", Session.get("groupIdeasFilter"));
 	},
 
 	'click .cancel-user': function(){
@@ -204,3 +238,74 @@ Template.activefilters.events({
 		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "time");
 	},
 });
+
+updateFilterBoxFilters = function() {
+  /***************************************************************
+    * Check group ideators and update user filters
+    **************************************************************/
+  var group = Groups.findOne({_id: Session.get("currentGroup")._id});
+  // logger.trace("Updating filters for group: " + group);
+  var ideators = GroupManager.getUsersInRole(group, 'Ideator');
+  // logger.trace("current group has ideators: " + 
+  //     JSON.stringify(ideators));
+  var prev = Session.get("currentIdeators");
+  var prevGroupIdeaFilters = Session.get("groupIdeasFilter");
+  // logger.trace("current ideators stored in session are: " + 
+  //     JSON.stringify(prev));
+  var newUsers = [];
+  var update = false;
+  ideators.forEach(function(user) {
+    if (!isInList(user, prev, '_id')) {
+      // logger.trace("Found new ideator: " + 
+      //   JSON.stringify(user));
+      newUsers.push(user);
+      update = true;
+    }
+  });
+  var prevCluster = Session.get("currentSynthesizers");
+  // logger.trace("current synthesizers stored in session are: " + 
+  //     JSON.stringify(prevCluster));
+  var newClusterers = [];
+  var clusterers = GroupManager.getUsersInRole(group, 'Synthesizer'); 
+  clusterers.forEach(function(user) {
+    if (!isInList(user, prevCluster, '_id')) {
+      // logger.trace("Found new clusterer: " + 
+      //   JSON.stringify(user));
+      newClusterers.push(user);
+      update = true;
+    }
+  });
+
+  if (update) {
+    // logger.trace("Updating session variable and filter");
+    //Create filter for user
+    newUsers.forEach(function(user) {
+      // logger.debug("Creating new filter for ideator user: " + user.name);
+      var newFilter = FilterManager.create(filterBoxIdeaFilter,
+          Session.get("currentUser"),
+          "ideas",
+          "userID",
+          user._id
+      );
+      prev.push(user);
+      prevGroupIdeaFilters.push(newFilter);
+    });
+    newClusterers.forEach(function(user) {
+      // logger.debug("Creating new filter for cluster user: " + user.name);
+      var newFilter = FilterManager.create(clusterFilterName,
+          Session.get("currentUser"),
+          "clusters",
+          "userID",
+          user._id
+      );
+      prevCluster.push(user);
+    });
+    // logger.debug("Setting list of ideators: " + 
+    //     JSON.stringify(prev));
+    Session.set("currentIdeators", prev);
+    Session.set("groupIdeasFilter",prevGroupIdeaFilters);
+    // logger.debug("Setting list of synthesizers: " + 
+    //     JSON.stringify(prevCluster));
+    Session.set("currentSynthesizers", prevCluster);
+ }
+};

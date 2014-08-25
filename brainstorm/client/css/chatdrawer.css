@@ -40,8 +40,8 @@
   position: fixed;
   top: 45%;
   left: 0%;
-  width: 3%;
-  height: 8%;
+  width: 40px;
+  height: 60px;
   text-shadow: 1px 1px #ededed;
   background-color: #5cb85c;
   opacity: 1; 
@@ -73,9 +73,9 @@
 
 
 #messageicon{
-	position: relative;
-  top: 45%;
-  transform: translateY(-50%);
+	position: absolute;
+  top: 10px;
+  left: 3px;
 }
 
 #write-message{
@@ -93,4 +93,13 @@
 
 #sendchat{
   margin-top: 0px !important;
+}
+
+.close-drawer-icon {
+  position: absolute;
+  top: 45%;
+  margin-top: 25px;
+  z-index: 100;
+  width: 30px;
+  height: 30px;
 }

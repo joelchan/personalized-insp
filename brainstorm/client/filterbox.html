@@ -1,5 +1,5 @@
 <template name="filterbox">
-	<div>
+	<div class="filterbox-container">
 		<!-- <i class="fa fa-filter"></i> -->
 		<div id="filterbox-header">
 			<label>Filter by: </label>
@@ -138,12 +138,12 @@
 	<ul id="idealist" class="ideadeck ui-sortable">
 		<li class="sort-disabled"></li>
 			{{#each ideas}}
-				{{> ideaitem}}
+				{{> FilterBoxIdeaItem}}
 			{{/each}}
 	</ul>
 </template>
 
-<template name="ideaitem">
+<template name="FilterBoxIdeaItem">
 	<li id={{_id}} class="idea-item">{{content}} <i class="sort-disabled fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}} gamechangestar"></i></li>
 </template>
 

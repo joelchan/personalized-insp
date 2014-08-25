@@ -314,3 +314,13 @@
   top: 50%;
   left: 100%;
 }
+
+.dashboard .profile .userprofilename {
+  display: inline-block;
+  vertical-align: middle;
+  text-decoration: underline;
+}
+
+.dashboard a {
+  color: #000;
+}

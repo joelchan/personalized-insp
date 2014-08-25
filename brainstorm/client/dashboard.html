@@ -324,8 +324,12 @@
 
 <template name="userprofile">
 	<div class="profile" id="userprofile-{{_id}}">
-		<form class="form-inline" role="form">
-  			<span style="display:inline-block;vertical-align:middle;">{{this.name}}</span>
+    <form class="form-inline" role="form">
+      <a href="">
+        <span class="userprofilename">
+          {{this.name}}
+        </span>
+      </a>
   			<!-- <span class="userprofilename" href="">{{this.name}}</span> -->
   			<!-- <div class="checkbox">
       			<input class="selectpart" type="checkbox" value="{{this._id}}">

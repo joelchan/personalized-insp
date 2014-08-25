@@ -17,7 +17,7 @@
 							<span class="message-content helprequest">
 								<label>{{username}} is requesting help! </label>
 							</span>
-							<i><a href="">Help {{username}}</a></i>
+              <!-- <i><a href="">Help {{username}}</a></i> -->
 						{{else}}
 							<span class="message-content">
 								<label>{{username}} has been helped</label>
@@ -25,8 +25,11 @@
 						{{/unless}}
 					{{/unless}}
 				</div>
-			{{/each}}
+        {{/each}}
 			</div>
+        <div id="close-drawer-glyph" class="close-drawer-icon">
+          <span class="glyphicon glyphicon-chevron-left"></span>
+        </div>
 		    <div id="write-message" class="input-group">
 		    	<input id="chatinput" type="text" class="form-control">
 				<span class="input-group-btn">

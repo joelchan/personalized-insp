@@ -2,6 +2,31 @@
 	margin-bottom: 5px;
 }
 
+#idealist li.idea-item{
+	border: solid 1px #ddd;
+	margin: 5px;
+	padding: 5px;
+	background-color: #fff;
+	cursor: pointer;
+}
+
+#idealist li.idea-item .gamechangestar{
+	float: right;
+	/*padding-top: 0px;*/
+	color: #f0ad4e;
+	text-shadow: 1px 1px #ddd; /*#eea236;*/
+}
+
+#idealist {
+	background-color: #f5f5f5;
+	/* height: 300px; */
+  min-height: 500px;
+	overflow: auto;
+	list-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+}
+
 #filter-box button{
 	margin: 0px;
 	margin-top: 0px;
