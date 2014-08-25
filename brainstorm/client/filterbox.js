@@ -20,7 +20,7 @@ Template.filterbox.helpers({
 		// return Ideas.find();
 		// var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
 		var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-		  Session.get("currentUser"), 
+		  Session.get("currentUser"), 	
 		  "ideas").fetch();
 		// return filteredIdeas;
 		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
@@ -63,10 +63,10 @@ Template.activefilters.helpers({
 	},
 
 	clusters: function(){
-		// return this.clusters;
-		console.log(this);
-		// console.log("Active filters for clusters: " + this.clusterIDs);
 		return this.clusterIDs;
+		// console.log(this);
+		// console.log("Active filters for clusters: " + this.clusterIDs);
+		// return this._id;
 	},
 
 	inClusterFilter : function(){
@@ -160,7 +160,7 @@ Template.filterbox.events({
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
 			id = id.split("-")[1];
-			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);
+			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);
 		    return id;
 		});
 	},

@@ -424,7 +424,7 @@ Template.Dashboard.events({
 		// Session.set("idealistFilters", filters);
 
 		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);	
-		console.log(Filters.find().fetch());
+		// console.log(Filters.find().fetch());
 	},
 
 	'mouseover .tagname' : function(){
