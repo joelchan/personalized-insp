@@ -188,15 +188,10 @@ Template.Clustering.rendered = function(){
 ********************************************************************/
 Template.IdeaList.helpers({
   ideas : function(){
-    //var filter = Session.get("currentFilter");//Filters.findOne({name: "Syn Idea List Filter", user: Session.get("currentUser")});
     var filteredIdeas = FilterManager.performQuery(ideaFilterName, 
       Session.get("currentUser"), 
       "ideas");
     return filteredIdeas;
-    //var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
-    //return sortedIdeas;
-
-    // return Ideas.find();//FilterFactory.performQuery(filter);//
   },
 });
 
@@ -290,30 +285,14 @@ Template.Clustering.events({
 
   //Collapse clusters and makes them unsortable until expanded
   'click .collapser' : function(){
-    var id = $(event.target).parent().parent().attr('id');
-    var cluster = Clusters.findOne({_id: id});
-    var state = !cluster.isCollapsed;
-
-    Clusters.update({_id: id}, {$set: {isCollapsed: state}});
-    /*if($(event.target).hasClass('fa-angle-double-up')){
-      $(event.target).switchClass('fa-angle-double-up', 
-        'fa-angle-double-down');
-    } else {
-      $(event.target).switchClass('fa-angle-double-down', 
-        'fa-angle-double-up');
-    }
-    $(event.target).parent().parent().children('li').slideToggle("fast");*/
+    Clusters.update({_id: this._id}, 
+      {$set: {isCollapsed: !this.isCollapsed}}
+    );
   },
 
-
-  //'click .cluster-item': function(){
-    ////console.log(event.target);
-    //var id = $(event.target).attr("id");
-    //id = id.split("-")[1];
-    //var cluster = Clusters.findOne({_id: id});
-    //var top = cluster.position.top;
-    //window.scrollTo(0, top+100);
-  //},
+	'click .gamechangestar' : function(){
+		IdeaFactory.toggleGameChanger(this);
+	},
 });
 
 
@@ -353,6 +332,31 @@ Template.cluster.rendered = function(){
     revert: true,
     receive: function(event, ui) {
       receiveSortable(event, ui, this);
+    }
+  });
+  $('.cluster').draggable({
+    stop: function() {
+      var pos = $(this).position();
+      ClusterFactory.updatePosition(this, pos);
+    },
+    grid: [5, 5]
+  });
+  $('.cluster-item').droppable({accept: ".idea-item",
+    drop: function(event, ui) {
+      logger.trace("*********************************************");
+      logger.trace("*********************************************");
+      logger.trace("*********************************************");
+      logger.trace("Theme list cluster received idea");
+      var idea = getDraggableIdea(ui)
+      var source = getDroppableSource(ui)
+      var clusterID = trimFromString(this.id, 'ci-');
+      var target = ClusterFactory.getWithIDs(clusterID);
+      if (source !== null) {
+        logger.trace("Removing idea from source cluster: " +
+          JSON.stringify(source));
+        ClusterFactory.removeIdeaFromCluster(idea, source);
+      }
+      ClusterFactory.insertIdeaToCluster(idea, target);
     }
   });
 }

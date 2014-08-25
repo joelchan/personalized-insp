@@ -1,9 +1,9 @@
 
 <template name="ClusterIdeaItem">
 <li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
-  {{ content }} 
   <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
   </i>
+  {{ content }} 
 </li>
 </template>
 
@@ -56,10 +56,12 @@
 </template>
 
 <template name="cluster">
-<!-- <div class="cluster col-md-4" id={{_id}} style="position: absolute; top:{{position.top}}px; left:{{position.left}}px"> -->
-  <div class="cluster thumbnail" id=cluster-{{_id}}>
+  <div class="cluster" id=cluster-{{_id}} 
+    style="top:{{position.top}}px; 
+    left:{{position.left}}px">
+    <!-- <div class="cluster" id=cluster-{{_id}}> -->
     <div class="form-group form-group-inline">
-      <!-- <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i> -->
+      <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
       <label class="sort-disabled">
         <span class="clusterlabel {{named}}">{{this.name}}</span>
       </label>
