@@ -1,7 +1,13 @@
 //Session.set("partFilters", []);
 Session.set("selectedParts", []);
 Session.set("selectedIdeas", []);
-Session.set("sessionLength", 30);
+// Session.set("sessionLength", 30);
+var sessionPrompt = Session.get("currentPrompt");
+if (sessionPrompt.length > 0) {
+	Session.set("sessionLength", sessionPrompt.length);	
+} else {
+	Session.set("sessionLength", 30);
+}
 var filters = {
 	partFilters: [],
 	clusterFilters: [],
@@ -165,7 +171,7 @@ Template.userseries.rendered = function(){
 						};
 						return ideas.substring(0, ideas.length-2);
 					} else if (desc === "Dashboard user changed prompt")
-						return "Prompt: " + d.prompt;
+						return "Message: " + d.prompt;
 					else if (desc === "Dashboard user sent theme")
 						return "Theme: " + Clusters.findOne(d.theme).name;
 					else if (desc === "User submitted idea")
@@ -395,24 +401,21 @@ Template.Dashboard.helpers({
 
 Template.tagcloud.helpers({
 	clusters : function(){
-    	// console.log(ideas);
-    	// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
-    	// console.log("Filtered ideas: " + filteredIdeas.length);
-    	// var filteredClusters = [];
-    	// filteredIdeas.forEach(function(idea) {
-    	// 	var thisClusterIDs = idea.clusters;
-    	// 	thisClusterIDs.forEach(function(clusterID) {
-    	// 		if(filteredClusters.indexOf(clusterID) < 0) {
-    	// 			filteredClusters.push(clusterID);
-    	// 		}	
-    	// 	});
-    	// });
-    	// console.log("Filtered clusters: " + filteredClusters.length);
-    	// filteredClusters.forEach(function(cluster) {
-    	// 	console.log(cluster.name);
-    	// });
-    	// return Clusters.find({isRoot: {$ne: true}}, {_id: {$in: filteredClusters}}, {sort: {name: 1}});
-    	return Clusters.find({isRoot: {$ne: true}}, {sort: {name: 1}});
+    	var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+    	cursor = Clusters.find({isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, {sort: {name: 1}}).fetch();
+    	
+    	// update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
+    	cursor.forEach(function(c) {
+    		c.ideaIDs.forEach(function(i){
+    			if (!isInList(i,filteredIdeaIDs)) {
+    				c.ideaIDs.pop(i);
+    			}
+    		})
+    	})
+    	
+    	return cursor;
+    	// return Clusters.find({isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, {sort: {name: 1}});
+    	// return Clusters.find({isRoot: {$ne: true}}, {sort: {name: 1}});
   	},
 
   	getFontSize : function(){
@@ -510,6 +513,42 @@ Template.Dashboard.events({
 		// Session.set("idealistFilters", filters);
 
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);	
+	},
+
+	'mouseover .tagname' : function(){
+		var id = $(event.target).parent().attr("id");
+		id = id.split("-")[1];
+		var thisTheme = Clusters.findOne({_id: id});
+		var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+		var thisThemeIdeas = [];
+		thisTheme.ideaIDs.forEach(function(i){
+			if (isInList(i,filteredIdeaIDs)) {
+				thisThemeIdeas.push(Ideas.findOne({_id: i}).content);	
+			}
+			// var thisIdea = Ideas.findOne({_id: i}).content
+			// ideaText = ideaText + thisIdea + "\n";
+		});
+		// $('<span class="tag-tip"></span>').text(ideaText)
+		$('<span class="tag-tip"></span>')
+			.appendTo('#tagcloud')
+			.css('top', (event.pageY-100) + 'px')
+			.css('left', (event.pageX-130) + 'px')
+			.fadeIn('slow');
+		$('<span></span>').text("Ideas in " + thisTheme.name + ":")
+			.appendTo('.tag-tip');
+		$('<br>')
+			.appendTo('.tag-tip');
+		thisThemeIdeas.forEach(function(i){
+			iText = "- " + i;
+			$('<span></span>').text(iText)
+				.appendTo('.tag-tip');
+			$('<br>')
+				.appendTo('.tag-tip');
+		})
+	},
+
+	'mouseout .tagname' : function(){
+		$('.tag-tip').remove();
 	},
 
 	'click .fa-minus-circle' : function(){
