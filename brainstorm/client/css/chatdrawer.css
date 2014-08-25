@@ -98,8 +98,14 @@
 .close-drawer-icon {
   position: absolute;
   top: 45%;
-  margin-top: 25px;
-  z-index: 100;
-  width: 30px;
-  height: 30px;
+  left: 86%;
+  margin-top: 15px;
+  z-index: 10;
+  width: 33px;
+  height: 33px;
+  font-size: 1.2em;
+  padding: 5px;
+  border: 2px solid #999;
+  border-radius: 35px;
+  background-color: #ddd;
 }

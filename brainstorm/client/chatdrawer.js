@@ -109,6 +109,19 @@ Template.chatdrawer.events({
 
 		messageViewScrollTo();
 	},
+  'click #close-drawer-arrow' : function() {
+		console.log("moving");
+		if($('#chat-handle').hasClass('moved')){
+			$('#chat-handle').removeClass('moved');
+		} else {
+			$('#chat-handle').addClass('moved');
+		}
+
+		Meteor.clearInterval(messageAlertInterval);
+		$('#chat-handle').removeClass('flash');
+
+		messageViewScrollTo();
+  },
 	'click #sendchat' : function(){
 		var message = $("#chatinput").val()
 		if(message === "")
