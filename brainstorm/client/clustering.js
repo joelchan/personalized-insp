@@ -73,13 +73,6 @@ getSortableSource = function(ui) {
   } else {
     return null;
   }
-  //var sourceID = trimFromString($(ui.sender).attr('id'),
-    //"cluster-list-"); 
-  //logger.debug("got sourceID: " + sourceID);
-  //var source = ClusterFactory.getWithIDs(sourceID);
-  //logger.debug("got cluster: " + JSON.stringify(source));
-  //return source;
-  //ClusterFactory.removeIdeaFromCluster(idea, cluster);
 
 };
 
@@ -177,6 +170,23 @@ Template.Clustering.rendered = function(){
     }
   });
 
+  $('.cluster-item').droppable({accept: ".idea-item",
+    drop: function(event, ui) {
+      var idea = getDraggableIdea(ui)
+      var source = getDroppableSource(ui)
+      var clusterID = trimFromString(this.id, 'ci-');
+      var target = ClusterFactory.getWithIDs(clusterID);
+      if (source._id !== target._id) {
+        if (source !== null) {
+          logger.trace("Removing idea from source cluster: " +
+            JSON.stringify(source));
+          ClusterFactory.removeIdeaFromCluster(idea, source);
+        }
+        ClusterFactory.insertIdeaToCluster(idea, target);
+      }
+    }
+  });
+
   $('.cluster-idea-list').sortable({
     connectWith: ".cluster-idea-list",
     revert: true,
@@ -256,12 +266,14 @@ Template.ClusterList.rendered = function() {
       var source = getDroppableSource(ui)
       var clusterID = trimFromString(this.id, 'ci-');
       var target = ClusterFactory.getWithIDs(clusterID);
-      if (source._id !== target._id) {
-        if (source !== null) {
+      if (source !== null) {
+        if (source._id !== target._id) {
           logger.trace("Removing idea from source cluster: " +
             JSON.stringify(source));
           ClusterFactory.removeIdeaFromCluster(idea, source);
+          ClusterFactory.insertIdeaToCluster(idea, target);
         }
+      } else {
         ClusterFactory.insertIdeaToCluster(idea, target);
       }
     }
@@ -342,6 +354,7 @@ Template.cluster.events({
     //});
   },
 });
+
 Template.cluster.rendered = function(){
   $('.clusterul').sortable({
     connectWith: ".cluster-idea-list",
@@ -362,17 +375,18 @@ Template.cluster.rendered = function(){
   });
   $('.cluster-item').droppable({accept: ".idea-item",
     drop: function(event, ui) {
-      logger.trace("Theme list cluster received idea");
       var idea = getDraggableIdea(ui)
       var source = getDroppableSource(ui)
       var clusterID = trimFromString(this.id, 'ci-');
       var target = ClusterFactory.getWithIDs(clusterID);
-      if (source._id !== target._id) {
-        if (source !== null) {
+      if (source !== null) {
+        if (source._id !== target._id) {
           logger.trace("Removing idea from source cluster: " +
             JSON.stringify(source));
           ClusterFactory.removeIdeaFromCluster(idea, source);
+          ClusterFactory.insertIdeaToCluster(idea, target);
         }
+      } else {
         ClusterFactory.insertIdeaToCluster(idea, target);
       }
     }
