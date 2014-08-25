@@ -63,7 +63,7 @@ Template.activefilters.helpers({
 	},
 
 	clusters: function(){
-		return this.clusterIDs;
+		return this.clusters;
 		// console.log(this);
 		// console.log("Active filters for clusters: " + this.clusterIDs);
 		// return this._id;

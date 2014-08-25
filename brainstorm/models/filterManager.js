@@ -202,7 +202,7 @@ FilterManager = (function () {
       var clusterFilters = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: 'clusters'
+          field: 'clusterIDs'
       });
       logger.debug("Found " + clusterFilters.count() + 
           " matching [cluster] filters");
