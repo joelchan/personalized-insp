@@ -442,9 +442,9 @@ Template.Dashboard.events({
 		});
 		// $('<span class="tag-tip"></span>').text(ideaText)
 		$('<span class="tag-tip"></span>')
-			.appendTo('#tagcloud')
-			.css('top', (event.pageY-100) + 'px')
-			.css('left', (event.pageX-130) + 'px')
+			.appendTo('body')
+			.css('top', (event.pageY - 10) + 'px')
+			.css('left', (event.pageX + 20) + 'px')
 			.fadeIn('slow');
 		$('<span></span>').text("Ideas in " + thisTheme.name + ":")
 			.appendTo('.tag-tip');
@@ -461,6 +461,12 @@ Template.Dashboard.events({
 
 	'mouseout .tagname' : function(){
 		$('.tag-tip').remove();
+	},
+
+	'mousemove .tagname' : function(){
+		$('.tag-tip')
+		.css('top', (event.pageY - 10) + 'px')
+		.css('left', (event.pageX + 20) + 'px');
 	},
 
 	'click .fa-minus-circle' : function(){

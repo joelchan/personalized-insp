@@ -197,6 +197,40 @@ Template.filterbox.events({
 			$icon.switchClass('fa-star', 'fa-star-o');
 		}
 	},
+
+	'mouseover .idea-item' : function(){
+		var id = $(event.target).attr("id");
+		// id = id.split("-")[1];
+		var thisIdea = Ideas.findOne({_id: id});
+		var thisIdeaAuthor = thisIdea.userName;
+		if (thisIdea.inCluster) {
+			var thisIdeaTheme = thisIdea.clusterIDs[0];	
+		} else {
+			var thisIdeaTheme = "Not in a theme";
+		}
+		
+		$('<span class="idea-tip"></span>')
+			.appendTo('body')
+			.css('top', (event.pageY- 10) + 'px')
+			.css('left', (event.pageX + 20) + 'px')
+			.fadeIn('slow');
+		$('<span></span>').text("Author: " + thisIdeaAuthor)
+			.appendTo('.idea-tip');
+		$('<br>')
+			.appendTo('.idea-tip');
+		$('<span></span>').text("Theme: " + thisIdeaTheme)
+			.appendTo('.idea-tip');
+	},
+
+	'mouseout .idea-item' : function(){
+		$('.idea-tip').remove();
+	},
+
+	'mousemove .idea-item' : function(){
+		$('.idea-tip')
+		.css('top', (event.pageY - 10) + 'px')
+		.css('left', (event.pageX + 20) + 'px');
+	},
 });
 
 Template.activefilters.events({
