@@ -203,8 +203,8 @@ Template.filterbox.events({
 		// id = id.split("-")[1];
 		var thisIdea = Ideas.findOne({_id: id});
 		var thisIdeaAuthor = thisIdea.userName;
-		if (thisIdea.inCluster) {
-			var thisIdeaTheme = thisIdea.clusterIDs[0];	
+		if (thisIdea.clusterIDs.length > 0) {
+			var thisIdeaTheme = Clusters.findOne({_id: thisIdea.clusterIDs[0]}).name;	
 		} else {
 			var thisIdeaTheme = "Not in a theme";
 		}
