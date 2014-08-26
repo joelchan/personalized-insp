@@ -224,14 +224,14 @@ Router.configure({
 
 var initRolePage = function() {
   if ($('.exitStudy').length == 0) {
-    $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
+    var exitStudyBtn = UI.render(Template.ExitStudy);
+    UI.insert(exitStudyBtn, $('.login')[0]);
   }
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
     logger.info("exiting study early");
     EventLogger.logExitStudy();
     EventLogger.logEndRole();
-    //EventLogger.logExitStudy(Session.get("currentParticipant"));
     exitPage();
   });
   //Add timer

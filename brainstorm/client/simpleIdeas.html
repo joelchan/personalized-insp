@@ -156,40 +156,6 @@
   </div>
 </template>
 
-<!--<template name="SubmitIdeas">
-  <div class="row">
-    <div class="col-md-10">
-        <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
-(press the &lt;Enter&gt; key or the &quot;Enter Idea&quot; button to the right after each 
-complete idea)"></textarea>
-    </div>
-    <div class="col-md-2">
-        <button id="submitIdea" class="submitIdea btn-default btn-primary"> Enter Idea </button>
-    </div>
-  </div>
-</template>-->
-
-<!-- <template name="SubmitIdeas">
-  <div class="row">
-    <div class="col-md-9">
-        <textArea id="nextIdea" class="idea-input" placeholder="Enter your idea here 
-(press the &lt;Enter&gt; key or the &quot;Enter Idea&quot; button to the right after each 
-complete idea)"></textarea>
-    </div>
-    <div class="col-md-2">
-        <button id="submitIdea" class="submitIdea btn-default btn-primary"> Enter Idea </button>
-    </div>
-    <div class="col-md-1">
-      <a href="#notifications" class="menu-link">
-        <i id="notify-bulb" class="fa fa-lightbulb-o fa-5x"></i>
-        {{#if number}}
-          <span class="badge">{{number}}</span>
-        {{/if}}
-      </a>
-    </div>
-  </div>
-</template> -->
-
 <template name="SubmitIdeas">
   <div class="row">
     <div class="col-md-7">
@@ -203,68 +169,6 @@ complete idea)"></textarea>
     <div class="col-md-2">
         <a href="" data-toggle="modal" data-target="#acknowledgeModal">
           <button id="request-help" class="getHelp btn-default btn-danger" style=""> Get Help </button></a>
-    </div>
-  </div>
-</template>
-
-<template name="IdeationPageOld3">
-  <div class="row">
-    <div class="col-md-3">
-      <div class="sidebar">
-        {{> Directions}}
-        {{> Timer }}
-      </div>
-    </div>
-
-    <div class="col-md-9">
-      <div class="header" data-spy="affix" data-offset-top="50"> 
-        <div class="row">
-          {{> Prompt}}
-        </div>
-        <div class="row">
-          {{> Priming }}
-        </div>
-      </div> <!-- close header -->
-      <div class="row">
-        {{> IdeaBox}}
-      </div>
-  
-      <div class="footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
-        {{> SubmitIdeas }}
-      </div>
-    </div>
-  </div>
-</template>
-
-<template name="IdeationPageOld">
-  <div class="sidebar">
-        {{> NotificationDrawer}}
-  </div>
-
-  <div id="notifications-handle">
-    <a href="#notifications" class="menu-link">
-      <i id="" class="fa fa-lightbulb-o fa-2x"></i>
-    </a>
-  </div>
-
-  <div class="row">
-    <div id="ideation-pane" class="col-md-10 col-md-offset-1">
-      <div class="header" data-spy="affix" data-offset-top="50"> 
-        <div class="row">
-          {{> Prompt}}
-        </div>
-        <div class="row">
-          {{> Priming }}
-        </div>
-      </div> 
-      <!-- close header -->
-      <div class="row">
-        {{> IdeaBox}}
-      </div>
-  
-      <div class="footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
-        {{> SubmitIdeas }}
-      </div>
     </div>
   </div>
 </template>
