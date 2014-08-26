@@ -13,7 +13,7 @@ Meteor.startup(function(){
 		************************************************************/
 		//Meteor.subscribe("ideas");
 		Meteor.subscribe("replayIdeas");
-		//Meteor.subscribe("clusters");
+		Meteor.subscribe("clusters");
 		Meteor.subscribe("prompts");
 		Meteor.subscribe("myUsers");
 		Meteor.subscribe("roles");

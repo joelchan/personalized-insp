@@ -163,6 +163,11 @@
 	margin: 5px;
 }
 
+#sendExModal .send-examples-filterbox {
+	max-height: 300px;
+	overflow: auto;
+}
+
 .modal > div > div > div.modal-body > div.userSelectList {
 	padding-left: 5px;
 }
