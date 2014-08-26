@@ -53,9 +53,13 @@ Template.Clustering.rendered = function(){
   Session.set("currentSynthesizers", []);
   //Setup filters for users and filter update listener
   updateFilters();
-
-  //Update filters every 5 seconds
-  Meteor.setInterval(updateFilters, 5000);
+  //Update filters when current group changes
+  Groups.find({_id: Session.get("currentGroup")._id}).observe({
+    changed: function(newDoc, oldDoc) {
+      //Setup filters for users and filter update listener
+      updateFilters();
+    } 
+  });
 };
 
 /********************************************************************
@@ -67,6 +71,7 @@ Template.IdeaList.helpers({
       Session.get("currentUser"), 
       "ideas");
     return filteredIdeas;
+    //return Ideas.find();
   },
 });
 

@@ -11,10 +11,9 @@ Meteor.startup(function(){
 		/************************************************************
 		* Subscribe to models.js collections
 		************************************************************/
-		Meteor.subscribe("ideas");
+		//Meteor.subscribe("ideas");
 		Meteor.subscribe("replayIdeas");
-		Meteor.subscribe("ideasToProcess");
-		Meteor.subscribe("clusters");
+		//Meteor.subscribe("clusters");
 		Meteor.subscribe("prompts");
 		Meteor.subscribe("myUsers");
 		Meteor.subscribe("roles");

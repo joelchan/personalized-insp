@@ -142,9 +142,15 @@ Router.map(function () {
         //Filters.findOne({user: MyUsers.findOne({_id: "syn"})}));
     },
     waitOn: function(){
-      return [Meteor.subscribe('notifications'), 
+      var group = Session.get("currentGroup");
+      console.log(group['assignments']['Ideator']);
+      var ideatorIDs = getIDs(group['assignments']['Ideator'])
+      var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      return [
+          Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
+          Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
+          Meteor.subscribe('notifications'), 
           Meteor.subscribe('filters'), 
-          Meteor.subscribe('ideasToProcess'),
           Meteor.subscribe('groups'),
           ];
     },
@@ -170,7 +176,15 @@ Router.map(function () {
       //Session.set("currentUser", MyUsers.findOne({_id: "db"}));
     },
     waitOn: function() {
-      return [Meteor.subscribe('events'),
+      var group = Session.get("currentGroup");
+      console.log(group['assignments']['Ideator']);
+      console.log("************************************************");
+      var ideatorIDs = getIDs(group['assignments']['Ideator'])
+      var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      return [
+          Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
+          Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
+          Meteor.subscribe('events'),
           Meteor.subscribe('filters'), 
           Meteor.subscribe('groups')
       ];
