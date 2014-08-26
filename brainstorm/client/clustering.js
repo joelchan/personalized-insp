@@ -73,8 +73,10 @@ Template.IdeaList.helpers({
   ideas : function(){
     var filteredIdeas = FilterManager.performQuery(ideaFilterName, 
       Session.get("currentUser"), 
-      "ideas");
-    return filteredIdeas;
+      "ideas").fetch();
+    // return filteredIdeas;
+    var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+    return sortedIdeas;
     //return Ideas.find();
   },
 });
