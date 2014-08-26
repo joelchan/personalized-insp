@@ -210,7 +210,7 @@ Template.activefilters.events({
 	},
 
 	'click .cancel-cluster': function(){
-		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", this._id);
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", this._id);
 	},
 
 	'click .cancel-themed': function(){
