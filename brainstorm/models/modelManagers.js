@@ -1,8 +1,10 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
-//Logger.setLevel('Model:Managers', 'trace');
-Logger.setLevel('Model:Managers', 'info');
+Logger.setLevel('Model:Managers', 'trace');
+//Logger.setLevel('Model:Managers', 'debug');
+//Logger.setLevel('Model:Managers', 'info');
+//Logger.setLevel('Model:Managers', 'warn');
 
 
 IdeaFactory = (function() {
@@ -83,7 +85,7 @@ ClusterFactory = (function() {
           logger.trace("Adding idea with id + " + idea._id + " to cluster");
           ClusterFactory.insertIdeaToCluster(idea, cluster);
         });
-      } else {
+      } else if (ideas) {
         logger.trace("Adding idea with id + " + ideas._id + " to cluster");
         ClusterFactory.insertIdeaToCluster(ideas, cluster);
       }
@@ -113,6 +115,7 @@ ClusterFactory = (function() {
             {clusterIDs: cluster._id}
       });
       if (deleteCluster) {
+        logger.debug("Deleting Cluster");
         this.remove(cluster);
       } else {
         Clusters.update({_id: cluster._id},

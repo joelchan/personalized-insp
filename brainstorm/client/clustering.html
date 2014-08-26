@@ -43,7 +43,7 @@
         Drag idea here to create a new cluster
       </li>
       {{#each clusters}}
-        <li id="ci-{{_id}}" class="cluster-item idea-item">{{name}}</li>
+        <li id="ci-{{_id}}" class="cluster-item">{{name}}</li>
       {{/each}}
     </ul>
   </div>
@@ -79,16 +79,20 @@
 <template name="Clustering">
 	<div id="cluster-interface" class="clusterinterface">
     <h1 class="page-header" id="clusterprompt">{{prompt}}</h1>
-    <div class="container-fluid">
+    <div class="row">
 		  <div class="row">
 			  {{> chatdrawer}} 
-			  <div id="left-clustering" class="col-md-3">
-          {{> IdeaList }}
+        <div id="left-clustering" class="col-md-3">
+          <div>
+            {{> IdeaList }}
+          </div>
 			  </div>
         <div id="middle-clustering" class="col-md-2">
+          <div>
           {{> ClusterList }}
+          </div>
 			  </div>
-			  <div id="right-clustering" class="col-md-6 container-fluid">
+			  <div id="right-clustering" class="col-md-6">
           <h3>Clusters</h3>
           <div  id="clusterarea">
             {{> clusterarea}}
