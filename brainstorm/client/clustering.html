@@ -38,10 +38,10 @@
     <h3>Theme List</h3>
     <!-- <ul class="newcluster ui-sortable" id="node-drag-target"> -->
       <!-- </ul> -->
+    <div class="newcluster" id="new-cluster"> 
+      Drag idea here to create a new cluster
+    </div>
     <ul id="clusterlist" class="deck clusterdeck">
-      <li class="newcluster" id="new-cluster"> 
-        Drag idea here to create a new cluster
-      </li>
       {{#each clusters}}
         <li id="ci-{{_id}}" class="cluster-item">{{name}}</li>
       {{/each}}

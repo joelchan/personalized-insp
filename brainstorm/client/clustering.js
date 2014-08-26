@@ -41,6 +41,10 @@ Template.Clustering.rendered = function(){
       receiveDroppable(event, ui, this);
     }
   });
+  $('#clusterlist').sortable({containment: '.clusterinterface',
+    revert: true,
+    zIndex: 50,
+  });
 
   //Create isInCluster filter
   FilterManager.create(ideaFilterName,

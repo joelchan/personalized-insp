@@ -61,12 +61,12 @@ Template.chatdrawer.helpers({
                         NotificationTypes.CHANGE_PROMPT,
                         NotificationTypes.SEND_THEMES]}
                       }]},
-										{recipient: currUser._id},
-										{message: "Help Requested"}]});
+										{recipientIDs: currUser._id},
+                    {message: "Help Requested"}]});
     } else if (role.title === "Synthesizer") {
       logger.trace("Getting notifications for synthesis user");
 		  return Notifications.find({$or: [{sender: currUser._id}, 
-										{recipient: currUser._id},
+										{recipientIDs: currUser._id},
 										]});
     } else {
       logger.warn("Getting notifications for non-synthesis or facilitator user");
@@ -129,10 +129,9 @@ Template.chatdrawer.events({
 		$("#chatinput").val("");
 		//chatNotify(Session.get("currentUser")._id, "syn", message);
 
-		MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["Synthesizer", "Facilitator"]}}).forEach(function(user){
-			console.log(user)
-			chatNotify(Session.get("currentUser")._id, user._id, message);
-		});
+		var recipients = MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["Synthesizer", "Facilitator"]}})
+    var recipientIDs = getIDs(recipients);
+		chatNotify(Session.get("currentUser")._id, recipientIDs, message);
 
 		messageViewScrollTo();
 		//$('#messageview').scrollTop($('#messageview')[0].scrollHeight);

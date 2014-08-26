@@ -118,7 +118,7 @@ Template.userseries.rendered = function(){
 			.remove();
 	}
 
-	var leverEventsCursor = Events.find({recipient: userID, description: 
+	var leverEventsCursor = Events.find({recipientIDs: userID, description: 
 		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
 		"Dashboard user sent theme"]}}); //this should be based off of filter object .performQuery
 	var leverEvents = [];
@@ -552,9 +552,7 @@ Template.Dashboard.events({
 		if(prompt === "" || prompt === " ")
 			return false;
 
-		for (var i = 0; i < recipients.length; i++) {
-			changePromptNotify(sender, recipients[i], prompt);
-		};
+		changePromptNotify(sender, recipients, prompt);
 	},
 
 	'click #sendExModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
@@ -575,9 +573,7 @@ Template.Dashboard.events({
 		if(examples.length < 1)
 			return false;
 
-		for (var i = 0; i < recipients.length; i++) {
-			sendExamplesNotify(sender, recipients[i], examples);
-		};
+		sendExamplesNotify(sender, recipients, examples);
 	},
 
 	'click #sendThemeModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
@@ -590,8 +586,6 @@ Template.Dashboard.events({
 		if(theme === undefined)
 			return false;
 
-		for (var i = 0; i < recipients.length; i++) {
-			sendThemeNotify(sender, recipients[i], theme);
-		};
+	  sendThemeNotify(sender, recipients, theme);
 	}
 });

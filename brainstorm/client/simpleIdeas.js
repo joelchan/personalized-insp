@@ -290,7 +290,7 @@ Template.NotificationDrawer.rendered = function(){
         // #accordion > div:nth-child(1) > div.panel-heading
       }, 1000);
 
-  Notifications.find({recipient: Session.get("currentUser")._id, handled: false}).observe({
+  Notifications.find({recipientIDs: Session.get("currentUser")._id, handled: false}).observe({
     added : function(doc){
       newNotify = doc;//Notifications.findOne({_id: doc}); //holds new notification
       // Meteor.clearInterval(messageAlertInterval);
@@ -302,7 +302,7 @@ Template.NotificationDrawer.rendered = function(){
 //Helpers
 Template.NotificationDrawer.helpers({
   notifications : function(){
-    return Notifications.find({recipient: Session.get("currentUser")._id}, {sort: {time: -1}});
+    return Notifications.find({recipientIDs: Session.get("currentUser")._id}, {sort: {time: -1}});
   },
   directions : function(){
     return this.type.val === -1;
@@ -361,7 +361,7 @@ Template.NotificationDrawer.events({
 //Helpers
 Template.SubmitIdeas.helpers({
   number : function(){
-    return Notifications.find({recipient: Session.get("currentUser")._id, handled: false}).count(); 
+    return Notifications.find({recipientIDs: Session.get("currentUser")._id, handled: false}).count(); 
   }
 });
 //Events
