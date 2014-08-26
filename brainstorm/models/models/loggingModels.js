@@ -63,13 +63,13 @@ Meteor.startup(function() {
   EventTypeManager.get("User handled a notification", fields);
   EventTypeManager.get("User expanded a notification", fields);
   EventTypeManager.get("User collapsed a notification", fields);
-  fields = ['sender', 'recipient', 'type', 'examples', 'promptID'];
+  fields = ['sender', 'recipientIDs', 'type', 'examples', 'promptID'];
   EventTypeManager.get("Dashboard user sent examples", fields);
-  fields = ['sender', 'recipient', 'type', 'prompt', 'promptID'];
+  fields = ['sender', 'recipientIDs', 'type', 'prompt', 'promptID'];
   EventTypeManager.get("Dashboard user changed prompt", fields);
-  fields = ['sender', 'recipient', 'type', 'theme', 'promptID' ];
+  fields = ['sender', 'recipientIDs', 'type', 'theme', 'promptID' ];
   EventTypeManager.get("Dashboard user sent theme", fields);
-  fields = ['sender', 'recipient', 'type', 'promptID'];
+  fields = ['sender', 'recipientIDs', 'type', 'promptID'];
   EventTypeManager.get("Ideator requested help", fields);
 });
   

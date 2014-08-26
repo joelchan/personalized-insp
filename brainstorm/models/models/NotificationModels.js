@@ -46,7 +46,7 @@ sendExamplesNotify = function(sender, recipientIDs, examples){
 	notification.examples = examples;
 	Notifications.insert(notification);
 	EventLogger.logSendExamples(notification);
-	checkIfHelped(recipient);
+	checkIfHelped(recipientIDs);
 }
 
 changePromptNotify = function(sender, recipientIDs, prompt){
@@ -55,7 +55,7 @@ changePromptNotify = function(sender, recipientIDs, prompt){
 	notification.prompt = prompt;
 	Notifications.insert(notification);
 	EventLogger.logChangePrompt(notification);
-	checkIfHelped(recipient);
+	checkIfHelped(recipientIDs);
 }
 
 sendThemeNotify = function(sender, recipientIDs, clusterID){
@@ -64,7 +64,7 @@ sendThemeNotify = function(sender, recipientIDs, clusterID){
 	notification.theme = clusterID;
 	Notifications.insert(notification);
 	EventLogger.logSendTheme(notification);
-	checkIfHelped(recipient);
+	checkIfHelped(recipientIDs);
 }
 
 requestHelpNotify = function(sender, recipientIDs){
@@ -79,15 +79,29 @@ chatNotify = function(sender, recipientIDs, message){
 	var notification = new Notification(sender, recipientIDs);
 	notification.message = message;
 	notification.type = NotificationTypes.CHAT_MESSAGE;
-	Notifications.insert(notification);
+	Notifications.insert(notificationIDs);
 }
 
-checkIfHelped = function(recipient){
-	var needHelp = Notifications.find({sender: recipient, handled: false});
-	needHelp.forEach(function(note){
-		Notifications.update({_id: note._id},
-			{$set: {handled: true}
-		});
-	});
+checkIfHelped = function(recipientIDs){
+  if (hasForEach(recipientIDs)) {
+    recipientIDs.forEach(function(recipientID) {
+	    var needHelp = Notifications.find(
+        {sender: recipientID, handled: false});
+	    needHelp.forEach(function(note){
+		    Notifications.update({_id: note._id},
+			    {$set: {handled: true}
+		    });
+	    });
+    });
+  } else {
+    //recipientIDs is not an array or cursor
+	  var needHelp = Notifications.find(
+      {sender: recipientIDs, handled: false});
+	  needHelp.forEach(function(note){
+		  Notifications.update({_id: note._id},
+			  {$set: {handled: true}
+		  });
+	  });
+  }
 }
 

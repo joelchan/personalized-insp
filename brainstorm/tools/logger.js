@@ -214,7 +214,7 @@ EventLogger = (function () {
       var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
-              "recipient": notification.recipient,
+              "recipientIDs": notification.recipientIDs,
               "type": notification.type,
               "examples": notification.examples,
               'promptID': prompt._id
@@ -228,7 +228,7 @@ EventLogger = (function () {
       var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
-              "recipient": notification.recipient,
+              "recipientIDs": notification.recipientIDs,
               "type": notification.type,
               "prompt": notification.prompt,
               'promptID': prompt._id
@@ -249,7 +249,7 @@ EventLogger = (function () {
       var type = EventTypeManager.get(msg);
       console.log(type);
       var data  = {"sender": notification.sender,
-              "recipient": notification.recipient,
+              "recipientIDs": notification.recipientIDs,
               "type": notification.type,
               "theme": notification.theme,
               'promptID': prompt._id
@@ -268,7 +268,7 @@ EventLogger = (function () {
       var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
-              "recipient": notification.recipient,
+              "recipientIDs": notification.recipientIDs,
               "type": notification.type,
               'promptID': prompt._id
       };
