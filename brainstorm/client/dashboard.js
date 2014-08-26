@@ -54,7 +54,7 @@ Template.userseries.rendered = function(){
 
 	var xAxis = d3.svg.axis()
 						.scale(x)
-						.ticks(10)
+						.ticks(7)
 						.tickFormat(d3.time.format("%I:%M"))
 						.orient("bottom");
 
