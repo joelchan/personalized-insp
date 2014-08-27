@@ -116,6 +116,7 @@ ClusterFactory = (function() {
       });
       if (deleteCluster) {
         logger.debug("Deleting Cluster");
+        EventLogger.logDeletingCluster(cluster);
         this.remove(cluster);
       } else {
         Clusters.update({_id: cluster._id},

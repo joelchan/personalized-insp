@@ -103,8 +103,7 @@ FilterManager = (function () {
        *    op  - (optional) the comparison operator to be applied
        *        with the given value (ie: eq, ne, gt, lt, gte, lte)
        * @Return
-       *    boolean - true if successful creation of iflter that will
-       *        not conflict with existing queries
+       *    boolean - true if toggle filter on, false if toggle off
        * ***********************************************************/
       logger.trace("Beginning FilterManager.toggle");
       var filter = Filters.findOne({name: name, 
@@ -115,8 +114,10 @@ FilterManager = (function () {
       });
       if (filter) {
         this.remove(name, user, col, field, val);
+        return false;
       } else {
         this.create(name, user, col, field, val);
+        return true;
       }
     },
     getFilterList: function(name, user, col) {

@@ -298,7 +298,12 @@
 </template>
 
 <template name="idea">
-	<div id={{this._id}} class="idea">{{this.content}} <i class="fa fa-lg {{#if this.isGamechanger}} fa-star {{else}} fa-star-o {{/if}}gamechangestar"></i></div>
+<div id={{this._id}} class="idea">
+  <i class="fa fa-lg {{#if this.isGamechanger}} 
+    fa-star {{else}} fa-star-o {{/if}}gamechangestar">
+  </i>
+  {{this.content}} 
+</div>
 </template>
 
 <template name="theme">
