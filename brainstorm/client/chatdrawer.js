@@ -28,7 +28,7 @@ Template.chatdrawer.rendered = function(){
   });
 
   
-  Notifications.find({recipient: Session.get("currentUser")._id}).observe({
+  Notifications.find({recipientIDs: Session.get("currentUser")._id}).observe({
   	added: function(message){
       console.log("Noficiation observe found new msg");
   		Meteor.clearInterval(messageAlertInterval);
@@ -83,7 +83,7 @@ Template.chatdrawer.helpers({
 	},
 
 	helpRequest : function(){
-		if((this.type.val == 3) && (this.recipient == Session.get("currentUser")._id))
+		if((this.type.val == 3) && (this.recipientIDs == Session.get("currentUser")._id))
 			return true;
 		else
 			return false;

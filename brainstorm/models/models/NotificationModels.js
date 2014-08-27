@@ -79,7 +79,7 @@ chatNotify = function(sender, recipientIDs, message){
 	var notification = new Notification(sender, recipientIDs);
 	notification.message = message;
 	notification.type = NotificationTypes.CHAT_MESSAGE;
-	Notifications.insert(notificationIDs);
+	Notifications.insert(notification);
 }
 
 checkIfHelped = function(recipientIDs){

@@ -317,18 +317,18 @@ Template.NotificationDrawer.events({
   'click a' : function(){
     var $notification = $(event.target).parent().parent().parent();
     var id = $notification.children('.panel-collapse').attr('id');
-
-    if(!Notifications.findOne({_id: id}).handled){
+    var notification = Notifications.findOne({_id: id});
+    if(!notification.handled){
       Notifications.update({_id: id}, {$set: {handled: true}});
-      EventLogger.logNotificationHandled(Session.get("currentParticipant"), id);
+      EventLogger.logNotificationHandled(notification);
       //return false; //handled event is same as first expansion event
     } else {
       var context = $(event.target).parent('.panel-heading').context;
       if($(context).hasClass("collapsed")){
-        EventLogger.logNotificationExpanded(Session.get("currentParticipant"), id);
+        EventLogger.logNotificationExpanded(notification);
         //console.log("logging expansion");
       } else {
-        EventLogger.logNotificationCollapsed(Session.get("currentParticipant"), id);
+        EventLogger.logNotificationCollapsed(notification);
         //console.log("logging collapse");
       }
     }
