@@ -92,7 +92,10 @@ Meteor.methods({
     console.log("**************************************************");
     console.log(data['prompt'])
     PromptManager.remove(Prompts.find());
-    /* GroupManager.remove(Groups.find()); */
+    GroupManager.remove(Groups.find());
+    IdeaFactory.remove(Ideas.find());
+    ClusterFactory.remote(Clusters.find());
+    
   },
 
 
