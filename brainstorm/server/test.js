@@ -38,6 +38,66 @@
      }
    };
  }());
+var data = {}
+
+Meteor.methods({
+  createDemoData: function() {
+    console.log("**************************************************");
+    console.log("Creating demo data");
+    console.log("**************************************************");
+    //Create Prompt
+    data['prompt'] = PromptManager.create(
+      "What are some alternative uses for a bowling pin",
+      GroupManager.defaultTemplate,
+      "Bowling pin"
+    );
+    data['group'] = GroupManager.create(data['prompt'].template);
+    data['users'] = [];
+    var user = UserFactory.create("Billy");
+    var role = RoleManager.defaults['Facilitator'];
+    GroupManager.addUser(data['group'], user, 'Facilitator');
+    data['users'].push(user) 
+    var user = UserFactory.create("Joan");
+    var role = RoleManager.defaults['Synthesizer'];
+    GroupManager.addUser(data['group'], user, 'Synthesizer');
+    data['users'].push(user) 
+    var user = UserFactory.create("Yuri");
+    var role = RoleManager.defaults['Synthesizer'];
+    GroupManager.addUser(data['group'], user, role);
+    data['users'].push(user) 
+    var user = UserFactory.create("Carlos");
+    var role = RoleManager.defaults['Ideator'];
+    GroupManager.addUser(data['group'], user, role);
+    data['users'].push(user) 
+    var user = UserFactory.create("Jillian");
+    var role = RoleManager.defaults['Ideator'];
+    GroupManager.addUser(data['group'], user, role);
+    data['users'].push(user) 
+    var user = UserFactory.create("Jordan");
+    var role = RoleManager.defaults['Ideator'];
+    GroupManager.addUser(data['group'], user, role);
+    data['users'].push(user) 
+    var user = UserFactory.create("Jackson");
+    var role = RoleManager.defaults['Ideator'];
+    GroupManager.addUser(data['group'], user, role);
+    data['users'].push(user) 
+
+
+
+
+  },
+  destroyDemoData: function() {
+    console.log("**************************************************");
+    console.log("Destroying demo data");
+    console.log("**************************************************");
+    console.log(data['prompt'])
+    PromptManager.remove(Prompts.find());
+    /* GroupManager.remove(Groups.find()); */
+  },
+
+
+});
+
 
 
  //testExpManager = (function() {
