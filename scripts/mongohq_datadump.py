@@ -1,4 +1,5 @@
 import pymongo, json
+import pandas as pd
 from pymongo import MongoClient
 
 mongoClientAddress = "mongodb://joelc:protolab@kahana.mongohq.com:10001/joelc"
@@ -18,11 +19,57 @@ collectionsToDump = ["ideas",
                 "events",
                 "notifications"]
 
-# iterate over collections we want to dump
-for collection in collectionsToDump:
-    collectionItems = []
-    for item in db[collection].find():
-        collectionItems.append(item)
+# just grab the ideas and clusters
+clusters = {}
+for cluster in db.clusters.find():
+    clusters[cluster[u'_id']] = cluster[u'name']
+
+ideas = []
+for idea in db.ideas.find():
+    rowDict = {}
+    rowDict["idea"] = idea[u'content']
+    if len(idea[u'clusterIDs']) > 0:
+        clusterID = idea[u'clusterIDs'][0]
+        rowDict["theme"] = clusters[clusterID]
+    else:
+        rowDict["theme"] = "No theme"
+    rowDict["starred"] = idea[u'isGamechanger']
+    ideas.append(rowDict)
+
+ideasDF = pd.DataFrame(ideas)
+ideasDF.to_csv("ideas.csv")
+
+users = {}
+for user in db.myUsers.find():
+    users[user[u'_id']] = user[u'name']
+
+notifications = []
+for notification in db.notifications.find():
+    rowDict = {}
+    if notification[u'message']:
+        rowDict["message"] = notification[u'message']
+    elif notification[u'examples']:
+        examples = "Sent Examples: %s" %', '.join(notification[u'examples'])
+        examples[:-2]
+        rowDict["message"] = examples
+    elif notification[u'theme']:
+        rowDict["message"] = "Sent theme: %s" %notification[u'theme']
+    elif notification[u'prompt']:
+        rowDict["message"] = "Sent message: %s" %notification[u'prompt']
+    else:
+        break
+    # get author info
+    # get time?
+    notifications.append(rowDict)
+
+notificationsDF = pd.DataFrame(notifications)
+notificationsDF.to_csv("notifications.csv")
+
+#### placeholder code for iterating over collections we want to dump ####
+# for collection in collectionsToDump:
+#     collectionItems = []
+#     for item in db[collection].find():
+#         collectionItems.append(item)
         #### placeholder code for dealing with weird datetime format stuff ####
         # rowDict = {}
         # for field in item:
