@@ -96,9 +96,13 @@
 }
 
 .close-drawer-icon {
-  position: absolute;
-  top: 45%;
-  left: 86%;
+  /*position: absolute;*/
+  /*top: 45%;*/
+  /*left: 86%;*/
+  /*float:right;*/
+  clear:both;
+  margin-left:auto;
+  margin-right: 15px;
   margin-top: 15px;
   z-index: 10;
   width: 33px;
