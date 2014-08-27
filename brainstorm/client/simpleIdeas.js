@@ -379,7 +379,7 @@ Template.SubmitIdeas.events({
       // Clear the text field
       $('#nextIdea').val('');
       //Scroll window to new idea
-      $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
+      // $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
     },
 
     'click #request-help' : function(){
