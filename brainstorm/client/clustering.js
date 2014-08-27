@@ -75,7 +75,9 @@ Template.IdeaList.helpers({
       Session.get("currentUser"), 
       "ideas").fetch();
     // return filteredIdeas;
-    var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+    var sortedIdeas = filteredIdeas.sort(function(a,b) { 
+      return b.time - a.time
+    });
     return sortedIdeas;
     //return Ideas.find();
   },
@@ -158,12 +160,14 @@ Template.Clustering.events({
 
   //Collapse clusters and makes them unsortable until expanded
   'click .collapser' : function(){
+    EventLogger.logClusterCollapse(this);
     Clusters.update({_id: this._id}, 
       {$set: {isCollapsed: !this.isCollapsed}}
     );
   },
 
 	'click .gamechangestar' : function(){
+    EventLogger.logToggleGC(this);
 		IdeaFactory.toggleGameChanger(this);
 	},
 });
@@ -194,6 +198,7 @@ Template.cluster.events({
     var clusterName = $(event.target).val();
     logger.debug("new cluster name: " + clusterName);
     var cluster =  ClusterFactory.setName(this, clusterName);
+    EventLogger.logChangeClusterName(this, clusterName);
   },
 });
 
@@ -205,6 +210,7 @@ Template.cluster.rendered = function(){
       var cluster = ClusterFactory.getWithIDs(id);
       var pos = $(this).position();
       ClusterFactory.updatePosition(cluster, pos);
+      EventLogger.logMovedCluster(cluster, pos);
     },
     grid: [5, 5]
   });
@@ -356,9 +362,10 @@ receiveDroppable = function(event, ui, context) {
   logger.debug(target);
   if (target.hasClass("ideadeck")) {
     logger.info("Removing idea from cluster and unsorting idea");
+    EventLogger.logIdeaUnclustered(idea, source);
     ClusterFactory.removeIdeaFromCluster(idea, source);
     target = null;
-    ui.item.remove();
+    //ui.item.remove();
   } else if (target.hasClass("clusterul")) {
     logger.info("Moving idea to a cluster");
     var targetID = trimFromString(target.attr('id'), 
@@ -366,22 +373,26 @@ receiveDroppable = function(event, ui, context) {
     logger.debug("Adding to cluster with ID: " + targetID);
     target = ClusterFactory.getWithIDs(targetID);
     logger.debug("Cluster: " + JSON.stringify(target));
+    EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("newcluster")) {
     logger.info("Creating a new cluster for idea");
     target = ClusterFactory.create(null,
       Session.get("currentUser"),
       Session.get("currentPrompt")
     );
+    EventLogger.logCreateCluster(idea, source, target);
   } else if (target.hasClass("cluster-item")) {
     logger.info("Inserting idea into cluster using cluster list");
     var clusterID = trimFromString(context.id, 'ci-');
     target = ClusterFactory.getWithIDs(clusterID);
+    EventLogger.logIdeaClustered(idea, source, target);
   }
   if (target !== null) {
     if (source !== null) {
       if (source._id !== target._id) {
         logger.trace("Removing idea from source cluster: " +
           JSON.stringify(source));
+        EventLogger.logIdeaRemovedFromCluster(idea, source, target);
         ClusterFactory.removeIdeaFromCluster(idea, source);
         ClusterFactory.insertIdeaToCluster(idea, target);
         //ui.item.remove();

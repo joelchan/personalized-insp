@@ -348,6 +348,7 @@ Template.Dashboard.events({
 		// var state = !idea.isGamechanger;
 
 		// Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+    EventLogger.logToggleGC(this);
 		IdeaFactory.toggleGameChanger(this);
 	},
 
@@ -394,8 +395,13 @@ Template.Dashboard.events({
 		// // filters.partFilters.push(id);
 		// // //Session.set("partFilters", parts);
 		// Session.set("idealistFilters", filters);
+		var isOn = FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
+    EventLogger.logToggleUserFilter(
+        Session.get("currentUser"),
+        id,
+        isOn
+    );
 
-		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
 
 	},
 
@@ -423,7 +429,18 @@ Template.Dashboard.events({
 		// filters.clusterFilters.push(clusterMap);
 		// Session.set("idealistFilters", filters);
 
-		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);	
+		var isOn = FilterManager.toggle(
+        "Ideas Filter", 
+        Session.get("currentUser"), 
+        "ideas", 
+        "clusterIDs", 
+        id
+    );	
+    EventLogger.logToggleClusterFilter(
+        Session.get("currentUser"),
+        id,
+        isOn
+    );
 		// console.log(Filters.find().fetch());
 	},
 

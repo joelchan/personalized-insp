@@ -71,5 +71,23 @@ Meteor.startup(function() {
   EventTypeManager.get("Dashboard user sent theme", fields);
   fields = ['sender', 'recipientIDs', 'type', 'promptID'];
   EventTypeManager.get("Ideator requested help", fields);
+  fields = ['clusterID', 'newState'];
+  EventTypeManager.get("User toggled cluster collapse", fields);
+  fields = ['ideaID', 'newState'];
+  EventTypeManager.get("User toggled idea game changer", fields);
+  fields = ['clusterID', 'newName'];
+  EventTypeManager.get("User modified cluster name", fields);
+  fields = ['clusterID', 'position'];
+  EventTypeManager.get("User moved cluster", fields);
+  fields = ['clusterID', 'name'];
+  EventTypeManager.get("Empty Cluster is being deleted", fields);
+  fields = ['ideaID', 'sourceID', 'targetID'];
+  EventTypeManager.get("User removed Idea from cluster", fields);
+  fields = ['ideaID', 'sourceID', 'targetID'];
+  EventTypeManager.get("User created new cluster", fields);
+  fields = ['ideaID', 'sourceID', 'targetID'];
+  EventTypeManager.get("User inserted idea to cluster", fields);
+  fields = ['ideaID', 'sourceID'];
+  EventTypeManager.get("User unclustered idea", fields);
 });
   
