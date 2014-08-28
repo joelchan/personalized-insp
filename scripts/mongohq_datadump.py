@@ -2,9 +2,9 @@ import pymongo, json
 import pandas as pd
 from pymongo import MongoClient
 
-mongoClientAddress = "mongodb://joelc:protolab@kahana.mongohq.com:10001/joelc"
+mongoClientAddress = "mongodb://proto1:lTwI9iiTm7@kahana.mongohq.com:10010/CHI1"
 # client = MongoClient("mongodb://experimenter:%s@kahana.mongohq.com:10075/IdeaGens" %(passWord))
-mongoDBName = "joelc"
+mongoDBName = "CHI1"
 
 # set up the connnection
 client = MongoClient(mongoClientAddress)
@@ -46,15 +46,16 @@ for user in db.myUsers.find():
 notifications = []
 for notification in db.notifications.find():
     rowDict = {}
-    if notification[u'message']:
+    if u'message' in notification:
         rowDict["message"] = notification[u'message']
-    elif notification[u'examples']:
-        examples = "Sent Examples: %s" %', '.join(notification[u'examples'])
-        examples[:-2]
-        rowDict["message"] = examples
-    elif notification[u'theme']:
+    elif u'examples' in notification:
+        examples = [ex[u'content'] for ex in notification[u'examples']]
+        examplesMessage = "Sent Examples: %s" %(', '.join(examples))
+        examplesMessage[:-2]
+        rowDict["message"] = examplesMessage
+    elif u'theme' in notification:
         rowDict["message"] = "Sent theme: %s" %notification[u'theme']
-    elif notification[u'prompt']:
+    elif u'prompt' in notification:
         rowDict["message"] = "Sent message: %s" %notification[u'prompt']
     else:
         break
