@@ -41,10 +41,10 @@ Template.Clustering.rendered = function(){
       receiveDroppable(event, ui, this);
     }
   });
-  $('#clusterlist').sortable({containment: '.clusterinterface',
-    revert: true,
-    zIndex: 50,
-  });
+  //$('#clusterlist').sortable({containment: '.clusterinterface',
+    //revert: true,
+    //zIndex: 50,
+  //});
 
   //Create isInCluster filter
   FilterManager.create(ideaFilterName,
@@ -203,6 +203,9 @@ Template.cluster.events({
 });
 
 Template.cluster.rendered = function(){
+  console.log("****************************************************");
+  console.log(this);
+  console.log("****************************************************");
   $('.cluster').draggable({
     stop: function() {
       logger.debug("dragged object");
@@ -214,12 +217,19 @@ Template.cluster.rendered = function(){
     },
     grid: [5, 5]
   });
-  $('.cluster-item').droppable({accept: ".idea-item",
+  $(this.firstNode).find('.cluster-idea-list').droppable({
+    accept: ".idea-item",
     tolerance: "pointer",
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
   });
+  //$('.cluster-item').droppable({accept: ".idea-item",
+    //tolerance: "pointer",
+    //drop: function(event, ui) {
+      //receiveDroppable(event, ui, this);
+    //}
+  //});
 }
 
 Template.cluster.helpers({
