@@ -1,161 +1,98 @@
 import pymongo, json
+from pymongo.errors import DuplicateKeyError
+import mongohq
 import pandas as pd
-from pymongo import MongoClient
+from os import mkdir, listdir, path
+from datetime import datetime
+import dateutil.parser
 
-mongoClientAddress = "mongodb://proto1:lTwI9iiTm7@kahana.mongohq.com:10010/CHI1"
-# client = MongoClient("mongodb://experimenter:%s@kahana.mongohq.com:10075/IdeaGens" %(passWord))
-mongoDBName = "CHI1"
-
-# set up the connnection
-client = MongoClient(mongoClientAddress)
-db = client[mongoDBName]
-
-# define collections to dump
-collectionsToDump = ["ideas",
-                "clusters",
-                "prompts",
-                "groups",
-                "myUsers",
-                "events",
-                "notifications"]
-
-# just grab the ideas and clusters
-clusters = {}
-for cluster in db.clusters.find():
-    clusters[cluster[u'_id']] = cluster[u'name']
-
-ideas = []
-for idea in db.ideas.find():
-    rowDict = {}
-    rowDict["idea"] = idea[u'content']
-    if len(idea[u'clusterIDs']) > 0:
-        clusterID = idea[u'clusterIDs'][0]
-        rowDict["theme"] = clusters[clusterID]
-    else:
-        rowDict["theme"] = "No theme"
-    rowDict["starred"] = idea[u'isGamechanger']
-    ideas.append(rowDict)
-
-ideasDF = pd.DataFrame(ideas)
-ideasDF.to_csv("ideas.csv")
-
-users = {}
-for user in db.myUsers.find():
-    users[user[u'_id']] = user[u'name']
-
-notifications = []
-for notification in db.notifications.find():
-    rowDict = {}
-    if u'message' in notification:
-        rowDict["message"] = notification[u'message']
-    elif u'examples' in notification:
-        examples = [ex[u'content'] for ex in notification[u'examples']]
-        examplesMessage = "Sent Examples: %s" %(', '.join(examples))
-        examplesMessage[:-2]
-        rowDict["message"] = examplesMessage
-    elif u'theme' in notification:
-        rowDict["message"] = "Sent theme: %s" %notification[u'theme']
-    elif u'prompt' in notification:
-        rowDict["message"] = "Sent message: %s" %notification[u'prompt']
-    else:
-        break
-    # get author info
-    # get time?
-    notifications.append(rowDict)
-
-notificationsDF = pd.DataFrame(notifications)
-notificationsDF.to_csv("notifications.csv")
-
-#### placeholder code for iterating over collections we want to dump ####
-# for collection in collectionsToDump:
-#     collectionItems = []
-#     for item in db[collection].find():
-#         collectionItems.append(item)
-        #### placeholder code for dealing with weird datetime format stuff ####
-        # rowDict = {}
-        # for field in item:
-        #   if field is not u'time':
-        #       rowDict[field] = row[field]
-        #   else:
-        #       thisTime = parse(row[u'time'])
-        #       rowDict[u'time'] = thisTime
-        # data.append(rowDict)
-    #### placeholder code for dumping to a JSON ####
-    # resultsFileName = "%s.json" %collection
-    # resultsFile = open(resultsFileName,'w')
-    # resultsFile.write(json.dumps(collectionItems, indent=2))
-    # resultsFile.close()
+# collections to ignore
+default_collections = [
+    'system.indexes',
+    'system.users',
+]
 
 
-"""
-#### Error messages relating to datetime parsing issues ####
+def date_handler(obj):
+        return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
-In [24]: print json.dumps(events, indent=4)
----------------------------------------------------------------------------
-TypeError                                 Traceback (most recent call last)
-<ipython-input-24-09c21bb0a7f7> in <module>()
-----> 1 print json.dumps(events, indent=4)
 
-/Users/jchan/anaconda/python.app/Contents/lib/python2.7/json/__init__.pyc in dumps(obj, skipkeys, ensure_ascii, check_circular, allow_nan, cls, indent, separators, encoding, default, sort_keys, **kw)
-    248         check_circular=check_circular, allow_nan=allow_nan, indent=indent,
-    249         separators=separators, encoding=encoding, default=default,
---> 250         sort_keys=sort_keys, **kw).encode(obj)
-    251 
-    252 
+def write_json_to_file(data='', dir_name='data', file_name='default'):
+    print "writing to directory: " + dir_name
+    if not path.exists(dir_name):
+        mkdir(dir_name, 0774)
+    # Create file path
+    file_path = path.join(dir_name, file_name + '.json')
+    print "writing to: " + file_path
+    # Write data to file
+    resultsFile = open(file_path,'w')
+    resultsFile.write(
+        json.dumps(data, indent=2, default=date_handler)
+    )
+    resultsFile.close()
 
-/Users/jchan/anaconda/python.app/Contents/lib/python2.7/json/encoder.pyc in encode(self, o)
-    207         chunks = self.iterencode(o, _one_shot=True)
-    208         if not isinstance(chunks, (list, tuple)):
---> 209             chunks = list(chunks)
-    210         return ''.join(chunks)
-    211 
 
-/Users/jchan/anaconda/python.app/Contents/lib/python2.7/json/encoder.pyc in _iterencode(o, _current_indent_level)
-    429             yield _floatstr(o)
-    430         elif isinstance(o, (list, tuple)):
---> 431             for chunk in _iterencode_list(o, _current_indent_level):
-    432                 yield chunk
-    433         elif isinstance(o, dict):
+def dump_db(dir_name='data', db_params=mongohq.ideagenstest):
+    # set up the connnection
+    db = mongohq.get_db(db_params)
+    allCollections =  [col for col in db.collection_names() if col not in default_collections]
+    print "list of collections: "
+    for col in allCollections:
+        print "collection name: " + col
+        docs = db[col].find()
+        data = [doc for doc in docs]
+        write_json_to_file(data, dir_name, col)
 
-/Users/jchan/anaconda/python.app/Contents/lib/python2.7/json/encoder.pyc in _iterencode_list(lst, _current_indent_level)
-    330                 else:
-    331                     chunks = _iterencode(value, _current_indent_level)
---> 332                 for chunk in chunks:
-    333                     yield chunk
-    334         if newline_indent is not None:
 
-/Users/jchan/anaconda/python.app/Contents/lib/python2.7/json/encoder.pyc in _iterencode_dict(dct, _current_indent_level)
-    406                 else:
-    407                     chunks = _iterencode(value, _current_indent_level)
---> 408                 for chunk in chunks:
-    409                     yield chunk
-    410         if newline_indent is not None:
+def decode_json_file(file_path):
+    json_file = open(file_path, 'r')
+    decode_data = json.load(json_file)
+    # Handle isodate
+    if 'time' in decode_data[0]:
+        print "data has time field"
+        try:
+            datetime_data = dateutil.parser.parse(decode_data[0]['time'])
+        except:
+            print "Couldn't convert to datetime"
+            pass
+        else:
+            print "converted to datetime object"
+            for doc in decode_data:
+                doc['time'] = dateutil.parser.parse(doc['time'])
+    return decode_data
 
-/Users/jchan/anaconda/python.app/Contents/lib/python2.7/json/encoder.pyc in _iterencode(o, _current_indent_level)
-    440                     raise ValueError("Circular reference detected")
-    441                 markers[markerid] = o
---> 442             o = _default(o)
-    443             for chunk in _iterencode(o, _current_indent_level):
-    444                 yield chunk
 
-/Users/jchan/anaconda/python.app/Contents/lib/python2.7/json/encoder.pyc in default(self, o)
-    182 
-    183         
---> 184         raise TypeError(repr(o) + " is not JSON serializable")
-    185 
-    186     def encode(self, o):
+def restore_db(dir_name='data', db_params=mongohq.ideagenstest):
+    files = listdir(dir_name)
+    col_names = [file.split('.json')[0] for file in files]
+    db = mongohq.get_db(db_params)
+    existing_cols = db.collection_names()
+    for file_name in files:
+        file_path = path.join(dir_name, file_name)
+        col = file_name.split('.json')[0]
+        print "writing to data to collection " + col + \
+            " in db: " + db_params['dbName']
+        if col != 'users':
+            data = decode_json_file(file_path)
+            if col not in existing_cols:
+                print "creating collection: " + col
+                db.create_collection(col)
+            else:
+                print "inserting into existing collection"
+            try:
+                db[col].insert(data, continue_on_error=True)
+            except DuplicateKeyError:
+                print "Attempted insert of document with duplicate key"
+            else:
+                print "success"
+        else:
+            print "not writing users to db"
 
-TypeError: datetime.datetime(2014, 8, 13, 5, 3, 20, 463000) is not JSON serializable
 
-In [25]: events[0]
-Out[25]: 
-{u'_id': u'yczX4L44BiFSRTMCZ',
- u'description': u'User began role Ideator',
- u'role': u'Ideator',
- u'time': datetime.datetime(2014, 8, 13, 5, 3, 20, 463000),
- u'type': {u'_id': u'iHLSvfzrGKuZJqTH8',
-  u'desc': u'User began role Ideator',
-  u'fields': [u'role']},
- u'userID': u'THMSNSyuFRAuuAkNz',
- u'userName': u'Joel'}
-"""
+if __name__ == '__main__':
+    dump_db('data/chi1', mongohq.chi1)
+    restore_db('data/chi1', mongohq.ideagenstest)
+
+
+
+
