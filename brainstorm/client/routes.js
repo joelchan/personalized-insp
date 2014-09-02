@@ -64,6 +64,10 @@ Router.map(function () {
       path: 'select/',
       template: 'RoleSelectPage'
   });
+  this.route('BeginBrainstormPage', {
+    path: 'BeginBrainstorm/',
+    template: 'BeginBrainstormPage'
+  });
   this.route('ExpAdminPage', {
       path: 'ExpAdmin/',
       template: 'ExpAdminPage'
@@ -91,19 +95,6 @@ Router.map(function () {
     }
 
   });
-  //this.route('IdeationPage', {
-  	//path: 'Ideation/:_id',
-  	//template: 'IdeationPage',
-    //data: function() {
-      //return Experiments.findOne({_id: this.params._id});
-    //},
-    ////waitOn: function() {
-        ////return Meteor.subscribe('ideas');
-        ////},
-    //onRun: function() {
-      //Session.set("currentExp", Experiments.findOne({_id: this.params._id}));
-    //}
-  //});
   this.route('CustomConsentPage', {
       path: 'ConsentPage/:_id',
       template: 'ConsentPage'
@@ -122,10 +113,6 @@ Router.map(function () {
   this.route('SurveyPage', {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
-  });
-  this.route('BeginBrainstormPage', {
-    path: 'BeginBrainstorm/',
-    template: 'BeginBrainstormPage'
   });
   this.route('IdeationSurvey', {
     path: 'IdeationSurvey/',
