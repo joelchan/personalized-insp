@@ -64,8 +64,8 @@ decrementTimer = function decrementTimer() {
     // console.log("Decrementing timer")
   } else {
     logger.info("Exitting current page");
-    EventLogger.logEndRole();
-    exitPage();
+    //EventLogger.logEndRole();
+    //exitPage();
   }
 };
 
