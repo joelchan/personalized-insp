@@ -123,6 +123,10 @@ Router.map(function () {
     path: 'SurveyPage/:_id',
     template: 'SurveyPage'
   });
+  this.route('BeginBrainstormPage', {
+    path: 'BeginBrainstorm/',
+    template: 'BeginBrainstormPage'
+  });
   this.route('IdeationSurvey', {
     path: 'IdeationSurvey/',
     template: 'IdeationSurvey'
