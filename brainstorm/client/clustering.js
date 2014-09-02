@@ -372,8 +372,10 @@ receiveDroppable = function(event, ui, context) {
   logger.debug(target);
   if (target.hasClass("ideadeck")) {
     logger.info("Removing idea from cluster and unsorting idea");
-    EventLogger.logIdeaUnclustered(idea, source);
-    ClusterFactory.removeIdeaFromCluster(idea, source);
+    if (source) {
+      EventLogger.logIdeaUnclustered(idea, source);
+      ClusterFactory.removeIdeaFromCluster(idea, source);
+    }
     target = null;
     //ui.item.remove();
   } else if (target.hasClass("clusterul")) {
