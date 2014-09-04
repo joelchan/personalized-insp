@@ -96,13 +96,69 @@ def clear_db(db_params=mongohq.ideagenstest):
         # Remove all docs from collection
         db[col].remove()
     
+def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
+   if not path.exists(dir_path):
+       mkdir(dir_path, 0774)
 
+   db = mongohq.get_db(db_params)
+   # just grab the ideas and clusters
+   clusters = {}
+   for cluster in db.clusters.find():
+       clusters[cluster[u'_id']] = cluster[u'name']
+        
+   ideas = []
+   for idea in db.ideas.find():
+       rowDict = {}
+       rowDict["idea"] = idea[u'content']
+       if len(idea[u'clusterIDs']) > 0:
+           clusterID = idea[u'clusterIDs'][0]
+           rowDict["theme"] = clusters[clusterID]
+       else:
+           rowDict["theme"] = "-"
+           rowDict["starred"] = idea[u'isGamechanger']
+       if idea[u'isGamechanger']:
+          rowDict["starred"] = idea[u'isGamechanger']
+       else:
+          rowDict["starred"] = "-" 
+       ideas.append(rowDict)
+    
+   ideasDF = pd.DataFrame(ideas)
+   file_path = path.join(dir_path, "ideas.csv")
+   ideasDF.to_csv(file_path)
+    
+   users = {}
+   for user in db.myUsers.find():
+       users[user[u'_id']] = user[u'name']
+
+   notifications = []
+   for notification in db.notifications.find():
+       rowDict = {}
+       if u'message' in notification:
+           rowDict["message"] = notification[u'message']
+       elif u'examples' in notification:
+           examples = [ex[u'content'] for ex in notification[u'examples']]
+           examplesMessage = "Sent Examples: %s" %(', '.join(examples))
+           examplesMessage[:-2]
+           rowDict["message"] = examplesMessage
+       elif u'theme' in notification:
+           themeID = notification[u'theme']
+           rowDict["message"] = "Sent theme: %s" %clusters[themeID]
+       elif u'prompt' in notification:
+           rowDict["message"] = "Sent message: %s" %notification[u'prompt']
+       else:
+           break
+       # get author info
+       # get time?
+       notifications.append(rowDict) 
+    
+   notificationsDF = pd.DataFrame(notifications)
+   # Create file path
+   file_path = path.join(dir_path, "notifications.csv")
+   notificationsDF.to_csv(file_path) 
 
 if __name__ == '__main__':
-    dump_db('data/chi1', mongohq.chi1)
-    restore_db('data/chi1', mongohq.ideagenstest)
-    clear_db(mongohq.chi1)
-
-
-
+    # dump_db('data/chi1', mongohq.chi1)
+    # restore_db('data/chi1', mongohq.ideagenstest)
+    # clear_db(mongohq.chi1)
+    get_data_output('data/chi2', mongohq.chi1)
 
