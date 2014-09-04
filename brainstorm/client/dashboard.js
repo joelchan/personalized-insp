@@ -296,28 +296,51 @@ Template.Ideabox.helpers({
 
 Template.TagCloud.helpers({
 	clusters : function(){
-    var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
     cursor = Clusters.find(
        {isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, 
        {sort: {name: 1}}
      ).fetch();
     // update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
-    cursor.forEach(function(c) {
-     c.ideaIDs.forEach(function(i){
-    	 if (!isInList(i,filteredIdeaIDs)) {
-    		 c.ideaIDs.pop(i);
-    	 }
-     })
-    })
+    // cursor.forEach(function(c) {
+    //  c.ideaIDs.forEach(function(i){
+    // 	 if (!isInList(i,filteredIdeaIDs)) {
+    // 		 c.ideaIDs.pop(i);
+    // 	 }
+    //  })
+    // })
    	
     return cursor;
   },
   getFontSize : function(){
-    //console.log(this);
-    return 10 +(this.ideaIDs.length * 4);
+    // console.log(this);
+    var thisIdeaIDs = this.ideaIDs;
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
+    var thisClusterSize = 0;
+    thisIdeaIDs.forEach(function(i) {
+    	if(isInList(i,filteredIdeaIDs)) {
+    		// thisIdeaIDs.pop(i);
+    		thisClusterSize++;
+    	}
+    })
+    return 10 +(thisClusterSize * 4);
+    // return 10 +(Template.TagCloud.getClusterSize() * 4);
+    // return 10 +(Template.TagCloud.getClusterSize() * 4);
   },
   getClusterSize : function(){
-    return this.ideaIDs.length;
+    var thisIdeaIDs = this.ideaIDs;
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
+    // console.log(filteredIdeaIDs);
+    var thisClusterSize = 0;
+    thisIdeaIDs.forEach(function(i) {
+    	if(isInList(i,filteredIdeaIDs)) {
+    		// thisIdeaIDs.pop(i);
+    		thisClusterSize++;
+    	}
+    })
+    // return this.ideaIDs.length;
+    // return thisIdeaIDs.length;
+    return thisClusterSize;
   },
 });
 
