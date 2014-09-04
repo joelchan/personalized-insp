@@ -88,10 +88,20 @@ def restore_db(dir_name='data', db_params=mongohq.ideagenstest):
         else:
             print "not writing users to db"
 
+def clear_db(db_params=mongohq.ideagenstest):
+    db = mongohq.get_db(db_params)
+    cols = db.collection_names()
+    clear_cols = [col for col in cols if col not in default_collections]
+    for col in clear_cols:
+        # Remove all docs from collection
+        db[col].remove()
+    
+
 
 if __name__ == '__main__':
     dump_db('data/chi1', mongohq.chi1)
     restore_db('data/chi1', mongohq.ideagenstest)
+    clear_db(mongohq.chi1)
 
 
 
