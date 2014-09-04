@@ -10,6 +10,35 @@ Logger.setLevel('Client:Widgets:ChatDrawer', 'trace');
 var messageAlertInterval;
 var messageWaiting = false;
 
+Template.ChatInput.rendered = function() {
+	// Register event listenr to click submit button when enter is pressed
+  $('#chatinput').keyup(function(e){
+    if(e.keyCode===13) {
+      //console.log("enter pressed")
+      $('#sendchat').click();
+    }
+  });
+
+};
+
+Template.ChatInput.events({
+
+	'click #sendchat' : function(){
+		var message = $("#chatinput").val()
+		if(message === "")
+			return false;
+		$("#chatinput").val("");
+		//chatNotify(Session.get("currentUser")._id, "syn", message);
+
+		var recipients = MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["Synthesizer", "Facilitator"]}})
+    var recipientIDs = getIDs(recipients);
+		chatNotify(Session.get("currentUser")._id, recipientIDs, message);
+
+		messageViewScrollTo();
+		//$('#messageview').scrollTop($('#messageview')[0].scrollHeight);
+	}
+});
+
 Template.chatdrawer.rendered = function(){
 	$('.menu-link').bigSlide({
 		'menu': ('#chat-drawer'),
@@ -19,13 +48,6 @@ Template.chatdrawer.rendered = function(){
 	  	'speed': '300'
 	});
 
-	// Register event listenr to click submit button when enter is pressed
-  $('#chatinput').keyup(function(e){
-    if(e.keyCode===13) {
-      //console.log("enter pressed")
-      $('#sendchat').click();
-    }
-  });
 
   
   Notifications.find({recipientIDs: Session.get("currentUser")._id}).observe({
@@ -47,7 +69,7 @@ Template.chatdrawer.rendered = function(){
   Meteor.clearInterval(messageAlertInterval);
 }
 
-Template.chatdrawer.helpers({
+Template.ChatMessages.helpers({
 	messages: function(){
 		var currUser = Session.get("currentUser");
     console.log("Getting mesages for chat drawer");
@@ -122,18 +144,4 @@ Template.chatdrawer.events({
 
 		messageViewScrollTo();
   },
-	'click #sendchat' : function(){
-		var message = $("#chatinput").val()
-		if(message === "")
-			return false;
-		$("#chatinput").val("");
-		//chatNotify(Session.get("currentUser")._id, "syn", message);
-
-		var recipients = MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["Synthesizer", "Facilitator"]}})
-    var recipientIDs = getIDs(recipients);
-		chatNotify(Session.get("currentUser")._id, recipientIDs, message);
-
-		messageViewScrollTo();
-		//$('#messageview').scrollTop($('#messageview')[0].scrollHeight);
-	}
 });

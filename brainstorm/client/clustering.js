@@ -224,12 +224,12 @@ Template.cluster.rendered = function(){
       receiveDroppable(event, ui, this);
     }
   });
-  //$('.cluster-item').droppable({accept: ".idea-item",
-    //tolerance: "pointer",
-    //drop: function(event, ui) {
-      //receiveDroppable(event, ui, this);
-    //}
-  //});
+  $('.cluster-item').droppable({accept: ".idea-item",
+    tolerance: "pointer",
+    drop: function(event, ui) {
+      receiveDroppable(event, ui, this);
+    }
+  });
 }
 
 Template.cluster.helpers({

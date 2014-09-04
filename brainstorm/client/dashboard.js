@@ -11,33 +11,23 @@ Template.Dashboard.rendered = function(){
   Session.set("idealistFilters", filters);
   Session.set("selectedParts", []);
   Session.set("selectedIdeas", []);
-  var sessionPrompt = Session.get("currentPrompt");
-  if (sessionPrompt.length > 0) {
-	  Session.set("sessionLength", sessionPrompt.length);	
-  } else {
-	  Session.set("sessionLength", 30);
-  }
   
   window.scrollTo(0,0);
   $('.menu-link').bigSlide();
 }
 
-Template.tagcloud.rendered = function(){
-
-}
 
 Template.userseries.rendered = function(){
 	//var start = Date.now;
-	//console.log(this);
 	var self = this;
 	var userID = self.data._id;
 	console.log(userID);
 	//var part_ID = self.data.
 	var node = self.find(".series");
 	var svg = d3.select(node).append("svg");
-
 	var h = 70;
-	var w = 546;
+  var width = $(this.firstNode).css('width');
+  width = trimFromString(width, 'px') - 30;
 	var pad = 20;
 
 
@@ -50,7 +40,7 @@ Template.userseries.rendered = function(){
 	var x = d3.time.scale()
 					.domain([start, end])
 					.nice(d3.time.minute)
-					.range([pad, w-pad]);
+					.range([pad, width-pad]);
 
 	var xAxis = d3.svg.axis()
 						.scale(x)
@@ -178,7 +168,7 @@ Template.userseries.rendered = function(){
 		}
 	});
 	
-	var nowWidth = (w-2*pad)/sessionlength; //1 minute
+	var nowWidth = (width-2*pad)/sessionlength; //1 minute
 	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
 	var nowLine = svg.append("g");
 					//.selectAll("rect")
@@ -230,7 +220,7 @@ Template.userseries.rendered = function(){
 		nLine.exit()
 			.transition()
 			.duration(0)
-			.attr("x",w) // this moves the previous nowLine off the scale
+			.attr("x",width) // this moves the previous nowLine off the scale
 			.remove();
 	}
 
@@ -246,49 +236,18 @@ Template.userseries.rendered = function(){
 *********************************************************************/
 Template.Dashboard.helpers({
 	ideas : function(){
-		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		// console.log(cursor.count());
+		var cursor = FilterManager.performQuery("Ideas Filter", 
+      Session.get("currentUser"),
+      "ideas"
+    );
 		return cursor;
-		// var filters = Session.get("idealistFilters");//Session.get("partFilters");
-		// var clusterIdeas = [];
-		// for (var i = 0; i < filters.clusterFilters.length; i++) {
-		// 	clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
-		// };
-		// if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
-		// 	return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}});
-		// } else if (clusterIdeas.length > 0){
-  //  			return IdeasToProcess.find({_id: {$in: clusterIdeas}, isGamechanger: {$in: filters.gamchanger}});
-  //  		} else if (filters.partFilters.length > 0){
-  //  			return IdeasToProcess.find({userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}})
-  //  		} else {
-  //  			return IdeasToProcess.find({isGamechanger: {$in: filters.gamchanger}});
-  //  		}
   	},
 
-  	numIdeas : function(){
-  		return Template.Dashboard.ideas().count();
-  	},
-
-  	clusters : function(){
-  		return Clusters.find({isRoot: {$ne: true}});
-  	},
 
   	gamechangers : function(){
   		return false;
   	},
 
-  	users : function(){
-  		var beganIdeation = Events.find({description: "User began role Ideator"});
-  		var userIDs = [];
-  		beganIdeation.forEach(function(event){
-  			userIDs.push(event.userID);
-  		})
-  		return MyUsers.find({name: {$ne: ["ProtoAdmin", 'TestAdmin']}, _id: {$in: userIDs}});
-  		// var cursor = FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
-  		// console.log("Dashboard users: ");
-  		// console.log(cursor.fetch());
-  		// return cursor;
-  	},
 
   	selectedparts : function(){
   		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
@@ -300,70 +259,124 @@ Template.Dashboard.helpers({
 		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
 	},
 
-  	partFilters : function(){
-  		return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
-  	},
-
-  	clusterFilters : function(){
-  		return Session.get("idealistFilters").clusterFilters;
-  	}
+  	//partFilters : function(){
+  		//return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
+  	//},
+//
+  	//clusterFilters : function(){
+  		//return Session.get("idealistFilters").clusterFilters;
+  	//}
 });
 
-Template.tagcloud.helpers({
+Template.IdeatorPanels.helpers({
+  users : function(){
+    console.log("*************** getting users *******************")
+    var beganIdeation = Events.find({description: "User began role Ideator"});
+    var userIDs = [];
+    beganIdeation.forEach(function(event){
+  	  userIDs.push(event.userID);
+    })
+    return MyUsers.find({name: {$ne: ["ProtoAdmin", 'TestAdmin']}, 
+      _id: {$in: userIDs}});
+  },
+});
+
+Template.Ideabox.helpers({
+	ideas : function(){
+	  var cursor = FilterManager.performQuery("Ideas Filter", 
+      Session.get("currentUser"),
+      "ideas"
+    );
+    return cursor;
+  },
+  numIdeas : function(){
+  	return Template.Ideabox.ideas().count();
+  },
+});
+
+Template.TagCloud.helpers({
 	clusters : function(){
-    	var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
-    	cursor = Clusters.find({isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, {sort: {name: 1}}).fetch();
-    	
-    	// update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
-    	cursor.forEach(function(c) {
-    		c.ideaIDs.forEach(function(i){
-    			if (!isInList(i,filteredIdeaIDs)) {
-    				c.ideaIDs.pop(i);
-    			}
-    		})
-    	})
-    	
-    	return cursor;
-    	// return Clusters.find({isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, {sort: {name: 1}});
-    	// return Clusters.find({isRoot: {$ne: true}}, {sort: {name: 1}});
-  	},
+    var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+    cursor = Clusters.find(
+       {isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, 
+       {sort: {name: 1}}
+     ).fetch();
+    // update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
+    cursor.forEach(function(c) {
+     c.ideaIDs.forEach(function(i){
+    	 if (!isInList(i,filteredIdeaIDs)) {
+    		 c.ideaIDs.pop(i);
+    	 }
+     })
+    })
+   	
+    return cursor;
+  },
+  getFontSize : function(){
+    //console.log(this);
+    return 10 +(this.ideaIDs.length * 4);
+  },
+  getClusterSize : function(){
+    return this.ideaIDs.length;
+  },
+});
 
-  	getFontSize : function(){
-  		//console.log(this);
-  		return 10 +(this.ideaIDs.length * 4);
-  	},
+Template.ChangePromptModal.helpers({
+  	participants : function(){
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+	},
+});
 
-  	getClusterSize : function(){
-  		return this.ideaIDs.length;
-  	}
-})
+Template.SendThemeModal.helpers({
+  	participants : function(){
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+	},
+	clusters : function(){
+    var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+    cursor = Clusters.find(
+       {isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, 
+       {sort: {name: 1}}
+     ).fetch();
+    // update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
+    cursor.forEach(function(c) {
+     c.ideaIDs.forEach(function(i){
+    	 if (!isInList(i,filteredIdeaIDs)) {
+    		 c.ideaIDs.pop(i);
+    	 }
+     })
+    })
+    return cursor;
+  },
+});
+
+Template.SendExamplesModal.helpers({
+	ideas : function(){
+	  var cursor = FilterManager.performQuery("Ideas Filter", 
+      Session.get("currentUser"),
+      "ideas"
+    );
+    return cursor;
+  },
+  	participants : function(){
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+	},
+});
+
 
 /********************************************************************
 * Template Events
 *********************************************************************/
 Template.Dashboard.events({
 	'click .gamechangestar' : function(){
-		// var id = (this)._id;
-		// var idea = Ideas.findOne({_id: id});
-		// var state = !idea.isGamechanger;
-
-		// Ideas.update({_id: id}, {$set: {isGamechanger: state}});
     EventLogger.logToggleGC(this);
 		IdeaFactory.toggleGameChanger(this);
 	},
-
-	// 'click #filterGamechangers' : function(){
-	// 	var filters = Session.get("idealistFilters");
-	// 	if ($("#filterGamechangers").hasClass("fa-star-o")){
-	// 		filters.gamchanger = [true];
-	// 		$("#filterGamechangers").switchClass("fa-star-o", "fa-star")
-	// 		return Session.set("idealistFilters", filters);
-	// 	} else if ($("#filterGamechangers").hasClass("fa-star")){
-	// 		filters.gamchanger = [true, false];
-	// 		$("#filterGamechangers").switchClass("fa-star", "fa-star-o")
-	// 		return Session.set("idealistFilters", filters);
-	// 	}
-	// },
 
 	'click #checkall' : function(event, template){
 		//event.target
@@ -382,19 +395,6 @@ Template.Dashboard.events({
 	'click .userprofilename' : function(e){
 		var id = $(e.currentTarget).parents('.profile').attr("id");
 		id = id.split("-")[1];
-		// //var userName = MyUsers.findOne({_id: id}).name;
-		// //var parts = Session.get("idealistFilters");
-		// // var filters = Session.get("idealistFilters");
-		// // var parts = filters.partFilters;
-
-		// // for (var i = 0; i < parts.length; i++) {
-		// // 	if(parts[i] === id) 
-		// // 		return false;
-		// // };
-
-		// // filters.partFilters.push(id);
-		// // //Session.set("partFilters", parts);
-		// Session.set("idealistFilters", filters);
 		var isOn = FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
     EventLogger.logToggleUserFilter(
         Session.get("currentUser"),
@@ -408,26 +408,6 @@ Template.Dashboard.events({
 	'click .tagname' : function(){
 		var id = $(event.target).parent().attr("id");
 		id = id.split("-")[1];
-
-		// var filters = Session.get("idealistFilters");
-		// var clusters = filters.clusterFilters;
-
-		// for (var i = 0; i < clusters.length; i++) {
-		// 	if(clusters[i].id === id) 
-		// 		return false;
-		// };
-
-		// var clusterMap = {
-		// 	ideas: [], //maps cluster id to its idea's ids
-		// }
-
-		// var myCluster = Clusters.findOne({_id: id});
-		// clusterMap.ideas = myCluster.ideas;
-		// clusterMap.name = myCluster.name;
-		// clusterMap.id = id;
-
-		// filters.clusterFilters.push(clusterMap);
-		// Session.set("idealistFilters", filters);
 
 		var isOn = FilterManager.toggle(
         "Ideas Filter", 
@@ -490,25 +470,6 @@ Template.Dashboard.events({
 		var label = $(event.target).parent();
 		var id = label.attr("id");
 		id = id.split("-")[1];
-		// //console.log(id);
-		// var filters = Session.get("idealistFilters");
-
-		// if(label.hasClass("partfilter-label")){
-		// 	for (var i = 0; i < filters.partFilters.length; i++) {
-		// 		if (filters.partFilters[i] === id){
-		// 			filters.partFilters.splice(i,1);
-		// 			return Session.set("idealistFilters", filters);
-		// 		}
-		// 	}
-		// } else if(label.hasClass("clusterfilter-label")){
-		// 	for (var i = 0; i < filters.clusterFilters.length; i++) {
-		// 		console.log(filters.clusterFilters[i].id);
-		// 		if (filters.clusterFilters[i].id === id){
-		// 			filters.clusterFilters.splice(i,1);
-		// 			return Session.set("idealistFilters", filters);
-		// 		}
-		// 	}
-		// } else 
 		if (label.hasClass("part-label")) {
 			var selectedParts = Session.get("selectedParts");
 			for (var i = 0; i < selectedParts.length; i++) {

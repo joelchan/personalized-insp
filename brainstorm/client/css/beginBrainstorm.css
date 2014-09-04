@@ -1,4 +1,12 @@
 .full-page {
   width: 100%;
-  top: 40%;
+  height: 720px;
+  text-align: center;
+}
+
+#begin-brainstorm {
+  margin-top: 300px;
+  width: 60%;
+  height: 100px;
+  
 }

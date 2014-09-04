@@ -180,6 +180,14 @@ Router.map(function () {
           Meteor.subscribe('groups')
       ];
     }, 
+    onBeforeAction: function() {
+      var sessionPrompt = Session.get("currentPrompt");
+      if (sessionPrompt.length > 0) {
+	      Session.set("sessionLength", sessionPrompt.length);	
+      } else {
+	      Session.set("sessionLength", 30);
+      }
+    },
     action: function(){
       if(this.ready())
         this.render();
