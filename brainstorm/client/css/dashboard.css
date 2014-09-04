@@ -42,11 +42,17 @@
 .dashboard .alert-msg {
   color: #900;
   display: block;
+  width: 100%;
 }
 
-.dashboard .flash-alert-text {
+.dashboard .flash-alert .alert-msg {
   color: #FFF;
 }
+
+.dashboard .flash-alert .userprofilename {
+  color: #FFF;
+}
+
 .dashboard .flash-alert {
   background: #900;
   color: #FFF
@@ -229,6 +235,7 @@
 }
 
 .people .form-inline {
+  padding: 0;
 }
 
 .series{
@@ -352,8 +359,6 @@
 }
 
 .dashboard .profile .userprofilename {
-  display: inline-block;
-  vertical-align: middle;
   text-decoration: underline;
 }
 

@@ -96,8 +96,10 @@ Template.ChatMessages.helpers({
                         NotificationTypes.CHANGE_PROMPT,
                         NotificationTypes.SEND_THEMES]}
                       }]},
-										{recipientIDs: currUser._id},
-                    {message: "Help Requested"}]});
+										{$and: [{recipientIDs: currUser._id},
+                      {type: {$ne: NotificationTypes.REQUEST_HELP}}
+                    ]}
+      ]});
     } else if (role.title === "Synthesizer") {
       logger.trace("Getting notifications for synthesis user");
 		  return Notifications.find({$or: [{sender: currUser._id}, 

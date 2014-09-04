@@ -16,7 +16,7 @@ Template.Dashboard.rendered = function(){
   $('.menu-link').bigSlide();
   Notifications.find({
     recipientIDs: Session.get("currentUser")._id,
-    'type.val': 3
+    'type.val': NotificationTypes.REQUEST_HELP.val
     }).observe({
     added: function(newMsg) {
       console.log("***********************************************");
@@ -31,10 +31,25 @@ Template.Dashboard.rendered = function(){
         var msg = UI.render(Template.HelpMessage);
         UI.insert(msg, $(msgSenderDivID)[0]);
       }
-  		messageAlertInterval = Meteor.setInterval(function(){
-        console.log("message alert interval");
-  			$(msgSenderDivID).toggleClass('flash-alert');
-  		}, 750);
+      if (!$(msgSenderDivID).hasClass("flashing")) {
+        $(msgSenderDivID).addClass("flashing");
+        var alertTimer = {'time': 10};
+        Session.set(msgSenderDivID, alertTimer);
+  		  alertTimer['interval'] = Meteor.setInterval(function(){
+          console.log("message alert interval");
+          var alertTime = Session.get(msgSenderDivID);
+          if (alertTime['time'] != 0) {
+  			    $(msgSenderDivID).toggleClass('flash-alert');
+            alertTime['time'] = alertTime['time'] - 1;
+            Session.set(msgSenderDivID, alertTime)
+          } else {
+            $(msgSenderDivID).removeClass("flashing");
+            Meteor.clearTimeout(alertTime['interval']);
+          }
+
+  		  }, 500);
+        Session.set(msgSenderDivID, alertTimer);
+      }
     },
       
   	changed: function(newMsg, oldMsg){
@@ -44,10 +59,20 @@ Template.Dashboard.rendered = function(){
       console.log("Msg handled");
       console.log("***********************************************");
       console.log("***********************************************");
+      var msgSenderDivID = '#uname-' + newMsg.sender;
+      var alertDivID = msgSenderDivID + " .alert-msg";
       if (newMsg.handled) {
         console.log("Msg handled");
-        var alertDivID = '#uname-' + newMsg.sender + " .alert-msg";
         $(alertDivID).remove();
+        if (!$(msgSenderDivID).hasClass("flash-alert")) {
+          $(msgSenderDivID).removeClass("flash-alert");
+        }
+        if (!$(msgSenderDivID).hasClass("flashing")) {
+          $(msgSenderDivID).removeClass("flashing");
+          Meteor.clearTimeout(
+            Session.get(msgSenderDivID)['interval']
+          );
+        }
       } else {
         console.log("Alert generated handled");
         //$('#uname-' + newMsg.sender)
