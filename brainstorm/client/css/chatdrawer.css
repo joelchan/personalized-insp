@@ -42,6 +42,7 @@
 #chat-handle{
   float: right;
   position: fixed;
+  z-index: 20;
   top: 45%;
   left: 0%;
   width: 40px;

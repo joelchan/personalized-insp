@@ -68,7 +68,7 @@ Template.userseries.rendered = function(){
 					} else if (desc === "Dashboard user changed prompt")
 						return "Message: " + d.prompt;
 					else if (desc === "Dashboard user sent theme")
-						return "Theme: " + Clusters.findOne(d.theme).name;
+						return "Theme: " + Clusters.findOne({_id: d.theme}).name;
 					else if (desc === "User submitted idea")
 						return Ideas.findOne({_id: d.ideaID}).content;
 				});
