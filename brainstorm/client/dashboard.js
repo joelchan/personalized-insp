@@ -31,6 +31,10 @@ Template.Dashboard.rendered = function(){
         var msg = UI.render(Template.HelpMessage);
         UI.insert(msg, $(msgSenderDivID)[0]);
       }
+  		messageAlertInterval = Meteor.setInterval(function(){
+        console.log("message alert interval");
+  			$(msgSenderDivID).toggleClass('flash-alert');
+  		}, 750);
     },
       
   	changed: function(newMsg, oldMsg){
@@ -69,7 +73,7 @@ Template.userseries.rendered = function(){
 	var results = [];
 	var start = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time);
 	var sessionlength = Session.get("sessionLength");
-	var end = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time).add('m', sessionlength);//new Date(start + sessionlength*MS_PER_MINUTE);
+	var end = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time).add('m', sessionlength+5);//new Date(start + sessionlength*MS_PER_MINUTE);
 
 	var x = d3.time.scale()
 					.domain([start, end])
@@ -102,7 +106,7 @@ Template.userseries.rendered = function(){
 					} else if (desc === "Dashboard user changed prompt")
 						return "Message: " + d.prompt;
 					else if (desc === "Dashboard user sent theme")
-						return "Theme: " + Clusters.findOne(d.theme).name;
+						return "Theme: " + Clusters.findOne({_id: d.theme}).name;
 					else if (desc === "User submitted idea")
 						return Ideas.findOne({_id: d.ideaID}).content;
 				});
@@ -330,28 +334,51 @@ Template.Ideabox.helpers({
 
 Template.TagCloud.helpers({
 	clusters : function(){
-    var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
     cursor = Clusters.find(
        {isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, 
        {sort: {name: 1}}
      ).fetch();
     // update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
-    //cursor.forEach(function(c) {
-     //c.ideaIDs.forEach(function(i){
-    	 //if (!isInList(i,filteredIdeaIDs)) {
-    		 //c.ideaIDs.pop(i);
-    	 //}
-     //})
-    //})
+    // cursor.forEach(function(c) {
+    //  c.ideaIDs.forEach(function(i){
+    // 	 if (!isInList(i,filteredIdeaIDs)) {
+    // 		 c.ideaIDs.pop(i);
+    // 	 }
+    //  })
+    // })
    	
     return cursor;
   },
   getFontSize : function(){
-    //console.log(this);
-    return 10 +(this.ideaIDs.length * 4);
+    // console.log(this);
+    var thisIdeaIDs = this.ideaIDs;
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
+    var thisClusterSize = 0;
+    thisIdeaIDs.forEach(function(i) {
+    	if(isInList(i,filteredIdeaIDs)) {
+    		// thisIdeaIDs.pop(i);
+    		thisClusterSize++;
+    	}
+    })
+    return 10 +(thisClusterSize * 4);
+    // return 10 +(Template.TagCloud.getClusterSize() * 4);
+    // return 10 +(Template.TagCloud.getClusterSize() * 4);
   },
   getClusterSize : function(){
-    return this.ideaIDs.length;
+    var thisIdeaIDs = this.ideaIDs;
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
+    // console.log(filteredIdeaIDs);
+    var thisClusterSize = 0;
+    thisIdeaIDs.forEach(function(i) {
+    	if(isInList(i,filteredIdeaIDs)) {
+    		// thisIdeaIDs.pop(i);
+    		thisClusterSize++;
+    	}
+    })
+    // return this.ideaIDs.length;
+    // return thisIdeaIDs.length;
+    return thisClusterSize;
   },
 });
 

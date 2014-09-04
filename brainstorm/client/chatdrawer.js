@@ -55,10 +55,10 @@ Template.chatdrawer.rendered = function(){
       console.log("Noficiation observe found new msg");
   		Meteor.clearInterval(messageAlertInterval);
 
-  		if($('#chat-handle').hasClass('moved')){
-  			messageViewScrollTo();
-  			return false;
-  		}
+  		//if($('#chat-handle').hasClass('moved')){
+  			//messageViewScrollTo();
+  			//return false;
+  		//}
   		messageAlertInterval = Meteor.setInterval(function(){
         console.log("message alert interval");
   			$('#chat-handle').toggleClass('flash');
@@ -68,6 +68,19 @@ Template.chatdrawer.rendered = function(){
 
   Meteor.clearInterval(messageAlertInterval);
 }
+
+Template.ChatMessages.rendered = function(){
+
+  Notifications.find({recipientIDs: Session.get("currentUser")._id}).observe({
+  	added: function(message){
+      console.log("Noficiation observe found new msg");
+  		Meteor.clearInterval(messageAlertInterval);
+
+  			messageViewScrollTo();
+  	}
+  });
+};
+
 
 Template.ChatMessages.helpers({
 	messages: function(){
