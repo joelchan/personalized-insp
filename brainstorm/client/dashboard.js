@@ -14,14 +14,48 @@ Template.Dashboard.rendered = function(){
   
   window.scrollTo(0,0);
   $('.menu-link').bigSlide();
+  Notifications.find({
+    recipientIDs: Session.get("currentUser")._id,
+    'type.val': 3
+    }).observe({
+    added: function(newMsg) {
+      console.log("***********************************************");
+      console.log("***********************************************");
+      console.log(newMsg)
+      console.log("Alert generated handled");
+      console.log("***********************************************");
+      console.log("***********************************************");
+      var msgSenderDivID = '#uname-' + newMsg.sender;
+      var alertDivID = msgSenderDivID + " .alert-msg";
+      if (!newMsg.handled && ($(alertDivID).length == 0)) {
+        var msg = UI.render(Template.HelpMessage);
+        UI.insert(msg, $(msgSenderDivID)[0]);
+      }
+    },
+      
+  	changed: function(newMsg, oldMsg){
+      console.log("***********************************************");
+      console.log("***********************************************");
+      console.log(newMsg)
+      console.log("Msg handled");
+      console.log("***********************************************");
+      console.log("***********************************************");
+      if (newMsg.handled) {
+        console.log("Msg handled");
+        var alertDivID = '#uname-' + newMsg.sender + " .alert-msg";
+        $(alertDivID).remove();
+      } else {
+        console.log("Alert generated handled");
+        //$('#uname-' + newMsg.sender)
+      }
+    }
+  });
+
 }
 
-
 Template.userseries.rendered = function(){
-	//var start = Date.now;
 	var self = this;
 	var userID = self.data._id;
-	console.log(userID);
 	//var part_ID = self.data.
 	var node = self.find(".series");
 	var svg = d3.select(node).append("svg");
@@ -302,13 +336,13 @@ Template.TagCloud.helpers({
        {sort: {name: 1}}
      ).fetch();
     // update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
-    cursor.forEach(function(c) {
-     c.ideaIDs.forEach(function(i){
-    	 if (!isInList(i,filteredIdeaIDs)) {
-    		 c.ideaIDs.pop(i);
-    	 }
-     })
-    })
+    //cursor.forEach(function(c) {
+     //c.ideaIDs.forEach(function(i){
+    	 //if (!isInList(i,filteredIdeaIDs)) {
+    		 //c.ideaIDs.pop(i);
+    	 //}
+     //})
+    //})
    	
     return cursor;
   },

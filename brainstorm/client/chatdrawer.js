@@ -24,7 +24,7 @@ Template.ChatInput.rendered = function() {
 Template.ChatInput.events({
 
 	'click #sendchat' : function(){
-		var message = $("#chatinput").val()
+		var message = $.trim($("#chatinput").val())
 		if(message === "")
 			return false;
 		$("#chatinput").val("");
@@ -113,7 +113,7 @@ Template.ChatMessages.helpers({
 });
 
 messageViewScrollTo =function(){
-	$('#messageview').scrollTop($('#messageview')[0].scrollHeight);
+	$('.messageview').scrollTop($('.messageview')[0].scrollHeight);
 	console.log("scrolled");
 }
 

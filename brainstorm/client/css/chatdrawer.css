@@ -16,9 +16,10 @@
 
 .messageview .chatmessage{
 	padding: 0px 10px 0px 10px;
-  min-height: 25px;
+  min-height: 35px;
   vertical-align: center;
 }
+
 .message-content {
   display: block;
 }

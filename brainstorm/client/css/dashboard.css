@@ -39,9 +39,11 @@
 	overflow: auto;
 	height: 720px;
 }
-.dashboard .alert-text {
+.dashboard .alert-msg {
   color: #900;
+  display: block;
 }
+
 .dashboard .flash-alert-text {
   color: #FFF;
 }
@@ -74,6 +76,7 @@
 
 .dashboard .vizes {
   border-bottom: solid 1px #ddd;
+  min-height: 250px;
 }
 
 .dashboard .messageview {
