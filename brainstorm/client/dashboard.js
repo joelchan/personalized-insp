@@ -35,7 +35,7 @@ Template.userseries.rendered = function(){
 	var results = [];
 	var start = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time);
 	var sessionlength = Session.get("sessionLength");
-	var end = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time).add('m', sessionlength);//new Date(start + sessionlength*MS_PER_MINUTE);
+	var end = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time).add('m', sessionlength+5);//new Date(start + sessionlength*MS_PER_MINUTE);
 
 	var x = d3.time.scale()
 					.domain([start, end])
