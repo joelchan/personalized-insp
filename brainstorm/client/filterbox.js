@@ -1,5 +1,6 @@
 Template.filterbox.rendered = function(){
-
+	//Create isInCluster filter
+	// console.log("rendering");
 }
 var filterName;
 Template.filterbox.helpers({
@@ -11,11 +12,18 @@ Template.filterbox.helpers({
 	participants : function(){
 		// return MyUsers.find({type: "Experiment Participant"});
 		return MyUsers.find({type: "Ideator"});
+		// return MyUsers.find({_id: 
+		// 	{$in: getIDs(Session.get("currentIdeators"))}
+		// });
 	},
 	ideas : function(){
 		// return Ideas.find();
 		// var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
+		var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+		  Session.get("currentUser"), 	
+		  "ideas").fetch();
+		// return filteredIdeas;
+		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
 		// sort the array
 		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
 		// return the sorted array
@@ -26,6 +34,12 @@ Template.filterbox.helpers({
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
 	},
+});
+
+Template.FilterBoxIdeaItem.helpers({
+	gameChangerStatus: function() {
+		return this.isGamechanger;
+	}
 });
 
 Template.activefilters.helpers({
@@ -50,6 +64,9 @@ Template.activefilters.helpers({
 
 	clusters: function(){
 		return this.clusters;
+		// console.log(this);
+		// console.log("Active filters for clusters: " + this.clusterIDs);
+		// return this._id;
 	},
 
 	inClusterFilter : function(){
@@ -143,7 +160,7 @@ Template.filterbox.events({
 		var ids = $.map(options ,function(option) {
 		    var id = $(option).attr("val");
 			id = id.split("-")[1];
-			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);
+			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", id);
 		    return id;
 		});
 	},
@@ -180,12 +197,46 @@ Template.filterbox.events({
 			$icon.switchClass('fa-star', 'fa-star-o');
 		}
 	},
+
+	'mouseover .idea-item' : function(){
+		var id = $(event.target).attr("id");
+		// id = id.split("-")[1];
+		var thisIdea = Ideas.findOne({_id: id});
+		var thisIdeaAuthor = thisIdea.userName;
+		if (thisIdea.clusterIDs.length > 0) {
+			var thisIdeaTheme = Clusters.findOne({_id: thisIdea.clusterIDs[0]}).name;	
+		} else {
+			var thisIdeaTheme = "Not in a theme";
+		}
+		
+		$('<span class="idea-tip"></span>')
+			.appendTo('body')
+			.css('top', (event.pageY- 10) + 'px')
+			.css('left', (event.pageX + 20) + 'px')
+			.fadeIn('slow');
+		$('<span></span>').text("Author: " + thisIdeaAuthor)
+			.appendTo('.idea-tip');
+		$('<br>')
+			.appendTo('.idea-tip');
+		$('<span></span>').text("Theme: " + thisIdeaTheme)
+			.appendTo('.idea-tip');
+	},
+
+	'mouseout .idea-item' : function(){
+		$('.idea-tip').remove();
+	},
+
+	'mousemove .idea-item' : function(){
+		$('.idea-tip')
+		.css('top', (event.pageY - 10) + 'px')
+		.css('left', (event.pageX + 20) + 'px');
+	},
 });
 
 Template.activefilters.events({
 	'click .reset-filters' : function(){
 		//console.log("resetting filters");
-		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas", Session.get("groupIdeasFilter"));
 	},
 
 	'click .cancel-user': function(){
@@ -193,7 +244,7 @@ Template.activefilters.events({
 	},
 
 	'click .cancel-cluster': function(){
-		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", this._id);
+		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", this._id);
 	},
 
 	'click .cancel-themed': function(){

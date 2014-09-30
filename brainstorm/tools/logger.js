@@ -124,16 +124,6 @@ EventLogger = (function () {
       this.log(type);
     },
 
-    logIdeaSubmission: function(idea) {
-      var msg = "User submitted idea";
-      var prompt = Session.get("currentPrompt");
-      var type = EventTypeManager.get(msg);
-      var data = {"ideaID": idea._id,
-          'promptID': prompt._id,
-      };
-      this.log(type, data);
-    },
-
     logBeginRole: function() {
       var role = Session.get("currentRole");
       var prompt = Session.get("currentPrompt");
@@ -214,7 +204,7 @@ EventLogger = (function () {
       var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
-              "recipient": notification.recipient,
+              "recipientIDs": notification.recipientIDs,
               "type": notification.type,
               "examples": notification.examples,
               'promptID': prompt._id
@@ -228,7 +218,7 @@ EventLogger = (function () {
       var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
-              "recipient": notification.recipient,
+              "recipientIDs": notification.recipientIDs,
               "type": notification.type,
               "prompt": notification.prompt,
               'promptID': prompt._id
@@ -249,7 +239,7 @@ EventLogger = (function () {
       var type = EventTypeManager.get(msg);
       console.log(type);
       var data  = {"sender": notification.sender,
-              "recipient": notification.recipient,
+              "recipientIDs": notification.recipientIDs,
               "type": notification.type,
               "theme": notification.theme,
               'promptID': prompt._id
@@ -268,7 +258,7 @@ EventLogger = (function () {
       var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data  = {"sender": notification.sender,
-              "recipient": notification.recipient,
+              "recipientIDs": notification.recipientIDs,
               "type": notification.type,
               'promptID': prompt._id
       };
@@ -278,6 +268,137 @@ EventLogger = (function () {
               //{name: "recipient", data: notification.recipient},
               //{name: "type", data: notification.type}];
       //this.logEvent(msg, user, "notification", misc);
+    },
+
+    /** Ideation events **/
+    logIdeaSubmission: function(idea) {
+      var msg = "User submitted idea";
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"ideaID": idea._id,
+          'promptID': prompt._id,
+      };
+      this.log(type, data);
+    },
+
+    /** Clustering events **/
+    logClusterCollapse: function(cluster) {
+      var msg = "User toggled cluster collapse"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"clusterID": cluster._id,
+          'newState': !cluster.isCollapsed,
+      };
+      this.log(type, data);
+    },
+    logToggleGC: function(idea) {
+      var msg = "User toggled idea game changer"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"ideaID": idea._id,
+          'newState': !idea.isGamechanger,
+      };
+      this.log(type, data);
+    },
+    logChangeClusterName: function(cluster, name) {
+      var msg = "User modified cluster name"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"clusterID": cluster._id,
+          'newName': name,
+      };
+      this.log(type, data);
+    },
+    logMovedCluster: function(cluster, pos) {
+      var msg = "User moved cluster"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"clusterID": cluster._id,
+          'position': pos,
+      };
+      this.log(type, data);
+    },
+    logDeletingCluster: function(cluster) {
+      var msg = "Empty Cluster is being deleted"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"clusterID": cluster._id,
+          'name': cluster.name,
+      };
+      this.log(type, data);
+    },
+    logIdeaRemovedFromCluster: function(idea, source, target) {
+      var msg = "User removed Idea from cluster"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var targetID = null;
+      if (target) {
+        targetID = target._id;
+      } 
+      var data = {"ideaID": idea._id,
+          'sourceID': source._id,
+          'targetID': targetID,
+      };
+      this.log(type, data);
+    },
+    logCreateCluster: function(idea, source, target) {
+      var msg = "User created new cluster"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var sourceID = null;
+      if (source) {
+        sourceID = source._id;
+      } 
+      var data = {"ideaID": idea._id,
+          'sourceID': sourceID,
+          'targetID': target._id,
+      };
+      this.log(type, data);
+    },
+    logIdeaClustered: function(idea, source, target) {
+      var msg = "User inserted idea to cluster"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var sourceID = null;
+      if (source) {
+        sourceID = source._id;
+      } 
+      var data = {"ideaID": idea._id,
+          'sourceID': sourceID,
+          'targetID': target._id,
+      };
+      this.log(type, data);
+    },
+    logIdeaUnclustered: function(idea, source) {
+      var msg = "User unclustered idea"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"ideaID": idea._id,
+          'sourceID': source._id,
+      };
+      this.log(type, data);
+    },
+
+    /** Dashboard events **/
+    logToggleUserFilter: function(user, filterUserID, state) {
+      var msg = "User toggled user filter over ideas"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"userID": user._id,
+          'filterUserID': filterUserID,
+          'state': state,
+      };
+      this.log(type, data);
+    },
+    logToggleClusterFilter: function(user, filterClusterID, state) {
+      var msg = "User toggled cluster filter over ideas"
+      var prompt = Session.get("currentPrompt");
+      var type = EventTypeManager.get(msg);
+      var data = {"userID": user._id,
+          'filterClusterID': filterClusterID,
+          'state': state,
+      };
+      this.log(type, data);
     },
 
   };

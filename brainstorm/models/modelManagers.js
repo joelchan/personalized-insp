@@ -1,17 +1,22 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
-//Logger.setLevel('Model:Managers', 'trace');
-Logger.setLevel('Model:Managers', 'info');
+Logger.setLevel('Model:Managers', 'trace');
+//Logger.setLevel('Model:Managers', 'debug');
+//Logger.setLevel('Model:Managers', 'info');
+//Logger.setLevel('Model:Managers', 'warn');
 
 
 IdeaFactory = (function() {
   return {
     create: function(content, user, prompt) {
       logger.trace("Creating new Idea");
-      var idea = new Idea(content, user, prompt);
-      idea._id = Ideas.insert(idea);
-      return idea;
+      var trimmed = $.trim(content);
+      if (trimmed !== "") {
+        var idea = new Idea(trimmed, user, prompt);
+        idea._id = Ideas.insert(idea);
+        return idea;
+      }
     },
     toggleGameChanger: function(idea) {
       idea.isGamechanger = !idea.isGamechanger;
@@ -80,7 +85,7 @@ ClusterFactory = (function() {
           logger.trace("Adding idea with id + " + idea._id + " to cluster");
           ClusterFactory.insertIdeaToCluster(idea, cluster);
         });
-      } else {
+      } else if (ideas) {
         logger.trace("Adding idea with id + " + ideas._id + " to cluster");
         ClusterFactory.insertIdeaToCluster(ideas, cluster);
       }
@@ -110,6 +115,8 @@ ClusterFactory = (function() {
             {clusterIDs: cluster._id}
       });
       if (deleteCluster) {
+        logger.debug("Deleting Cluster");
+        EventLogger.logDeletingCluster(cluster);
         this.remove(cluster);
       } else {
         Clusters.update({_id: cluster._id},

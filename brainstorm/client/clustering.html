@@ -1,9 +1,9 @@
 
 <template name="ClusterIdeaItem">
 <li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
-  {{ content }} 
   <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
   </i>
+  {{ content }} 
 </li>
 </template>
 
@@ -17,20 +17,6 @@
       {{/each}}
     </ul>
   </div>
-		<!--End Idea List-->
-					<!-- <div class="btn-group">
-						<button id="sortMenuButton" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-							Sort By
-					    	<span class="caret"></span>
-					    	<span class="sr-only">Toggle Dropdown</span>
-					  	</button>
-					  	<ul class="dropdown-menu" role="menu">
-					    	<li><a href="" id="sortOldest">Oldest</a></li>
-					    	<li><a href="" id="sortMostRecent">Most Recent</a></li>
-					  	</ul>
-					</div> -->
-					<!-- {{> filterbox name=Cluster}} -->
-			<!-- <div> -->
 </template>
 
 <template name="ClusterList">
@@ -38,12 +24,14 @@
     <h3>Theme List</h3>
     <!-- <ul class="newcluster ui-sortable" id="node-drag-target"> -->
       <!-- </ul> -->
+    <div class="newcluster" id="new-cluster"> 
+      Drag idea here to create a new cluster
+    </div>
     <ul id="clusterlist" class="deck clusterdeck">
-      <li class="newcluster cluster-idea-list" id="new-cluster"> 
-        Drag idea here to create a new cluster
-      </li>
       {{#each clusters}}
-        <li id="ci-{{_id}}" class="cluster-item idea-item">{{name}}</li>
+        <li id="ci-{{_id}}" class="cluster-item">
+          {{name}}
+        </li>
       {{/each}}
     </ul>
   </div>
@@ -56,10 +44,12 @@
 </template>
 
 <template name="cluster">
-<!-- <div class="cluster col-md-4" id={{_id}} style="position: absolute; top:{{position.top}}px; left:{{position.left}}px"> -->
-  <div class="cluster thumbnail" id=cluster-{{_id}}>
+  <div class="cluster" id=cluster-{{_id}} 
+    style="top:{{position.top}}px; 
+    left:{{position.left}}px">
+    <!-- <div class="cluster" id=cluster-{{_id}}> -->
     <div class="form-group form-group-inline">
-      <!-- <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i> -->
+      <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
       <label class="sort-disabled">
         <span class="clusterlabel {{named}}">{{this.name}}</span>
       </label>
@@ -75,23 +65,25 @@
 </template>
 
 <template name="Clustering">
-	<div id="cluster-interface" class="clusterinterface">
-    <h1 class="page-header" id="clusterprompt">{{prompt}}</h1>
-    <div class="container-fluid">
-		  <div class="row">
-			  {{> chatdrawer}} 
-			  <div id="left-clustering" class="col-md-3">
-          {{> IdeaList }}
-			  </div>
-        <div id="middle-clustering" class="col-md-2">
-          {{> ClusterList }}
-			  </div>
-			  <div id="right-clustering" class="col-md-6 container-fluid">
-          <h3>Clusters</h3>
-          <div  id="clusterarea">
-            {{> clusterarea}}
-          </div>
-        </div>
+  <div class="cluster-header row">
+    <div class="col-sm-12">
+      <h1 id="clusterprompt">
+        {{prompt}}
+      </h1>
+    </div>
+  </div>
+  <div class="cluster-interface row">
+	{{> chatdrawer}} 
+    <div id="left-clustering" class="col-sm-3">
+        {{> IdeaList }}
+	</div>
+    <div id="middle-clustering" class="col-sm-2">
+      {{> ClusterList }}
+	</div>
+	<div id="right-clustering" class="col-sm-7">
+      <h3>Clusters</h3>
+      <div  id="clusterarea">
+        {{> clusterarea}}
       </div>
     </div>
   </div>
