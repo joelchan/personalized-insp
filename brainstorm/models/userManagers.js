@@ -62,19 +62,22 @@ RoleManager = (function () {
   //Change deafultRoles to object with list of roles + each role
   //accessible by name
   var defaultRoles = {};
-  var newRole = new Role("Ideator");
+  var newRole = new Role("MturkIdeator");
+  newRole.workflow = ['MturkIdeation'];
+  defaultRoles[newRole.title] = newRole;
+  newRole = new Role("Ideator");
   newRole.workflow = ['BeginBrainstormPage', 'Ideation', 'IdeationSurvey'];
   defaultRoles[newRole.title] = newRole;
-  var newRole = new Role("Synthesizer");
+  newRole = new Role("Synthesizer");
   newRole.workflow = ['BeginBrainstormPage', 'Clustering', 'SynthesisSurvey'];
   defaultRoles[newRole.title] = newRole;
-  var newRole = new Role("Facilitator");
+  newRole = new Role("Facilitator");
   newRole.workflow = ['BeginBrainstormPage', 'Dashboard', 'FacilitatorSurvey'];
   defaultRoles[newRole.title] = newRole;
-  var newRole = new Role("Unassigned");
+  newRole = new Role("Unassigned");
   newRole.workflow = ['PromptPage', 'GroupPage', 'RoleSelectPage'];
   defaultRoles[newRole.title] = newRole;
-  var newRole = new Role("Admin");
+  newRole = new Role("Admin");
   newRole.workflow = ['ExpAdminPage'];
   defaultRoles[newRole.title] = newRole;
 

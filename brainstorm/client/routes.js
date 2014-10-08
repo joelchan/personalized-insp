@@ -12,6 +12,59 @@ Router.map(function () {
       path: '/',
       template: 'LoginPage',
   });
+  this.route('MTurkPromptPage', {
+      path: 'Mturk/Brainstorms/',
+      template: 'MTurkPromptPage',
+      onBeforeAction: function() {
+        var myUser = UserFactory.getAdmin();
+        Session.set("currentUser", myUser);
+      }
+  });
+  this.route('MTurkLoginPage', {
+  	path: '/MturkLoginPage/:_id',
+    template: 'MTurkLoginPage',
+    waitOn: function() {
+      return Meteor.subscribe('prompts', this.params._id);
+    },
+    onBeforeAction: function() {
+        console.log("before action");
+        if (this.ready()) {
+          console.log("Data ready");
+          var prompt = Prompts.findOne({_id: this.params._id});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          }
+        }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    }, 
+  });
+  this.route('MturkIdeation', {
+  	path: 'Mturk/Ideation/',
+  	template: 'IdeationPage',
+    waitOn: function() {
+      if (Session.get("currentUser")) {
+        return Meteor.subscribe('ideas', 
+          {userID: Session.get("currentUser")._id});
+      } else {
+        return Meteor.subscribe('ideas');
+      }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      initRolePage();
+    }
+
+  });
   this.route('LoginPage', {
   	path: '/LoginPage/:_id',
     template: 'LoginPage',
@@ -222,9 +275,9 @@ Router.configure({
   onBeforeAction: function(pause) {
     if (!Session.get("currentUser")) {
       //if there is no user currently logged in, then render the login page
-      this.render('LoginPage');
+      //this.render('LoginPage');
       //Pause rendering the given page until the user is set
-      pause();
+      //pause();
     }
   },
   action: function(){

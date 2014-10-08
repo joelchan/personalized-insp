@@ -1,3 +1,11 @@
+// Configure logger for Tools
+var logger = new Logger('Client:Exp:Admin');
+// Comment out to use global logging level
+Logger.setLevel('Client:Exp:Admin', 'trace');
+//Logger.setLevel('Client:Exp:Admin', 'debug');
+//Logger.setLevel('Client:Exp:Admin', 'info');
+//Logger.setLevel('Client:Exp:Admin', 'warn');
+
 /********************************************************************
  * Return the list of all prompts
  * *****************************************************************/
@@ -6,20 +14,19 @@ Template.ExpAdminPage.experiments = function() {
 };
 
 Template.ExpAdminPage.roles = function() {
-    return Roles.find();
+    return RoleManager.defaults;
 };
 
-Template.EPGroupMakeup.role = function() {
-  return Roles.findOne({'_id': String(this)});
-};
+//Template.EPGroupMakeup.role = function() {
+  //return RoleManager.getTemplate(String(this));
+//};
 
 Template.EPExperiment.formUrl = function() {
   //var startPage = Roles.findOne({'_id': this.groupTemplate.roles[0].role}).workflow[0]
-  var startPage = "LoginPage";
+  var startPage = "MturkLoginPage";
   // Need to rewrite this to pull from Experiment.url
   return Meteor.absoluteUrl() + startPage + '/' + this._id;
 };
-
 
 Template.EPGroupMakeup.num = function() {
   if (this.num < 0) {
@@ -88,7 +95,4 @@ Template.ExpAdminPage.events({
     },
 
 });
-
-
-
 
