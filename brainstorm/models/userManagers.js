@@ -32,6 +32,9 @@ UserFactory  = (function() {
        return this.create(userName, this.testType);
      },
      getTestUsers: function(num) {
+       if (num === 1) {
+         return this.getTestUser();
+       }
        users = [];
        for (var i=0; i<num; i++) {
          var userName = this.testName + i;
@@ -161,15 +164,6 @@ GroupManager = (function () {
       }
       var newGroup = new Group(template);
       newGroup._id = Groups.insert(newGroup);
-      // Assign users to group if users are given
-      //if (users) {
-        //for (var i=0; i<users.length; i++) {
-          //if (group.isOpen) {
-            ////Assign the user and update the db entry
-            //this.addUser(group, users[i])
-          //}
-        //}
-      //}
       return newGroup;
     },
     createDefault: function() {
@@ -195,6 +189,8 @@ GroupManager = (function () {
           logger.trace("Adding a single role to group template");
         }
 
+      } else {
+        return this.defaultTemplate;
       }
       //result._id = GroupTemplates.insert(result);
       return result;
@@ -253,25 +249,6 @@ GroupManager = (function () {
       }
       return newRole;
     },
-
-    //create: function(template, users) {
-      ///**************************************************************
-      //* Create a new group from a tempalte and perform an necessary
-      //* initialization
-      //**************************************************************/
-      //var newGroup = new Group(template);
-      //newGroup._id = Groups.insert(newGroup);
-      //// Assign users to group if users are given
-      //if (users) {
-        //for (var i=0; i<users.length; i++) {
-          //if (group.isOpen) {
-            ////Assign the user and update the db entry
-            //this.addUser(group, users[i])
-          //}
-        //}
-      //}
-      //return newGroup;
-    //},
 
     numOpenSlots: function(group) {
       /****************************************************************

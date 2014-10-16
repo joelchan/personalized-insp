@@ -86,5 +86,11 @@ Meteor.startup(function(){
 		Meteor.publish("notifications", function(){
 			return Notifications.find();
 		});
+		/*****************************************************************
+		* Publish tasks.js collection
+		******************************************************************/
+		Meteor.publish("tasks", function(){
+			return Tasks.find();
+		});
 	}
 });

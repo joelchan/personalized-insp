@@ -11,7 +11,9 @@ IdeaFactory = (function() {
   return {
     create: function(content, user, prompt) {
       logger.trace("Creating new Idea");
-      var trimmed = $.trim(content);
+      //var trimmed = $.trim(content);
+      //JQuery doesn't work on server
+      var trimmed = content;
       if (trimmed !== "") {
         var idea = new Idea(trimmed, user, prompt);
         idea._id = Ideas.insert(idea);

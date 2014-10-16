@@ -7,9 +7,13 @@ Logger.setLevel('Test:Server:Brainstorm', 'trace');
 //Logger.setLevel('Test:Server:Brainstorm', 'warn');
 
 
-describe("Brainstorm Management", function() {
-  describe("Brainstorm setup", function () {
-
+if (!(typeof MochaWeb === 'undefined')){
+  MochaWeb.testOnly(function() {
+    describe("Server Brainstorm Management", function() {
+      it("Brainstorm setup", function () {
+        chai.assert.equal(10, 10);
+      });
+    });
   });
-});
+}
 

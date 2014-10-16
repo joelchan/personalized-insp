@@ -95,7 +95,7 @@ def clear_db(db_params=mongohq.ideagenstest):
     for col in clear_cols:
         # Remove all docs from collection
         db[col].remove()
-    
+
 def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
    if not path.exists(dir_path):
        mkdir(dir_path, 0774)
@@ -105,7 +105,7 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
    clusters = {}
    for cluster in db.clusters.find():
        clusters[cluster[u'_id']] = cluster[u'name']
-        
+
    ideas = []
    for idea in db.ideas.find():
        rowDict = {}
@@ -119,13 +119,13 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
        if idea[u'isGamechanger']:
           rowDict["starred"] = idea[u'isGamechanger']
        else:
-          rowDict["starred"] = "-" 
+          rowDict["starred"] = "-"
        ideas.append(rowDict)
-    
+
    ideasDF = pd.DataFrame(ideas)
    file_path = path.join(dir_path, "ideas.csv")
    ideasDF.to_csv(file_path)
-    
+
    users = {}
    for user in db.myUsers.find():
        users[user[u'_id']] = user[u'name']
@@ -149,16 +149,16 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
            break
        # get author info
        # get time?
-       notifications.append(rowDict) 
-    
+       notifications.append(rowDict)
+
    notificationsDF = pd.DataFrame(notifications)
    # Create file path
    file_path = path.join(dir_path, "notifications.csv")
-   notificationsDF.to_csv(file_path) 
+   notificationsDF.to_csv(file_path)
 
 if __name__ == '__main__':
+    clear_db(mongohq.ideagenstest)
     # dump_db('data/chi1', mongohq.chi1)
-    # restore_db('data/chi1', mongohq.ideagenstest)
-    # clear_db(mongohq.chi1)
-    get_data_output('data/chi2', mongohq.chi1)
+    restore_db('data/chi3_raw', mongohq.ideagenstest)
+    # get_data_output('data/chi2', mongohq.chi1)
 

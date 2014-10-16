@@ -44,6 +44,10 @@ Meteor.startup(function(){
 		* Subscribe to notificationModels.js collection
 		************************************************************/
 		Meteor.subscribe("notifications");
+		/************************************************************
+		* Subscribe to tasks.js collection
+		************************************************************/
+		Meteor.subscribe("tasks");
 
   }
 });

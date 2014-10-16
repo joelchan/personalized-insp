@@ -31,16 +31,27 @@ PromptManager  = (function() {
        * Add a group to the given prompt
        * @Params:
        *    prompt: the prompt document to be updated
-       *    groups: an array of groups to be added to the prompt
+       *    groups: an array of groups or a single group 
+       *        to be added to the prompt
        *************************************************************/
-      groups.forEach(function(group) {
-        prompt.groupIDs.push(group._id);
+      if (hasForEach(groups)) {
+        groups.forEach(function(group) {
+          prompt.groupIDs.push(group._id);
+          Prompts.update({_id: prompt._id}, 
+            {$push: {groupIDs: group._id}});
+          //Maybe eventually update group with prompt
+          Groups.update({_id: group._id}, 
+            {$addToSet: {promptIDs: prompt._id}});
+        });
+      } else {
+        //Groups is only a single group
+        prompt.groupIDs.push(groups._id);
         Prompts.update({_id: prompt._id}, 
-          {$push: {groupIDs: group._id}});
+          {$push: {groupIDs: groups._id}});
         //Maybe eventually update group with prompt
-        Groups.update({_id: group._id}, 
+        Groups.update({_id: groups._id}, 
           {$addToSet: {promptIDs: prompt._id}});
-      });
+      }
     },
     setTitle: function(prompt, title) {
       prompt.title = title;

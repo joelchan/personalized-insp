@@ -6,11 +6,15 @@ Logger.setLevel('Test:Client', 'debug');
 /********************************************************************
  * Client behavior tests
  *******************************************************************/
-describe("High level client behavior tests", function() {
-    it("Test1", function() {
-      chai.assert.equal(10, 10);
+if (!(typeof MochaWeb === 'undefined')){
+  MochaWeb.testOnly(function() {
+    describe("High level client behavior tests", function() {
+        it("Test1", function() {
+          chai.assert.equal(10, 10);
+        });
     });
-});
+  });
+}
 
 //describe("Filtering with FilterManager", function() {
   //describe("Filter Retrieval", function () {

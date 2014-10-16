@@ -8,10 +8,12 @@ insecure
 accounts-ui
 accounts-password
 jquery
-cmather:iron-router@0.7.1
 chrismbeckett:fontawesome4@1.1.0
 d3
 mrt:nvd3js@0.1.0
 mrt:moment@2.6.0
 jag:pince@0.0.5
-mrt:mocha-web@0.2.4
+iron:router
+mike:mocha
+velocity:html-reporter
+
