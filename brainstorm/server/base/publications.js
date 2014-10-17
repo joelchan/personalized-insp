@@ -63,15 +63,6 @@ Meteor.startup(function(){
 			return SurveyResponses.find();
 		});
 		/*****************************************************************
-		* Publish contentModels.js collections
-		******************************************************************/
-		Meteor.publish("screens", function(){
-			return Screens.find();
-		});
-		Meteor.publish("textBlocks", function(){
-			return TextBlocks.find();
-		});
-		/*****************************************************************
 		* Publish loggingModels.js collection
 		******************************************************************/
 		Meteor.publish("events", function(){
@@ -85,12 +76,6 @@ Meteor.startup(function(){
 		******************************************************************/
 		Meteor.publish("notifications", function(){
 			return Notifications.find();
-		});
-		/*****************************************************************
-		* Publish tasks.js collection
-		******************************************************************/
-		Meteor.publish("tasks", function(){
-			return Tasks.find();
 		});
 	}
 });

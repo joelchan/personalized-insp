@@ -6,11 +6,9 @@
 
 Meteor.startup(function(){
   /*****************************************************************
-   * Publishing collections core to module function
-   ****************************************************************/
-  /*********** Example **************/
-  //Meteor.publish("ideas", function(){
-	  //return Ideas.find();
-  //});
-  /*********** End Example **************/
+  * Publish Task related collections
+  ******************************************************************/
+  Meteor.publish("tasks", function(){
+	  return Tasks.find();
+  });
 });

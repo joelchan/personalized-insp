@@ -5,10 +5,11 @@
 
 Meteor.startup(function(){
 		/************************************************************
-		* Subscribe to 
+		* Subscribe to tasks.js collection
 		************************************************************/
+		Meteor.subscribe("tasks");
 
 });
 
 // Manually define dictionary of all collections
-//MyCollections['name'] = <Name>;
+MyCollections['tasks'] = Tasks;

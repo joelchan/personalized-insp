@@ -7,49 +7,41 @@
 ********************************************************************/
 
 Meteor.startup(function(){
-  if (Meteor.isClient) {
-		/************************************************************
-		* Subscribe to models.js collections
-		************************************************************/
-		//Meteor.subscribe("ideas");
-		Meteor.subscribe("replayIdeas");
-		Meteor.subscribe("clusters");
-		Meteor.subscribe("prompts");
-		Meteor.subscribe("myUsers");
-		Meteor.subscribe("roles");
-		Meteor.subscribe("groups");
-		Meteor.subscribe("groupTemplates");
-		Meteor.subscribe("userTypes");
-    Meteor.subscribe("filters");
-		/************************************************************
-		* Subscribe to experimentModels.js collections
-		************************************************************/
-		Meteor.subscribe("experiments");
-    Meteor.subscribe('exp-conditions');
-		Meteor.subscribe("consents");
-		Meteor.subscribe("participants");
-		Meteor.subscribe("SurveyResponses");
-		/************************************************************
-		* Subscribe to contentModels.js collections
-		************************************************************/
-		Meteor.subscribe("screens");
-		Meteor.subscribe("textBlocks");
-		/************************************************************
-		* Subscribe to loggingModels.js collection
-		************************************************************/
-		//Meteor.subscribe("events");
-		Meteor.subscribe("eventTypes");
-		Meteor.subscribe("events");
-		/************************************************************
-		* Subscribe to notificationModels.js collection
-		************************************************************/
-		Meteor.subscribe("notifications");
-		/************************************************************
-		* Subscribe to tasks.js collection
-		************************************************************/
-		Meteor.subscribe("tasks");
+  /************************************************************
+  * Subscribe to models.js collections
+  ************************************************************/
+  //Meteor.subscribe("ideas");
+  Meteor.subscribe("replayIdeas");
+  Meteor.subscribe("clusters");
+  Meteor.subscribe("prompts");
+  Meteor.subscribe("myUsers");
+  Meteor.subscribe("roles");
+  Meteor.subscribe("groups");
+  Meteor.subscribe("groupTemplates");
+  Meteor.subscribe("userTypes");
+  /************************************************************
+  * Subscribe to Filtering collections
+  ************************************************************/
+  Meteor.subscribe("filters");
+  /************************************************************
+  * Subscribe to experimentModels.js collections
+  ************************************************************/
+  Meteor.subscribe("experiments");
+  Meteor.subscribe('exp-conditions');
+  Meteor.subscribe("consents");
+  Meteor.subscribe("participants");
+  Meteor.subscribe("SurveyResponses");
+  /************************************************************
+  * Subscribe to loggingModels.js collection
+  ************************************************************/
+  //Meteor.subscribe("events");
+  Meteor.subscribe("eventTypes");
+  Meteor.subscribe("events");
+  /************************************************************
+  * Subscribe to notificationModels.js collection
+  ************************************************************/
+  Meteor.subscribe("notifications");
 
-  }
 });
 
 // Manually define dictionary of all collections
