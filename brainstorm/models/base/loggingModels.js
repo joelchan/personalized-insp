@@ -42,52 +42,54 @@ EventType = function (desc, fields) {
  * Initialize all known EventTypes
  *******************************************************************/
 Meteor.startup(function() {
-  //Initializes if not already present
-  var fields;
-  EventTypeManager.get("User logged into experiment");
-  EventTypeManager.get("User was denied participation in experiment");
-  EventTypeManager.get("User consented to experiment");
-  _.keys(RoleManager.defaults).forEach(function(title) {
-    fields = ['role'];
-    EventTypeManager.get("User began role " + title, fields);
-    EventTypeManager.get("User finished role " + title, fields);
-  });
-  //EventTypeManager.get("User began ideation");
-  EventTypeManager.get("User exited study early");
-  fields = ['ideaID', 'promptID'];
-  EventTypeManager.get("User submitted idea", fields);
-  //EventTypeManager.get("User finished ideation");
-  fields = ['responseID'];
-  EventTypeManager.get("User submitted survey", fields);
-  fields = ['notificationID', 'promptID'];
-  EventTypeManager.get("User handled a notification", fields);
-  EventTypeManager.get("User expanded a notification", fields);
-  EventTypeManager.get("User collapsed a notification", fields);
-  fields = ['sender', 'recipientIDs', 'type', 'examples', 'promptID'];
-  EventTypeManager.get("Dashboard user sent examples", fields);
-  fields = ['sender', 'recipientIDs', 'type', 'prompt', 'promptID'];
-  EventTypeManager.get("Dashboard user changed prompt", fields);
-  fields = ['sender', 'recipientIDs', 'type', 'theme', 'promptID' ];
-  EventTypeManager.get("Dashboard user sent theme", fields);
-  fields = ['sender', 'recipientIDs', 'type', 'promptID'];
-  EventTypeManager.get("Ideator requested help", fields);
-  fields = ['clusterID', 'newState'];
-  EventTypeManager.get("User toggled cluster collapse", fields);
-  fields = ['ideaID', 'newState'];
-  EventTypeManager.get("User toggled idea game changer", fields);
-  fields = ['clusterID', 'newName'];
-  EventTypeManager.get("User modified cluster name", fields);
-  fields = ['clusterID', 'position'];
-  EventTypeManager.get("User moved cluster", fields);
-  fields = ['clusterID', 'name'];
-  EventTypeManager.get("Empty Cluster is being deleted", fields);
-  fields = ['ideaID', 'sourceID', 'targetID'];
-  EventTypeManager.get("User removed Idea from cluster", fields);
-  fields = ['ideaID', 'sourceID', 'targetID'];
-  EventTypeManager.get("User created new cluster", fields);
-  fields = ['ideaID', 'sourceID', 'targetID'];
-  EventTypeManager.get("User inserted idea to cluster", fields);
-  fields = ['ideaID', 'sourceID'];
-  EventTypeManager.get("User unclustered idea", fields);
+  if (Meteor.isServer()){
+    //Initializes if not already present
+    var fields;
+    EventTypeManager.get("User logged into experiment");
+    EventTypeManager.get("User was denied participation in experiment");
+    EventTypeManager.get("User consented to experiment");
+    _.keys(RoleManager.defaults).forEach(function(title) {
+      fields = ['role'];
+      EventTypeManager.get("User began role " + title, fields);
+      EventTypeManager.get("User finished role " + title, fields);
+    });
+    //EventTypeManager.get("User began ideation");
+    EventTypeManager.get("User exited study early");
+    fields = ['ideaID', 'promptID'];
+    EventTypeManager.get("User submitted idea", fields);
+    //EventTypeManager.get("User finished ideation");
+    fields = ['responseID'];
+    EventTypeManager.get("User submitted survey", fields);
+    fields = ['notificationID', 'promptID'];
+    EventTypeManager.get("User handled a notification", fields);
+    EventTypeManager.get("User expanded a notification", fields);
+    EventTypeManager.get("User collapsed a notification", fields);
+    fields = ['sender', 'recipientIDs', 'type', 'examples', 'promptID'];
+    EventTypeManager.get("Dashboard user sent examples", fields);
+    fields = ['sender', 'recipientIDs', 'type', 'prompt', 'promptID'];
+    EventTypeManager.get("Dashboard user changed prompt", fields);
+    fields = ['sender', 'recipientIDs', 'type', 'theme', 'promptID' ];
+    EventTypeManager.get("Dashboard user sent theme", fields);
+    fields = ['sender', 'recipientIDs', 'type', 'promptID'];
+    EventTypeManager.get("Ideator requested help", fields);
+    fields = ['clusterID', 'newState'];
+    EventTypeManager.get("User toggled cluster collapse", fields);
+    fields = ['ideaID', 'newState'];
+    EventTypeManager.get("User toggled idea game changer", fields);
+    fields = ['clusterID', 'newName'];
+    EventTypeManager.get("User modified cluster name", fields);
+    fields = ['clusterID', 'position'];
+    EventTypeManager.get("User moved cluster", fields);
+    fields = ['clusterID', 'name'];
+    EventTypeManager.get("Empty Cluster is being deleted", fields);
+    fields = ['ideaID', 'sourceID', 'targetID'];
+    EventTypeManager.get("User removed Idea from cluster", fields);
+    fields = ['ideaID', 'sourceID', 'targetID'];
+    EventTypeManager.get("User created new cluster", fields);
+    fields = ['ideaID', 'sourceID', 'targetID'];
+    EventTypeManager.get("User inserted idea to cluster", fields);
+    fields = ['ideaID', 'sourceID'];
+    EventTypeManager.get("User unclustered idea", fields);
+  }
 });
   

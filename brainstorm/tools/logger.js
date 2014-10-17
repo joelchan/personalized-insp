@@ -1,6 +1,3 @@
-//Logging still needs refinement for logger instantiation and
-//function scope
-
 /********************************************************************
  * Configuring Pince logger to enable multi-level logging for 
  * system monitoring to console

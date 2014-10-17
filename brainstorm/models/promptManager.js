@@ -1,10 +1,10 @@
 // Configure logger for Tools
-var logger = new Logger('Models:ProjectManager');
+var logger = new Logger('Models:PromptManager');
 // Comment out to use global logging level
-//Logger.setLevel('Models:ProjectManager', 'trace');
-//Logger.setLevel('Models:ProjectManager', 'debug');
-Logger.setLevel('Models:ProjectManager', 'info');
-//Logger.setLevel('Models:ProjectManager', 'warn');
+//Logger.setLevel('Models:PromptManager', 'trace');
+//Logger.setLevel('Models:PromptManager', 'debug');
+Logger.setLevel('Models:PromptManager', 'info');
+//Logger.setLevel('Models:PromptManager', 'warn');
 
 
 PromptManager  = (function() {
