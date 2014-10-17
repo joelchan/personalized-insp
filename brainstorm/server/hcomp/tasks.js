@@ -11,9 +11,8 @@ Logger.setLevel('Model:Server:Tasks', 'trace');
 Meteor.methods({
   'TaskManager_create': function(user, prompt, group, desc, 
               type, priority, num, inspiration ) {
-    var task = TaskManager.create(user, prompt, group, desc,
+    return TaskManager.create(user, prompt, group, desc,
       type, priority, num, inspiration);
-    return task;
   },
   'TaskManager_attachIdeas': function(task, ideas) {
     TaskManager.attachIdeas(task, ideas);

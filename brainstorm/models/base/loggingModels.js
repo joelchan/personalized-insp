@@ -42,7 +42,7 @@ EventType = function (desc, fields) {
  * Initialize all known EventTypes
  *******************************************************************/
 Meteor.startup(function() {
-  if (Meteor.isServer()){
+  if (Meteor.isServer){
     //Initializes if not already present
     var fields;
     EventTypeManager.get("User logged into experiment");
