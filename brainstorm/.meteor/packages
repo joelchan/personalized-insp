@@ -12,8 +12,8 @@ chrismbeckett:fontawesome4@1.1.0
 d3
 mrt:nvd3js@0.1.0
 mrt:moment@2.6.0
-jag:pince@0.0.5
 iron:router
-mike:mocha
 velocity:html-reporter
+jag:pince
+mike:mocha
 
