@@ -7,9 +7,10 @@ Logger.setLevel('Models:Tasks', 'trace');
 //Logger.setLevel('Models:Tasks', 'warn');
 
 Tasks = new Meteor.Collection("tasks");
+//Tasks.remove({})
 Questions = new Meteor.Collection("questions");
 
-Task = function (user, prompt, group, desc, type, priority, num) {
+Task = function (user, prompt, group, desc, type, priority, num, ideasRequested, minutesRequested) {
   /*****************************************************************
    * Constructor for Ideation Tasks
    * **************************************************************/
@@ -44,6 +45,13 @@ Task = function (user, prompt, group, desc, type, priority, num) {
   this.num = num;
   //List of Ideas for inspiration
   this.attachments = [];
+	
+	//Number of Ideas requested for this task
+	this.ideasRequested = ideasRequested;
+	//Minutes requested for this task
+	this.minutesRequested = minutesRequested;
+	//Is the task being edited?
+	this.edited = false;
 
 };
 

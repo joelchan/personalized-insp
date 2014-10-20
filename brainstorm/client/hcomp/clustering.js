@@ -17,7 +17,7 @@ var clusterFilterName = "Clustering droppable";
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
 ********************************************************************/
-Template.Clustering.rendered = function(){
+Template.MturkClustering.rendered = function(){
   //$('.idea-item').draggable({containment: '.clusterinterface',
     //revert: true,
     //zIndex: 50,
@@ -47,12 +47,12 @@ Template.Clustering.rendered = function(){
   //});
 
   //Create isInCluster filter
-  //FilterManager.create(ideaFilterName,
-      //Session.get("currentUser"),
-      //"ideas",
-      //"clusterIDs",
-      //[]
-  //);
+  FilterManager.create(ideaFilterName,
+      Session.get("currentUser"),
+      "ideas",
+      "clusterIDs",
+      []
+  );
   Session.set("currentIdeators", []);
   Session.set("currentSynthesizers", []);
   //Setup filters for users and filter update listener
@@ -69,7 +69,7 @@ Template.Clustering.rendered = function(){
 /********************************************************************
 * IdeaList template Helpers
 ********************************************************************/
-Template.IdeaList.helpers({
+Template.MturkClusteringIdeaList.helpers({
   ideas : function(){
     var filteredIdeas = FilterManager.performQuery(ideaFilterName, 
       Session.get("currentUser"), 
@@ -86,8 +86,8 @@ Template.IdeaList.helpers({
 /********************************************************************
 * ClusterIdeaItem template Helpers
 ********************************************************************/
-Template.ClusterIdeaItem.rendered = function() {
-  $(this.firstNode).draggable({containment: '.cluster-interface',
+Template.MturkClusterIdeaItem.rendered = function() {
+  $(this.firstNode).draggable({containment: '.clusterinterface',
     revert: true,
     zIndex: 50,
   });
@@ -96,7 +96,7 @@ Template.ClusterIdeaItem.rendered = function() {
   });
 };
 
-Template.ClusterIdeaItem.helpers({
+Template.MturkClusterIdeaItem.helpers({
   gameChangerStatus : function(){
     return this.isGamechanger;
   },
@@ -108,7 +108,7 @@ Template.ClusterIdeaItem.helpers({
 /********************************************************************
 * ClusterList template Helpers
 ********************************************************************/
-Template.ClusterList.helpers({
+Template.MturkClusterList.helpers({
   clusters : function(){
     var filteredClusters = FilterManager.performQuery(
       clusterFilterName, 
@@ -118,7 +118,7 @@ Template.ClusterList.helpers({
   },
 });
 
-Template.ClusterList.rendered = function() {
+Template.MturkClusterList.rendered = function() {
   $('.cluster-item').droppable({accept: ".idea-item",
     tolerance: "pointer",
     drop: function(event, ui) {
@@ -130,7 +130,7 @@ Template.ClusterList.rendered = function() {
 /********************************************************************
 * Clustering Interface template Helpers
 ********************************************************************/
-Template.Clustering.helpers({
+Template.MturkClustering.helpers({
 
   clustername : function(){
     var clu = Clusters.findOne({_id: this.toString()});
@@ -156,7 +156,7 @@ Template.Clustering.helpers({
 * Template event functions. Much of the heavy lifting in the interface*
 * is done by the mouseover event.
 ********************************************************************/
-Template.Clustering.events({
+Template.MturkClustering.events({
 
   //Collapse clusters and makes them unsortable until expanded
   'click .collapser' : function(){
@@ -176,11 +176,11 @@ Template.Clustering.events({
 /*******************************************************************
  * ******************  ClusterArea Template ************************
  * ****************************************************************/
-Template.clusterarea.rendered = function(){
+Template.MturkClusterarea.rendered = function(){
      
 }
 
-Template.clusterarea.helpers({
+Template.MturkClusterarea.helpers({
   clusters : function(){
     return Clusters.find({isRoot: {$ne: true}});
   },
@@ -191,7 +191,7 @@ Template.clusterarea.helpers({
 /*******************************************************************
  * ******************  Cluster Template ************************
  * ****************************************************************/
-Template.cluster.events({
+Template.MturkCluster.events({
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
     logger.debug(this);
@@ -202,7 +202,7 @@ Template.cluster.events({
   },
 });
 
-Template.cluster.rendered = function(){
+Template.MturkCluster.rendered = function(){
   console.log("****************************************************");
   console.log(this);
   console.log("****************************************************");
@@ -232,7 +232,7 @@ Template.cluster.rendered = function(){
   });
 }
 
-Template.cluster.helpers({
+Template.MturkCluster.helpers({
   clusterideas : function(){
     // logger.trace("Getting Cluster Ideas");
     var ideaIDs = $(this)[0].ideaIDs;

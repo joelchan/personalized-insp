@@ -8,7 +8,7 @@
   background: #449d44;
   background: #CFFFBD;
   border-right: 3px solid #464646;
-  height: 768px;
+  overflow: scroll;
 
 }
 
@@ -27,13 +27,21 @@
   padding: 5px;
 }
 
+.hcomp-ideation-pane .idea-list-box {
+  overflow: scroll;
+}
+
 .hcomp-ideation-pane .idea-box {
   width: 90%;
-  margin: 5px 5%;
+  margin: 10px 5%;
   padding: 5px;
+  min-height: 1.1em;
   background: #FFF3CC; /*Light Yellow*/
   border: 2px solid #464646;
   border-radius: 10px;
+}
+.hcomp-ideation-pane .idea-box p {
+  margin: 0;
 }
 
 .hcomp-ideation-pane .task-lists {

@@ -96,11 +96,14 @@ Template.CrowdBrainstorm.helpers({
 Template.CrowdBrainstorm.events({
   'click .dash-button': function() {
     console.log("go to dash");
-    Router.go("HcompDashboard", {promptID: this._id});
+    Router.go("HcompDashboard", 
+      {promptID: this._id,
+        userID: Session.get('currentUser')});
   },
   'click .review-button': function() {
     console.log("go to reviewpage");
-    Router.go("HcompResultsPage", {promptID: this._id});
+    Router.go("HcompResultsPage", 
+      {promptID: this._id, userID: Session.get("currentUser")});
   },
 });
 
@@ -137,7 +140,7 @@ Template.CrowdPromptPage.events({
       PromptManager.addGroups(prompt, group);
     },
 
-    'click div.clickable': function () {
+    'click .dash-button': function () {
       // Set the current prompt
       var prompt = Prompts.findOne({'_id': this._id});
       Session.set("currentPrompt", prompt);
@@ -148,6 +151,23 @@ Template.CrowdPromptPage.events({
         Session.set("currentPrompt", prompt);
         logger.debug("Prompt selected");
         Router.go('HcompDashboard', {promptID: prompt._id});
+      } else {
+        logger.error("couldn't find current prompt with id: " + 
+            prompt._id);
+      }
+    },
+
+    'click .review-button': function () {
+      // Set the current prompt
+      var prompt = Prompts.findOne({'_id': this._id});
+      Session.set("currentPrompt", prompt);
+      var group = Groups.findOne({'_id': this.groupIDs[0]});
+      Session.set("currentGroup", group);
+      if (prompt) {
+        logger.trace("found current prompt with id: " + prompt._id);
+        Session.set("currentPrompt", prompt);
+        logger.debug("Prompt selected");
+        Router.go('HcompResultsPage', {promptID: prompt._id});
       } else {
         logger.error("couldn't find current prompt with id: " + 
             prompt._id);

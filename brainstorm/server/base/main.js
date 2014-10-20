@@ -1,3 +1,10 @@
+Meteor.startup(function() {
+
+  // var natural = Meteor.require('natural'),
+  //   tokenizer = new natural.WordTokenizer();
+  // console.log(tokenizer.tokenize("your dog has fleas."));
+
+});
 //
 //Meteor.startup(function() {
   ///****************************************************************

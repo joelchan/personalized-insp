@@ -60,7 +60,6 @@ UserFactory  = (function() {
    };
  }());
 
-'BeingBrainstormPage', 
 RoleManager = (function () {
   //Change deafultRoles to object with list of roles + each role
   //accessible by name
@@ -146,18 +145,29 @@ RoleManager = (function () {
 
 GroupManager = (function () {
   //Define a default group template
+  var defTemplates = [];
   var defaultTempl = new GroupTemplate();
   defaultTempl.roles = [RoleManager.getTemplate("Ideator", -1),
     RoleManager.getTemplate('Synthesizer', -1),
     RoleManager.getTemplate('Facilitator', -1)
   ];
   defaultTempl.size = -1;
+  defTemplates.push(defaultTempl);
+  var defaultTempl = new GroupTemplate();
+  defaultTempl.roles = [RoleManager.getTemplate("HcompIdeator", -1),
+    RoleManager.getTemplate('HcompFacilitator', -1)
+  ];
+  defaultTempl.size = -1;
+  defTemplates.push(defaultTempl);
   return {
     /****************************************************************
      * Object that allows for most group manipulations including 
      *   assignment, creation, and modification
      ****************************************************************/
-    defaultTemplate: defaultTempl,
+    defaultTemplates: defTemplates,
+    defaultTemplate: function() {
+      return this.defaultTemplates[1];
+    },
     create: function(template) {
       /**************************************************************
       * Create a new group from a tempalte and perform an necessary
@@ -297,10 +307,10 @@ GroupManager = (function () {
       *   role - the role that the user was assigned or undefined if 
       *       no assignment was successfully made
       **************************************************************/
-      logger.debug("number of assigned to role, " + role + " " + 
-          group.assignments[role].length);
-      logger.debug("number of possible to role, " + role + " " + 
-          this.getSize(group, role));
+      //logger.debug("number of assigned to role, " + role + " " + 
+          //group.assignments[role].length);
+      //logger.debug("number of possible to role, " + role + " " + 
+          //this.getSize(group, role));
       if (group.isOpen && 
           ((this.getSize(group, role) > group.assignments[role].length) ||
            (this.getSize(group) < 0))) {
@@ -390,9 +400,11 @@ GroupManager = (function () {
       }
     },
     hasUser: function(group, user) {
+      logger.debug("Checking if user in group");
       var users = group.users;
-      logger.debug(user);
-      logger.debug(users);
+      logger.trace(group);
+      logger.trace(user);
+      logger.trace(users);
       if (isInList(user, users, '_id')) {
         logger.trace("user is in group");
         return true;

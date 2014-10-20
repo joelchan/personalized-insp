@@ -19,31 +19,34 @@ Template.HcompFilterbox.helpers({
 		// });
 	},
 	ideas : function(){
-		// return Ideas.find();
-		// var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-		//   Session.get("currentUser"), 	
-		//   "ideas").fetch();
-		var filteredIdeasCursor = FilterManager.performQuery("Ideas Filter", 
-		  Session.get("currentUser"), 	
-		  "ideas");
-		// return filteredIdeas;
-		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
-		// sort the array
 		
-		// return the sorted array
-		// console.log("FilterBoxHelper says there are " + filteredIdeas.count() + " ideas");
+		var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+		  Session.get("currentUser"), 	
+		  "ideas").fetch();
 
 		// apply search query, if it exists
 		var query = Session.get("searchQuery");
+		var queriedIdeas = [];
 		if (query != "") {
-			// do regex search through array with query
-			var filteredIdeas = filteredIdeasCursor.find({ $text: { $search: query }}).fetch();
+			queryArr = stringToWords(query);
+			filteredIdeas.forEach(function(idea){
+				// console.log(idea);
+				if (searchQueryMatch(idea,queryArr)) {
+					// console.log("Matched query");
+					queriedIdeas.push(idea);
+				} else {
+					// console.log("Not matching");
+					// filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
+				}
+			});
+			// create an array from the query
+			
 		} else {
-			var filteredIdeas = filteredIdeasCursor.find().fetch()
+			queriedIdeas = filteredIdeas.slice();
 		}
-		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
-		console.log(sortedIdeas);
+
+		var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+		// console.log(sortedIdeas);
 		return sortedIdeas;
 		// return cursor;
 	},
@@ -111,12 +114,15 @@ Template.HcompFilterbox.events({
 	'click .search-apply-btn' : function(){
 		var query = $('#search-query').val(); // grab query from text form
 		Session.set("searchQuery",query);
+		$('.search-apply-btn').toggleClass('btn-success');
 		console.log("Created new query: " + Session.get("searchQuery"));
 	},
 
 	// clear full-text search of idea content
 	'click .search-remove-btn' : function(){
 		Session.set("searchQuery","");
+		$('.search-apply-btn').toggleClass('btn-success');
+		$('#search-query').val("");
 	},
 
 	'click .filter-drop-button' :function(){
@@ -283,3 +289,33 @@ Template.HcompActivefilters.events({
 		FilterManager.remove("Ideas Filter", Session.get("currentUser"), "ideas", "time");
 	},
 });
+
+function searchQueryMatch(idea,queryArr) {
+	// console.log("calling searchQueryMatch");
+	var match = false;
+	var ideaContent = idea.content;
+	// queryArr.forEach(function(query){
+	for (var i = 0; i < queryArr.length; i++) {
+		// console.log("processing query array");
+		re = new RegExp(queryArr[i],'i')
+		// console.log(re);
+		if (re.test(ideaContent)){
+			match = true;
+			break;
+		}
+	}
+	// words = stringToWords(idea.content);
+	// words.forEach(function(word) {
+
+	// });
+	// console.log(match);
+	return match;
+}
+
+function stringToWords(str) {
+	arr = str.split(" ");
+	arr.forEach(function(q) {
+		q = q.trim();
+	});
+	return arr;
+}
