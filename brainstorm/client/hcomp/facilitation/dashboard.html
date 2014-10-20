@@ -5,6 +5,9 @@
     </div>
     <div class="tasks-view col-sm-4">
       <h3>Focus the Brainstorm!</h3>
+
+	{{> CreateTask }}
+
       <div class="row new-task-btn">
         <a href="#" class="show-modal" id="new-task-btn" 
         data-toggle="modal" data-target="#new-task-modal">
@@ -13,7 +16,10 @@
           </button>
         </a>
       </div>
-      {{> HcompTaskList }}
+
+
+	{{> TaskCards }}
+	{{> HcompTaskList }}
     </div>
     <div class="notes-view col-sm-4">
       <h3>Understand What's Going On!</h3>
@@ -476,4 +482,169 @@
       			</span>
 		{{/each}}
 	</div>
+</template>
+
+<template name="CreateTask">
+	<div id="CreateTask">
+		<form role="form" class="form">
+			<div class="row">
+		  		<div class="col-xs-12">
+					<label class="sr-only" for="task-description">Task Instructions</label>
+					<textarea class="form-control" rows="5" id="task-description" placeholder="Enter task instructions here..."></textarea>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<label class="" for="task-priority">Priority </label>
+					<select id="task-priority" class="form-control">
+						<option>Low</option>
+						<option>Medium</option>
+						<option>High</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-3">
+					<label class="" for="task-ideators">Ideators</label>
+				</div>
+		    		<div class="col-xs-3">
+					<label class="" for="task-ideas">Ideas</label>
+					
+				</div>
+				<div class="col-xs-3">
+					<label class="" for="task-minutes">Minutes</label>
+					
+				</div>
+				<div class="col-xs-3">
+					
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group task-options col-xs-3">
+					<input class="form-control" id="task-ideators" type="number" min="1" step="1" value="1" />
+				</div>
+		    		<div class="form-group task-options col-xs-3">
+					<input  class="form-control" id="task-ideas" type="number" min="3" step="1" value="3" />
+				</div>
+				<div class="form-group task-options col-xs-3">
+					<input  class="form-control" id="task-minutes" type="number" min="1" step="1" value="1" />
+				</div>
+				<div class="form-group task-options col-xs-3">
+					<button id="task-create" type="button" class="btn btn-primary btn-block">
+			      			Create
+			    		</button>
+				</div>
+			</div>
+	  	</form>
+	</div>
+</template>
+
+<template name="TaskCards">
+	<div id="task-card-list">
+		{{#each tasks}}
+			{{> TaskCard }}
+		{{/each}}
+	</div>
+</template>
+
+<template name="TaskCard">
+	{{#if isNotEdit}} 
+		<div class="task-card" id="{{getID}}">
+			<div class="row">
+				<div class="card-description col-xs-8">
+					{{getDescription}}
+				</div>
+				<div class="card-priority col-xs-2">
+					<span title="Priority" class="glyphicon glyphicon-warning-sign"> </span>
+					{{getPriority}}				
+				</div>
+				<div class="card-ideators col-xs-2">
+					<span title="Ideators"  class="glyphicon glyphicon-user"> </span>
+					{{getIdeators}}			
+				</div>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="card-ideas col-xs-3 btn">
+					<span title="Ideas" class="glyphicon glyphicon-exclamation-sign"> </span>
+					{{getIdeas}}
+				</div>
+				<div class="card-questions col-xs-3 btn">
+					<span title="Questions" class="glyphicon glyphicon-question-sign"> </span>
+					{{getQuestions}}			
+				</div>
+				<div class="card-edit col-xs-3 btn col-xs-offset-3">
+					<span title="Edit" class="glyphicon glyphicon-edit"> </span>		
+				</div>
+			</div>
+		</div>
+	{{else}} 
+		<div class="edit-task" id="{{getID}}">
+			<form role="form" class="form">
+				<div class="row">
+			  		<div class="col-xs-12">
+						<label class="sr-only">Task Instructions</label>
+						<textarea class="form-control task-description" rows="5" id="" placeholder="Enter task instructions here...">{{getDescription}}</textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<label class="">Priority </label>
+						<select class="form-control task-priority">
+							{{#if getPriority 'Low'}}  
+								<option selected>Low</option>
+								<option>Medium</option>
+								<option>High</option>
+							{{else}}
+								{{#if getPriority 'Medium'}}  
+									<option>Low</option>
+									<option selected>Medium</option>
+									<option>High</option>
+								{{else}}
+									{{#if getPriority 'High'}}  
+										<option>Low</option>
+										<option>Medium</option>
+										<option selected>High</option>
+									{{/if}}
+								{{/if}}
+							{{/if}}
+						
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label class="">Ideators</label>
+					</div>
+			    		<div class="col-xs-3">
+						<label class="">Ideas</label>
+					
+					</div>
+					<div class="col-xs-3">
+						<label class="">Minutes</label>
+					
+					</div>
+					<div class="col-xs-3">
+					
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group task-options col-xs-3">
+						<input class="form-control task-ideators" type="number" min="1" step="1" value="{{getIdeatorCount}}" />
+					</div>
+			    		<div class="form-group task-options col-xs-3">
+						<input  class="form-control task-ideas" type="number" min="3" step="1" value="{{getIdeaCount}}" />
+					</div>
+					<div class="form-group task-options col-xs-3">
+						<input  class="form-control task-minutes" type="number" min="1" step="1" value="{{getMinuteCount}}" />
+					</div>
+					<div class="form-group task-options col-xs-3">
+						<button type="button" class="btn btn-primary btn-block task-update">
+				      			Update
+				    		</button>
+					</div>
+				</div>
+		  	</form>
+		</div>
+	{{/if}}
 </template>

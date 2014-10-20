@@ -38,7 +38,7 @@ TaskManager = (function() {
   return {
     types: ['timed', 'quantity', 'open'],
     create: function(user, prompt, group, desc, 
-              type, priority, num, ideas ) {
+              type, priority, num, ideas, ideasRequested, minutesRequested) {
       /**************************************************************
        * Creates a new task, inserts into DB, and returns it
        * @Params
@@ -54,7 +54,7 @@ TaskManager = (function() {
        *  task - the newly created task
        * **********************************************************/
       var task = new Task(user, prompt, group, 
-        desc, type, priority, num);
+        desc, type, priority, num, ideasRequested, minutesRequested);
       //Attach inspiration to task
       task._id = Tasks.insert(task);
       if (ideas) {
