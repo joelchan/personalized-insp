@@ -1,0 +1,31 @@
+<template name="AllIdeasItem">
+<li id=idea-{{_id}} class="allIdea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
+  <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
+  </i>
+  {{ content }} 
+</li>
+</template>
+
+<template name="AllIdeasList">
+  <div id="hcomp-allideas-container">
+    <ul id="allideaslist">
+      {{#each ideas}}
+        {{> AllIdeasItem}}
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name = "HcompResultsPage">
+	<div id = "hccompresultspage">
+		<div class = "title-container">
+	      <h1>Brainstorm Results</h1>
+	    </div>
+	 	<div class="all-interface row">
+	   		<div id="allIdeasColumn" class="col-sm-3">
+		    	<h3> All Ideas </h3>
+		        {{> AllIdeasList }}
+			</div>
+	  	</div>
+  	</div>
+</template>
