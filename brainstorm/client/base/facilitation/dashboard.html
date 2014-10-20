@@ -3,18 +3,72 @@
 		<div class="ideas-view col-sm-3">
       {{> Ideabox }}
     </div>
-    <div class="themes-view col-sm-4">
-      {{> ThemeViz }}
-      <h3>Chat with Theme Finders</h3>
-      {{> ChatMessages }}
-      {{> ChatInput }}
+    <div class="tasks-view col-sm-5">
+      <h3>Focus the Brainstorm!</h3>
+      {{> TaskList }}
+      {{> CreateTaskButton }}
     </div>
-    <div class="ideators-stats col-sm-5">
-      {{> IdeatorPanels }}
-    </div> <!-- close ideator-stats col -->
+    <div class="notes-view col-sm-4">
+      <h3>Understand What's Going On!</h3>
+      {{> BigPictureViz }}
+      {{> ScratchPad }}
+    </div> <!-- close notes-view col -->
   </div> <!-- close dashboard container -->
 </template>
 
+<template name="Ideabox">
+  <div class="ideas row">
+    <!--List of Ideas-->
+    <div class="col-md-8">
+      <h3>Ideas 
+        <span class="quantity">
+          ({{ numIdeas }})
+        </span>
+      </h3>
+      {{> filterbox}}
+    </div>
+    <div id="filters" class="col-md-4">
+      <h3>Applied Filters</h3>
+      {{>activefilters}}
+    </div>
+  </div> <!--End Ideas-->
+</template>
+
+<template name="TaskList">
+  <div class="row">
+    <h3>Focus the Brainstorm!</h3>
+  </div>
+  {{ > CreateTaskButton }}
+</template>
+
+<template name="CreateTaskButton">
+  <div class="row">
+  </div>
+</template>
+
+<template name="BigPictureViz">
+  <div class="row">
+  </div>
+</template>
+
+<template name="ScratchPad">
+  <div class="row">
+  </div>
+</template>
+
+<template name="TagCloud">
+  <div id="tagcloud">
+    {{#each clusters}}
+      <span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}">
+        <a href="">{{name}} ({{getClusterSize}})</a>
+      </span>
+    {{/each}}
+  </div>
+</template>
+
+<!-- ############################################ -->
+<!-- Old unused stuff -->
+<!-- ############################################ -->
 
 <template name="ThemeViz">
   <div class="vizes row">
@@ -27,24 +81,6 @@
 		  </div>
 	  </div>
   </div>
-</template>
-
-<template name="Ideabox">
-	<div class="ideas row">
-	  <!--List of Ideas-->
-		<div class="col-md-8">
-			<h3>Ideas 
-				<span class="quantity">
-          ({{ numIdeas }})
-        </span>
-		  </h3>
-			{{> filterbox}}
-		</div>
-		<div id="filters" class="col-md-4">
-			<h3>Applied Filters</h3>
-			{{>activefilters}}
-		</div>
-	</div> <!--End Ideas-->
 </template>
 
 <template name="IdeatorPanels">
@@ -259,16 +295,6 @@
 		<label><input type="radio" name="userSelectRadios" id="userSelectRadios{{this._id}}" value="{{this._id}}">
 			{{this.name}}
 		</label>
-	</div>
-</template>
-
-<template name="TagCloud">
-	<div id="tagcloud">
-		{{#each clusters}}
-			<span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}">
-        <a href="">{{name}} ({{getClusterSize}})</a>
-      </span>
-		{{/each}}
 	</div>
 </template>
 
