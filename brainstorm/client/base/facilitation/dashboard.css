@@ -37,6 +37,11 @@
     /*float:right;*/
 }
 
+.dashboard .tasks-view .new-task-btn {
+    text-align: center;
+    padding:15px;
+}
+
 .dashboard .tasks-view #new-task-btn .btn {
     background-color:#d58512;
     border-radius: 25px;

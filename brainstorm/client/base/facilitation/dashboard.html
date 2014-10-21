@@ -3,14 +3,16 @@
 		<div class="ideas-view col-sm-3">
       {{> Ideabox }}
     </div>
-    <div class="tasks-view col-sm-5">
+    <div class="tasks-view col-sm-4">
       <h3>Focus the Brainstorm!</h3>
-      <a href="#" class="show-modal" id="new-task-btn" 
-      data-toggle="modal" data-target="#new-task-modal">
-        <button type="button" class="btn btn-primary">
-        Create New Task
-        </button>
-      </a>
+      <div class="row new-task-btn">
+        <a href="#" class="show-modal" id="new-task-btn" 
+        data-toggle="modal" data-target="#new-task-modal">
+          <button type="button" class="btn btn-primary">
+          Create New Task
+          </button>
+        </a>
+      </div>
       {{> TaskList }}
     </div>
     <div class="notes-view col-sm-4">
@@ -41,7 +43,35 @@
 
 <template name="TaskList">
   <div class="row">
+    <div id="tasks" class="panel">   
+      <div class="panel-group" id="accordion">
+        {{#each tasks}}
+          {{> TaskItem}}
+        {{/each}}
+      </div>
+    </div>
     {{> NewTaskModal }}
+  </div>
+</template>
+
+<template name="TaskItem">
+  <div class="panel panel-default task-item">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <!-- <label class="time-label">{{time}}</label> -->
+        <a data-toggle="collapse" data-parent="#{{_id}}" href="#{{_id}}">
+          <i class="fa fa-chevron-circle-right"></i> 
+          {{title}}  
+          <span class="priority-label" style="float:right;"></span>
+        </a>
+      </h4>
+      <span style="float:right;">{{totalTaskIdeas}}</span>
+    </div>
+    <div id="{{_id}}" class="panel-collapse collapse">
+      <div class="panel-body">
+        {{this.desc}}
+      </div>
+    </div>
   </div>
 </template>
 

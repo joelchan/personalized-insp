@@ -82,6 +82,14 @@ Template.Dashboard.rendered = function(){
 
 }
 
+Template.TaskItem.rendered = function(){
+
+    // this should programmatically write in the priority label that matches 
+    // the priority attached to the task
+    $('<i class="fa fa-exclamation"></i>')
+       .appendTo('.task-item div.panel-heading .priority-label');
+}
+
 Template.userseries.rendered = function(){
 	// var self = this;
 	// var userID = self.data._id;
@@ -345,12 +353,51 @@ Template.Ideabox.helpers({
   },
 });
 
-Template.ChangePromptModal.helpers({
+Template.NewTaskModal.helpers({
     // participants : function(){
     //     // return MyUsers.find({type: "Experiment Participant"});
     //     return MyUsers.find({type: "Ideator"});
     //     // return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
     // },
+});
+
+Template.TaskList.helpers({
+    
+    // this should return the list of tasks
+    tasks : function() {
+    
+        // temporary creating a new task for making the UI
+        var task1 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
+          "This is a test task", 'open', priority=5, num=5);
+        //Attach inspiration to task
+        task1._id = Tasks.insert(task1);
+        var task2 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
+          "This is another test task. Much much longer though. Will have to truncate to fit into the title bar", 'open', priority=3, num=5);
+        //Attach inspiration to task
+        task2._id = Tasks.insert(task2);
+
+        return Tasks.find().fetch();
+    },
+
+});
+
+Template.TaskItem.helpers({
+
+    title : function() {
+        var titleLength = 50;
+        return this.desc.substring(0,titleLength) + "...";
+    },
+
+    // this should return the number of ideas attached to a given task
+    totalTaskIdeas : function() {
+        return 15;
+    },
+
+    // this should return the number of ideas generated for a task since the user last looked at it
+    newTaskIdeas : function() {
+        return 4;
+    },
+
 });
 
 Template.TagCloud.helpers({
