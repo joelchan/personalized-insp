@@ -25,10 +25,32 @@
 .dashboard button{
 	margin-top: 0px;
 }
-.dashboard #people-view #actions .btn-group .btn {
-	font-weight: bold;
-	border:none;
+
+/* new task creation */
+.dashboard .tasks-view #new-task-modal .modal-footer {
+    height: 80px;
+    margin-top:0px;
+    padding: 10px;
 }
+
+.dashboard .tasks-view #new-task-modal .modal-footer .btn {
+    /*float:right;*/
+}
+
+.dashboard .tasks-view #new-task-btn .btn {
+    background-color:#d58512;
+    border-radius: 25px;
+    margin:auto;
+    width:80%;
+    font-size: 25px;
+    border:none;
+}
+
+.dashboard .tasks-view #new-task-modal #task-options {
+    text-align: left;
+    float:left;
+}
+
 .dashboard .gamechangestar, .modal .gamechangestar{
 	float: right;
 	color: #f0ad4e;
@@ -141,7 +163,6 @@
 	margin-bottom: 10px;
 }
 
-
 .quantity{
 	font-size: 15px;
 }
@@ -163,6 +184,7 @@
 #filters .active-filters span i{
 	padding-top: 0px;
 }
+
 /*.part-label, .partfilter-label, .clusterfilter-label{
 	padding-left: 0em;
 }
@@ -178,12 +200,9 @@
 	margin: 2px;
 }*/
 
-
 .changeprompt{
 	height: 40%;
 }
-
-
 
 .profile .name-icon{
 	display: inline-block;
@@ -193,78 +212,10 @@
 
 }
 
-#sendThemeModal-clusterlist{
-	max-height: 200px;
-	overflow: auto;
-}
-
-#sendThemeModal .theme{
-	margin: 5px;
-}
-
-#sendExModal .send-examples-filterbox {
-	max-height: 300px;
-	overflow: auto;
-}
-
-.modal > div > div > div.modal-body > div.userSelectList {
-	padding-left: 5px;
-}
-
-#people{
-	overflow: hidden;
-}
-
-#checkall-btn-group{
-	margin-bottom: 10px;
-}
-
-#people-view hr{
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-.profile{
-	display: inline-flex;
-	width: 100%;
-	height: 70px;
-}
-
-.profile form{
-	width:75px;
-}
-
-.people .form-inline {
-  padding: 0;
-}
-
-.series{
-	height:100%;
-	/*z-index: 100;*/
-}
-
-.bar {
-	z-index: 100;
-}
-
-.nowLine{
-	opacity: 0.30;
-	fill: gray;
-	z-index: -100;
-}
-
-#examples {
-	border: solid 1px #ddd;	
-	border-radius: 5px;
-	height: 130px;
-	overflow: auto;
-}
-
 .checkbox{
 	height: 70px;
 
 }
-
 
 /*.fa-minus-circle{
 	cursor: pointer;
@@ -283,6 +234,82 @@
 
 .modal h3{
 	margin-top: 10px;
+}
+
+/*********************************
+* deprecated
+**********************************/
+
+.dashboard #people-view #actions .btn-group .btn {
+    font-weight: bold;
+    border:none;
+}
+
+#sendThemeModal-clusterlist{
+    max-height: 200px;
+    overflow: auto;
+}
+
+#sendThemeModal .theme{
+    margin: 5px;
+}
+
+#sendExModal .send-examples-filterbox {
+    max-height: 300px;
+    overflow: auto;
+}
+
+.modal > div > div > div.modal-body > div.userSelectList {
+    padding-left: 5px;
+}
+
+#people{
+    overflow: hidden;
+}
+
+#checkall-btn-group{
+    margin-bottom: 10px;
+}
+
+#people-view hr{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.profile{
+    display: inline-flex;
+    width: 100%;
+    height: 70px;
+}
+
+.profile form{
+    width:75px;
+}
+
+.people .form-inline {
+  padding: 0;
+}
+
+.series{
+    height:100%;
+    /*z-index: 100;*/
+}
+
+.bar {
+    z-index: 100;
+}
+
+.nowLine{
+    opacity: 0.30;
+    fill: gray;
+    z-index: -100;
+}
+
+#examples {
+    border: solid 1px #ddd; 
+    border-radius: 5px;
+    height: 130px;
+    overflow: auto;
 }
 
 .axis path,

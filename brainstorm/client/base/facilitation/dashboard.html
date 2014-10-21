@@ -5,8 +5,13 @@
     </div>
     <div class="tasks-view col-sm-5">
       <h3>Focus the Brainstorm!</h3>
+      <a href="#" class="show-modal" id="new-task-btn" 
+      data-toggle="modal" data-target="#new-task-modal">
+        <button type="button" class="btn btn-primary">
+        Create New Task
+        </button>
+      </a>
       {{> TaskList }}
-      {{> CreateTaskButton }}
     </div>
     <div class="notes-view col-sm-4">
       <h3>Understand What's Going On!</h3>
@@ -36,13 +41,66 @@
 
 <template name="TaskList">
   <div class="row">
+    {{> NewTaskModal }}
   </div>
-  {{ > CreateTaskButton }}
 </template>
 
-<template name="CreateTaskButton">
-  <div class="row">
+<template name="NewTaskModal">
+  <!--Change Prompt Modal-->
+  <div class="modal fade" id="new-task-modal" tabindex="-1" 
+    role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" 
+            aria-hidden="true">
+            &times;
+          </button>
+          <h3 class="modal-title" id="myModalLabel">New Task</h3>
+        </div> <!-- close modal-header -->
+        <div class="modal-body">
+          <div class="form-group">
+            <textarea class="form-control" rows="5" id="new-prompt" 
+              placeholder="Enter task instructions here...">
+            </textarea>
+          </div>
+        </div> <!-- close modal-body -->
+        {{> ModalButtons }}
+      </div> <!-- close modal-content -->
+    </div> <!-- close modal-dialog -->
+  </div> <!-- close changeModal -->
+</template>
+
+<template name="ModalButtons">
+  <div class="modal-footer">
+    {{> TaskOptions }}
+    <button type="button" class="btn btn-default" 
+      data-dismiss="modal">
+      Close
+    </button>
+    <button type="button" class="btn btn-primary" 
+      data-dismiss="modal">
+      Send
+    </button>
   </div>
+</template>
+
+<template name="TaskOptions">
+  <span id="task-options">   
+    <label>Priority </label>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span data-bind="label">Select One</span>&nbsp;<span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li><a href="#">High</a></li>
+        <li><a href="#">Medium</a></li>
+        <li><a href="#">Low</a></li>
+        <li><a href="#">Closed</a></li>
+      </ul>
+    </div> <!-- close btn-body -->
+    ( <a href="">more options</a> | <a href="">presets</a> )
+  </span> 
 </template>
 
 <template name="BigPictureViz">
@@ -258,19 +316,6 @@
     </div> <!-- close modal-dialog -->
   </div> <!-- close sendThemeModal -->
 </template> 
-
-<template name="ModalButtons">
-  <div class="modal-footer">
-    <button type="button" class="btn btn-default" 
-      data-dismiss="modal">
-      Close
-    </button>
-    <button type="button" class="btn btn-primary" 
-      data-dismiss="modal">
-      Send
-    </button>
-  </div>
-</template>
 
 <template name="idea">
 <div id={{this._id}} class="idea">
