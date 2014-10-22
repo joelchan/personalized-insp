@@ -1,0 +1,28 @@
+.hccompresultspage #allideaslist{
+	background-color: #f5f5f5;
+  	min-height: 500px;
+	list-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+ 	padding: 5px;
+}
+
+.hccompresultspage #allIdeasColumn{
+  padding-left: 50px;
+}
+
+
+.hccompresultspage li.allIdea-item{
+	border: solid 1px #ddd;
+	margin: 5px;
+	padding: 5px;
+	background-color: #fff;
+	cursor: pointer;
+}
+li.allIdea-item .gamechangestar{
+	float: left;
+  padding: 2px 5px 2px 0;
+	color: #f0ad4e;
+	text-shadow: 1px 1px #ddd; /*#eea236;*/
+}
+
