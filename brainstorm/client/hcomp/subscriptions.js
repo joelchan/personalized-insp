@@ -11,5 +11,3 @@ Meteor.startup(function(){
 
 });
 
-// Manually define dictionary of all collections
-MyCollections['tasks'] = Tasks;
