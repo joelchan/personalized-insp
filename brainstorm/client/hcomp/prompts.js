@@ -1,23 +1,23 @@
 // Configure logger for Tools
-var logger = new Logger('Client:Exp:Prompts');
+var logger = new Logger('Client:Hcomp:Prompts');
 // Comment out to use global logging level
-Logger.setLevel('Client:Exp:Prompts', 'trace');
-//Logger.setLevel('Client:Exp:Prompts', 'debug');
-//Logger.setLevel('Client:Exp:Prompts', 'info');
-//Logger.setLevel('Client:Exp:Prompts', 'warn');
+Logger.setLevel('Client:Hcomp:Prompts', 'trace');
+//Logger.setLevel('Client:Hcomp:Prompts', 'debug');
+//Logger.setLevel('Client:Hcomp:Prompts', 'info');
+//Logger.setLevel('Client:Hcomp:Prompts', 'warn');
 
 /********************************************************************
  * Return the list of all prompts
  * *****************************************************************/
-Template.MTurkPromptPage.prompts = function() {
+Template.CrowdPromptPage.prompts = function() {
   return Prompts.find();
 };
 
-Template.MTurkPromptPage.rendered = function() {
+Template.CrowdPromptPage.rendered = function() {
   window.scrollTo(0,0);
 }
 
-Template.MTurkBrainstorm.helpers({
+Template.CrowdBrainstorm.helpers({
   question: function() {
     return this.question;
   },
@@ -64,8 +64,12 @@ Template.MTurkBrainstorm.helpers({
     }
   },
   formUrl: function() {
-    return Meteor.absoluteUrl() + "Mturk/LoginPage/" + this._id;
-  }
+    //Get absolute base url and trim trailing slash
+    return Meteor.absoluteUrl().slice(0,-1);
+  },
+  promptID: function() {
+    return {promptID: this._id};
+  },
 });
 
 
@@ -73,7 +77,7 @@ Template.MTurkBrainstorm.helpers({
 /********************************************************************
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
-Template.MTurkPromptPage.events({
+Template.CrowdPromptPage.events({
     'click button.nextPage': function () {
         //Go to next page
     },
@@ -108,7 +112,7 @@ Template.MTurkPromptPage.events({
         logger.trace("found current prompt with id: " + prompt._id);
         Session.set("currentPrompt", prompt);
         logger.debug("Prompt selected");
-        Router.goToNextPage();
+        Router.go("HcompDashboard", {promptID: prompt._id});
       } else {
         logger.error("couldn't find current prompt with id: " + 
             prompt._id);

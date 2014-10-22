@@ -11,16 +11,13 @@ Router.map(function () {
   /***************************************************************
    * Define custom routes for hcomp pages
    * *************************************************************/
-  this.route('MTurkPromptPage', {
-      path: 'Mturk/Brainstorms/',
-      template: 'MTurkPromptPage',
-      onBeforeAction: function() {
-        var myUser = UserFactory.getAdmin();
-        Session.set("currentUser", myUser);
-      }
+  this.route('CrowdPromptPage', {
+      name: 'CrowdPromptPage',
+      path: 'crowd/Brainstorms/',
+      template: 'CrowdPromptPage',
   });
   this.route('HcompDashboard', {
-    path: 'crowd/Dashboard',
+    path: 'crowd/Dashboard/:promptID',
     template: 'HcompDashboard',
     onRun: function() {
       //Session.set("currentUser", MyUsers.findOne({_id: "db"}));
@@ -41,10 +38,17 @@ Router.map(function () {
     }, 
     onBeforeAction: function() {
       var sessionPrompt = Session.get("currentPrompt");
-      if (sessionPrompt.length > 0) {
-	      Session.set("sessionLength", sessionPrompt.length);	
-      } else {
-	      Session.set("sessionLength", 30);
+      if (this.ready()) {
+        var prompt = Prompts.findOne({_id: this.params.promptID});
+        if (prompt) {
+          console.log("setting current prompt");
+          Session.set("currentPrompt", prompt);
+          if (prompt.length > 0) {
+	          Session.set("sessionLength", prompt.length);	
+          } else {
+	          Session.set("sessionLength", 10);
+          }
+        }
       }
     },
     onAfterAction: function() {
@@ -129,6 +133,8 @@ Router.map(function () {
           }
         }
     },
+  });
+
 
 });
 

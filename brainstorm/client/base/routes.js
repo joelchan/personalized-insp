@@ -8,9 +8,13 @@ Logger.setLevel('Client:Routes', 'trace');
 
 //Maps routes to templates
 Router.map(function () {
+  //this.route("Home", {
+      //path: '/',
+      //template: 'LoginPage',
+  //});
   this.route("Home", {
       path: '/',
-      template: 'LoginPage',
+      template: 'HcompLoginPage',
   });
   this.route('PromptPage', {
       path: 'Brainstorms/',

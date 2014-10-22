@@ -38,3 +38,32 @@ Template.MTurkLoginPage.events({
       }
     },
 });
+
+Template.HcompLoginPage.rendered = function() {
+  // Ensure scroll to top of window
+  window.scrollTo(0,0);
+}
+
+/********************************************************************
+ * Login Page event listeners 
+ * *****************************************************************/
+Template.HcompLoginPage.events({
+    'click button.nextPage': function () {
+        //console.log("clicked continue");
+        //login user
+        var userName = $('input#name').val().trim();
+        logger.info("Logging in user with name: " + userName);
+        LoginManager.loginUser(userName);
+        var role = RoleManager.defaults['HcompFacilitator'];
+        Session.set("currentRole", role);
+        Router.go("CrowdPromptPage");
+
+    /********************* Disable experiment logic ************/
+    },
+    'keyup input#name': function (evt) {
+      if(evt.keyCode==13) {
+        //console.log("enter released, clicking continue");
+        $('#nextPage').click();
+      }
+    },
+});
