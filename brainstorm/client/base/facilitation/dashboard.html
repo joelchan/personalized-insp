@@ -14,6 +14,180 @@
   </div> <!-- close dashboard container -->
 </template>
 
+<template name="Ideabox">
+  <div class="ideas row">
+    <!--List of Ideas-->
+    <div class="col-md-8">
+      <h3>Ideas 
+        <span class="quantity">
+          ({{ numIdeas }})
+        </span>
+      </h3>
+      {{> filterbox}}
+    </div>
+    <div id="filters" class="col-md-4">
+      <h3>Applied Filters</h3>
+      {{>activefilters}}
+    </div>
+  </div> <!--End Ideas-->
+</template>
+
+<template name="TaskList">
+  <div class="row">
+    <div id="tasks" class="panel">   
+      <div class="panel-group" id="accordion">
+        {{#each tasks}}
+          {{> TaskItem}}
+        {{/each}}
+      </div>
+    </div>
+    {{> NewTaskModal }}
+    {{> EditTaskModal }}
+  </div>
+</template>
+
+<template name="TaskItem">
+  <div class="panel panel-default task-item">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <!-- <label class="time-label">{{time}}</label> -->
+        <a data-toggle="collapse" data-parent="#{{_id}}" href="#{{_id}}">
+          <i class="fa fa-chevron-circle-right"></i> 
+          {{title}}  
+          <span class="priority-label" style="float:right;"></span>
+        </a>
+        <span style="float:right;">{{totalTaskIdeas}}</span>
+      </h4>
+      
+    </div>
+    <div id="{{_id}}" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div class="row task-descr">
+          {{this.desc}}
+        </div>
+        <div class="row">
+          <div class="col-md-3 task-metadata">
+            {{activeIdeators}} active ideators
+          </div>
+          <div class="col-md-1 task-edit" style="float:right;">
+            <a href="#" class="show-modal" id="edit-task-btn" 
+        data-toggle="modal" data-target="#edit-task-modal">
+              <span class="fa fa-edit"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="NewTaskModal">
+  <!--Change Prompt Modal-->
+  <div class="modal fade" id="new-task-modal" tabindex="-1" 
+    role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" 
+            aria-hidden="true">
+            &times;
+          </button>
+          <h3 class="modal-title" id="myModalLabel">New Task</h3>
+        </div> <!-- close modal-header -->
+        <div class="modal-body">
+          <div class="form-group">
+            <textarea class="form-control" rows="5" id="new-prompt" 
+              placeholder="Enter task instructions here...">
+            </textarea>
+          </div>
+        </div> <!-- close modal-body -->
+        {{> ModalButtons }}
+      </div> <!-- close modal-content -->
+    </div> <!-- close modal-dialog -->
+  </div> <!-- close changeModal -->
+</template>
+
+<template name="EditTaskModal">
+  <!--Change Prompt Modal-->
+  <div class="modal fade" id="edit-task-modal" tabindex="-1" 
+    role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" 
+            aria-hidden="true">
+            &times;
+          </button>
+          <h3 class="modal-title" id="myModalLabel">New Task</h3>
+        </div> <!-- close modal-header -->
+        <div class="modal-body">
+          <div class="form-group">
+            <textarea class="form-control" rows="5" id="new-prompt" 
+              placeholder="Enter task instructions here...">
+            </textarea>
+          </div>
+        </div> <!-- close modal-body -->
+        {{> ModalButtons }}
+      </div> <!-- close modal-content -->
+    </div> <!-- close modal-dialog -->
+  </div> <!-- close changeModal -->
+</template>
+
+<template name="ModalButtons">
+  <div class="modal-footer">
+    {{> TaskOptions }}
+    <button type="button" class="btn btn-default" 
+      data-dismiss="modal">
+      Close
+    </button>
+    <button type="button" class="btn btn-primary" 
+      data-dismiss="modal">
+      Send
+    </button>
+  </div>
+</template>
+
+<template name="TaskOptions">
+  <span id="task-options">   
+    <label>Priority </label>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span data-bind="label">Select One</span>&nbsp;<span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li><a href="#">High</a></li>
+        <li><a href="#">Medium</a></li>
+        <li><a href="#">Low</a></li>
+        <li><a href="#">Closed</a></li>
+      </ul>
+    </div> <!-- close btn-body -->
+    ( <a href="">more options</a> | <a href="">presets</a> )
+  </span> 
+</template>
+
+<template name="BigPictureViz">
+  <div class="row">
+  </div>
+</template>
+
+<template name="ScratchPad">
+  <div class="row">
+  </div>
+</template>
+
+<template name="TagCloud">
+  <div id="tagcloud">
+    {{#each clusters}}
+      <span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}">
+        <a href="">{{name}} ({{getClusterSize}})</a>
+      </span>
+    {{/each}}
+  </div>
+</template>
+
+<!-- ############################################ -->
+<!-- Old unused stuff -->
+<!-- ############################################ -->
 
 <template name="ThemeViz">
   <div class="vizes row">
@@ -26,24 +200,6 @@
 		  </div>
 	  </div>
   </div>
-</template>
-
-<template name="Ideabox">
-	<div class="ideas row">
-	  <!--List of Ideas-->
-		<div class="col-md-8">
-			<h3>Ideas 
-				<span class="quantity">
-          ({{ numIdeas }})
-        </span>
-		  </h3>
-			{{> filterbox}}
-		</div>
-		<div id="filters" class="col-md-4">
-			<h3>Applied Filters</h3>
-			{{>activefilters}}
-		</div>
-	</div> <!--End Ideas-->
 </template>
 
 <template name="IdeatorPanels">
@@ -223,19 +379,6 @@
   </div> <!-- close sendThemeModal -->
 </template> 
 
-<template name="ModalButtons">
-  <div class="modal-footer">
-    <button type="button" class="btn btn-default" 
-      data-dismiss="modal">
-      Close
-    </button>
-    <button type="button" class="btn btn-primary" 
-      data-dismiss="modal">
-      Send
-    </button>
-  </div>
-</template>
-
 <template name="idea">
 <div id={{this._id}} class="idea">
   <i class="fa fa-lg {{#if this.isGamechanger}} 
@@ -258,16 +401,6 @@
 		<label><input type="radio" name="userSelectRadios" id="userSelectRadios{{this._id}}" value="{{this._id}}">
 			{{this.name}}
 		</label>
-	</div>
-</template>
-
-<template name="TagCloud">
-	<div id="tagcloud">
-		{{#each clusters}}
-			<span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}">
-        <a href="">{{name}} ({{getClusterSize}})</a>
-      </span>
-		{{/each}}
 	</div>
 </template>
 

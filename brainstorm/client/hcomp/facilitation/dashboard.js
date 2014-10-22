@@ -376,6 +376,8 @@ Template.HcompTaskList.helpers({
         //Attach inspiration to task
         task2._id = Tasks.insert(task2);
 
+        console.log(Tasks.find().fetch());
+
         return Tasks.find().fetch();
     },
 
@@ -384,7 +386,7 @@ Template.HcompTaskList.helpers({
 Template.HcompTaskItem.helpers({
 
     title : function() {
-        var titleLength = 50;
+        var titleLength = 25;
         return this.desc.substring(0,titleLength) + "...";
     },
 
@@ -398,6 +400,15 @@ Template.HcompTaskItem.helpers({
         return 4;
     },
 
+    // this should return the number of ideators that are actively working on the task
+    activeIdeators : function() {
+        return 7;
+    }
+
+});
+
+Template.OverallStats.helpers({
+    // code for ideation stats here
 });
 
 Template.HcompTagCloud.helpers({

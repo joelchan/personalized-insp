@@ -51,25 +51,44 @@
       </div>
     </div>
     {{> HcompNewTaskModal }}
+    {{> HcompEditTaskModal }}
   </div>
 </template>
 
 <template name="HcompTaskItem">
   <div class="panel panel-default task-item">
-    <div class="panel-heading">
+    <div class="panel-heading clearfix">
       <h4 class="panel-title">
         <!-- <label class="time-label">{{time}}</label> -->
         <a data-toggle="collapse" data-parent="#{{_id}}" href="#{{_id}}">
           <i class="fa fa-chevron-circle-right"></i> 
           {{title}}  
           <span class="priority-label" style="float:right;"></span>
+          <span style="float:right;">{{totalTaskIdeas}}</span>
+          {{#if newTaskIdeas}}
+            <span class="badge pull-right">{{newTaskIdeas}}</span>
+            <!-- <span class="badge">5</span> -->
+          {{/if}}
         </a>
       </h4>
-      <span style="float:right;">{{totalTaskIdeas}}</span>
+      
     </div>
     <div id="{{_id}}" class="panel-collapse collapse">
       <div class="panel-body">
-        {{this.desc}}
+        <div class="row task-descr">
+          {{this.desc}}
+        </div>
+        <div class="row">
+          <div class="col-md-3 task-metadata">
+            {{activeIdeators}} active ideators
+          </div>
+          <div class="col-md-1 task-edit" style="float:right;">
+            <a href="#" class="show-modal" id="edit-task-btn" 
+        data-toggle="modal" data-target="#edit-task-modal">
+              <span class="fa fa-edit"></span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -78,6 +97,32 @@
 <template name="HcompNewTaskModal">
   <!--Change Prompt Modal-->
   <div class="modal fade" id="new-task-modal" tabindex="-1" 
+    role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" 
+            aria-hidden="true">
+            &times;
+          </button>
+          <h3 class="modal-title" id="myModalLabel">New Task</h3>
+        </div> <!-- close modal-header -->
+        <div class="modal-body">
+          <div class="form-group">
+            <textarea class="form-control" rows="5" id="new-prompt" 
+              placeholder="Enter task instructions here...">
+            </textarea>
+          </div>
+        </div> <!-- close modal-body -->
+        {{> HcompModalButtons }}
+      </div> <!-- close modal-content -->
+    </div> <!-- close modal-dialog -->
+  </div> <!-- close changeModal -->
+</template>
+
+<template name="HcompEditTaskModal">
+  <!--Change Prompt Modal-->
+  <div class="modal fade" id="edit-task-modal" tabindex="-1" 
     role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog ">
       <div class="modal-content">
@@ -134,13 +179,18 @@
 </template>
 
 <template name="HcompBigPictureViz">
-  <div class="row">
+  <div class="row" id="big-picture-viz">
+      <div class="col-md-1">
+        {{> HcompOverallStats}}
+      </div>
+      <div class="col-md-3">
+        {{> HcompTagCloud }}
+      </div>
   </div>
 </template>
 
-<template name="HcompScratchPad">
-  <div class="row">
-  </div>
+<template name="HcompOverallStats">
+  <span class="fa fa-lightbulb-o"></span>
 </template>
 
 <template name="HcompTagCloud">
@@ -150,6 +200,17 @@
         <a href="">{{name}} ({{getClusterSize}})</a>
       </span>
     {{/each}}
+  </div>
+</template>
+
+<template name="HcompScratchPad">
+  <div class="row" id="scratchpad">
+    <h3>Scratchpad</h3>
+    <div class="form-group">
+      <textarea class="form-control" rows="6" id="fac-notes" 
+        placeholder="Take notes here...">
+      </textarea>
+    </div>
   </div>
 </template>
 
