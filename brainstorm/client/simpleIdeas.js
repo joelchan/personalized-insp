@@ -290,7 +290,7 @@ Template.NotificationDrawer.rendered = function(){
         // #accordion > div:nth-child(1) > div.panel-heading
       }, 1000);
 
-  Notifications.find({recipient: Session.get("currentUser")._id, handled: false}).observe({
+  Notifications.find({recipientIDs: Session.get("currentUser")._id, handled: false}).observe({
     added : function(doc){
       newNotify = doc;//Notifications.findOne({_id: doc}); //holds new notification
       // Meteor.clearInterval(messageAlertInterval);
@@ -302,7 +302,7 @@ Template.NotificationDrawer.rendered = function(){
 //Helpers
 Template.NotificationDrawer.helpers({
   notifications : function(){
-    return Notifications.find({recipient: Session.get("currentUser")._id}, {sort: {time: -1}});
+    return Notifications.find({recipientIDs: Session.get("currentUser")._id}, {sort: {time: -1}});
   },
   directions : function(){
     return this.type.val === -1;
@@ -317,18 +317,18 @@ Template.NotificationDrawer.events({
   'click a' : function(){
     var $notification = $(event.target).parent().parent().parent();
     var id = $notification.children('.panel-collapse').attr('id');
-
-    if(!Notifications.findOne({_id: id}).handled){
+    var notification = Notifications.findOne({_id: id});
+    if(!notification.handled){
       Notifications.update({_id: id}, {$set: {handled: true}});
-      EventLogger.logNotificationHandled(Session.get("currentParticipant"), id);
+      EventLogger.logNotificationHandled(notification);
       //return false; //handled event is same as first expansion event
     } else {
       var context = $(event.target).parent('.panel-heading').context;
       if($(context).hasClass("collapsed")){
-        EventLogger.logNotificationExpanded(Session.get("currentParticipant"), id);
+        EventLogger.logNotificationExpanded(notification);
         //console.log("logging expansion");
       } else {
-        EventLogger.logNotificationCollapsed(Session.get("currentParticipant"), id);
+        EventLogger.logNotificationCollapsed(notification);
         //console.log("logging collapse");
       }
     }
@@ -361,7 +361,7 @@ Template.NotificationDrawer.events({
 //Helpers
 Template.SubmitIdeas.helpers({
   number : function(){
-    return Notifications.find({recipient: Session.get("currentUser")._id, handled: false}).count(); 
+    return Notifications.find({recipientIDs: Session.get("currentUser")._id, handled: false}).count(); 
   }
 });
 //Events
@@ -379,7 +379,7 @@ Template.SubmitIdeas.events({
       // Clear the text field
       $('#nextIdea').val('');
       //Scroll window to new idea
-      $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
+      // $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
     },
 
     'click #request-help' : function(){

@@ -64,6 +64,10 @@ Router.map(function () {
       path: 'select/',
       template: 'RoleSelectPage'
   });
+  this.route('BeginBrainstormPage', {
+    path: 'BeginBrainstorm/',
+    template: 'BeginBrainstormPage'
+  });
   this.route('ExpAdminPage', {
       path: 'ExpAdmin/',
       template: 'ExpAdminPage'
@@ -91,19 +95,6 @@ Router.map(function () {
     }
 
   });
-  //this.route('IdeationPage', {
-  	//path: 'Ideation/:_id',
-  	//template: 'IdeationPage',
-    //data: function() {
-      //return Experiments.findOne({_id: this.params._id});
-    //},
-    ////waitOn: function() {
-        ////return Meteor.subscribe('ideas');
-        ////},
-    //onRun: function() {
-      //Session.set("currentExp", Experiments.findOne({_id: this.params._id}));
-    //}
-  //});
   this.route('CustomConsentPage', {
       path: 'ConsentPage/:_id',
       template: 'ConsentPage'
@@ -142,9 +133,15 @@ Router.map(function () {
         //Filters.findOne({user: MyUsers.findOne({_id: "syn"})}));
     },
     waitOn: function(){
-      return [Meteor.subscribe('notifications'), 
+      var group = Session.get("currentGroup");
+      console.log(group['assignments']['Ideator']);
+      var ideatorIDs = getIDs(group['assignments']['Ideator'])
+      var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      return [
+          Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
+          Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
+          Meteor.subscribe('notifications'), 
           Meteor.subscribe('filters'), 
-          Meteor.subscribe('ideasToProcess'),
           Meteor.subscribe('groups'),
           ];
     },
@@ -170,11 +167,27 @@ Router.map(function () {
       //Session.set("currentUser", MyUsers.findOne({_id: "db"}));
     },
     waitOn: function() {
-      return [Meteor.subscribe('events'),
+      var group = Session.get("currentGroup");
+      console.log(group['assignments']['Ideator']);
+      console.log("************************************************");
+      var ideatorIDs = getIDs(group['assignments']['Ideator'])
+      var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      return [
+          Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
+          Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
+          Meteor.subscribe('events'),
           Meteor.subscribe('filters'), 
           Meteor.subscribe('groups')
       ];
     }, 
+    onBeforeAction: function() {
+      var sessionPrompt = Session.get("currentPrompt");
+      if (sessionPrompt.length > 0) {
+	      Session.set("sessionLength", sessionPrompt.length);	
+      } else {
+	      Session.set("sessionLength", 30);
+      }
+    },
     action: function(){
       if(this.ready())
         this.render();
@@ -224,14 +237,14 @@ Router.configure({
 
 var initRolePage = function() {
   if ($('.exitStudy').length == 0) {
-    $('.login').append('<button id="exitStudy" class="exitStudy btn-sm btn-default btn-primary">Exit Early</button>');
+    var exitStudyBtn = UI.render(Template.ExitStudy);
+    UI.insert(exitStudyBtn, $('.login')[0]);
   }
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
     logger.info("exiting study early");
     EventLogger.logExitStudy();
     EventLogger.logEndRole();
-    //EventLogger.logExitStudy(Session.get("currentParticipant"));
     exitPage();
   });
   //Add timer

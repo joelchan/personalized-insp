@@ -1,132 +1,96 @@
-//Session.set("partFilters", []);
-Session.set("selectedParts", []);
-Session.set("selectedIdeas", []);
-Session.set("sessionLength", 30);
 var filters = {
 	partFilters: [],
 	clusterFilters: [],
 	gamchanger: [true, false]
 }
 
-/////////////////////////// Demo code //////////////////////////
-
-
-///////// Sample Filtering code /////////////////////////////////
-//FilterFactory.addSort(myFilter, 'user', [1,2,3]);
-//FilterFactory.performQuery(myFilter);
-
-// var myFilter = FilterFactory.create("Dashboard Participant Filter",
-//     Session.get("currentUser"),
-//     "ideas"
-//     );
-
-// console.log(getCollection(myFilters));
-
-// myFilters = Filters.findOne({name: "Dashboard Participant Filter", 
-//               user: Session.get("currentUser")
-// });
-
-// filter.filter = [{key: "_id", val: {$in: clusterIdeas}},
-//       {key: "isGamechanger", val: {$in: filters.gamchanger}}];
-
-
-
-////////////////////////////////////////////////////////////////
-
-
-
-
-Session.set("idealistFilters", filters);
 MS_PER_MINUTE = 60000;
 
 Template.Dashboard.rendered = function(){
+
+  Session.set("idealistFilters", filters);
+  Session.set("selectedParts", []);
+  Session.set("selectedIdeas", []);
+  
   window.scrollTo(0,0);
-	$('.menu-link').bigSlide();
-}
+  $('.menu-link').bigSlide();
+  Notifications.find({
+    recipientIDs: Session.get("currentUser")._id,
+    'type.val': NotificationTypes.REQUEST_HELP.val
+    }).observe({
+    added: function(newMsg) {
+      console.log("***********************************************");
+      console.log("***********************************************");
+      console.log(newMsg)
+      console.log("Alert generated handled");
+      console.log("***********************************************");
+      console.log("***********************************************");
+      var msgSenderDivID = '#uname-' + newMsg.sender;
+      var alertDivID = msgSenderDivID + " .alert-msg";
+      if (!newMsg.handled && ($(alertDivID).length == 0)) {
+        var msg = UI.render(Template.HelpMessage);
+        UI.insert(msg, $(msgSenderDivID)[0]);
+      }
+      if (!$(msgSenderDivID).hasClass("flashing")) {
+        $(msgSenderDivID).addClass("flashing");
+        var alertTimer = {'time': 10};
+        Session.set(msgSenderDivID, alertTimer);
+  		  alertTimer['interval'] = Meteor.setInterval(function(){
+          console.log("message alert interval");
+          var alertTime = Session.get(msgSenderDivID);
+          if (alertTime['time'] != 0) {
+  			    $(msgSenderDivID).toggleClass('flash-alert');
+            alertTime['time'] = alertTime['time'] - 1;
+            Session.set(msgSenderDivID, alertTime)
+          } else {
+            $(msgSenderDivID).removeClass("flashing");
+            Meteor.clearTimeout(alertTime['interval']);
+          }
 
-Template.tagcloud.rendered = function(){
-	// var self = this;
-	// self.node = self.find("svg");
-	// var w = 453;
-	// var h = 280;
-	// var hPad = 20;
-	// var wPad = 30;
-	// var svg = d3.select("#tagcloud")
-	// 			.append("svg")
-	// 			.attr("height", h)
-	// 			.attr("width", w);
+  		  }, 500);
+        Session.set(msgSenderDivID, alertTimer);
+      }
+    },
+      
+  	changed: function(newMsg, oldMsg){
+      console.log("***********************************************");
+      console.log("***********************************************");
+      console.log(newMsg)
+      console.log("Msg handled");
+      console.log("***********************************************");
+      console.log("***********************************************");
+      var msgSenderDivID = '#uname-' + newMsg.sender;
+      var alertDivID = msgSenderDivID + " .alert-msg";
+      if (newMsg.handled) {
+        console.log("Msg handled");
+        $(alertDivID).remove();
+        if (!$(msgSenderDivID).hasClass("flash-alert")) {
+          $(msgSenderDivID).removeClass("flash-alert");
+        }
+        if (!$(msgSenderDivID).hasClass("flashing")) {
+          $(msgSenderDivID).removeClass("flashing");
+          Meteor.clearTimeout(
+            Session.get(msgSenderDivID)['interval']
+          );
+        }
+      } else {
+        console.log("Alert generated handled");
+        //$('#uname-' + newMsg.sender)
+      }
+    }
+  });
 
-	// var timeDep = new Deps.Dependency();
-	// Deps.autorun(function () {
-	// 	timeDep.depend();
-	// 	var clusters = Clusters.find().fetch();
-
- //    	var xScale = d3.scale.linear()
-	// 					.domain([d3.min(clusters, function(d){
-	// 						if(d.position !== undefined) return d.position.left;
-	// 					}), d3.max(clusters, function(d) {
-	// 						if(d.position !== undefined) return d.position.left; 
-	// 					})])
-	// 					.range([wPad, w - wPad*3]);
-
-	// 	var yScale = d3.scale.linear()
-	// 					.domain([d3.min(clusters, function(d){
-	// 						if(d.position !== undefined) return d.position.top;
-	// 					}), d3.max(clusters, function(d) {
-	// 						if(d.position !== undefined) return d.position.top;
-	// 					})])
-	// 					.range([hPad, h - hPad]);
-
-	// 	var wsScale = d3.scale.linear()
-	// 					.domain([0, d3.max(clusters, function(d){
-	// 						if(d.ideas !== undefined) return d.ideas.length;
-	// 					})])
-	// 					.range([10, 25]);
-
- //    	var tags = svg.selectAll("text")
- //    				.data(clusters);
-
- //    	tags.enter()
- //   			.append("text")
- //    		.attr("x", function(d){
- //    			if(d.position !== undefined)
- //    				return xScale(d.position.left);
- //   			})
- // 			.attr("y", function(d){
- //    			if(d.position !== undefined)
- //    				return yScale(d.position.top);
- //    		})
- //    		.style("font-size", function(d){
- //    			if(d.ideas !== undefined){
- //    				//console.log(wsScale(d.ideas.length));
- //    				return wsScale(d.ideas.length);}
- //    		})
-	// 		.text(function(d){
-	// 		   	return d.name;
-	// 		});
-
-	// 	tags.exit()
-	// 		.remove();
-	// });
-
-	// timeDep.changed(); //run once at beginning
-	// setInterval(function(){
-	// 	timeDep.changed();
-	// }, 5000);
 }
 
 Template.userseries.rendered = function(){
-	//var start = Date.now;
-	//console.log(this);
 	var self = this;
 	var userID = self.data._id;
-	console.log(userID);
 	//var part_ID = self.data.
 	var node = self.find(".series");
 	var svg = d3.select(node).append("svg");
-
 	var h = 70;
-	var w = 546;
+  var width = $(this.firstNode).css('width');
+  width = trimFromString(width, 'px') - 30;
 	var pad = 20;
 
 
@@ -134,16 +98,16 @@ Template.userseries.rendered = function(){
 	var results = [];
 	var start = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time);
 	var sessionlength = Session.get("sessionLength");
-	var end = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time).add('m', sessionlength);//new Date(start + sessionlength*MS_PER_MINUTE);
+	var end = new moment(Events.findOne({userID: userID, description: "User began role Ideator"}).time).add('m', sessionlength+5);//new Date(start + sessionlength*MS_PER_MINUTE);
 
 	var x = d3.time.scale()
 					.domain([start, end])
 					.nice(d3.time.minute)
-					.range([pad, w-pad]);
+					.range([pad, width-pad]);
 
 	var xAxis = d3.svg.axis()
 						.scale(x)
-						.ticks(10)
+						.ticks(7)
 						.tickFormat(d3.time.format("%I:%M"))
 						.orient("bottom");
 
@@ -165,9 +129,9 @@ Template.userseries.rendered = function(){
 						};
 						return ideas.substring(0, ideas.length-2);
 					} else if (desc === "Dashboard user changed prompt")
-						return "Prompt: " + d.prompt;
+						return "Message: " + d.prompt;
 					else if (desc === "Dashboard user sent theme")
-						return "Theme: " + Clusters.findOne(d.theme).name;
+						return "Theme: " + Clusters.findOne({_id: d.theme}).name;
 					else if (desc === "User submitted idea")
 						return Ideas.findOne({_id: d.ideaID}).content;
 				});
@@ -207,7 +171,7 @@ Template.userseries.rendered = function(){
 			.remove();
 	}
 
-	var leverEventsCursor = Events.find({recipient: userID, description: 
+	var leverEventsCursor = Events.find({recipientIDs: userID, description: 
 		{$in: ["Dashboard user sent examples", "Dashboard user changed prompt", 
 		"Dashboard user sent theme"]}}); //this should be based off of filter object .performQuery
 	var leverEvents = [];
@@ -267,7 +231,7 @@ Template.userseries.rendered = function(){
 		}
 	});
 	
-	var nowWidth = (w-2*pad)/sessionlength; //1 minute
+	var nowWidth = (width-2*pad)/sessionlength; //1 minute
 	var nowData = [new moment(Date.now())]; // data for nowLine, initialize with current moment
 	var nowLine = svg.append("g");
 					//.selectAll("rect")
@@ -319,7 +283,7 @@ Template.userseries.rendered = function(){
 		nLine.exit()
 			.transition()
 			.duration(0)
-			.attr("x",w) // this moves the previous nowLine off the scale
+			.attr("x",width) // this moves the previous nowLine off the scale
 			.remove();
 	}
 
@@ -335,45 +299,18 @@ Template.userseries.rendered = function(){
 *********************************************************************/
 Template.Dashboard.helpers({
 	ideas : function(){
-		var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		console.log(cursor.count());
+		var cursor = FilterManager.performQuery("Ideas Filter", 
+      Session.get("currentUser"),
+      "ideas"
+    );
 		return cursor;
-		// var filters = Session.get("idealistFilters");//Session.get("partFilters");
-		// var clusterIdeas = [];
-		// for (var i = 0; i < filters.clusterFilters.length; i++) {
-		// 	clusterIdeas = clusterIdeas.concat(filters.clusterFilters[i].ideas);
-		// };
-		// if (filters.partFilters.length > 0 && clusterIdeas.length > 0){
-		// 	return IdeasToProcess.find({_id: {$in: clusterIdeas}, userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}});
-		// } else if (clusterIdeas.length > 0){
-  //  			return IdeasToProcess.find({_id: {$in: clusterIdeas}, isGamechanger: {$in: filters.gamchanger}});
-  //  		} else if (filters.partFilters.length > 0){
-  //  			return IdeasToProcess.find({userID: {$in: filters.partFilters}, isGamechanger: {$in: filters.gamchanger}})
-  //  		} else {
-  //  			return IdeasToProcess.find({isGamechanger: {$in: filters.gamchanger}});
-  //  		}
   	},
 
-  	numIdeas : function(){
-  		return Template.Dashboard.ideas().count();
-  	},
-
-  	clusters : function(){
-  		return Clusters.find({isRoot: {$ne: true}});
-  	},
 
   	gamechangers : function(){
   		return false;
   	},
 
-  	users : function(){
-  		var beganIdeation = Events.find({description: "User began role Ideator"});
-  		var userIDs = [];
-  		beganIdeation.forEach(function(event){
-  			userIDs.push(event.userID);
-  		})
-  		return MyUsers.find({name: {$ne: ["ProtoAdmin", 'TestAdmin']}, _id: {$in: userIDs}});
-  	},
 
   	selectedparts : function(){
   		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
@@ -382,73 +319,150 @@ Template.Dashboard.helpers({
   	participants : function(){
 		// return MyUsers.find({type: "Experiment Participant"});
 		return MyUsers.find({type: "Ideator"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
 	},
 
-  	partFilters : function(){
-  		return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
-  	},
-
-  	clusterFilters : function(){
-  		return Session.get("idealistFilters").clusterFilters;
-  	}
+  	//partFilters : function(){
+  		//return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
+  	//},
+//
+  	//clusterFilters : function(){
+  		//return Session.get("idealistFilters").clusterFilters;
+  	//}
 });
 
-Template.tagcloud.helpers({
+Template.IdeatorPanels.helpers({
+  users : function(){
+    console.log("*************** getting users *******************")
+    var beganIdeation = Events.find({description: "User began role Ideator"});
+    var userIDs = [];
+    beganIdeation.forEach(function(event){
+  	  userIDs.push(event.userID);
+    })
+    return MyUsers.find({name: {$ne: ["ProtoAdmin", 'TestAdmin']}, 
+      _id: {$in: userIDs}});
+  },
+});
+
+Template.Ideabox.helpers({
+	ideas : function(){
+	  var cursor = FilterManager.performQuery("Ideas Filter", 
+      Session.get("currentUser"),
+      "ideas"
+    );
+    return cursor;
+  },
+  numIdeas : function(){
+  	return Template.Ideabox.ideas().count();
+  },
+});
+
+Template.TagCloud.helpers({
 	clusters : function(){
-    	// console.log(ideas);
-    	// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
-    	// console.log("Filtered ideas: " + filteredIdeas.length);
-    	// var filteredClusters = [];
-    	// filteredIdeas.forEach(function(idea) {
-    	// 	var thisClusterIDs = idea.clusters;
-    	// 	thisClusterIDs.forEach(function(clusterID) {
-    	// 		if(filteredClusters.indexOf(clusterID) < 0) {
-    	// 			filteredClusters.push(clusterID);
-    	// 		}	
-    	// 	});
-    	// });
-    	// console.log("Filtered clusters: " + filteredClusters.length);
-    	// filteredClusters.forEach(function(cluster) {
-    	// 	console.log(cluster.name);
-    	// });
-    	// return Clusters.find({isRoot: {$ne: true}}, {_id: {$in: filteredClusters}}, {sort: {name: 1}});
-    	return Clusters.find({isRoot: {$ne: true}}, {sort: {name: 1}});
-  	},
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
+    cursor = Clusters.find(
+       {isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, 
+       {sort: {name: 1}}
+     ).fetch();
+    // update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
+    // cursor.forEach(function(c) {
+    //  c.ideaIDs.forEach(function(i){
+    // 	 if (!isInList(i,filteredIdeaIDs)) {
+    // 		 c.ideaIDs.pop(i);
+    // 	 }
+    //  })
+    // })
+   	
+    return cursor;
+  },
+  getFontSize : function(){
+    // console.log(this);
+    var thisIdeaIDs = this.ideaIDs;
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
+    var thisClusterSize = 0;
+    thisIdeaIDs.forEach(function(i) {
+    	if(isInList(i,filteredIdeaIDs)) {
+    		// thisIdeaIDs.pop(i);
+    		thisClusterSize++;
+    	}
+    })
+    return 10 +(thisClusterSize * 4);
+    // return 10 +(Template.TagCloud.getClusterSize() * 4);
+    // return 10 +(Template.TagCloud.getClusterSize() * 4);
+  },
+  getClusterSize : function(){
+    var thisIdeaIDs = this.ideaIDs;
+    var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
+    // console.log(filteredIdeaIDs);
+    var thisClusterSize = 0;
+    thisIdeaIDs.forEach(function(i) {
+    	if(isInList(i,filteredIdeaIDs)) {
+    		// thisIdeaIDs.pop(i);
+    		thisClusterSize++;
+    	}
+    })
+    // return this.ideaIDs.length;
+    // return thisIdeaIDs.length;
+    return thisClusterSize;
+  },
+});
 
-  	getFontSize : function(){
-  		//console.log(this);
-  		return 10 +(this.ideaIDs.length * 4);
-  	},
+Template.ChangePromptModal.helpers({
+  	participants : function(){
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+	},
+});
 
-  	getClusterSize : function(){
-  		return this.ideaIDs.length;
-  	}
-})
+Template.SendThemeModal.helpers({
+  	participants : function(){
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+	},
+	clusters : function(){
+    var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+    cursor = Clusters.find(
+       {isRoot: {$ne: true}, ideaIDs: {$in: filteredIdeaIDs}}, 
+       {sort: {name: 1}}
+     ).fetch();
+    // update the copied clusters' idea IDs to filter out ideas not in the current ideas filter
+    cursor.forEach(function(c) {
+     c.ideaIDs.forEach(function(i){
+    	 if (!isInList(i,filteredIdeaIDs)) {
+    		 c.ideaIDs.pop(i);
+    	 }
+     })
+    })
+    return cursor;
+  },
+});
+
+Template.SendExamplesModal.helpers({
+	ideas : function(){
+	  var cursor = FilterManager.performQuery("Ideas Filter", 
+      Session.get("currentUser"),
+      "ideas"
+    );
+    return cursor;
+  },
+  	participants : function(){
+		// return MyUsers.find({type: "Experiment Participant"});
+		return MyUsers.find({type: "Ideator"});
+		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+	},
+});
+
 
 /********************************************************************
 * Template Events
 *********************************************************************/
 Template.Dashboard.events({
 	'click .gamechangestar' : function(){
-		var id = (this)._id;
-		var idea = Ideas.findOne({_id: id});
-		var state = !idea.isGamechanger;
-
-		Ideas.update({_id: id}, {$set: {isGamechanger: state}});
+    EventLogger.logToggleGC(this);
+		IdeaFactory.toggleGameChanger(this);
 	},
-
-	// 'click #filterGamechangers' : function(){
-	// 	var filters = Session.get("idealistFilters");
-	// 	if ($("#filterGamechangers").hasClass("fa-star-o")){
-	// 		filters.gamchanger = [true];
-	// 		$("#filterGamechangers").switchClass("fa-star-o", "fa-star")
-	// 		return Session.set("idealistFilters", filters);
-	// 	} else if ($("#filterGamechangers").hasClass("fa-star")){
-	// 		filters.gamchanger = [true, false];
-	// 		$("#filterGamechangers").switchClass("fa-star", "fa-star-o")
-	// 		return Session.set("idealistFilters", filters);
-	// 	}
-	// },
 
 	'click #checkall' : function(event, template){
 		//event.target
@@ -467,74 +481,81 @@ Template.Dashboard.events({
 	'click .userprofilename' : function(e){
 		var id = $(e.currentTarget).parents('.profile').attr("id");
 		id = id.split("-")[1];
-		// //var userName = MyUsers.findOne({_id: id}).name;
-		// //var parts = Session.get("idealistFilters");
-		// // var filters = Session.get("idealistFilters");
-		// // var parts = filters.partFilters;
+		var isOn = FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
+    EventLogger.logToggleUserFilter(
+        Session.get("currentUser"),
+        id,
+        isOn
+    );
 
-		// // for (var i = 0; i < parts.length; i++) {
-		// // 	if(parts[i] === id) 
-		// // 		return false;
-		// // };
-
-		// // filters.partFilters.push(id);
-		// // //Session.set("partFilters", parts);
-		// Session.set("idealistFilters", filters);
-
-		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", id);
 
 	},
 
 	'click .tagname' : function(){
 		var id = $(event.target).parent().attr("id");
 		id = id.split("-")[1];
-		
-		// var filters = Session.get("idealistFilters");
-		// var clusters = filters.clusterFilters;
 
-		// for (var i = 0; i < clusters.length; i++) {
-		// 	if(clusters[i].id === id) 
-		// 		return false;
-		// };
+		var isOn = FilterManager.toggle(
+        "Ideas Filter", 
+        Session.get("currentUser"), 
+        "ideas", 
+        "clusterIDs", 
+        id
+    );	
+    EventLogger.logToggleClusterFilter(
+        Session.get("currentUser"),
+        id,
+        isOn
+    );
+		// console.log(Filters.find().fetch());
+	},
 
-		// var clusterMap = {
-		// 	ideas: [], //maps cluster id to its idea's ids
-		// }
+	'mouseover .tagname' : function(){
+		var id = $(event.target).parent().attr("id");
+		id = id.split("-")[1];
+		var thisTheme = Clusters.findOne({_id: id});
+		var filteredIdeaIDs = getIDs(Template.Dashboard.ideas());
+		var thisThemeIdeas = [];
+		thisTheme.ideaIDs.forEach(function(i){
+			if (isInList(i,filteredIdeaIDs)) {
+				thisThemeIdeas.push(Ideas.findOne({_id: i}).content);	
+			}
+			// var thisIdea = Ideas.findOne({_id: i}).content
+			// ideaText = ideaText + thisIdea + "\n";
+		});
+		// $('<span class="tag-tip"></span>').text(ideaText)
+		$('<span class="tag-tip"></span>')
+			.appendTo('body')
+			.css('top', (event.pageY - 10) + 'px')
+			.css('left', (event.pageX + 20) + 'px')
+			.fadeIn('slow');
+		$('<span></span>').text("Ideas in " + thisTheme.name + ":")
+			.appendTo('.tag-tip');
+		$('<br>')
+			.appendTo('.tag-tip');
+		thisThemeIdeas.forEach(function(i){
+			iText = "- " + i;
+			$('<span></span>').text(iText)
+				.appendTo('.tag-tip');
+			$('<br>')
+				.appendTo('.tag-tip');
+		})
+	},
 
-		// var myCluster = Clusters.findOne({_id: id});
-		// clusterMap.ideas = myCluster.ideas;
-		// clusterMap.name = myCluster.name;
-		// clusterMap.id = id;
+	'mouseout .tagname' : function(){
+		$('.tag-tip').remove();
+	},
 
-		// filters.clusterFilters.push(clusterMap);
-		// Session.set("idealistFilters", filters);
-
-		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "clusters", id);	
+	'mousemove .tagname' : function(){
+		$('.tag-tip')
+		.css('top', (event.pageY - 10) + 'px')
+		.css('left', (event.pageX + 20) + 'px');
 	},
 
 	'click .fa-minus-circle' : function(){
 		var label = $(event.target).parent();
 		var id = label.attr("id");
 		id = id.split("-")[1];
-		// //console.log(id);
-		// var filters = Session.get("idealistFilters");
-
-		// if(label.hasClass("partfilter-label")){
-		// 	for (var i = 0; i < filters.partFilters.length; i++) {
-		// 		if (filters.partFilters[i] === id){
-		// 			filters.partFilters.splice(i,1);
-		// 			return Session.set("idealistFilters", filters);
-		// 		}
-		// 	}
-		// } else if(label.hasClass("clusterfilter-label")){
-		// 	for (var i = 0; i < filters.clusterFilters.length; i++) {
-		// 		console.log(filters.clusterFilters[i].id);
-		// 		if (filters.clusterFilters[i].id === id){
-		// 			filters.clusterFilters.splice(i,1);
-		// 			return Session.set("idealistFilters", filters);
-		// 		}
-		// 	}
-		// } else 
 		if (label.hasClass("part-label")) {
 			var selectedParts = Session.get("selectedParts");
 			for (var i = 0; i < selectedParts.length; i++) {
@@ -595,9 +616,7 @@ Template.Dashboard.events({
 		if(prompt === "" || prompt === " ")
 			return false;
 
-		for (var i = 0; i < recipients.length; i++) {
-			changePromptNotify(sender, recipients[i], prompt);
-		};
+		changePromptNotify(sender, recipients, prompt);
 	},
 
 	'click #sendExModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
@@ -618,9 +637,7 @@ Template.Dashboard.events({
 		if(examples.length < 1)
 			return false;
 
-		for (var i = 0; i < recipients.length; i++) {
-			sendExamplesNotify(sender, recipients[i], examples);
-		};
+		sendExamplesNotify(sender, recipients, examples);
 	},
 
 	'click #sendThemeModal > div > div > div.modal-footer > button.btn.btn-primary' : function(){
@@ -633,9 +650,6 @@ Template.Dashboard.events({
 		if(theme === undefined)
 			return false;
 
-		for (var i = 0; i < recipients.length; i++) {
-			sendThemeNotify(sender, recipients[i], theme);
-		};
+	  sendThemeNotify(sender, recipients, theme);
 	}
 });
-

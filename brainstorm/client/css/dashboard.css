@@ -12,14 +12,83 @@
     height:100%;
 }*/
 
-.vizes, #people-view, .ideas, .leverbox{
-	border: solid 1px #ddd;
-	/*border-radius: 5px;
-	margin-bottom: 5px;*/
+.dashboard h3{
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+.dashboard input[type=checkbox]{
+	margin-top: 29px;
+}
+.dashboard a {
+  color: #000;
+}
+.dashboard button{
+	margin-top: 0px;
+}
+.dashboard #people-view #actions .btn-group .btn {
+	font-weight: bold;
+	border:none;
+}
+.dashboard .gamechangestar, .modal .gamechangestar{
+	float: right;
+	color: #f0ad4e;
+	text-shadow: 1px 1px #ddd;
+}
+.dashboard .ideadeck{
+	list-style: none;
+	overflow: auto;
+	height: 720px;
+}
+.dashboard .alert-msg {
+  color: #900;
+  display: block;
+  width: 100%;
 }
 
-#people-view{
-	/*height: 747px;*/
+.dashboard .flash-alert .alert-msg {
+  color: #FFF;
+}
+
+.dashboard .flash-alert .userprofilename {
+  color: #FFF;
+}
+
+.dashboard .flash-alert {
+  background: #900;
+  color: #FFF
+}
+
+.dashboard .idea-item{
+	cursor: default;
+}
+
+.vizes, #people-view, .ideas, .leverbox{
+	/* border: solid 1px #ddd; */
+}
+.dashboard .ideas-view {
+  margin-right: 0;
+  border-right: solid 1px #ddd;
+  min-height: 1080px;
+
+}
+.dashboard .themes-view {
+}
+
+.dashboard .ideators-stats {
+  margin-left: 0;
+  border-left: solid 1px #ddd;
+  min-height: 1080px;
+}
+
+.dashboard .vizes {
+  border-bottom: solid 1px #ddd;
+  min-height: 250px;
+}
+
+.dashboard .messageview {
+  margin-top: 15px;
+  height: 200px;
+  border: solid 1px #ddd;
 }
 
 #lever-events-key{
@@ -45,6 +114,23 @@
 	text-align: center;
 }
 
+.tag-tip {
+	display: none;
+	font-size: 10pt;
+	position: absolute;
+	/*border: 1px solid #000000;
+	background-color: #FFFFE0;
+	padding: 2px 6px;
+	color: #990000;*/
+	line-height: 2;
+	font-weight: bold;
+	padding: 12px;
+	background: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	border-radius: 2px;
+	z-index: 5;
+}
+
 .tagname a, .userprofilename{
 	text-decoration: none;
 	vertical-align: middle;
@@ -55,29 +141,11 @@
 	margin-bottom: 10px;
 }
 
-/*.dashboard-panel-7 {
-   width: 57.9%;
-}*/
-
-.dashboard h3{
-	margin-top: 10px;
-	margin-bottom: 5px;
-}
 
 .quantity{
 	font-size: 15px;
 }
 
-.idealist{
-	list-style: none;
-	overflow: auto;
-	margin-left: 0px;
-	height: 345px;
-}
-
-.dashboard .idea-item{
-	cursor: default;
-}
 
 #filterGamechangers{
 	float: right;
@@ -110,24 +178,12 @@
 	margin: 2px;
 }*/
 
-.dashboard .gamechangestar, .modal .gamechangestar{
-	float: right;
-	color: #f0ad4e;
-	text-shadow: 1px 1px #ddd;
-}
 
 .changeprompt{
 	height: 40%;
 }
 
-.dashboard button{
-	margin-top: 0px;
-}
 
-.dashboard #people-view #actions .btn-group .btn {
-	font-weight: bold;
-	border:none;
-}
 
 .profile .name-icon{
 	display: inline-block;
@@ -146,12 +202,16 @@
 	margin: 5px;
 }
 
+#sendExModal .send-examples-filterbox {
+	max-height: 300px;
+	overflow: auto;
+}
+
 .modal > div > div > div.modal-body > div.userSelectList {
 	padding-left: 5px;
 }
 
 #people{
-	/*height: 620px;*/
 	overflow: hidden;
 }
 
@@ -174,8 +234,11 @@
 	width:75px;
 }
 
+.people .form-inline {
+  padding: 0;
+}
+
 .series{
-	width:540px;
 	height:100%;
 	/*z-index: 100;*/
 }
@@ -202,9 +265,6 @@
 
 }
 
-.dashboard input[type=checkbox]{
-	margin-top: 29px;
-}
 
 /*.fa-minus-circle{
 	cursor: pointer;
@@ -297,3 +357,8 @@
   top: 50%;
   left: 100%;
 }
+
+.dashboard .profile .userprofilename {
+  text-decoration: underline;
+}
+

@@ -55,6 +55,9 @@ Cluster = function(user, prompt, ideaIDs){
   this.promptID = prompt._id;
   this.name = "Not named yet"; //default name for unnamed clusters
   this.position; //used only for clustering interface and tag cloud
+  var jitterTop = 30 + getRandomInt(0, 30);
+  var jitterLeft = getRandomInt(0, 30);
+  this.position = {top: jitterTop , left: jitterLeft};
   this.children = [];
   this.isCollapsed = false; //used only for clustering interface
 }

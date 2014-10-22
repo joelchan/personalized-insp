@@ -11,11 +11,18 @@
 <body>
 </body>
 
+<template name="loading">
+  <div class="full-page">
+	  <h1>Loading</h1>
+  </div>
+</template>
+
+
 <!--Template with notification menu tab/handle-->
 <template name="IdeaGen">
   <!-- Navbar -->
   <div id="header" class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-lg-3">
           <div class="navbar-header">
@@ -42,11 +49,8 @@
     </div>
   </div>
 
-  <!--<div id="notifications-handle">
-    <i id="" class="fa fa-lightbulb-o"></i>
-  </div>-->
 
-  <div class="container" id="ideastorm">
+  <div class="container-fluid" id="ideastorm">
     {{> yield}}
   </div> <!-- /container -->
 </template>
@@ -57,39 +61,8 @@
   </div> 
 </template>
 
-<!-- State Machine -->
-<!--<template name="IdeaGen">
-  <!- - Navbar - ->
-  <div id="header" class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-3">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="/">Brainstorming Study</a>
-          </div>
-        </div>
-        <div class="col-lg-9">
-          <div class="login">
-            {{#if loggedIn }}
-              <span class="userName">
-                <strong>Welcome</strong> {{currentUserName}}
-              </span>
-              <!- - 
-              <button id="submitLogout" class="submitLogout btn-login">Logout</button>
-              - ->
-            {{else}}
-            <!- -
-              User Name:
-              <input type="text" id="userLogin" class="userLogin" placeholder="username">
-              <button id="submitLogin" class="submitLogin btn-login">Login</button>
-              - ->
-            {{/if}}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="container" id="ideastorm">
-    {{> yield}}
-  </div> <!- - /container - ->
-</template>-->
+<template name="ExitStudy">
+  <button id="exitStudy" class="exitStudy nav-btn">
+    Exit Early
+  </button>
+</template>

@@ -90,6 +90,36 @@ FilterManager = (function () {
 
       /*****************   End Actual Implementation code **********/
     },
+    toggle: function(name, user, col, field, val, op) {
+      /**************************************************************
+       * Create/Destroy filter with given params
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    col - the colleciton that will be queried
+       *    field - the document field to be operated on (using
+       *        dot notation for document subfields)
+       *    val  -  the value used for comparison with the field
+       *    op  - (optional) the comparison operator to be applied
+       *        with the given value (ie: eq, ne, gt, lt, gte, lte)
+       * @Return
+       *    boolean - true if toggle filter on, false if toggle off
+       * ***********************************************************/
+      logger.trace("Beginning FilterManager.toggle");
+      var filter = Filters.findOne({name: name, 
+            user: user, 
+            collection: col,
+            field: field,
+            val: val
+      });
+      if (filter) {
+        this.remove(name, user, col, field, val);
+        return false;
+      } else {
+        this.create(name, user, col, field, val);
+        return true;
+      }
+    },
     getFilterList: function(name, user, col) {
       /**************************************************************
        * Get the raw list of filters that will shape the query
@@ -173,7 +203,7 @@ FilterManager = (function () {
       var clusterFilters = Filters.find({name: name, 
           user: user, 
           collection: col,
-          field: 'clusters'
+          field: 'clusterIDs'
       });
       logger.debug("Found " + clusterFilters.count() + 
           " matching [cluster] filters");
@@ -328,7 +358,7 @@ FilterManager = (function () {
       /*****************   End Actual Implementation code **********/
 
     },
-    reset: function(name, user, col) {
+    reset: function(name, user, col, exceptionFilters) {
       /**************************************************************
        * Delete all filters associated with the name, user, and
        * collection
@@ -336,6 +366,7 @@ FilterManager = (function () {
        *    name - An identifier used but the filtering component
        *    user - the user that is using the query
        *    collection - the colleciton that will be queried
+       *    exceptionFilters - (optional) list of filters to NOT remove
        * @Return
        *    boolean if all the filters was successfully removed
        * ***********************************************************/
@@ -359,9 +390,17 @@ FilterManager = (function () {
           user: user, 
           collection: col
         });
-        filts.forEach(function(filt) {
-          Filters.remove({_id: filt._id});
-        });
+        if (exceptionFilters) {
+          filts.forEach(function(filt) {
+            if (!isInList(filt,exceptionFilters,"_id")) {
+              Filters.remove({_id: filt._id});  
+            }
+          });
+        } else {
+          filts.forEach(function(filt) {
+            Filters.remove({_id: filt._id});
+          });
+        }
       }
       results = Filters.find({name: name, 
           user: user, 

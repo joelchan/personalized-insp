@@ -94,32 +94,6 @@ Template.PromptPage.events({
       if (!isNaN(minutes)) {
         PromptManager.setLength(newPrompt, parseInt(minutes));
       }
-      //Session.set("currentPrompt", newPrompt);
-///////////////////////////////////////////////////////////////////////
-      //var exp = new Experiment();
-      //exp.description = "Regular brainstorming activity"
-      //exp._id = Experiments.insert(exp);
-      //var cond1 = new ExpCondition(1,
-          //exp._id,
-          //newQuestion,
-          //"Brainstorming activity",
-          //100 
-          //);
-      //var template = GroupTemplates.findOne({isDefault: true});
-      //cond1.groupTemplate = template;
-      //cond1._id = Conditions.insert(cond1);
-      //exp.conditions = [cond1];
-      //Experiments.update({_id: exp._id},
-          //{$set: {conditions: exp.conditions}}
-           //);
-      //ExperimentManager.initGroupRefs(exp);
-      //Prompts.update({_id: newPrompt._id},
-          //{$set: {expID: exp._id, condID: cond1._id}}
-          //);
-
-///////////////////////////////////////////////////////////////////////
-      //Router.go('IdeationPage', {'_id': currentPrompt[0]._id});
-      //$('.modal').addClass('testclass');
     },
 
     'click div.clickable': function () {

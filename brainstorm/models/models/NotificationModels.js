@@ -12,7 +12,7 @@ NotificationTypes = {
 Object.freeze(NotificationTypes);
 
 
-Notification = function(sender, recipient){
+Notification = function(sender, recipientIDs){
 	/******************************************************************
    * Notification definition with parameters for sending data across 
    * users 
@@ -26,7 +26,7 @@ Notification = function(sender, recipient){
    *	
    *****************************************************************/
 	this.sender = sender;
-	this.recipient = recipient; //imagine both will be some kind of id
+	this.recipientIDs = recipientIDs; //imagine both will be some kind of id
 	this.time = new Date();
 	this.type;
 	this.handled = false;
@@ -40,54 +40,68 @@ directions.type = NotificationTypes.DIRECTIONS;
 //priming._id = 'priming';
 //priming.type = NotificationTypes.PRIMING;
 
-sendExamplesNotify = function(sender, recipient, examples){
-	var notification = new Notification(sender, recipient);
+sendExamplesNotify = function(sender, recipientIDs, examples){
+	var notification = new Notification(sender, recipientIDs);
 	notification.type = NotificationTypes.SEND_EXAMPLES;
 	notification.examples = examples;
 	Notifications.insert(notification);
 	EventLogger.logSendExamples(notification);
-	checkIfHelped(recipient);
+	checkIfHelped(recipientIDs);
 }
 
-changePromptNotify = function(sender, recipient, prompt){
-	var notification = new Notification(sender, recipient);
+changePromptNotify = function(sender, recipientIDs, prompt){
+	var notification = new Notification(sender, recipientIDs);
 	notification.type = NotificationTypes.CHANGE_PROMPT;
 	notification.prompt = prompt;
 	Notifications.insert(notification);
 	EventLogger.logChangePrompt(notification);
-	checkIfHelped(recipient);
+	checkIfHelped(recipientIDs);
 }
 
-sendThemeNotify = function(sender, recipient, clusterID){
-	var notification = new Notification(sender, recipient);
+sendThemeNotify = function(sender, recipientIDs, clusterID){
+	var notification = new Notification(sender, recipientIDs);
 	notification.type = NotificationTypes.SEND_THEME;
 	notification.theme = clusterID;
 	Notifications.insert(notification);
 	EventLogger.logSendTheme(notification);
-	checkIfHelped(recipient);
+	checkIfHelped(recipientIDs);
 }
 
-requestHelpNotify = function(sender, recipient){
-	var notification = new Notification(sender, recipient);
+requestHelpNotify = function(sender, recipientIDs){
+	var notification = new Notification(sender, recipientIDs);
 	notification.type = NotificationTypes.REQUEST_HELP;
 	notification.message = "Help Requested";
 	Notifications.insert(notification);
 	EventLogger.logRequestHelp(notification);
 }
 
-chatNotify = function(sender, recipient, message){
-	var notification = new Notification(sender, recipient);
+chatNotify = function(sender, recipientIDs, message){
+	var notification = new Notification(sender, recipientIDs);
 	notification.message = message;
 	notification.type = NotificationTypes.CHAT_MESSAGE;
 	Notifications.insert(notification);
 }
 
-checkIfHelped = function(recipient){
-	var needHelp = Notifications.find({sender: recipient, handled: false});
-	needHelp.forEach(function(note){
-		Notifications.update({_id: note._id},
-			{$set: {handled: true}
-		});
-	});
+checkIfHelped = function(recipientIDs){
+  if (hasForEach(recipientIDs)) {
+    recipientIDs.forEach(function(recipientID) {
+	    var needHelp = Notifications.find(
+        {sender: recipientID, handled: false});
+	    needHelp.forEach(function(note){
+		    Notifications.update({_id: note._id},
+			    {$set: {handled: true}
+		    });
+	    });
+    });
+  } else {
+    //recipientIDs is not an array or cursor
+	  var needHelp = Notifications.find(
+      {sender: recipientIDs, handled: false});
+	  needHelp.forEach(function(note){
+		  Notifications.update({_id: note._id},
+			  {$set: {handled: true}
+		  });
+	  });
+  }
 }
 

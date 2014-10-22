@@ -1,8 +1,9 @@
 <template name="filterbox">
-	<div>
+	<div class="filterbox-container">
 		<!-- <i class="fa fa-filter"></i> -->
 		<div id="filterbox-header">
 			<label>Filter by: </label>
+			<br>
 			<span id="filter-box" class="btn-group btn-group-xs">
 				<button class="parts-filters filter-drop-button btn btn-primary">
 					User <span class="caret"></span>
@@ -10,9 +11,9 @@
 				<button class="memberOf-filters filter-drop-button btn btn-primary">
 					Theme <span class="caret"></span>
 				</button>
-				<button class="themed-filters filter-drop-button btn btn-primary">
+				<!-- <button class="themed-filters filter-drop-button btn btn-primary">
 					Status <span class="caret"></span>
-				</button>
+				</button> -->
 				<button class="time-filters filter-drop-button btn btn-primary">
 					Time<span class="caret"></span>
 				</button>
@@ -40,7 +41,7 @@
 	</div>
 
 	<!--Themed Filter Dropdown-->
-	<div class="select-themed-filters filter-dropdown col-md-3">
+	<!-- <div class="select-themed-filters filter-dropdown col-md-3">
 		<h5>Select Status</h5>
 		<div class="filter-list">
 			<div class="radio">
@@ -66,7 +67,7 @@
 			<button class="btn btn-default">Cancel</button>
 			<button class="btn btn-primary apply">Apply</button>
 		</div>
-	</div>
+	</div> -->
 
 	<!--Member Of Selection Filter-->
 	<div class="select-memberOf-filters filter-dropdown col-md-3">
@@ -138,13 +139,16 @@
 	<ul id="idealist" class="ideadeck ui-sortable">
 		<li class="sort-disabled"></li>
 			{{#each ideas}}
-				{{> ideaitem}}
+				{{> FilterBoxIdeaItem}}
 			{{/each}}
 	</ul>
 </template>
 
-<template name="ideaitem">
-	<li id={{_id}} class="idea-item">{{content}} <i class="sort-disabled fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}} gamechangestar"></i></li>
+<template name="FilterBoxIdeaItem">
+<li id={{_id}} class="idea-item">
+  <i class="sort-disabled fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}} gamechangestar"></i>
+  {{content}} 
+</li>
 </template>
 
 <template name="activefilters">

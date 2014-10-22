@@ -10,6 +10,35 @@ Logger.setLevel('Client:Widgets:ChatDrawer', 'trace');
 var messageAlertInterval;
 var messageWaiting = false;
 
+Template.ChatInput.rendered = function() {
+	// Register event listenr to click submit button when enter is pressed
+  $('#chatinput').keyup(function(e){
+    if(e.keyCode===13) {
+      //console.log("enter pressed")
+      $('#sendchat').click();
+    }
+  });
+
+};
+
+Template.ChatInput.events({
+
+	'click #sendchat' : function(){
+		var message = $.trim($("#chatinput").val())
+		if(message === "")
+			return false;
+		$("#chatinput").val("");
+		//chatNotify(Session.get("currentUser")._id, "syn", message);
+
+		var recipients = MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["Synthesizer", "Facilitator"]}})
+    var recipientIDs = getIDs(recipients);
+		chatNotify(Session.get("currentUser")._id, recipientIDs, message);
+
+		messageViewScrollTo();
+		//$('#messageview').scrollTop($('#messageview')[0].scrollHeight);
+	}
+});
+
 Template.chatdrawer.rendered = function(){
 	$('.menu-link').bigSlide({
 		'menu': ('#chat-drawer'),
@@ -19,24 +48,17 @@ Template.chatdrawer.rendered = function(){
 	  	'speed': '300'
 	});
 
-	// Register event listenr to click submit button when enter is pressed
-  $('#chatinput').keyup(function(e){
-    if(e.keyCode===13) {
-      //console.log("enter pressed")
-      $('#sendchat').click();
-    }
-  });
 
   
-  Notifications.find({recipient: Session.get("currentUser")._id}).observe({
+  Notifications.find({recipientIDs: Session.get("currentUser")._id}).observe({
   	added: function(message){
       console.log("Noficiation observe found new msg");
   		Meteor.clearInterval(messageAlertInterval);
 
-  		if($('#chat-handle').hasClass('moved')){
-  			messageViewScrollTo();
-  			return false;
-  		}
+  		//if($('#chat-handle').hasClass('moved')){
+  			//messageViewScrollTo();
+  			//return false;
+  		//}
   		messageAlertInterval = Meteor.setInterval(function(){
         console.log("message alert interval");
   			$('#chat-handle').toggleClass('flash');
@@ -47,7 +69,20 @@ Template.chatdrawer.rendered = function(){
   Meteor.clearInterval(messageAlertInterval);
 }
 
-Template.chatdrawer.helpers({
+Template.ChatMessages.rendered = function(){
+
+  Notifications.find({recipientIDs: Session.get("currentUser")._id}).observe({
+  	added: function(message){
+      console.log("Noficiation observe found new msg");
+  		Meteor.clearInterval(messageAlertInterval);
+
+  			messageViewScrollTo();
+  	}
+  });
+};
+
+
+Template.ChatMessages.helpers({
 	messages: function(){
 		var currUser = Session.get("currentUser");
     console.log("Getting mesages for chat drawer");
@@ -61,12 +96,14 @@ Template.chatdrawer.helpers({
                         NotificationTypes.CHANGE_PROMPT,
                         NotificationTypes.SEND_THEMES]}
                       }]},
-										{recipient: currUser._id},
-										{message: "Help Requested"}]});
+										{$and: [{recipientIDs: currUser._id},
+                      {type: {$ne: NotificationTypes.REQUEST_HELP}}
+                    ]}
+      ]});
     } else if (role.title === "Synthesizer") {
       logger.trace("Getting notifications for synthesis user");
 		  return Notifications.find({$or: [{sender: currUser._id}, 
-										{recipient: currUser._id},
+										{recipientIDs: currUser._id},
 										]});
     } else {
       logger.warn("Getting notifications for non-synthesis or facilitator user");
@@ -83,7 +120,7 @@ Template.chatdrawer.helpers({
 	},
 
 	helpRequest : function(){
-		if((this.type.val == 3) && (this.recipient == Session.get("currentUser")._id))
+		if((this.type.val == 3) && (this.recipientIDs == Session.get("currentUser")._id))
 			return true;
 		else
 			return false;
@@ -91,7 +128,7 @@ Template.chatdrawer.helpers({
 });
 
 messageViewScrollTo =function(){
-	$('#messageview').scrollTop($('#messageview')[0].scrollHeight);
+	$('.messageview').scrollTop($('.messageview')[0].scrollHeight);
 	console.log("scrolled");
 }
 
@@ -109,19 +146,17 @@ Template.chatdrawer.events({
 
 		messageViewScrollTo();
 	},
-	'click #sendchat' : function(){
-		var message = $("#chatinput").val()
-		if(message === "")
-			return false;
-		$("#chatinput").val("");
-		//chatNotify(Session.get("currentUser")._id, "syn", message);
+  'click #close-drawer-arrow' : function() {
+		console.log("moving");
+		if($('#chat-handle').hasClass('moved')){
+			$('#chat-handle').removeClass('moved');
+		} else {
+			$('#chat-handle').addClass('moved');
+		}
 
-		MyUsers.find({_id: {$ne: Session.get("currentUser")._id}, type: {$in: ["Synthesizer", "Facilitator"]}}).forEach(function(user){
-			console.log(user)
-			chatNotify(Session.get("currentUser")._id, user._id, message);
-		});
+		Meteor.clearInterval(messageAlertInterval);
+		$('#chat-handle').removeClass('flash');
 
 		messageViewScrollTo();
-		//$('#messageview').scrollTop($('#messageview')[0].scrollHeight);
-	}
+  },
 });

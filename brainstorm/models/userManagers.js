@@ -57,19 +57,19 @@ UserFactory  = (function() {
    };
  }());
 
-
+'BeingBrainstormPage', 
 RoleManager = (function () {
   //Change deafultRoles to object with list of roles + each role
   //accessible by name
   var defaultRoles = {};
   var newRole = new Role("Ideator");
-  newRole.workflow = ['Ideation', 'IdeationSurvey'];
+  newRole.workflow = ['BeginBrainstormPage', 'Ideation', 'IdeationSurvey'];
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Synthesizer");
-  newRole.workflow = ['Clustering', 'SynthesisSurvey'];
+  newRole.workflow = ['BeginBrainstormPage', 'Clustering', 'SynthesisSurvey'];
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Facilitator");
-  newRole.workflow = ['Dashboard', 'FacilitatorSurvey'];
+  newRole.workflow = ['BeginBrainstormPage', 'Dashboard', 'FacilitatorSurvey'];
   defaultRoles[newRole.title] = newRole;
   var newRole = new Role("Unassigned");
   newRole.workflow = ['PromptPage', 'GroupPage', 'RoleSelectPage'];
@@ -347,13 +347,48 @@ GroupManager = (function () {
           group.isOpen = false;
         }
         //Update group in group collection
-        Groups.update({_id: group._id},
-            {
-              $push: {users: user},
-              $set: {assignments: group.assignments,
-                  isOpen: group.isOpen}
-            }
-        );
+        switch(role.title) {
+         case "Ideator":
+          Groups.update({_id: group._id},
+              {
+                $push: {users: user, 
+                  'assignments.Ideator': user
+                },
+                $set: {isOpen: group.isOpen}
+              }
+          );
+          break;
+         case "Synthesizer":
+          Groups.update({_id: group._id},
+              {
+                $push: {users: user, 
+                  'assignments.Synthesizer': user
+                },
+                $set: {isOpen: group.isOpen}
+              }
+          );
+          break;
+         case "Facilitator":
+          Groups.update({_id: group._id},
+              {
+                $push: {users: user, 
+                  'assignments.Facilitator': user
+                },
+                $set: {isOpen: group.isOpen}
+              }
+          );
+          break;
+         default:
+          Groups.update({_id: group._id},
+              {
+                $push: {users: user},
+                $set: {assignments: group.assignments,
+                  isOpen: group.isOpen
+                }
+              }
+          );
+          break;
+        }
         //Update user in db
         MyUsers.update({_id: user._id},
             {$set: {'groupID': group._id}}

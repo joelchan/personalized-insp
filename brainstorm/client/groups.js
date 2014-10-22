@@ -13,7 +13,9 @@ Template.GroupPage.helpers({
     * Return the list of all groups with this prompt
     * *****************************************************************/
     //Get only the groups related to the current prompt
-    var prompt = Prompts.findOne({_id: Session.get("currentPrompt")._id});
+    var prompt = Session.get("currentPrompt");
+    logger.debug("current Prompt " + JSON.stringify(prompt));
+    //var prompt = Prompts.findOne({_id: Session.get("currentPrompt")._id});
     return Groups.find({promptIDs: prompt._id});
   }, 
 });
@@ -34,8 +36,8 @@ Template.GroupPage.events({
       //For now just create a group using the default template
       var prompt = Session.get("currentPrompt");
       var group = GroupManager.create(prompt.template);
-      Session.set("currentPrompt", 
-        PromptManager.addGroups(prompt, [group]));
+      PromptManager.addGroups(prompt, [group]);
+      Session.set("currentPrompt", prompt);
     },
 
     'click div.clickable': function () {
