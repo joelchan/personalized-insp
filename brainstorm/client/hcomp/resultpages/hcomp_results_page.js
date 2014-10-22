@@ -1,10 +1,10 @@
- // Configure logger for server tests
- var logger = new Logger('Client:HcompResults');
- // Comment out to use global logging level
- Logger.setLevel('Client:HcompResults', 'trace');
- //Logger.setLevel('Client:Clustering', 'debug');
- //Logger.setLevel('Client:Clustering', 'info');
- //Logger.setLevel('Client:Clustering', 'warn');
+ // // Configure logger for server tests
+ // var logger = new Logger('Client:HcompResults');
+ // // Comment out to use global logging level
+ // Logger.setLevel('Client:HcompResults', 'trace');
+ // //Logger.setLevel('Client:Clustering', 'debug');
+ // //Logger.setLevel('Client:Clustering', 'info');
+ // //Logger.setLevel('Client:Clustering', 'warn');
 
 /*******************************************************************
  * ***************  HcompResultsPage Template **********************
@@ -18,7 +18,7 @@ var allIdeasFilterName = "All Ideas";
 Template.HcompResultsPage.rendered = function(){
 
   //Create isInCluster filter
-  FilterManager.create(ideaFilterName,
+  FilterManager.create(allIdeasFilterName,
       Session.get("currentUser"),
       "ideas",
       "clusterIDs",
@@ -27,14 +27,14 @@ Template.HcompResultsPage.rendered = function(){
   Session.set("currentIdeators", []);
   Session.set("currentSynthesizers", []);
   //Setup filters for users and filter update listener
-  updateFilters();
-  //Update filters when current group changes
-  Groups.find({_id: Session.get("currentGroup")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-      //Setup filters for users and filter update listener
-      updateFilters();
-    } 
-  });
+  // updateFilters();
+  // //Update filters when current group changes
+  // Groups.find({_id: Session.get("currentGroup")._id}).observe({
+  //   changed: function(newDoc, oldDoc) {
+  //     //Setup filters for users and filter update listener
+  //     updateFilters();
+  //   } 
+  // });
 };
 
 /********************************************************************
