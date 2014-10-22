@@ -407,6 +407,10 @@ Template.HcompTaskItem.helpers({
 
 });
 
+Template.OverallStats.helpers({
+    // code for ideation stats here
+});
+
 Template.HcompTagCloud.helpers({
 	clusters : function(){
     var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());

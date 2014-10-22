@@ -179,13 +179,18 @@
 </template>
 
 <template name="HcompBigPictureViz">
-  <div class="row">
+  <div class="row" id="big-picture-viz">
+      <div class="col-md-1">
+        {{> HcompOverallStats}}
+      </div>
+      <div class="col-md-3">
+        {{> HcompTagCloud }}
+      </div>
   </div>
 </template>
 
-<template name="HcompScratchPad">
-  <div class="row">
-  </div>
+<template name="HcompOverallStats">
+  <span class="fa fa-lightbulb-o"></span>
 </template>
 
 <template name="HcompTagCloud">
@@ -195,6 +200,17 @@
         <a href="">{{name}} ({{getClusterSize}})</a>
       </span>
     {{/each}}
+  </div>
+</template>
+
+<template name="HcompScratchPad">
+  <div class="row" id="scratchpad">
+    <h3>Scratchpad</h3>
+    <div class="form-group">
+      <textarea class="form-control" rows="6" id="fac-notes" 
+        placeholder="Take notes here...">
+      </textarea>
+    </div>
   </div>
 </template>
 
