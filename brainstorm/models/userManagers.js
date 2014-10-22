@@ -65,8 +65,11 @@ RoleManager = (function () {
   //Change deafultRoles to object with list of roles + each role
   //accessible by name
   var defaultRoles = {};
-  var newRole = new Role("MturkIdeator");
-  newRole.workflow = ['MturkIdeation'];
+  var newRole = new Role("HcompIdeator");
+  newRole.workflow = ['HcompIdeation', 'HcompSynthesis'];
+  defaultRoles[newRole.title] = newRole;
+  newRole = new Role("HcompFacilitator");
+  newRole.workflow = ['HcompDashboard', 'HcompResultsPage'];
   defaultRoles[newRole.title] = newRole;
   newRole = new Role("Ideator");
   newRole.workflow = ['BeginBrainstormPage', 'Ideation', 'IdeationSurvey'];
@@ -75,7 +78,7 @@ RoleManager = (function () {
   newRole.workflow = ['BeginBrainstormPage', 'Clustering', 'SynthesisSurvey'];
   defaultRoles[newRole.title] = newRole;
   newRole = new Role("Facilitator");
-  newRole.workflow = ['BeginBrainstormPage', 'HcompDashboard', 'FacilitatorSurvey'];
+  newRole.workflow = ['BeginBrainstormPage', 'Dashboard', 'FacilitatorSurvey'];
   defaultRoles[newRole.title] = newRole;
   newRole = new Role("Unassigned");
   newRole.workflow = ['PromptPage', 'GroupPage', 'RoleSelectPage'];
@@ -83,6 +86,7 @@ RoleManager = (function () {
   newRole = new Role("Admin");
   newRole.workflow = ['ExpAdminPage'];
   defaultRoles[newRole.title] = newRole;
+
 
   return {
     /****************************************************************

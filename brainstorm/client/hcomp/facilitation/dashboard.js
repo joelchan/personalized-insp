@@ -340,7 +340,7 @@ Template.HcompDashboard.helpers({
   	//}
 });
 
-Template.HcompIdeabox.helpers({
+Template.HcompDashIdeabox.helpers({
 	ideas : function(){
 	  var cursor = FilterManager.performQuery("Ideas Filter", 
       Session.get("currentUser"),

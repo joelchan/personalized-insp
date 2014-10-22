@@ -11,6 +11,14 @@ Router.map(function () {
   /***************************************************************
    * Define custom routes for hcomp pages
    * *************************************************************/
+  this.route('MTurkPromptPage', {
+      path: 'Mturk/Brainstorms/',
+      template: 'MTurkPromptPage',
+      onBeforeAction: function() {
+        var myUser = UserFactory.getAdmin();
+        Session.set("currentUser", myUser);
+      }
+  });
   this.route('HcompDashboard', {
     path: 'crowd/Dashboard',
     template: 'HcompDashboard',
@@ -39,36 +47,92 @@ Router.map(function () {
 	      Session.set("sessionLength", 30);
       }
     },
-    action: function(){
-      if(this.ready())
-        this.render();
-      else
-        this.render('loading');
-    },
     onAfterAction: function() {
       initRolePage();
     }
   });
+  this.route('MTurkLoginPage', {
+    path: '/crowd/LoginPage/:promptID',
+    template: 'MTurkLoginPage',
+    waitOn: function() {
+      return Meteor.subscribe('prompts', this.params.promptID);
+    },
+    onBeforeAction: function() {
+      console.log("before action");
+      if (this.ready()) {
+        console.log("Data ready");
+        var prompt = Prompts.findOne({_id: this.params.promptID});
+        if (prompt) {
+          console.log("setting current prompt");
+          Session.set("currentPrompt", prompt);
+        }
+      }
+    },
+  });
+  this.route('MturkIdeation', {
+    path: 'crowd/Ideation/:promptID',
+  	template: 'MturkIdeationPage',
+    waitOn: function() {
+      if (Session.get("currentUser")) {
+        return Meteor.subscribe('ideas', 
+          {userID: Session.get("currentUser")._id});
+      } else {
+        return Meteor.subscribe('ideas');
+      }
+    },
+    onBeforeAction: function() {
+        console.log("before action");
+        if (!Session.get("currentUser")) {
+          //if there is no user currently logged in, then render the login page
+          this.render('MTurkLoginPage', {'promptID': params.promptID});
+          //Pause rendering the given page until the user is set
+          pause();
+        }
+        if (this.ready()) {
+          console.log("Data ready");
+          var prompt = Prompts.findOne({_id: this.params._id});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          }
+        }
+    },
+    onAfterAction: function() {
+      initRolePage();
+    }
+
+  });
 
   this.route("HcompResultsPage", {
-    path: "/HCOMPresults/", 
-    template: "HcompResultsPage"
-  });
+    path: "/results/:promptID", 
+    template: "HcompResultsPage",
+    waitOn: function() {
+      if (Session.get("currentUser")) {
+        return Meteor.subscribe('ideas', 
+          {userID: Session.get("currentUser")._id});
+      } else {
+        return Meteor.subscribe('ideas');
+      }
+    },
+    onBeforeAction: function() {
+        console.log("before action");
+        if (!Session.get("currentUser")) {
+          //if there is no user currently logged in, then render the login page
+          this.render('MTurkLoginPage', {'promptID': params.promptID});
+          //Pause rendering the given page until the user is set
+          pause();
+        }
+        if (this.ready()) {
+          console.log("Data ready");
+          var prompt = Prompts.findOne({_id: this.params._id});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          }
+        }
+    },
 
 });
 
 var initRolePage = function() {
-  if ($('.exitStudy').length == 0) {
-    var exitStudyBtn = UI.render(Template.ExitStudy);
-    UI.insert(exitStudyBtn, $('.login')[0]);
-  }
-  //Add event handler for the exit study button
-  $('.exitStudy').click(function() {
-    logger.info("exiting study early");
-    EventLogger.logExitStudy();
-    EventLogger.logEndRole();
-    exitPage();
-  });
   //Add timer
   var prompt = Session.get("currentPrompt");
   if (prompt.length > 0) {
