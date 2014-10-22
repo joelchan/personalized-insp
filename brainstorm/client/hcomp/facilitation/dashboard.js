@@ -340,7 +340,7 @@ Template.HcompDashboard.helpers({
   	//}
 });
 
-Template.HcompIdeabox.helpers({
+Template.HcompDashIdeabox.helpers({
 	ideas : function(){
 	  var cursor = FilterManager.performQuery("Ideas Filter", 
       Session.get("currentUser"),
@@ -376,6 +376,8 @@ Template.HcompTaskList.helpers({
         //Attach inspiration to task
         task2._id = Tasks.insert(task2);
 
+        console.log(Tasks.find().fetch());
+
         return Tasks.find().fetch();
     },
 
@@ -384,7 +386,7 @@ Template.HcompTaskList.helpers({
 Template.HcompTaskItem.helpers({
 
     title : function() {
-        var titleLength = 50;
+        var titleLength = 25;
         return this.desc.substring(0,titleLength) + "...";
     },
 

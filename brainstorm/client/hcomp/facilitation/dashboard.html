@@ -51,21 +51,27 @@
       </div>
     </div>
     {{> HcompNewTaskModal }}
+    {{> HcompEditTaskModal }}
   </div>
 </template>
 
 <template name="HcompTaskItem">
   <div class="panel panel-default task-item">
-    <div class="panel-heading">
+    <div class="panel-heading clearfix">
       <h4 class="panel-title">
         <!-- <label class="time-label">{{time}}</label> -->
         <a data-toggle="collapse" data-parent="#{{_id}}" href="#{{_id}}">
           <i class="fa fa-chevron-circle-right"></i> 
           {{title}}  
           <span class="priority-label" style="float:right;"></span>
+          <span style="float:right;">{{totalTaskIdeas}}</span>
+          {{#if newTaskIdeas}}
+            <span class="badge pull-right">{{newTaskIdeas}}</span>
+            <!-- <span class="badge">5</span> -->
+          {{/if}}
         </a>
       </h4>
-      <span style="float:right;">{{totalTaskIdeas}}</span>
+      
     </div>
     <div id="{{_id}}" class="panel-collapse collapse">
       <div class="panel-body">
@@ -114,7 +120,7 @@
   </div> <!-- close changeModal -->
 </template>
 
-<template name="EditTaskModal">
+<template name="HcompEditTaskModal">
   <!--Change Prompt Modal-->
   <div class="modal fade" id="edit-task-modal" tabindex="-1" 
     role="dialog" aria-labelledby="basicModal" aria-hidden="true">
@@ -134,7 +140,7 @@
             </textarea>
           </div>
         </div> <!-- close modal-body -->
-        {{> ModalButtons }}
+        {{> HcompModalButtons }}
       </div> <!-- close modal-content -->
     </div> <!-- close modal-dialog -->
   </div> <!-- close changeModal -->
@@ -209,7 +215,7 @@
   </div>
 </template>
 
-<template name="IdeatorPanels">
+<template name="HcompIdeatorPanels">
 	<div id="people-view">
     {{> HcompIdeatorMessaging }}
 		<hr>
@@ -262,7 +268,7 @@
   </div>
 </template>
 
-<template name="ChangePromptModal">
+<template name="HcompChangePromptModal">
 	<!--Change Prompt Modal-->
 	<div class="modal fade" id="changemodal" tabindex="-1" 
     role="dialog" aria-labelledby="basicModal" aria-hidden="true">
