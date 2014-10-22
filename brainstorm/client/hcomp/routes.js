@@ -23,26 +23,34 @@ Router.map(function () {
       //Session.set("currentUser", MyUsers.findOne({_id: "db"}));
     },
     waitOn: function() {
-      var group = Session.get("currentGroup");
-      console.log(group['assignments']['Ideator']);
-      console.log("************************************************");
-      var ideatorIDs = getIDs(group['assignments']['Ideator'])
-      var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      //var group = Session.get("currentGroup");
+      //console.log(group['assignments']['Ideator']);
+      //console.log("************************************************");
+      //var ideatorIDs = getIDs(group['assignments']['Ideator'])
+      //var synthIDs = getIDs(group['assignments']['Synthesizer'])
       return [
-          Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
-          Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
-          Meteor.subscribe('events'),
-          Meteor.subscribe('filters'), 
-          Meteor.subscribe('groups')
+          Meteor.subscribe('prompts'),
+          //Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
+          //Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
+          //Meteor.subscribe('events'),
+          //Meteor.subscribe('filters'), 
+          //Meteor.subscribe('groups')
       ];
     }, 
     onBeforeAction: function() {
-      var sessionPrompt = Session.get("currentPrompt");
+      if (!Session.get("currentUser")) {
+        //if there is no user currently logged in, then render the login page
+        this.render('HcompLoginPage');
+        //Pause rendering the given page until the user is set
+        pause();
+      }
       if (this.ready()) {
         var prompt = Prompts.findOne({_id: this.params.promptID});
         if (prompt) {
+          var group = Groups.findOne({_id: prompt.groupIDs[0]})
           console.log("setting current prompt");
           Session.set("currentPrompt", prompt);
+          Session.set("currentGroup", group);
           if (prompt.length > 0) {
 	          Session.set("sessionLength", prompt.length);	
           } else {
