@@ -69,7 +69,20 @@
     </div>
     <div id="{{_id}}" class="panel-collapse collapse">
       <div class="panel-body">
-        {{this.desc}}
+        <div class="row task-descr">
+          {{this.desc}}
+        </div>
+        <div class="row">
+          <div class="col-md-3 task-metadata">
+            {{activeIdeators}} active ideators
+          </div>
+          <div class="col-md-1 task-edit" style="float:right;">
+            <a href="#" class="show-modal" id="edit-task-btn" 
+        data-toggle="modal" data-target="#edit-task-modal">
+              <span class="fa fa-edit"></span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -96,6 +109,32 @@
           </div>
         </div> <!-- close modal-body -->
         {{> HcompModalButtons }}
+      </div> <!-- close modal-content -->
+    </div> <!-- close modal-dialog -->
+  </div> <!-- close changeModal -->
+</template>
+
+<template name="EditTaskModal">
+  <!--Change Prompt Modal-->
+  <div class="modal fade" id="edit-task-modal" tabindex="-1" 
+    role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" 
+            aria-hidden="true">
+            &times;
+          </button>
+          <h3 class="modal-title" id="myModalLabel">New Task</h3>
+        </div> <!-- close modal-header -->
+        <div class="modal-body">
+          <div class="form-group">
+            <textarea class="form-control" rows="5" id="new-prompt" 
+              placeholder="Enter task instructions here...">
+            </textarea>
+          </div>
+        </div> <!-- close modal-body -->
+        {{> ModalButtons }}
       </div> <!-- close modal-content -->
     </div> <!-- close modal-dialog -->
   </div> <!-- close changeModal -->

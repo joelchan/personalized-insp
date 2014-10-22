@@ -398,6 +398,11 @@ Template.HcompTaskItem.helpers({
         return 4;
     },
 
+    // this should return the number of ideators that are actively working on the task
+    activeIdeators : function() {
+        return 7;
+    }
+
 });
 
 Template.HcompTagCloud.helpers({
