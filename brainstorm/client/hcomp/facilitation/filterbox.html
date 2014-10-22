@@ -1,0 +1,197 @@
+<template name="HcompFilterbox">
+	<div class="Hcomp-filterbox-container">
+		<!-- <i class="fa fa-filter"></i> -->
+		<div id="filterbox-header">
+			<label>Filter by: </label>
+			<br>
+			<span id="filter-box" class="btn-group btn-group-xs">
+				<button class="parts-filters filter-drop-button btn btn-primary">
+					User <span class="caret"></span>
+				</button>
+				<button class="memberOf-filters filter-drop-button btn btn-primary">
+					Theme <span class="caret"></span>
+				</button>
+				<!-- <button class="themed-filters filter-drop-button btn btn-primary">
+					Status <span class="caret"></span>
+				</button> -->
+				<button class="time-filters filter-drop-button btn btn-primary">
+					Time<span class="caret"></span>
+				</button>
+				<button class="gamechange-filter filter-drop-button btn btn-primary">
+					<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
+				</button>
+			</span>
+		</div>
+	</div>
+
+	<!--Participant Filter Dropdown-->
+	<div class="select-parts-filters filter-dropdown col-md-3">
+		<h5>Select Participants</h5>
+		<div class="filter-list">
+			<select multiple class="select-participants form-control">
+				{{#each participants}}
+					<option val="pf-{{this._id}}">{{this.name}}</option>
+				{{/each}}
+			</select>
+		</div>
+		<div class="apply-filter">
+			<button class="btn btn-default">Cancel</button>
+			<button class="btn btn-primary apply">Apply</button>
+		</div>
+	</div>
+
+	<!--Themed Filter Dropdown-->
+	<!-- <div class="select-themed-filters filter-dropdown col-md-3">
+		<h5>Select Status</h5>
+		<div class="filter-list">
+			<div class="radio">
+			  <label>
+			    <input type="radio" name="themedRadios" id="themedRadios1" value="true">
+			   	In a theme
+			  </label>
+			</div>
+			<div class="radio">
+			  <label>
+			    <input type="radio" name="themedRadios" id="themedRadios2" value="false">
+			    Not in a theme
+			  </label>
+			</div>
+			<div class="radio disabled">
+			  <label>
+			    <input type="radio" name="themedRadios" id="themedRadios3" value="neither">
+			    Both
+			  </label>
+			</div>
+		</div>
+		<div class="apply-filter">
+			<button class="btn btn-default">Cancel</button>
+			<button class="btn btn-primary apply">Apply</button>
+		</div>
+	</div> -->
+
+	<!--Member Of Selection Filter-->
+	<div class="select-memberOf-filters filter-dropdown col-md-3">
+		<h5>Select Themes</h5>
+		<div class="filter-list">
+			<select multiple class="select-themes form-control">
+				{{#each currentClusters}}
+					<option val="mo-{{this._id}}">{{this.name}}</option>
+				{{/each}}
+			</select>
+		</div>
+		<div class="apply-filter">
+			<button class="btn btn-default">Cancel</button>
+			<button class="btn btn-primary apply">Apply</button>
+		</div>
+	</div>
+
+	<!--Time Filter Dropdown-->
+	<div class="select-time-filters filter-dropdown col-md-3">
+		<div class="filter-list">
+			<h5>Select Time Window</h5>
+			<!-- <div class="time-select-box"> -->
+				Between
+				<select class="select-start form-control time-select">
+					<option>0</option>
+  					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+					<option>13</option>
+					<option>14</option>
+				</select>
+				<span> minutes ago and</span>
+			
+				<select class="select-end form-control time-select">
+  					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+					<option>13</option>
+					<option>14</option>
+					<option>15</option>
+				</select>
+				<span> minutes ago.</span>
+			<!-- </div> -->
+		</div>
+		<div class="apply-filter">
+			<button class="btn btn-default">Cancel</button>
+			<button class="btn btn-primary apply">Apply</button>
+		</div>
+	</div>
+
+	<ul id="idealist" class="ideadeck ui-sortable">
+		<li class="sort-disabled"></li>
+			{{#each ideas}}
+				{{> HcompFilterBoxIdeaItem}}
+			{{/each}}
+	</ul>
+</template>
+
+<template name="HcompFilterBoxIdeaItem">
+<li id={{_id}} class="idea-item">
+  <i class="sort-disabled fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}} gamechangestar"></i>
+  {{content}} 
+</li>
+</template>
+
+<template name="HcompActivefilters">
+	<div class="active-filters">
+	{{#each getMappedFilters}}
+		{{#if users}}
+			{{#each users}}
+				<span class="partfilter-label filter-label label-success" id="{{this._id}}">
+					<i class="fa fa-times-circle cancel-filter cancel-user"></i>
+					{{this.name}}
+				</span>
+				<!-- <br> -->
+			{{/each}}
+		{{/if}}
+		{{#if inClusterFilter}}
+			<span class="themedfilter-label filter-label label-default">
+				<i class="fa fa-times-circle cancel-filter cancel-themed"></i>
+				{{#if inCluster}} In Themes {{else}} Not in Themes {{/if}}
+			</span>
+			<!-- <br> -->
+		{{/if}}
+		{{#if clusters}}
+			{{#each clusters}}
+				<span class="partfilter-label filter-label label-primary" id="{{this._id}}">
+					<i class="fa fa-times-circle cancel-filter cancel-cluster"></i>
+					{{this.name}}
+				</span>
+				<!-- <br> -->
+			{{/each}}
+		{{/if}}
+		{{#if time}}
+			<span class="timefilter-label filter-label label-warning" style="display: inline-block">
+				<i class="fa fa-times-circle cancel-filter cancel-time"></i>
+				 {{end}} to {{begin}}
+			</span>
+			<!-- <br> -->
+		{{/if}}
+	{{/each}}
+	{{#if isFilter}}
+		<div class="filter-reset">
+			<button href="#" class="reset-filters btn btn-info btn-xs filter-reset">Reset all filters</button>
+		</div>
+	{{/if}}
+	</div>
+
+</template>
