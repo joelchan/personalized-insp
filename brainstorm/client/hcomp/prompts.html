@@ -1,35 +1,32 @@
 <template name="CrowdBrainstorm">
-  <div id="prompt-{{_id}}" class="menu-box panel panel-info">
+  <div id="prompt-{{_id}}" class="menu-box prompt-panel">
     <div class="row">
-      <div class="col-sm-9">
-    <div class="panel-heading">
-      <strong>Title:  </strong><h3 style="display: inline-block">{{ title }}</h3>
-    </div>
-    <div class="panel-row">
-      <strong>Prompt: </strong> {{ question }}<br/>
-      {{#if hasTime}}
-        <strong>Session Length: {{ length }} minutes</strong><br/>
-      {{/if}}
-      <strong>Participants: </strong>
-      {{#if hasUsers}}
-        {{#each participants}}
-          {{> namebox }}
-        {{/each}}
-      {{/if}}
-      <br/>
-      <!--<strong>URL: </strong> {{urlFor route='HcompDashboard' data=_id}} <h3>id: {{_id}}</h3> -->
-      {{#with promptID}}
-      <strong>Crowd Ideator URL: </strong> {{formUrl}}{{pathFor "MturkIdeation"}}
-      
-      {{/with}}
-    </div>
-  </div>
-  <div class="col-sm-3 clickable" style="background: #c00;height: 100px;">
-    <h3>View Brainstorm Progress</h3>
-  </div>
+      <div class="col-sm-2 dash-button clickable">
+        <h3 class="center-vertical">View Brainstorm Progress</h3>
+      </div>
+      <div class="col-sm-8 prompt-data">
+        <div class="center-block">
+          <strong>Title:  </strong>
+          {{ title }}<br/>
+          <strong>Prompt: </strong> {{ question }}<br/>
+          {{#if hasTime}}
+            <strong>Session Length: {{ length }} minutes</strong><br/>
+          {{/if}}
+          <strong>Number of Workers: </strong> {{ numWorkers }}<br/>
+          <!--<strong>URL: </strong> {{urlFor route='HcompDashboard' data=_id}} <h3>id: {{_id}}</h3> -->
+          {{#with promptID}}
+          <strong>Crowd Ideator URL: </strong> {{formUrl}}{{pathFor "MturkIdeation"}}
+          {{/with}}
+        </div>
+      </div>
+      <div class="col-sm-2 review-button clickable">
+          <h3 class="center-vertical">Review Ideas</h3>
+      </div>
     </div>
   </div>
 </template>
+
+
 
 
 <template name="CrowdPromptPage">
@@ -65,7 +62,7 @@
     </div> <!-- End modal dialog -->
   </div> <!-- End modal -->
  
-  <div class="row prompt-list"> 
+  <div class="row hcomp-prompt-list"> 
     {{#each prompts}}
       {{> CrowdBrainstorm }}
     {{/each}}

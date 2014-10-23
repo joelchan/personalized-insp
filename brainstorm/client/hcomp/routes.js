@@ -92,11 +92,11 @@ Router.map(function () {
         return Meteor.subscribe('ideas');
       }
     },
-    onBeforeAction: function() {
+    onBeforeAction: function(pause) {
         console.log("before action");
         if (!Session.get("currentUser")) {
           //if there is no user currently logged in, then render the login page
-          this.render('MTurkLoginPage', {'promptID': params.promptID});
+          this.render('MTurkLoginPage', {'promptID': this.params.promptID});
           //Pause rendering the given page until the user is set
           pause();
         }

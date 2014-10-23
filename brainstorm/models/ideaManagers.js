@@ -140,14 +140,17 @@ ClusterFactory = (function() {
       });
       cluster.position = position;
     },
-    createDummy: function(ideas, num) {
+    createDummy: function(ideas, num, user) {
       if (!num) {
         num = 1;
+      }
+      if (!user) {
+        user = Session.get("currentUser");
       }
       logger.trace("Creating Dummy Clusters: #" + num);
       var clusters = [];
       for (var i=0; i<num; i++) {
-        clusters.push(this.create(ideas));
+        clusters.push(this.create(ideas, user));
       }
       return clusters;
     },

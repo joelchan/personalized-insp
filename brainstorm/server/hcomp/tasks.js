@@ -14,19 +14,19 @@ Meteor.methods({
     return TaskManager.create(user, prompt, group, desc,
       type, priority, num, inspiration);
   },
-  'TaskManager_attachIdeas': function(task, ideas) {
+  'TaskManager_attachIdeas': function(task, ideas, user) {
     TaskManager.attachIdeas(task, ideas);
   },
-  'TaskManager_addQuestion': function(question, task) {
+  'TaskManager_addQuestion': function(question, task, user) {
     TaskManager.addQuestion(question, task);
   },
-  'TaskManager_addResponse': function(response, question, task) {
+  'TaskManager_addResponse': function(response, question, task, user) {
     TaskManager.addResponse(response, question, task);
   },
-  'TaskManager_editQuestion': function(newQuestion, question, task) {
+  'TaskManager_editQuestion': function(newQuestion, question, task, user) {
     TaskManager.editQuestion(newQuestion, question, task);
   },
-  'TaskManager_editResponse': function(newResponse, question, task) {
+  'TaskManager_editResponse': function(newResponse, question, task, user) {
     TaskManager.editResponse(newResponse, question, task);
   },
   'TaskManager_remove': function(tasks) {
@@ -89,8 +89,8 @@ TaskManager = (function() {
       return task;
 
     },
-    addQuestion: function (question, task) {
-      var q = new Question(question);
+    addQuestion: function (question, task, user) {
+      var q = new Question(question, user);
       q.taskID = task._id;
       q.commentIndex = task.comments.length;
       q._id = Questions.insert(q);
@@ -98,24 +98,28 @@ TaskManager = (function() {
       Tasks.update({_id: task._id}, {comments: task.comments});
       return question;
     },
-    addResponse: function (response, question, task) {
+    addResponse: function (response, question, task, user) {
       question.answer = response;
       question.isAnswered = true;
-      Questions.update({_id: q._id}, {answer: response, isAnswered: true});
+      question.answerUserID = user._id;
+      Questions.update({_id: q._id}, 
+          {answer: response, isAnswered: true, answerUserID: user._id});
       task.comments[q.commentIndex] = q;
       Tasks.update({_id: task._id}, {comments: task.comments});
       return question;
     },
-    editQuestion: function (newQuestion, question, task) {
+    editQuestion: function (newQuestion, question, task, user) {
       question.question = newQuestion;
       Questions.update({_id: question._id}, {question: newQuestion});
       task.comments[question.commentIndex] = question;
       Tasks.update({_id: task._id}, {comments: task.comments});
       return question
     },
-    editResponse: function (newResponse, question, task) {
+    editResponse: function (newResponse, question, task, user) {
       question.answer = newResponse;
-      Questions.update({_id: q._id}, {answer: newResponse});
+      question.answerUserID = user._id;
+      Questions.update({_id: q._id}, 
+          {answer: newResponse, answerUserID: user._id});
       task.comments[question.commentIndex] = question;
       Tasks.update({_id: task._id}, {comments: task.comments});
       return question;

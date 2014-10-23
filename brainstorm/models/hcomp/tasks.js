@@ -47,12 +47,14 @@ Task = function (user, prompt, group, desc, type, priority, num) {
 
 };
 
-Question = function (question) {
+Question = function (question, user) {
   /******************************************************************
    * Constructor for Task Question/Answer objects
    * ***************************************************************/
   this.question = question;
+  this.questionUserID = user._id
   this.answer = null;
+  this.answerUserID = null;
   this.isAnswered = false;
   //The ID of the task
   this.taskID;

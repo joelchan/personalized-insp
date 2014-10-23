@@ -24,7 +24,16 @@ Prompt = function(question, user, template, title, exp, cond) {
   ********************************************************************/
   this.question = question;
   //Users working on the prompt
+  if (user) {
   this.userIDs = [user._id];
+  } else {
+    this.userIDs = Session.get("currentUser");
+    if (user) {
+      this.userIDs = [user._id];
+    } else {
+      this.userIDs = null;
+    }
+  }
   //Groups working on the prompt
   this.groupIDs = [];
   this.template = template;

@@ -17,6 +17,7 @@
     </div>
     <div class="notes-view col-sm-4">
       <h3>Understand What's Going On!</h3>
+	{{> IdeaWordCloud}}
       {{> HcompBigPictureViz }}
       {{> HcompScratchPad }}
     </div> <!-- close notes-view col -->
@@ -465,4 +466,14 @@
 
 <template name="Hcompfilter-UI">
 
+</template>
+
+<template name="IdeaWordCloud">
+	<div id="ideawordcloud">
+		{{#each ideas}}
+			<span class="cloudItem" style="font-size: {{getFontSize}}px;">
+        		<a href="">{{getWord}} ({{getWordCount}})</a>
+      			</span>
+		{{/each}}
+	</div>
 </template>
