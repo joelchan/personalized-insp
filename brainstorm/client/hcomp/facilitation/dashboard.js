@@ -727,3 +727,68 @@ Template.HcompDashboard.events({
 //       _id: {$in: userIDs}});
 //   },
 // });
+
+function getCloudFromIdeas()
+{
+	var ideas = Ideas.find({ content: { $exists: true}}).fetch();;
+	var cloud = [];
+	for (var i = 0; i < ideas.length; i++) 
+	{
+		var idea = ideas[i].content;
+		var words = idea.split(" ");
+		for (var j = 0; j < words.length; j++) 
+		{
+			var word = words[j];
+
+			var cloudItem = {'word': '', 'count': 0};
+			
+			var containsWord = Boolean(false);
+			for (var k = 0; k < cloud.length; k++) 
+			{
+				if (cloud[k].word == word) 
+				{
+					cloud[k].count = cloud[k].count + 1;
+					containsWord = Boolean(true);
+				}
+			}
+			if(containsWord == false)
+			{
+				cloudItem.word = word;
+				cloudItem.count = 1;
+				cloud.push(cloudItem);
+			}
+		}	
+	}
+	return cloud;
+}
+
+
+Template.IdeaWordCloud.rendered = function () 
+{
+	console.log(getCloudFromIdeas());
+}
+
+
+Template.IdeaWordCloud.helpers(
+{
+	ideas : function()
+	{
+		cursor = getCloudFromIdeas();
+    		return cursor;
+  	},
+	getFontSize : function()
+	{
+		var count = this.count;
+    		return 10 +(count * 4);
+	},
+	getWordCount : function()
+	{
+		var count = this.count;
+		return count;
+	},
+	getWord : function()
+	{
+		var word = this.word;
+		return word;
+	}
+});
