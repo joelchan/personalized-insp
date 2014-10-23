@@ -1,4 +1,47 @@
+.hcomp-ideation-pane {
+  position: relative;
+  margin-top: -29px;
+  z-index: 10;
+}
+
 .hcomp-ideation-pane .main-prompt {
   background: #449d44;
+  background: #CFFFBD;
   border-right: 3px solid #464646;
+  height: 768px;
+
+}
+
+.hcomp-ideation-pane .idea-input-box {
+}
+
+.hcomp-ideation-pane .idea-input {
+  width: 85%;
+  margin: 5px 7% 0px 7%;
+  padding: 5px;
+}
+
+.hcomp-ideation-pane .submit-idea {
+  width: 85%;
+  margin: 0px 7% 15px 7%;
+  padding: 5px;
+}
+
+.hcomp-ideation-pane .idea-box {
+  width: 90%;
+  margin: 5px 5%;
+  padding: 5px;
+  background: #FFF3CC; /*Light Yellow*/
+  border: 2px solid #464646;
+  border-radius: 10px;
+}
+
+.hcomp-ideation-pane .task-lists {
+  background: #FFF3CC; /*Light Yellow*/
+  overflow: scroll;
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 25%;
+  padding: 15px;
 }
