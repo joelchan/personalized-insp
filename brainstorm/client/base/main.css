@@ -27,6 +27,7 @@ h3 {
 .navbar {
   background: #464646; /* dark gray */
   color: #eee; /* light gray */
+  margin-bottom: 0px;
 }
 
 .navbar .navbar-brand {
