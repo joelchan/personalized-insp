@@ -7,6 +7,7 @@ Logger.setLevel('Models:Tasks', 'trace');
 //Logger.setLevel('Models:Tasks', 'warn');
 
 Tasks = new Meteor.Collection("tasks");
+Questions = new Meteor.Collection("questions");
 
 Task = function (user, prompt, group, desc, type, priority, num) {
   /*****************************************************************
@@ -33,6 +34,7 @@ Task = function (user, prompt, group, desc, type, priority, num) {
   //Graph container of the Task. Allows for Task = theme
   this.ideaNode;
   //Q&A to clarify the task 
+  //List of Question objects
   this.comments = [];
   //Creation time of the task
   this.time = new Date().getTime();
@@ -43,4 +45,17 @@ Task = function (user, prompt, group, desc, type, priority, num) {
   //List of Ideas for inspiration
   this.attachments = [];
 
+};
+
+Question = function (question) {
+  /******************************************************************
+   * Constructor for Task Question/Answer objects
+   * ***************************************************************/
+  this.question = question;
+  this.answer = null;
+  this.isAnswered = false;
+  //The ID of the task
+  this.taskID;
+  //the index in the list of comments
+  this.commentIndex;
 };

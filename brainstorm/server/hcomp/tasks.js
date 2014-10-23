@@ -17,6 +17,18 @@ Meteor.methods({
   'TaskManager_attachIdeas': function(task, ideas) {
     TaskManager.attachIdeas(task, ideas);
   },
+  'TaskManager_addQuestion': function(question, task) {
+    TaskManager.addQuestion(question, task);
+  },
+  'TaskManager_addResponse': function(response, question, task) {
+    TaskManager.addResponse(response, question, task);
+  },
+  'TaskManager_editQuestion': function(newQuestion, question, task) {
+    TaskManager.editQuestion(newQuestion, question, task);
+  },
+  'TaskManager_editResponse': function(newResponse, question, task) {
+    TaskManager.editResponse(newResponse, question, task);
+  },
   'TaskManager_remove': function(tasks) {
     TaskManager.remove(tasks);
   }
@@ -77,6 +89,37 @@ TaskManager = (function() {
       return task;
 
     },
+    addQuestion: function (question, task) {
+      var q = new Question(question);
+      q.taskID = task._id;
+      q.commentIndex = task.comments.length;
+      q._id = Questions.insert(q);
+      task.comments.push(q);
+      Tasks.update({_id: task._id}, {comments: task.comments});
+      return question;
+    },
+    addResponse: function (response, question, task) {
+      question.answer = response;
+      question.isAnswered = true;
+      Questions.update({_id: q._id}, {answer: response, isAnswered: true});
+      task.comments[q.commentIndex] = q;
+      Tasks.update({_id: task._id}, {comments: task.comments});
+      return question;
+    },
+    editQuestion: function (newQuestion, question, task) {
+      question.question = newQuestion;
+      Questions.update({_id: question._id}, {question: newQuestion});
+      task.comments[question.commentIndex] = question;
+      Tasks.update({_id: task._id}, {comments: task.comments});
+      return question
+    },
+    editResponse: function (newResponse, question, task) {
+      question.answer = newResponse;
+      Questions.update({_id: q._id}, {answer: newResponse});
+      task.comments[question.commentIndex] = question;
+      Tasks.update({_id: task._id}, {comments: task.comments});
+      return question;
+    },
     remove: function(tasks) {
       /**************************************************************
        * Remove the task(s) from the DB
@@ -99,7 +142,7 @@ TaskManager = (function() {
         Tasks.remove({_id: tasks._id});
       }
     },
-
+    
   };
 }());
 
