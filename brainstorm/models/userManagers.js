@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Models:UserManager');
 // Comment out to use global logging level
-//Logger.setLevel('Models:UserManager', 'trace');
+Logger.setLevel('Models:UserManager', 'trace');
 //Logger.setLevel('Models:UserManager', 'debug');
-Logger.setLevel('Models:UserManager', 'info');
+//Logger.setLevel('Models:UserManager', 'info');
 //Logger.setLevel('Models:UserManager', 'warn');
 
 UserFactory  = (function() {
@@ -60,7 +60,6 @@ UserFactory  = (function() {
    };
  }());
 
-'BeingBrainstormPage', 
 RoleManager = (function () {
   //Change deafultRoles to object with list of roles + each role
   //accessible by name
@@ -297,10 +296,10 @@ GroupManager = (function () {
       *   role - the role that the user was assigned or undefined if 
       *       no assignment was successfully made
       **************************************************************/
-      logger.debug("number of assigned to role, " + role + " " + 
-          group.assignments[role].length);
-      logger.debug("number of possible to role, " + role + " " + 
-          this.getSize(group, role));
+      //logger.debug("number of assigned to role, " + role + " " + 
+          //group.assignments[role].length);
+      //logger.debug("number of possible to role, " + role + " " + 
+          //this.getSize(group, role));
       if (group.isOpen && 
           ((this.getSize(group, role) > group.assignments[role].length) ||
            (this.getSize(group) < 0))) {
@@ -390,9 +389,11 @@ GroupManager = (function () {
       }
     },
     hasUser: function(group, user) {
+      logger.debug("Checking if user in group");
       var users = group.users;
-      logger.debug(user);
-      logger.debug(users);
+      logger.trace(group);
+      logger.trace(user);
+      logger.trace(users);
       if (isInList(user, users, '_id')) {
         logger.trace("user is in group");
         return true;
