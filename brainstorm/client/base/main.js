@@ -6,26 +6,24 @@ Logger.setLevel('Client:Main', 'trace');
 //Logger.setLevel('Client:Main', 'info');
 //Logger.setLevel('Client:Main', 'warn');
 
-Template.IdeaGen.loggedIn = function() {
-  if (!Session.get("currentUser")) {
-    //console.log('no user is logged in');
-    return false;
-  } else {
-    return true; 
-  }
-};
-
+Template.IdeaGen.helpers({
+  loggedIn: function() {
+    if (!Session.get("currentUser")) {
+      //console.log('no user is logged in');
+      return false;
+    } else {
+      return true; 
+    }
+  },
+  currentUserName: function() {
 /********************************************************************
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
-Template.IdeaGen.currentUserName = function() {
-  return Session.get("currentUser").name;
-};
+    return Session.get("currentUser").name;
+  },
+});
 
-/********************************************************************
- * IdeaGen App event listeners for elements in header
- * *****************************************************************/
-var user;
+
 
 
 Template.IdeaGen.events({

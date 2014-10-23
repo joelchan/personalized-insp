@@ -349,7 +349,7 @@ Template.HcompDashIdeabox.helpers({
     return cursor;
   },
   numIdeas : function(){
-  	return Template.Ideabox.ideas().count();
+  	return Ideas.ideas().count();
   },
 });
 
@@ -407,7 +407,7 @@ Template.HcompTaskItem.helpers({
 
 });
 
-Template.OverallStats.helpers({
+Template.HcompOverallStats.helpers({
     // code for ideation stats here
 });
 

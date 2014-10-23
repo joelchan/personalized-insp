@@ -9,13 +9,25 @@ Logger.setLevel('Client:Hcomp:Prompts', 'trace');
 /********************************************************************
  * Return the list of all prompts
  * *****************************************************************/
-Template.CrowdPromptPage.prompts = function() {
-  return Prompts.find();
-};
+Template.CrowdPromptPage.helpers({
+  prompts: function() {
+    return Prompts.find();
+  },
+});
 
-Template.CrowdPromptPage.rendered = function() {
+  Template.CrowdPromptPage.rendered = function() {
   window.scrollTo(0,0);
 }
+
+Template.CrowdBrainstorm.rendered = function() {
+  var buttons = $(this.firstNode).find(".center-vertical")
+  buttons.each(function(index, elm) {
+    var ah = $(elm).height();
+    var ph = $(elm).parent().height();
+    var mh = Math.ceil((ph-ah) / 2);
+    $(elm).css('margin-top', mh);
+  });
+};
 
 Template.CrowdBrainstorm.helpers({
   question: function() {
@@ -63,12 +75,32 @@ Template.CrowdBrainstorm.helpers({
       return false;
     }
   },
+  numWorkers: function() {
+    logger.debug("current prompt: " + JSON.stringify(this));
+    var groups = Groups.find({_id: {$in: this.groupIDs}});
+    var users = [];
+    groups.forEach(function(group) {
+      users = users.concat(group.users);
+    });
+    return users.length;
+  },
   formUrl: function() {
     //Get absolute base url and trim trailing slash
     return Meteor.absoluteUrl().slice(0,-1);
   },
   promptID: function() {
     return {promptID: this._id};
+  },
+});
+
+Template.CrowdBrainstorm.events({
+  'click .dash-button': function() {
+    console.log("go to dash");
+    Router.go("HcompDashboard", {promptID: this._id});
+  },
+  'click .review-button': function() {
+    console.log("go to reviewpage");
+    Router.go("HcompResultsPage", {promptID: this._id});
   },
 });
 
