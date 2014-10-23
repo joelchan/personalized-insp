@@ -86,8 +86,8 @@ Template.HcompTaskItem.rendered = function(){
 
     // this should programmatically write in the priority label that matches 
     // the priority attached to the task
-    $('<i class="fa fa-exclamation"></i>')
-       .appendTo('.task-item div.panel-heading .priority-label');
+    // $('<i class="fa fa-exclamation"></i>')
+    //    .appendTo('.task-item div.panel-heading .priority-label');
 }
 
 Template.HcompUserseries.rendered = function(){
@@ -376,7 +376,7 @@ Template.HcompTaskList.helpers({
         //Attach inspiration to task
         task2._id = Tasks.insert(task2);
 
-        console.log(Tasks.find().fetch());
+        // console.log(Tasks.find().fetch());
 
         return Tasks.find().fetch();
     },

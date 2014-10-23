@@ -1,9 +1,11 @@
-Template.filterbox.rendered = function(){
+Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
+	Session.set("searchQuery","");
+	Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 var filterName;
-Template.filterbox.helpers({
+Template.HcompFilterbox.helpers({
 	setFilterName : function(name){
 		filterName = name + "IdeasFilter";
 		console.log(filterName);
@@ -19,15 +21,25 @@ Template.filterbox.helpers({
 	ideas : function(){
 		// return Ideas.find();
 		// var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
-		var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+		var filteredIdeasCursor = FilterManager.performQuery("Ideas Filter", 
 		  Session.get("currentUser"), 	
-		  "ideas").fetch();
+		  "ideas");
 		// return filteredIdeas;
 		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas").fetch();
 		// sort the array
-		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+		
 		// return the sorted array
 		// console.log("FilterBoxHelper says there are " + filteredIdeas.count() + " ideas");
+
+		// apply search query, if it exists
+		var query = Session.get("searchQuery");
+		if (query != "") {
+			// do regex search through array with query
+			var filteredIdeas = filteredIdeasCursor.find({ $text: { $search: query }}).fetch();
+		} else {
+			var filteredIdeas = filteredIdeasCursor.find().fetch()
+		}
+		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
 		return sortedIdeas;
 		// return cursor;
 	},
@@ -36,13 +48,13 @@ Template.filterbox.helpers({
 	},
 });
 
-Template.FilterBoxIdeaItem.helpers({
+Template.HcompFilterBoxIdeaItem.helpers({
 	gameChangerStatus: function() {
 		return this.isGamechanger;
 	}
 });
 
-Template.activefilters.helpers({
+Template.HcompActivefilters.helpers({
 	getMappedFilters : function(){
 		var mappedFilts = FilterManager.createMappedFilterList("Ideas Filter", Session.get("currentUser"), "ideas", "mappedFilters");
 		mappedFilts = $.map(mappedFilts, function(val, key){
@@ -89,7 +101,19 @@ Template.activefilters.helpers({
 	}
 });
 
-Template.filterbox.events({
+Template.HcompFilterbox.events({
+
+	// apply new full-text search of idea content
+	'click .search-apply-btn' : function(){
+		var query = $('#search-query').val(); // grab query from text form
+		Session.set("searchQuery",query);
+		console.log("Created new query: " + Session.get("searchQuery"));
+	},
+
+	// clear full-text search of idea content
+	'click .search-remove-btn' : function(){
+		Session.set("searchQuery","");
+	},
 
 	'click .filter-drop-button' :function(){
 		$('.filter-dropdown').each(function(i){
@@ -233,7 +257,7 @@ Template.filterbox.events({
 	},
 });
 
-Template.activefilters.events({
+Template.HcompActivefilters.events({
 	'click .reset-filters' : function(){
 		//console.log("resetting filters");
 		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas", Session.get("groupIdeasFilter"));

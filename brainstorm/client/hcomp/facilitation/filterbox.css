@@ -48,6 +48,10 @@
 	margin-top: 0px;
 }
 
+#filterbox-header .idea-search {
+	padding:0px 12px 0px 12px;
+	font-size:8px;
+}
 
 #star-toggle-icon{
 	padding: 0px;
