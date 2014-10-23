@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
-Logger.setLevel('Model:Managers', 'trace');
+// Logger.setLevel('Model:Managers', 'trace');
 //Logger.setLevel('Model:Managers', 'debug');
-//Logger.setLevel('Model:Managers', 'info');
+Logger.setLevel('Model:Managers', 'info');
 //Logger.setLevel('Model:Managers', 'warn');
 
 

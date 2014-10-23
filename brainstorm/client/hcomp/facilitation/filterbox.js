@@ -21,6 +21,9 @@ Template.HcompFilterbox.helpers({
 	ideas : function(){
 		// return Ideas.find();
 		// var cursor = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"),"ideas");
+		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+		//   Session.get("currentUser"), 	
+		//   "ideas").fetch();
 		var filteredIdeasCursor = FilterManager.performQuery("Ideas Filter", 
 		  Session.get("currentUser"), 	
 		  "ideas");
@@ -40,6 +43,7 @@ Template.HcompFilterbox.helpers({
 			var filteredIdeas = filteredIdeasCursor.find().fetch()
 		}
 		var sortedIdeas = filteredIdeas.sort(function(a,b) { return b.time - a.time});
+		console.log(sortedIdeas);
 		return sortedIdeas;
 		// return cursor;
 	},

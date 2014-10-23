@@ -30,7 +30,8 @@ Router.map(function () {
       //var synthIDs = getIDs(group['assignments']['Synthesizer'])
       return [
           Meteor.subscribe('prompts'),
-          //Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
+          Meteor.subscribe('ideas')
+          // Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
           //Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
           //Meteor.subscribe('events'),
           //Meteor.subscribe('filters'), 
@@ -85,11 +86,22 @@ Router.map(function () {
     path: 'crowd/Ideation/:promptID',
   	template: 'MturkIdeationPage',
     waitOn: function() {
+      console.log("Waiting on...");
       if (Session.get("currentUser")) {
-        return Meteor.subscribe('ideas', 
-          {userID: Session.get("currentUser")._id});
+        // return Meteor.subscribe('ideas');
+        console.log("has current user...");
+        return [
+          // Meteor.subscribe('ideas', 
+          // {userID: Session.get("currentUser")._id}),
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('prompts')
+          ];
       } else {
-        return Meteor.subscribe('ideas');
+        console.log("NO current user...");
+        return [
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('prompts')
+        ];
       }
     },
     onBeforeAction: function(pause) {
@@ -102,11 +114,19 @@ Router.map(function () {
         }
         if (this.ready()) {
           console.log("Data ready");
-          var prompt = Prompts.findOne({_id: this.params._id});
+          var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {
             Session.set("currentPrompt", prompt);
           }
+        } else {
+          console.log("Not ready");
         }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
     },
     onAfterAction: function() {
       initRolePage();
