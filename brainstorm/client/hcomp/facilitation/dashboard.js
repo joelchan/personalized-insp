@@ -367,14 +367,14 @@ Template.HcompTaskList.helpers({
     tasks : function() {
     
         // temporary creating a new task for making the UI
-        var task1 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
-          "This is a test task", 'open', priority=5, num=5);
-        //Attach inspiration to task
-        task1._id = Tasks.insert(task1);
-        var task2 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
-          "This is another test task. Much much longer though. Will have to truncate to fit into the title bar", 'open', priority=3, num=5);
-        //Attach inspiration to task
-        task2._id = Tasks.insert(task2);
+        // var task1 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
+        //   "This is a test task", 'open', priority=5, num=5);
+        // //Attach inspiration to task
+        // task1._id = Tasks.insert(task1);
+        // var task2 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
+        //   "This is another test task. Much much longer though. Will have to truncate to fit into the title bar", 'open', priority=3, num=5);
+        // //Attach inspiration to task
+        // task2._id = Tasks.insert(task2);
 
         // console.log(Tasks.find().fetch());
 
