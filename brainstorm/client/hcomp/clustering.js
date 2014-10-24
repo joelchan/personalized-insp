@@ -44,6 +44,14 @@ Template.MturkClustering.rendered = function(){
       receiveDroppable(event, ui, this);
     }
   });
+
+  $('.cluster-trash-can').droppable({accept: ".cluster",
+    tolerance: "pointer",
+    drop: function(event, ui) {
+      receiveDroppable(event, ui, this);
+    }
+  });
+
   //$('#clusterlist').sortable({containment: '.clusterinterface',
     //revert: true,
     //zIndex: 50,
@@ -451,6 +459,15 @@ receiveDroppable = function(event, ui, context) {
     var clusterID = trimFromString(context.id, 'ci-');
     target = ClusterFactory.getWithIDs(clusterID);
     EventLogger.logIdeaClustered(idea, source, target);
+  } else if (target.hasClass('cluster-trash-can')) {
+    logger.info("Deleting cluster using droppable trash can");
+    logger.trace(target);
+    logger.trace(target.attr('id'));
+    var targetID = trimFromString(target.attr('id'), 
+        "cluster-");
+    logger.debug("Adding to cluster with ID: " + targetID);
+    target = ClusterFactory.getWithIDs(targetID);
+    logger.debug("Cluster: " + JSON.stringify(target));
   }
   if (target !== null) {
     if (source !== null) {

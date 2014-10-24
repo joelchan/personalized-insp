@@ -6,6 +6,15 @@
 	margin-top: 0px;
 }
 
+.mturk-cluster-interface .cluster-trash-can {
+    background-color: #000;
+    width:100px;
+    height:100px;
+    position:absolute;
+    top:0;
+    right:50px;
+}
+
 /*.cluster-interface #filterbox-header {
 	visibility: hidden;
 }*/
