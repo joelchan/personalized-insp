@@ -102,7 +102,8 @@ Template.CrowdBrainstorm.events({
   },
   'click .review-button': function() {
     console.log("go to reviewpage");
-    Router.go("HcompResultsPage", {promptID: this._id});
+    Router.go("HcompResultsPage", 
+      {promptID: this._id, userID: Session.get("currentUser")});
   },
 });
 

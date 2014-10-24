@@ -220,13 +220,12 @@ Router.map(function () {
   });
 
   this.route("HcompResultsPage", {
-    path: "/results/:promptID", 
+    path: "/results/:promptID/:userID", 
     template: "HcompResultsPage",
     waitOn: function() {
       if (Session.get("currentUser")) {
         return [ 
-          Meteor.subscribe('ideas', 
-            {userID: Session.get("currentUser")._id}),
+          Meteor.subscribe('ideas'),
           Meteor.subscribe('prompts'),
           ]
       } else {
@@ -246,11 +245,12 @@ Router.map(function () {
         // }
         if (this.ready()) {
           logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
-          LoginManager.loginUser(user.name);
-          Session.set("currentUser", user);
-          console.log("Data ready");
-          var prompt = Prompts.findOne({_id: this.params._id});
+          if (Session.get("currentUser")) {
+            var user = MyUsers.findOne({_id: this.params.userID});
+            LoginManager.loginUser(user.name);
+            Session.set("currentUser", user);
+          }
+          var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {
             Session.set("currentPrompt", prompt);
           } else {

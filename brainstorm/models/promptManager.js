@@ -19,7 +19,7 @@ PromptManager  = (function() {
       if (template) {
         newPrompt.template = template;
       } else {
-        newPrompt.template = GroupManager.defaultTemplate;
+        newPrompt.template = GroupManager.defaultTemplate();
       }
       //Store a shortened title
       if (title) {
