@@ -52,13 +52,13 @@
 	padding:15px;
 }
 
-#filterbox-header .idea-search {
+.idea-search {
 	/*padding:10px;*/
 	padding-top:15px;
 	font-size:8px;
 }
 
-.Hcomp-filterbox-container .idea-box-header {
+.idea-box-header {
 	background-color: #f5f5f5;
 	font-size:20px;
 	font-weight:bold;

@@ -1,29 +1,7 @@
 <template name="HcompFilterbox">
 	<div class="Hcomp-filterbox-container">
 		<!-- <i class="fa fa-filter"></i> -->
-		<div id="filterbox-header">
-		    <label>Show: </label>
-			<div class="btn-group filter-buttons">
-				<button type="button" class="btn btn-default all-ideas-filter-btn btn-success">Everything</button>
-				<button type="button" class="btn btn-default misc-ideas-filter-btn">Un-categorized</button>
-				<button type="button" class="btn btn-default starred-ideas-filter-btn">Starred</button>
-			</div>
-			<br>
-		    <div class="input-group input-group-sm idea-search">
-		      <span class="input-group-btn">
-		        <button class="btn btn-default search-apply-btn" type="button">
-		        	<i class="fa fa-search"></i>
-		        </button>
-		      </span>
-		      <input type="text" id="search-query" class="form-control" placeholder="Search...">
-		      <span class="input-group-btn">
-		        <button class="btn btn-default search-remove-btn" type="button">
-		        	<i class="fa fa-times"></i>
-		        </button>
-		      </span>
-		    </div> <!--close search bar input group-->	
-			
-		</div> <!--close filterbox header-->
+		{{ > HcompFilterBoxHeader }}
 
 		<!--Participant Filter Dropdown-->
 		<div class="select-parts-filters filter-dropdown col-md-3">
@@ -149,6 +127,31 @@
 				{{/each}}
 		</ul>
 	</div>
+</template>
+
+<template name="HcompFilterBoxHeader">
+	<div id="filterbox-header">
+	    <label>Show: </label>
+		<div class="btn-group filter-buttons">
+			<button type="button" class="btn btn-default all-ideas-filter-btn btn-success">Everything</button>
+			<button type="button" class="btn btn-default misc-ideas-filter-btn">Un-categorized</button>
+			<button type="button" class="btn btn-default starred-ideas-filter-btn">Starred</button>
+		</div>
+		<br>
+	    <div class="input-group input-group-sm idea-search">
+	      <span class="input-group-btn">
+	        <button class="btn btn-default search-apply-btn" type="button">
+	        	<i class="fa fa-search"></i>
+	        </button>
+	      </span>
+	      <input type="text" id="search-query" class="form-control" placeholder="Search...">
+	      <span class="input-group-btn">
+	        <button class="btn btn-default search-remove-btn" type="button">
+	        	<i class="fa fa-times"></i>
+	        </button>
+	      </span>
+	    </div> <!--close search bar input group-->	
+	</div> <!--close filterbox header-->
 </template>
 
 <template name="HcompFilterBoxIdeaItem">

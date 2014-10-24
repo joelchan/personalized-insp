@@ -175,7 +175,7 @@
       <div class="col-md-1">
         {{> HcompOverallStats}}
       </div>
-      <div class="col-md-6">
+      <div class="col-md-10">
         {{> HcompIdeaWordCloud}}
         <!-- {{> HcompTagCloud }} -->
       </div>
@@ -200,7 +200,7 @@
   <div class="row" id="scratchpad">
     <h3>Scratchpad</h3>
     <div class="form-group">
-      <textarea class="form-control scratchpad-form" rows="6" id="fac-notes" 
+      <textarea class="form-control scratchpad-form" rows="25" id="fac-notes" 
         placeholder="Take notes here..."></textarea>
     </div>
   </div>
@@ -539,29 +539,55 @@
 				<div class="card-description col-xs-8">
 					{{getDescription}}
 				</div>
-				<div class="card-priority col-xs-2">
+				<div class="card-priority col-xs-2 col-xs-offset-2">
 					<span title="Priority" class="glyphicon glyphicon-warning-sign"> </span>
 					{{getPriority}}				
+          <br>
+          <span title="Ideators"  class="glyphicon glyphicon-user"> </span>
+          {{getIdeators}} 
+          <br>
+          <span title="Edit" class="glyphicon glyphicon-edit"> </span>
 				</div>
-				<div class="card-ideators col-xs-2">
+				<!-- <div class="card-ideators col-xs-2">
 					<span title="Ideators"  class="glyphicon glyphicon-user"> </span>
 					{{getIdeators}}			
 				</div>
+        <div class="card-edit col-xs-1" style="margin:0px; padding:0px">
+          <span title="Edit" class="glyphicon glyphicon-edit"> </span>    
+        </div> -->
 			</div>
 			<hr />
-			<div class="row">
-				<div class="card-ideas col-xs-3 btn">
-					<span title="Ideas" class="glyphicon glyphicon-exclamation-sign"> </span>
-					{{getIdeas}}
-				</div>
-				<div class="card-questions col-xs-3 btn">
-					<span title="Questions" class="glyphicon glyphicon-question-sign"> </span>
-					{{getQuestions}}			
-				</div>
-				<div class="card-edit col-xs-3 btn col-xs-offset-3">
-					<span title="Edit" class="glyphicon glyphicon-edit"> </span>		
-				</div>
-			</div>
+			<div class="task-data row">
+          <!--Viz Selector-->
+          <ul id= "task-data-menu" class="nav nav-tabs nav-justified" role="tablist">
+            <li class="active">
+              <a href="{{this._id}}-ideas" data-toggle="tab">
+                  <span title="Ideas" class="fa fa-lightbulb-o"> </span>
+                    {{getIdeas}}
+              </a>
+            </li>
+            <li>
+              <a href="#" data-toggle="tab">
+                <span title="Questions" class="glyphicon glyphicon-question-sign"> </span>
+                {{getQuestions}}
+              </a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <!--Task idea list-->
+            <div class="task-idealist tab-pane active" id="{{this._id}}-ideas">
+              <ul id="idealist" class="ideadeck ui-sortable">
+                <li class="sort-disabled"></li>
+                    {{#each ideaContents}}
+                      {{> HcompFilterBoxIdeaItem}}
+                    {{/each}}
+              </ul>
+            </div>
+            <!--Comments-->
+            <div class="task-comments tab-pane" id="{{this._id}}-comments">
+            </div>
+          </div> <!--close task-data tab content-->
+        </div> <!--close task-data row-->
 		</div>
 	{{else}} 
 		<div class="edit-task" id="{{getID}}">

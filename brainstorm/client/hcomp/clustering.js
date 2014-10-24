@@ -22,6 +22,9 @@ Template.MturkClustering.rendered = function(){
     //revert: true,
     //zIndex: 50,
   //});
+
+  Session.set("searchQuery","");
+  
   $('.cluster-idea-list').droppable({accept: ".idea-item",
     tolerance: "pointer",
     drop: function(event, ui) {
@@ -71,15 +74,65 @@ Template.MturkClustering.rendered = function(){
 ********************************************************************/
 Template.MturkClusteringIdeaList.helpers({
   ideas : function(){
-    var filteredIdeas = FilterManager.performQuery(ideaFilterName, 
-      Session.get("currentUser"), 
+    var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+      Session.get("currentUser"),   
       "ideas").fetch();
-    // return filteredIdeas;
-    var sortedIdeas = filteredIdeas.sort(function(a,b) { 
-      return b.time - a.time
-    });
+
+    // apply search query, if it exists
+    var query = Session.get("searchQuery");
+    var queriedIdeas = [];
+    if (query != "") {
+      queryArr = stringToWords(query);
+      filteredIdeas.forEach(function(idea){
+        // console.log(idea);
+        if (searchQueryMatch(idea,queryArr)) {
+          // console.log("Matched query");
+          queriedIdeas.push(idea);
+        } else {
+          // console.log("Not matching");
+          // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
+        }
+      });
+      // create an array from the query
+      
+    } else {
+      queriedIdeas = filteredIdeas.slice();
+    }
+
+    var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+    // console.log(sortedIdeas);
     return sortedIdeas;
-    //return Ideas.find();
+  },
+
+  numIdeas : function(){
+    var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+      Session.get("currentUser"),   
+      "ideas").fetch();
+
+    // apply search query, if it exists
+    var query = Session.get("searchQuery");
+    var queriedIdeas = [];
+    if (query != "") {
+      queryArr = stringToWords(query);
+      filteredIdeas.forEach(function(idea){
+        // console.log(idea);
+        if (searchQueryMatch(idea,queryArr)) {
+          // console.log("Matched query");
+          queriedIdeas.push(idea);
+        } else {
+          // console.log("Not matching");
+          // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
+        }
+      });
+      // create an array from the query
+      
+    } else {
+      queriedIdeas = filteredIdeas.slice();
+    }
+
+    var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+    // console.log(sortedIdeas);
+    return sortedIdeas.length;
   },
 });
 
