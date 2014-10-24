@@ -204,16 +204,6 @@ Router.map(function () {
     path: "/results/:promptID", 
     template: "HcompResultsPage",
     waitOn: function() {
-<<<<<<< HEAD
-        return [
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers')
-        ];
-    },
-    onBeforeAction: function() {
-        logger.debug("before action");
-=======
       if (Session.get("currentUser")) {
         return [ 
           Meteor.subscribe('ideas', 
@@ -235,7 +225,6 @@ Router.map(function () {
         //   //Pause rendering the given page until the user is set
         //   pause();
         // }
->>>>>>> Angela_HCOMP
         if (this.ready()) {
           logger.debug("Data ready");
           var user = MyUsers.findOne({_id: this.params.userID});
