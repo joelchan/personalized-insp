@@ -33,7 +33,9 @@ Task = function (user, prompt, group, desc, type, priority, num, ideasRequested,
   //Set the priority of the task
   this.priority = priority;
   //Graph container of the Task. Allows for Task = theme
-  this.ideaNodeID = ClusterFactory.create([], user, prompt)._id;
+  var cluster = ClusterFactory.create([], user, prompt);
+  ClusterFactory.setName(cluster, this.desc); 
+  this.ideaNodeID = cluster._id;
   //Q&A to clarify the task 
   //List of Question objects
   this.comments = [];
