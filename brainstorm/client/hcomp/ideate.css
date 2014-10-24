@@ -3,8 +3,9 @@
   margin-top: -29px;
   z-index: 10;
 }
-.header h1 {
-  color: white;
+
+.hcomp-ideation-pane .header h1 {
+  color: #FFF;
   text-align: center;
 }
 
@@ -46,6 +47,7 @@
 }
 .hcomp-ideation-pane .idea-box p {
   margin: 0;
+  color: #000;
 }
 
 .hcomp-ideation-pane .task-list-header {
@@ -71,16 +73,17 @@
   position: relative;
   display: inline-block;
   width: 200px;
-  max-height: 90%;
   background: #FFF3CC; /*Light Yellow*/
+  background: #82837E;
+  color: #FFF;
   border: 2px solid #464646;
   border-radius: 15px;
   margin: 15px;
-  overflow: hidden;
   vertical-align: top;
 }
 
 .hcomp-ideation-pane .task-header {
   padding: 0;
-  margin: 10px;
+  margin: 15px 15px 5px 15px;
+  white-space: normal;
 }
