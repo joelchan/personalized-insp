@@ -145,10 +145,16 @@ Router.map(function () {
     template: "HcompResultsPage",
     waitOn: function() {
       if (Session.get("currentUser")) {
-        return Meteor.subscribe('ideas', 
-          {userID: Session.get("currentUser")._id});
+        return [ 
+          Meteor.subscribe('ideas', 
+            {userID: Session.get("currentUser")._id}),
+          Meteor.subscribe('prompts'),
+          ]
       } else {
-        return Meteor.subscribe('ideas');
+        return [
+        Meteor.subscribe('ideas'),
+        Meteor.subscribe('prompts'),
+        ]
       }
     },
     onBeforeAction: function() {

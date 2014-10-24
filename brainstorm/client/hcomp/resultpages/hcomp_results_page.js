@@ -51,7 +51,7 @@ Template.HcompResultsPage.rendered = function(){
 ********************************************************************/
 Template.HcompResultsPage.helpers({
   promptQuestion : function() {
-    
+    Session.get("currentPrompt");
   },
   Clusters : function() {
     return Clusters.find();
