@@ -25,6 +25,22 @@ getRandomElement = function (array) {
     return array[array.length - 1];
 };
 
+getValsFromField = function(objs, field) {
+  /******************************************************************
+   * Get the val from a specified field from a list of mongo objects
+   * @params:
+   *    objs - either an array of mongodb documents, or a cursor 
+   *        to a list of mongodb documents
+   *****************************************************************/
+  vals = []
+  objs.forEach(function(obj) {
+    logger.debug(obj[field]);
+    vals.push(obj[field]);
+  });
+  return vals;
+};
+
+
 
 getIndex = function(list, member) {
   for (var i=0; i<list.length; i++) {

@@ -1,38 +1,42 @@
 // Configure logger for Filters
-var logger = new Logger('Model:Server:Tasks');
+var logger = new Logger('Model:Hcomp:TaskManagers');
 // Comment out to use global logging level
-Logger.setLevel('Model:Server:Tasks', 'trace');
-//Logger.setLevel('Model:Server:Tasks', 'debug');
-//Logger.setLevel('Model:Server:Tasks', 'info');
-//Logger.setLevel('Model:Server:Tasks', 'warn');
+Logger.setLevel('Model:Hcomp:TaskManagers', 'trace');
+//Logger.setLevel('Model:Hcomp:TaskManagers', 'debug');
+//Logger.setLevel('Model:Hcomp:TaskManagers', 'info');
+//Logger.setLevel('Model:Hcomp:TaskManagers', 'warn');
 
 
 //Meteor remote invocation
-Meteor.methods({
-  'TaskManager_create': function(user, prompt, group, desc, 
-              type, priority, num, inspiration ) {
-    return TaskManager.create(user, prompt, group, desc,
-      type, priority, num, inspiration);
-  },
-  'TaskManager_attachIdeas': function(task, ideas, user) {
-    TaskManager.attachIdeas(task, ideas);
-  },
-  'TaskManager_addQuestion': function(question, task, user) {
-    TaskManager.addQuestion(question, task);
-  },
-  'TaskManager_addResponse': function(response, question, task, user) {
-    TaskManager.addResponse(response, question, task);
-  },
-  'TaskManager_editQuestion': function(newQuestion, question, task, user) {
-    TaskManager.editQuestion(newQuestion, question, task);
-  },
-  'TaskManager_editResponse': function(newResponse, question, task, user) {
-    TaskManager.editResponse(newResponse, question, task);
-  },
-  'TaskManager_remove': function(tasks) {
-    TaskManager.remove(tasks);
-  }
-});
+//Meteor.methods({
+  //'TaskManager_create': function(user, prompt, group, desc, 
+              //type, priority, num, inspiration ) {
+    //return TaskManager.create(user, prompt, group, desc,
+      //type, priority, num, inspiration);
+  //},
+  //'TaskManager_attachIdeas': function(task, ideas, user) {
+    //return TaskManager.attachIdeas(task, ideas);
+  //},
+  //'TaskManager_addQuestion': function(question, task, user) {
+    //return TaskManager.addQuestion(question, task);
+  //},
+  //'TaskManager_addResponse': function(response, question, task, user) {
+    //return TaskManager.addResponse(response, question, task);
+  //},
+  //'TaskManager_editQuestion': function(newQuestion, question, task, user) {
+    //return TaskManager.editQuestion(newQuestion, question, task);
+  //},
+  //'TaskManager_editResponse': function(newResponse, question, task, user) {
+    //return TaskManager.editResponse(newResponse, question, task);
+  //},
+  //'TaskManager_assignTask': function(prompt, user) {
+    //var tasks = TaskManager.assignTask(prompt, user);
+    //return tasks;
+  //},
+  //'TaskManager_remove': function(tasks) {
+    //return TaskManager.remove(tasks);
+  //}
+//});
 
 TaskManager = (function() {
   return {
@@ -88,6 +92,49 @@ TaskManager = (function() {
       }
       return task;
 
+    },
+    assignTask: function(prompt, user) {
+      logger.debug("assigning a task");
+      var tasks = Tasks.find({promptID: prompt._id}, 
+          {sort: {priority: -1, time: -1}}).fetch()
+      logger.trace(tasks);
+      for (var i=0; i<tasks.length; i++) {
+        var task = tasks[i];
+        logger.trace("looking at task: ");
+        logger.trace(task);
+        logger.debug("Task assignments: " + task.assignments.length +
+          " Number of tasks: " + task.num);
+        if (task.assignments.length < task.num) {
+          if (this.isAssignedToTask(task, user)) {
+            logger.debug("assigning task");
+            return this.assignUserToTask(task, user); 
+          }
+        }
+      }
+      //No unassigned tasks, so returning null;
+      return null;
+    },
+    isAssignedToTask: function (task, user) {
+      return (!isInList({userID: user._id}, task.assignments, 'userID'))
+    },
+    assignUserToTask: function (task, user) {
+      logger.debug("Assigning " + user.name + " to task");
+      var assignment = new Assignment(task, user);
+      assignment._id = Assignments.insert(assignment);
+      task.assignments.push(assignment)
+      Tasks.update({_id: task._id}, {$push: {assignments: assignment}});
+      return task;
+    },
+    getAssignedTasks: function (prompt, user) {
+      logger.debug("Getting all tasks assigned to " + user.name);
+      var tasks = Tasks.find({promptID: prompt._id}, 
+          {sort: {priority: -1, time: -1}}).fetch()
+      logger.trace(tasks);
+      
+    },
+    addIdeaToTask: function (idea, task) {
+      var cluster = Clusters.findOne({_id: task.ideaNodeID});
+      ClusterFactory.insertIdeaToCluster(idea, cluster);
     },
     addQuestion: function (question, task, user) {
       var q = new Question(question, user);

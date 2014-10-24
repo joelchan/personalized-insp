@@ -32,7 +32,6 @@
     {{#each ideas }}
       {{> MturkIdeabox}}
     {{/each}}
-
   </div>
 </template>
 
@@ -43,16 +42,35 @@
 </template>
 
 <template name="MturkTaskLists">
-  <div class="btn btn-success btn-large get-task">
-    Get a new task
+  <div class='row task-list-header'>
+    <div class="btn btn-success btn-large get-task">
+      Get a new task
+    </div>
+    <!-- *************************** Remove this code *************-->
+    <div class="btn btn-success btn-large begin-synthesis">
+      Go To Synthesis
+    </div>
+    <!-- *************************** Remove this code *************-->
   </div>
-  <!-- *************************** Remove this code *************-->
-  <div class="btn btn-success btn-large begin-synthesis">
-    Go To Synthesis
+  <div class='task-list-pane'>
+    {{#each getMyTasks}}
+      {{> MturkIdeateTask }}
+    {{/each}}
   </div>
-  <!-- *************************** Remove this code *************-->
 </template>
 
 <template name="MturkIdeateTask">
+  <div class="ideate-task">
+    <h3 class="task-header">{{ desc }}</h3>
+    {{> MturkIdeaEntryBox }}
+    {{> TaskIdeaList }}
+  </div>
+</template>
 
+<template name="TaskIdeaList">
+  <div class="idea-list-box">
+    {{#each ideas }}
+      {{> MturkIdeabox}}
+    {{/each}}
+  </div>
 </template>
