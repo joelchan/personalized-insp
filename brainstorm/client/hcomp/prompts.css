@@ -1,0 +1,40 @@
+
+.hcomp-prompt-list .prompt-panel {
+  width: 85%;
+  margin-left: 7%;
+  border: 3px solid #464646;
+  border-radius: 15px;
+  margin: 15px 7%;
+  position: relative;
+}
+
+
+.hcomp-prompt-list .prompt-panel .dash-button {
+  background: #3071a9;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  color: #fff;
+  text-align: center;
+}
+
+.hcomp-prompt-list .prompt-panel .prompt-data {
+  margin-left: 18%;
+  width: 64%;
+  padding: 10px;
+}
+
+.hcomp-prompt-list .prompt-panel .review-button {
+  background: #3071a9;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  color: #fff;
+  text-align: center;
+}

@@ -6,7 +6,7 @@ var filters = {
 
 MS_PER_MINUTE = 60000;
 
-Template.Dashboard.rendered = function(){
+Template.HcompDashboard.rendered = function(){
 
   Session.set("idealistFilters", filters);
   Session.set("selectedParts", []);
@@ -82,15 +82,15 @@ Template.Dashboard.rendered = function(){
 
 }
 
-Template.TaskItem.rendered = function(){
+Template.HcompTaskItem.rendered = function(){
 
     // this should programmatically write in the priority label that matches 
     // the priority attached to the task
-    $('<i class="fa fa-exclamation"></i>')
-       .appendTo('.task-item div.panel-heading .priority-label');
+    // $('<i class="fa fa-exclamation"></i>')
+    //    .appendTo('.task-item div.panel-heading .priority-label');
 }
 
-Template.userseries.rendered = function(){
+Template.HcompUserseries.rendered = function(){
 	// var self = this;
 	// var userID = self.data._id;
 	// //var part_ID = self.data.
@@ -306,7 +306,7 @@ Template.userseries.rendered = function(){
 * Template Helpers
 *********************************************************************/
 
-Template.Dashboard.helpers({
+Template.HcompDashboard.helpers({
 	ideas : function(){
 		var cursor = FilterManager.performQuery("Ideas Filter", 
       Session.get("currentUser"),
@@ -340,7 +340,7 @@ Template.Dashboard.helpers({
   	//}
 });
 
-Template.Ideabox.helpers({
+Template.HcompDashIdeabox.helpers({
 	ideas : function(){
 	  var cursor = FilterManager.performQuery("Ideas Filter", 
       Session.get("currentUser"),
@@ -349,11 +349,11 @@ Template.Ideabox.helpers({
     return cursor;
   },
   numIdeas : function(){
-  	return Template.Ideabox.ideas().count();
+  	return Ideas.ideas().count();
   },
 });
 
-Template.NewTaskModal.helpers({
+Template.HcompNewTaskModal.helpers({
     // participants : function(){
     //     // return MyUsers.find({type: "Experiment Participant"});
     //     return MyUsers.find({type: "Ideator"});
@@ -361,12 +361,12 @@ Template.NewTaskModal.helpers({
     // },
 });
 
-Template.TaskList.helpers({
+Template.HcompTaskList.helpers({
     
     // this should return the list of tasks
     tasks : function() {
     
-        // // temporary creating a new task for making the UI
+        // temporary creating a new task for making the UI
         // var task1 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
         //   "This is a test task", 'open', priority=5, num=5);
         // //Attach inspiration to task
@@ -376,15 +376,17 @@ Template.TaskList.helpers({
         // //Attach inspiration to task
         // task2._id = Tasks.insert(task2);
 
+        // console.log(Tasks.find().fetch());
+
         return Tasks.find().fetch();
     },
 
 });
 
-Template.TaskItem.helpers({
+Template.HcompTaskItem.helpers({
 
     title : function() {
-        var titleLength = 50;
+        var titleLength = 25;
         return this.desc.substring(0,titleLength) + "...";
     },
 
@@ -405,7 +407,11 @@ Template.TaskItem.helpers({
 
 });
 
-Template.TagCloud.helpers({
+Template.HcompOverallStats.helpers({
+    // code for ideation stats here
+});
+
+Template.HcompTagCloud.helpers({
 	clusters : function(){
     var filteredIdeaIDs = getIDs(Template.Ideabox.ideas());
     cursor = Clusters.find(
@@ -458,7 +464,7 @@ Template.TagCloud.helpers({
 /********************************************************************
 * Template Events
 *********************************************************************/
-Template.Dashboard.events({
+Template.HcompDashboard.events({
 	'click .gamechangestar' : function(){
     EventLogger.logToggleGC(this);
 		IdeaFactory.toggleGameChanger(this);
@@ -721,3 +727,82 @@ Template.Dashboard.events({
 //       _id: {$in: userIDs}});
 //   },
 // });
+
+function getCloudFromIdeas()
+{
+	var ideas = Ideas.find({ content: { $exists: true}}).fetch();
+    console.log(ideas);
+	var cloud = [];
+	for (var i = 0; i < ideas.length; i++) 
+	{
+		var idea = ideas[i].content;
+		var words = idea.split(" ");
+		for (var j = 0; j < words.length; j++) 
+		{
+			var word = words[j]
+                .trim().toLowerCase()
+                .replace(/[^\w\s]|_/g, "")
+                .replace(/\s{2,}/g," ");
+
+			var cloudItem = {'word': '', 'count': 0};
+			
+			var containsWord = Boolean(false);
+			for (var k = 0; k < cloud.length; k++) 
+			{
+				if (cloud[k].word == word) 
+				{
+					cloud[k].count = cloud[k].count + 1;
+					containsWord = Boolean(true);
+				}
+			}
+            // && stopWords.words.indexOf(word) >= 0
+            // console.log(stopWords);
+            // console.log(stopWords.words)
+			if(containsWord == false && stopWords.words.indexOf(word) == -1)
+			{
+				// console.log(stopWords);
+                cloudItem.word = word;
+				cloudItem.count = 1;
+				cloud.push(cloudItem);
+			}
+		}	
+	}
+    var sortedCloud = cloud.sort(function(a,b) {
+        if(a.word < b.word) return -1;
+        if(a.word > b.word) return 1;
+        return 0;
+    });
+	return sortedCloud;
+    }
+
+
+Template.HcompIdeaWordCloud.rendered = function () 
+{
+	console.log(getCloudFromIdeas());
+}
+
+
+Template.HcompIdeaWordCloud.helpers(
+{
+	ideas : function()
+	{
+		console.log("calling ideas for HcompIdeaWordCloud");
+        cursor = getCloudFromIdeas();
+    		return cursor;
+  	},
+	getFontSize : function()
+	{
+		var count = this.count;
+    		return 10 +(count * 4);
+	},
+	getWordCount : function()
+	{
+		var count = this.count;
+		return count;
+	},
+	getWord : function()
+	{
+		var word = this.word;
+		return word;
+	}
+});

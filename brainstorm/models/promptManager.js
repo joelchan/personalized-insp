@@ -9,8 +9,12 @@ Logger.setLevel('Models:PromptManager', 'info');
 
 PromptManager  = (function() {
   return {
-    create: function(question, template, title) {
-      var newPrompt = new Prompt(question);
+    create: function(question, user, template, title) {
+      //Legacy support of no user specified during prompt creation
+      if (!user) {
+        user = Session.get("currentUser");
+      }
+      var newPrompt = new Prompt(question, user);
       //For now, just associate default group template with all prompts
       if (template) {
         newPrompt.template = template;

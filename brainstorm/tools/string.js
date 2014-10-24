@@ -18,4 +18,13 @@ trimFromString = function(target, substring) {
   return result;
 }
 
+removeCR = function(target) {
+  logger.trace("Cleaning up carraige return from end of string");
+  var index = target.lastIndexOf("\n");
+  if (index <0) {
+    return target;
+  } else {
+    return target.slice(0, index);
+  }
+}
 
