@@ -1,0 +1,53 @@
+<template name="MturkIdeationPage">
+  <div class="row hcomp-ideation-pane">
+    <div class="col-md-3 main-prompt">
+      {{> MturkMainPrompt}}
+    </div>
+    <div class="col-md-9 task-lists">
+      {{> MturkTaskLists}}
+    </div>
+  </div>
+</template>
+
+<template name="MturkMainPrompt">
+  <div class="header">
+    <h1>{{ prompt }}</h1> <br/>
+  </div>
+  {{> MturkIdeaEntryBox }}
+  {{> MturkIdeaList }}
+
+</template>
+
+<template name="MturkIdeaEntryBox">
+  <div class="idea-input-box">
+    <textArea class="idea-input" placeholder="Enter your ideas here"></textArea>
+    <div class="btn btn-primary btn-large submit-idea">
+      Submit
+    </div>
+  </div>
+</template>
+
+<template name="MturkIdeaList">
+  <div class="idea-list-box">
+    {{#each ideas }}
+      {{> MturkIdeabox}}
+    {{/each}}
+
+  </div>
+</template>
+
+<template name="MturkIdeabox">
+  <div class="idea-box">
+    <p>{{ content }}</p>
+  </div>
+</template>
+
+<template name="MturkTaskLists">
+  <div class="btn btn-success btn-large get-task">
+    Get a new task
+  </div>
+</template>
+
+<template name="MturkIdeateTask">
+
+</template>

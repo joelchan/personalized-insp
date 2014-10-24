@@ -48,6 +48,7 @@ minimongo@1.0.4
 mobile-status-bar@1.0.1
 mongo@1.0.7
 mrt:moment@2.8.1
+mrt:natural@1.0.1
 mrt:nvd3js@0.1.0
 npm-bcrypt@0.7.7
 observe-sequence@1.0.3
@@ -71,6 +72,6 @@ ui@1.0.4
 underscore@1.0.1
 url@1.0.1
 velocity:core@0.2.14
-velocity:html-reporter@0.2.3
+velocity:html-reporter@0.2.4
 webapp-hashing@1.0.1
 webapp@1.1.3

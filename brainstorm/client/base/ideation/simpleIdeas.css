@@ -1,4 +1,4 @@
-.prompt-box h1 {
+.ideation-pane .prompt-box h1 {
   text-align: center;
   color: #fff;
   background-color: #3276b1;
@@ -11,49 +11,49 @@
   color: #000;
     color: #666666;
 }
-.prompt-box {
+.ideation-pane .prompt-box {
   background: #eee;
   padding: 10px;
 }
 
-.prompt-box p{
+.ideation-pane .prompt-box p{
   /*font-weight: bold;*/
   font-size: 14px;
 }
 
-.header .sample-ideas {
+.ideation-pane .header .sample-ideas {
   background: #eee;
   padding: 10px;
 
 }
 
-#nav-right .timer {
+#ideation-pane .nav-right .timer {
   background: #eee;
   display: inline-block;
   margin: 10px;
 }
 
-#ideastorm .timer {
+.ideation-pane #ideastorm .timer {
   background: #eee;
   padding: 5px;
   text-align: center;
   margin-top: -25px;
 }
 
-#ideastorm .timer span {
+.ideation-pane #ideastorm .timer span {
   font-size: 2em;
   color: #000;
   background: #eee;
 }
 
-#ideastorm .time {
+.ideation-pane #ideastorm .time {
   margin-top: -10px;
   padding-left: 10px;
   font-weight:bold;
   font-size:20px;
 }
 
-.sidebar {
+.ideation-pane .sidebar {
   padding: 0 35px 0 35px;
   margin-right: 15px;
   border-right: 3px;
@@ -63,13 +63,13 @@
   height: 100%;
 }
 
-.priming {
+.ideation-pane .priming {
   background: #eee;
   padding: 15px;
   margin-top: 20px;
 }
 
-.priming .prime-idea {
+.ideation-pane .priming .prime-idea {
   display: inline-flex;
   width: 30%;
   padding: 5px 10px; 
@@ -89,18 +89,18 @@
 
 
 
-.ideabox {
+.ideation-pane .ideabox {
    font-size: 14px;
    padding: 10px;
 }
 
-.login .exitStudy {
+.ideation-pane .login .exitStudy {
   padding: 5px;
   margin: 0 0 0 10px;
   font-stretch: expanded;
 }
 
-.list-item {
+.ideation-pane .list-item {
   display: inline-flex;
   color: #000;
   border: 3px;
@@ -115,7 +115,7 @@
   font-size: 14px;
 }
 
-.list-item .gamechangestar{
+.ideation-pane .list-item .gamechangestar{
   float: right;
   padding-top: 3px;
   padding-left: 3px;
@@ -127,25 +127,25 @@
   margin-left: 0px;
 }
 
-.idea-input {
+.ideation-pane .idea-input {
   width: 100%;
   margin-top: 50px;
   height: 75px;
   margin: 25px 0 20px 0; /*20px;*/
 }
 
-.footer {
+.ideation-pane .footer {
   background: #ddd;
   margin-left: 10px;
   padding: 0 30px 0 30px;
 }
 
-#submitIdea {
+#ideation-pane .submitIdea {
   margin: 25px 0 20px 0px;
   font-size: 16px;
 }
 
-#request-help{
+#ideation-pane .request-help{
   margin: 25px 0 20px -5px;
   font-size: 18px;
   /*cursor: pointer;
@@ -160,11 +160,11 @@
   text-shadow: 1px 1px #ededed;*/
 }
 
-#request-help:hover{
+#ideation-pane .request-help:hover{
   color: #6e6e6e;
 }
 
-.badge{
+.ideation-pane .badge{
   font-size: 14px;
   background: #f0ad4e;
   border: 1px solid #eea236;
@@ -229,7 +229,7 @@
   box-shadow: none !important;
 }
 
-.notification-item .panel-heading{
+#notifications .notification-item .panel-heading{
   color: #666666;
   background-image: none !important;
   background-color: white; 
@@ -239,13 +239,13 @@
   -o-transition: background-color 0.75s, color 0.65s;
 }
 
-.notification-item.unhandled .panel-heading{
+#notifications .notification-item.unhandled .panel-heading{
   background-color: white;
   /*background-color: #f0ad4e;*/
   /*color: black;*/
 }
 
-.notification-item.unhandled .panel-heading.flash {
+#notifications .notification-item.unhandled .panel-heading.flash {
   /*background-color: white;*/
   background-color: #f0ad4e;
   color: white;
@@ -265,7 +265,7 @@
   padding-top: 0px;
 }
 
-.notification-item .panel-body{
+#notifications .notification-item .panel-body{
   -webkit-box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.05);
   -moz-box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.05);
   box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.05);
@@ -303,19 +303,19 @@
   border-bottom: none;
 }
 
-.affix {
+.ideation-pane .affix {
   width: inherit;
   position: absolute;
   top: 50px;
 }
 
-.affix-bottom {
+.ideation-pane .affix-bottom {
   width: inherit;
   position: absolute;
   top: 50px;
 }
 
-.affix-top {
+.ideation-pane .affix-top {
   width: inherit;
   position: absolute;
   top: 50px;

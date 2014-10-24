@@ -1,3 +1,46 @@
+<template name="IdeationPage">
+  <div class="row">
+    <div>
+      {{> NotificationDrawer}}
+    </div>
+    <div id="ideation-pane" class="push ideation-pane col-md-9">
+      <div class="header" data-spy="affix" data-offset-top="50"> 
+        <div class="row">
+          {{> Prompt}}
+        </div>
+        <!-- <div class="row">
+          {{> Priming }}
+        </div> -->
+      </div> 
+      <!-- close header -->
+      <div class="row">
+        {{> IdeaBox}}
+      </div>
+  
+      <div class="push footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
+        {{> SubmitIdeas }}
+      </div>
+
+      <div class="modal fade" id="acknowledgeModal" tabindex="-1" role="dialog" aria-labelledby="acknowledgeModal" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myModalLabel">Help Requested</h4>
+            </div>
+            <div class="modal-body">
+              <h3>Help is on the way! You should hear from the facilitator soon!</h3>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <template name="simpleIdea">
   <div class='list-item' draggable="true">
     {{ content }}
@@ -173,45 +216,3 @@ complete idea)"></textarea>
   </div>
 </template>
 
-<template name="IdeationPage">
-  <div class="row">
-    <div>
-      {{> NotificationDrawer}}
-    </div>
-    <div id="ideation-pane" class="push col-md-9">
-      <div class="header" data-spy="affix" data-offset-top="50"> 
-        <div class="row">
-          {{> Prompt}}
-        </div>
-        <!-- <div class="row">
-          {{> Priming }}
-        </div> -->
-      </div> 
-      <!-- close header -->
-      <div class="row">
-        {{> IdeaBox}}
-      </div>
-  
-      <div class="push footer navbar-fixed-bottom" data-spy="affix" data-offset-top="50"> 
-        {{> SubmitIdeas }}
-      </div>
-
-      <div class="modal fade" id="acknowledgeModal" tabindex="-1" role="dialog" aria-labelledby="acknowledgeModal" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title" id="myModalLabel">Help Requested</h4>
-            </div>
-            <div class="modal-body">
-              <h3>Help is on the way! You should hear from the facilitator soon!</h3>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>

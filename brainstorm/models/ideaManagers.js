@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
-Logger.setLevel('Model:Managers', 'trace');
+// Logger.setLevel('Model:Managers', 'trace');
 //Logger.setLevel('Model:Managers', 'debug');
-//Logger.setLevel('Model:Managers', 'info');
+Logger.setLevel('Model:Managers', 'info');
 //Logger.setLevel('Model:Managers', 'warn');
 
 
@@ -11,9 +11,7 @@ IdeaFactory = (function() {
   return {
     create: function(content, user, prompt) {
       logger.trace("Creating new Idea");
-      //var trimmed = $.trim(content);
-      //JQuery doesn't work on server
-      var trimmed = content;
+      var trimmed = removeCR(content);
       if (trimmed !== "") {
         var idea = new Idea(trimmed, user, prompt);
         idea._id = Ideas.insert(idea);
@@ -140,14 +138,17 @@ ClusterFactory = (function() {
       });
       cluster.position = position;
     },
-    createDummy: function(ideas, num) {
+    createDummy: function(ideas, num, user) {
       if (!num) {
         num = 1;
+      }
+      if (!user) {
+        user = Session.get("currentUser");
       }
       logger.trace("Creating Dummy Clusters: #" + num);
       var clusters = [];
       for (var i=0; i<num; i++) {
-        clusters.push(this.create(ideas));
+        clusters.push(this.create(ideas, user));
       }
       return clusters;
     },

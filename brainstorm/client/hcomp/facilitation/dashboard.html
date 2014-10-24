@@ -1,20 +1,29 @@
-<template name="Dashboard">
-	<div class="row dashboard">
+<template name="HcompDashboard">
+	<div class="row hcomp-dashboard">
 		<div class="ideas-view col-sm-3">
-      {{> Ideabox }}
+      {{> HcompDashIdeabox }}
     </div>
-    <div class="themes-view col-sm-4">
-      {{> ThemeViz }}
-      <h3>Chat with Theme Finders</h3>
-      {{> ChatMessages }}
-      {{> ChatInput }}
-    </div> <div class="ideators-stats col-sm-5">
-      {{> IdeatorPanels }}
-    </div> <!-- close ideator-stats col -->
+    <div class="tasks-view col-sm-4">
+      <h3>Focus the Brainstorm!</h3>
+      <div class="row new-task-btn">
+        <a href="#" class="show-modal" id="new-task-btn" 
+        data-toggle="modal" data-target="#new-task-modal">
+          <button type="button" class="btn btn-primary">
+          Create New Task
+          </button>
+        </a>
+      </div>
+      {{> HcompTaskList }}
+    </div>
+    <div class="notes-view col-sm-4">
+      <h3>Understand What's Going On!</h3>
+      {{> HcompBigPictureViz }}
+      {{> HcompScratchPad }}
+    </div> <!-- close notes-view col -->
   </div> <!-- close dashboard container -->
 </template>
 
-<template name="Ideabox">
+<template name="HcompDashIdeabox">
   <div class="ideas row">
     <!--List of Ideas-->
     <div class="col-md-8">
@@ -23,40 +32,44 @@
           ({{ numIdeas }})
         </span>
       </h3>
-      {{> filterbox}}
+      {{> HcompFilterbox}}
     </div>
     <div id="filters" class="col-md-4">
       <h3>Applied Filters</h3>
-      {{>activefilters}}
+      {{> HcompActivefilters}}
     </div>
   </div> <!--End Ideas-->
 </template>
 
-<template name="TaskList">
+<template name="HcompTaskList">
   <div class="row">
     <div id="tasks" class="panel">   
       <div class="panel-group" id="accordion">
         {{#each tasks}}
-          {{> TaskItem}}
+          {{> HcompTaskItem}}
         {{/each}}
       </div>
     </div>
-    {{> NewTaskModal }}
-    {{> EditTaskModal }}
+    {{> HcompNewTaskModal }}
+    {{> HcompEditTaskModal }}
   </div>
 </template>
 
-<template name="TaskItem">
+<template name="HcompTaskItem">
   <div class="panel panel-default task-item">
-    <div class="panel-heading">
+    <div class="panel-heading clearfix">
       <h4 class="panel-title">
         <!-- <label class="time-label">{{time}}</label> -->
         <a data-toggle="collapse" data-parent="#{{_id}}" href="#{{_id}}">
           <i class="fa fa-chevron-circle-right"></i> 
           {{title}}  
           <span class="priority-label" style="float:right;"></span>
+          <span style="float:right;">{{totalTaskIdeas}}</span>
+          {{#if newTaskIdeas}}
+            <span class="badge pull-right">{{newTaskIdeas}}</span>
+            <!-- <span class="badge">5</span> -->
+          {{/if}}
         </a>
-        <span style="float:right;">{{totalTaskIdeas}}</span>
       </h4>
       
     </div>
@@ -81,7 +94,7 @@
   </div>
 </template>
 
-<template name="NewTaskModal">
+<template name="HcompNewTaskModal">
   <!--Change Prompt Modal-->
   <div class="modal fade" id="new-task-modal" tabindex="-1" 
     role="dialog" aria-labelledby="basicModal" aria-hidden="true">
@@ -101,13 +114,13 @@
             </textarea>
           </div>
         </div> <!-- close modal-body -->
-        {{> ModalButtons }}
+        {{> HcompModalButtons }}
       </div> <!-- close modal-content -->
     </div> <!-- close modal-dialog -->
   </div> <!-- close changeModal -->
 </template>
 
-<template name="EditTaskModal">
+<template name="HcompEditTaskModal">
   <!--Change Prompt Modal-->
   <div class="modal fade" id="edit-task-modal" tabindex="-1" 
     role="dialog" aria-labelledby="basicModal" aria-hidden="true">
@@ -127,15 +140,15 @@
             </textarea>
           </div>
         </div> <!-- close modal-body -->
-        {{> ModalButtons }}
+        {{> HcompModalButtons }}
       </div> <!-- close modal-content -->
     </div> <!-- close modal-dialog -->
   </div> <!-- close changeModal -->
 </template>
 
-<template name="ModalButtons">
+<template name="HcompModalButtons">
   <div class="modal-footer">
-    {{> TaskOptions }}
+    {{> HcompTaskOptions }}
     <button type="button" class="btn btn-default" 
       data-dismiss="modal">
       Close
@@ -147,7 +160,7 @@
   </div>
 </template>
 
-<template name="TaskOptions">
+<template name="HcompTaskOptions">
   <span id="task-options">   
     <label>Priority </label>
     <div class="btn-group">
@@ -165,23 +178,40 @@
   </span> 
 </template>
 
-<template name="BigPictureViz">
-  <div class="row">
+<template name="HcompBigPictureViz">
+  <div class="row" id="big-picture-viz">
+      <div class="col-md-1">
+        {{> HcompOverallStats}}
+      </div>
+      <div class="col-md-6">
+        {{> HcompIdeaWordCloud}}
+        <!-- {{> HcompTagCloud }} -->
+      </div>
   </div>
 </template>
 
-<template name="ScratchPad">
-  <div class="row">
-  </div>
+<template name="HcompOverallStats">
+  <span class="fa fa-lightbulb-o"></span>
 </template>
 
-<template name="TagCloud">
-  <div id="tagcloud">
-    {{#each clusters}}
-      <span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}">
-        <a href="">{{name}} ({{getClusterSize}})</a>
-      </span>
+<template name="HcompIdeaWordCloud">
+  <div id="ideawordcloud">
+    {{#each ideas}}
+      <span class="cloudItem" style="font-size: {{getFontSize}}px;">
+            <a href="">{{getWord}}</a>
+            </span>
     {{/each}}
+  </div>
+</template>
+
+<template name="HcompScratchPad">
+  <div class="row" id="scratchpad">
+    <h3>Scratchpad</h3>
+    <div class="form-group">
+      <textarea class="form-control scratchpad-form" rows="6" id="fac-notes" 
+        placeholder="Take notes here...">
+      </textarea>
+    </div>
   </div>
 </template>
 
@@ -189,22 +219,22 @@
 <!-- Old unused stuff -->
 <!-- ############################################ -->
 
-<template name="ThemeViz">
+<template name="HcompThemeViz">
   <div class="vizes row">
 	  <div class="col-md-12"><h3>Themes</h3>
 		  <div class="tab-content">
 			  <!--Tag Cloud Viz-->
 			  <div class="viz tab-pane active" id="tagcloudwrapper">
-				  {{> TagCloud}}
+				  {{> HcompTagCloud}}
 			  </div>
 		  </div>
 	  </div>
   </div>
 </template>
 
-<template name="IdeatorPanels">
+<template name="HcompIdeatorPanels">
 	<div id="people-view">
-    {{> IdeatorMessaging }}
+    {{> HcompIdeatorMessaging }}
 		<hr>
 		<div id="people">
 			<div class="row">
@@ -213,16 +243,16 @@
         </div>
 			</div>
 			{{#each users}}
-				{{> UserProfile}}
+				{{> HcompUserProfile}}
 			{{/each}}
 		</div>
-    {{> ChangePromptModal }}
-    {{> SendExamplesModal }}
-    {{> SendThemeModal }}
+    {{> HcompChangePromptModal }}
+    {{> HcompSendExamplesModal }}
+    {{> HcompSendThemeModal }}
 	</div>
 </template>
 
-<template name="IdeatorMessaging">
+<template name="HcompIdeatorMessaging">
   <div class="row" id="actions">
 	  <div class="col-md-2">
       <h3>Actions</h3>
@@ -255,7 +285,7 @@
   </div>
 </template>
 
-<template name="ChangePromptModal">
+<template name="HcompChangePromptModal">
 	<!--Change Prompt Modal-->
 	<div class="modal fade" id="changemodal" tabindex="-1" 
     role="dialog" aria-labelledby="basicModal" aria-hidden="true">
@@ -279,7 +309,7 @@
               </label>
             </div>
             {{#each participants}}
-              {{> userSelection}}
+              {{> HcompuserSelection}}
             {{/each}}
           </div>
           <h4>
@@ -291,13 +321,13 @@
             </textarea>
 					</div>
         </div> <!-- close modal-body -->
-        {{> ModalButtons }}
+        {{> HcompModalButtons }}
     	</div> <!-- close modal-content -->
   	</div> <!-- close modal-dialog -->
 	</div> <!-- close changeModal -->
 </template>
 
-<template name="SendExamplesModal">
+<template name="HcompSendExamplesModal">
 	<!--Send Examples Modal-->
 	<div class="modal fade" id="sendExModal" tabindex="-1" 
     role="dialog" aria-labelledby="basicModal" aria-hidden="true">
@@ -323,25 +353,25 @@
               </label>
             </div> <!-- close userSelection -->
             {{#each participants}}
-              {{> userSelection}}
+              {{> HcompUserSelection}}
             {{/each}}
           </div> <!-- close userSelectList -->
           <h4>Choose examples to send to the selected users</h4>
           <div class="send-examples-filterbox">
-            {{>filterbox}}
+            {{> HcompFilterbox}}
           </div>
           <div>
             <h3>Applied Filters</h3>
-            {{>activefilters}}
+            {{> HcompActivefilters}}
           </div>
         </div> <!-- close modal-body -->
-        {{> ModalButtons }}
+        {{> HcompModalButtons }}
       </div> <!-- close modal-content -->
   	</div> <!-- close modal-dialog -->
 	</div> <!-- close sendExModal -->
 </template>
 
-<template name="SendThemeModal">
+<template name="HcompSendThemeModal">
   <div class="modal fade" id="sendThemeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog ">
       <div class="modal-content">
@@ -363,23 +393,23 @@
               </label>
             </div>
             {{#each participants}}
-              {{> userSelection}}
+              {{> HcompuserSelection}}
             {{/each}}
           </div> <!-- close userSelectList -->
           <h4>Choose a theme to send to the selected users</h4>
           <div id="sendThemeModal-clusterlist">
 						{{#each clusters}}
-							{{> theme}}
+							{{> Hcomptheme}}
 						{{/each}}	
 					</div>
 			  </div> <!-- close modal-body -->
-        {{> ModalButtons }}
+        {{> HcompModalButtons }}
       </div> <!-- close modal-content -->
     </div> <!-- close modal-dialog -->
   </div> <!-- close sendThemeModal -->
 </template> 
 
-<template name="idea">
+<template name="HcompIdea">
 <div id={{this._id}} class="idea">
   <i class="fa fa-lg {{#if this.isGamechanger}} 
     fa-star {{else}} fa-star-o {{/if}}gamechangestar">
@@ -388,7 +418,7 @@
 </div>
 </template>
 
-<template name="theme">
+<template name="HcompTheme">
 	<div id={{this._id}} class="radio theme">
 		<label><input type="radio" name="themeRadios" id="themeRadios{{this._id}}" value="{{this._id}}">
 			{{this.name}}
@@ -396,7 +426,7 @@
 	</div>
 </template>
 
-<template name="userSelection">
+<template name="HcompUserSelection">
 	<div id={{this._id}} class="radio userSelection">
 		<label><input type="radio" name="userSelectRadios" id="userSelectRadios{{this._id}}" value="{{this._id}}">
 			{{this.name}}
@@ -404,13 +434,13 @@
 	</div>
 </template>
 
-<template name="HelpMessage">
+<template name="HcompHelpMessage">
   <span class="alert-msg">
     Help Requested
   </span> 
 </template>
 
-<template name="UserProfile">
+<template name="HcompUserProfile">
   <div class="profile row" id="userprofile-{{_id}}">
     <div id="uname-{{_id}}" class="form-inline col-sm-2">
       <a href="">
@@ -425,15 +455,25 @@
   			</div> -->
   			<!--<div class="name-icon"><i class="fa fa-user fa-2x"></i></div>-->
   	</div>
-		{{> userseries this}}
+		{{> HcompUserseries this}}
 	</div>
 </template>
 
-<template name="userseries">
+<template name="HcompUserseries">
 	<div class="series col-sm-10">
 	</div>
 </template>
 
-<template name="filter-UI">
+<template name="Hcompfilter-UI">
 
+</template>
+
+<template name="HcompTagCloud">
+  <div id="tagcloud">
+    {{#each clusters}}
+      <span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}">
+        <a href="">{{name}} ({{getClusterSize}})</a>
+      </span>
+    {{/each}}
+  </div>
 </template>

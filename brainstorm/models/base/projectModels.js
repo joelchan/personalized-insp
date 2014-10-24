@@ -8,11 +8,12 @@ var logger = new Logger('Models:Project');
 
 Prompts = new Meteor.Collection("prompts");
 
-Prompt = function(question, template, title, exp, cond) {
+Prompt = function(question, user, template, title, exp, cond) {
   /********************************************************************
    * Constructor that defines a brainstorming prompt/question
    * @Params
    *    question - A string containing the brainstorming prompt/subject
+   *    user     - The user who creates the prompt
    *    template - (Optional) Group Template associated with groups
    *        responding to this prompt
    *    exp      - (Optional) The experiment associated with this prompt
@@ -22,6 +23,18 @@ Prompt = function(question, template, title, exp, cond) {
    * @return {object} Prompt object 
   ********************************************************************/
   this.question = question;
+  //Users working on the prompt
+  if (user) {
+  this.userIDs = [user._id];
+  } else {
+    this.userIDs = Session.get("currentUser");
+    if (user) {
+      this.userIDs = [user._id];
+    } else {
+      this.userIDs = null;
+    }
+  }
+  //Groups working on the prompt
   this.groupIDs = [];
   this.template = template;
   this.title = title;

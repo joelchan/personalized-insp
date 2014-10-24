@@ -8,102 +8,13 @@ Logger.setLevel('Client:Routes', 'trace');
 
 //Maps routes to templates
 Router.map(function () {
-  this.route("Home", {
-      path: '/',
+  this.route("ChiHome", {
+      path: '/Chi',
       template: 'LoginPage',
   });
-  this.route('MTurkPromptPage', {
-      path: 'Mturk/Brainstorms/',
-      template: 'MTurkPromptPage',
-      onBeforeAction: function() {
-        var myUser = UserFactory.getAdmin();
-        Session.set("currentUser", myUser);
-      }
-  });
-  this.route('MTurkLoginPage', {
-  	path: '/MturkLoginPage/:_id',
-    template: 'MTurkLoginPage',
-    waitOn: function() {
-      return Meteor.subscribe('prompts', this.params._id);
-    },
-    onBeforeAction: function() {
-        console.log("before action");
-        if (this.ready()) {
-          console.log("Data ready");
-          var prompt = Prompts.findOne({_id: this.params._id});
-          if (prompt) {
-            Session.set("currentPrompt", prompt);
-          }
-        }
-    },
-    action: function(){
-      if(this.ready())
-        this.render();
-      else
-        this.render('loading');
-    }, 
-  });
-  this.route('MturkIdeation', {
-  	path: 'Mturk/Ideation/',
-  	template: 'IdeationPage',
-    waitOn: function() {
-      if (Session.get("currentUser")) {
-        return Meteor.subscribe('ideas', 
-          {userID: Session.get("currentUser")._id});
-      } else {
-        return Meteor.subscribe('ideas');
-      }
-    },
-    action: function(){
-      if(this.ready())
-        this.render();
-      else
-        this.render('loading');
-    },
-    onAfterAction: function() {
-      initRolePage();
-    }
-
-  });
-  this.route('LoginPage', {
-  	path: '/LoginPage/:_id',
-    template: 'LoginPage',
-    //waitOn: function() {
-        //return Meteor.subscribe('experiments', this.params._id);
-        //},
-    onBeforeAction: function() {
-        //console.log("before action");
-        //this.subscribe('experiments', this.params._id).wait();
-        if (this.data()) {
-          //console.log(Experiments.find().fetch().length);
-          var x = Experiments.findOne({_id: this.params._id});
-          //console.log(x);
-          //var role = Roles.findOne({_id: x.groupTemplate.roles[0].role});
-          //console.log(role);
-          if (x) {
-            //console.log("setting experiment session var");
-            //x.__proto__ = Experiment.prototype;
-            Session.set("currentExp", x);
-          }
-          //if (role) {
-              //role.__proto__ = Role.prototype;
-              //console.log("***********************************************");
-              //var test = $.extend(true, new Role(), role);
-              //console.log("setting role session var");
-              //console.log("type of role: " + typeof test);
-              //console.log("role: ",  test);
-              //test.nextFunc("ConsentPage");
-              //Session.set("currentRole", test);
-          //}
-        }
-    },
-    data: function() {
-      return Experiments.findOne({_id: this.params._id});
-    },
-  });
-  this.route('ScreensPage', {
-      path: 'Screens/',
-      template: 'ScreensReviewPage'
+  this.route("Home", {
+      path: '/',
+      template: 'HcompLoginPage',
   });
   this.route('PromptPage', {
       path: 'Brainstorms/',
@@ -125,7 +36,6 @@ Router.map(function () {
       path: 'ExpAdmin/',
       template: 'ExpAdminPage'
   });
-  //Defines the beginning of a route for each experiment
   this.route('Ideation', {
   	path: 'Ideation/',
   	template: 'IdeationPage',
