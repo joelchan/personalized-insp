@@ -17,7 +17,6 @@
     </div>
     <div class="notes-view col-sm-4">
       <h3>Understand What's Going On!</h3>
-	{{> IdeaWordCloud}}
       {{> HcompBigPictureViz }}
       {{> HcompScratchPad }}
     </div> <!-- close notes-view col -->
@@ -184,8 +183,9 @@
       <div class="col-md-1">
         {{> HcompOverallStats}}
       </div>
-      <div class="col-md-3">
-        {{> HcompTagCloud }}
+      <div class="col-md-6">
+        {{> HcompIdeaWordCloud}}
+        <!-- {{> HcompTagCloud }} -->
       </div>
   </div>
 </template>
@@ -194,12 +194,12 @@
   <span class="fa fa-lightbulb-o"></span>
 </template>
 
-<template name="HcompTagCloud">
-  <div id="tagcloud">
-    {{#each clusters}}
-      <span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}">
-        <a href="">{{name}} ({{getClusterSize}})</a>
-      </span>
+<template name="HcompIdeaWordCloud">
+  <div id="ideawordcloud">
+    {{#each ideas}}
+      <span class="cloudItem" style="font-size: {{getFontSize}}px;">
+            <a href="">{{getWord}}</a>
+            </span>
     {{/each}}
   </div>
 </template>
@@ -208,7 +208,7 @@
   <div class="row" id="scratchpad">
     <h3>Scratchpad</h3>
     <div class="form-group">
-      <textarea class="form-control" rows="6" id="fac-notes" 
+      <textarea class="form-control scratchpad-form" rows="6" id="fac-notes" 
         placeholder="Take notes here...">
       </textarea>
     </div>
@@ -468,12 +468,12 @@
 
 </template>
 
-<template name="IdeaWordCloud">
-	<div id="ideawordcloud">
-		{{#each ideas}}
-			<span class="cloudItem" style="font-size: {{getFontSize}}px;">
-        		<a href="">{{getWord}} ({{getWordCount}})</a>
-      			</span>
-		{{/each}}
-	</div>
+<template name="HcompTagCloud">
+  <div id="tagcloud">
+    {{#each clusters}}
+      <span class="tagname" style="font-size: {{getFontSize}}px;" id="cl-{{_id}}">
+        <a href="">{{name}} ({{getClusterSize}})</a>
+      </span>
+    {{/each}}
+  </div>
 </template>

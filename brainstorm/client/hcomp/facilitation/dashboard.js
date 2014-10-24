@@ -730,7 +730,8 @@ Template.HcompDashboard.events({
 
 function getCloudFromIdeas()
 {
-	var ideas = Ideas.find({ content: { $exists: true}}).fetch();;
+	var ideas = Ideas.find({ content: { $exists: true}}).fetch();
+    console.log(ideas);
 	var cloud = [];
 	for (var i = 0; i < ideas.length; i++) 
 	{
@@ -738,7 +739,10 @@ function getCloudFromIdeas()
 		var words = idea.split(" ");
 		for (var j = 0; j < words.length; j++) 
 		{
-			var word = words[j];
+			var word = words[j]
+                .trim().toLowerCase()
+                .replace(/[^\w\s]|_/g, "")
+                .replace(/\s{2,}/g," ");
 
 			var cloudItem = {'word': '', 'count': 0};
 			
@@ -751,29 +755,39 @@ function getCloudFromIdeas()
 					containsWord = Boolean(true);
 				}
 			}
-			if(containsWord == false)
+            // && stopWords.words.indexOf(word) >= 0
+            // console.log(stopWords);
+            // console.log(stopWords.words)
+			if(containsWord == false && stopWords.words.indexOf(word) == -1)
 			{
-				cloudItem.word = word;
+				// console.log(stopWords);
+                cloudItem.word = word;
 				cloudItem.count = 1;
 				cloud.push(cloudItem);
 			}
 		}	
 	}
-	return cloud;
-}
+    var sortedCloud = cloud.sort(function(a,b) {
+        if(a.word < b.word) return -1;
+        if(a.word > b.word) return 1;
+        return 0;
+    });
+	return sortedCloud;
+    }
 
 
-Template.IdeaWordCloud.rendered = function () 
+Template.HcompIdeaWordCloud.rendered = function () 
 {
 	console.log(getCloudFromIdeas());
 }
 
 
-Template.IdeaWordCloud.helpers(
+Template.HcompIdeaWordCloud.helpers(
 {
 	ideas : function()
 	{
-		cursor = getCloudFromIdeas();
+		console.log("calling ideas for HcompIdeaWordCloud");
+        cursor = getCloudFromIdeas();
     		return cursor;
   	},
 	getFontSize : function()
