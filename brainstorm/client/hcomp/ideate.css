@@ -3,13 +3,16 @@
   margin-top: -29px;
   z-index: 10;
 }
+.header h1 {
+  color: white;
+  text-align: center;
+}
 
 .hcomp-ideation-pane .main-prompt {
   background: #449d44;
-  background: #CFFFBD;
+  background: #82837E;
   border-right: 3px solid #464646;
   overflow: scroll;
-
 }
 
 .hcomp-ideation-pane .idea-input-box {

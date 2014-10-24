@@ -19,7 +19,12 @@ Template.MturkLoginPage.events({
         //console.log("clicked continue");
         //login user
         var prompt = Session.get("currentPrompt");
-        var userName = $('input#name').val().trim();
+        if ($("input#nickname").val() == null) {
+          var userName = $('input#name').val().trim();
+        }
+        else {
+          var userName = $('input#nickname').val().trim();
+        }
         logger.info("Logging in user with name: " + userName);
         var user = LoginManager.loginUser(userName);
         var group;
