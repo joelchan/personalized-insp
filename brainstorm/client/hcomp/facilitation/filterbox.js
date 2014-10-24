@@ -173,7 +173,7 @@ Template.HcompFilterbox.events({
 		$('.all-ideas-filter-btn').addClass('btn-success');
 
 		Session.set("searchQuery","");
-		$('.search-apply-btn').toggleClass('btn-success');
+		$('.search-apply-btn').removeClass('btn-success');
 		$('#search-query').val("");
 	},
 

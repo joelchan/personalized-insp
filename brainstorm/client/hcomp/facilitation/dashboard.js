@@ -932,10 +932,16 @@ Template.TaskCard.helpers(
 	},
 	getIdeas : function()
 	{
-		var ideas = this.attachments;
-		var count = ideas.length;
-		return count;
+		var ideaIDs = Clusters.findOne({_id : this.ideaNodeID}).ideaIDs;
+        var ideas = Ideas.find({_id : {$in : ideaIDs}}).fetch();
+        return ideas.length;
 	},
+    ideaContents : function()
+    {
+        var ideaIDs = Clusters.findOne({_id : this.ideaNodeID}).ideaIDs;
+        var ideas = Ideas.find({_id : {$in : ideaIDs}}).fetch();
+        return ideas;
+    },
 	getQuestions : function()
 	{
 		var questions = this.comments;
