@@ -1,7 +1,7 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
-// Logger.setLevel('Model:Managers', 'trace');
+//Logger.setLevel('Model:Managers', 'trace');
 //Logger.setLevel('Model:Managers', 'debug');
 Logger.setLevel('Model:Managers', 'info');
 //Logger.setLevel('Model:Managers', 'warn');
@@ -138,17 +138,20 @@ ClusterFactory = (function() {
       });
       cluster.position = position;
     },
-    createDummy: function(ideas, num, user) {
+    createDummy: function(ideas, num, user, prompt) {
       if (!num) {
         num = 1;
       }
       if (!user) {
         user = Session.get("currentUser");
       }
+      if (!prompt) {
+        prompt = Session.get("currentPrompt");
+      }
       logger.trace("Creating Dummy Clusters: #" + num);
       var clusters = [];
       for (var i=0; i<num; i++) {
-        clusters.push(this.create(ideas, user));
+        clusters.push(this.create(ideas, user, prompt));
       }
       return clusters;
     },
@@ -166,7 +169,8 @@ ClusterFactory = (function() {
           });
         }
       } else {
-        Clusters.remove({_id: clusters._id});
+        if (clusters) 
+          Clusters.remove({_id: clusters._id});
       }
     }
   };

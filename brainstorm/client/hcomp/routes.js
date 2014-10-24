@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Routes');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Routes', 'trace');
+//Logger.setLevel('Client:Hcomp:Routes', 'trace');
 //Logger.setLevel('Client:Hcomp:Routes', 'debug');
-//Logger.setLevel('Client:Hcomp:Routes', 'info');
+Logger.setLevel('Client:Hcomp:Routes', 'info');
 //Logger.setLevel('Client:Hcomp:Routes', 'warn');
 
 //Maps routes to templates
@@ -138,11 +138,11 @@ Router.map(function () {
           //pause();
         //}
         if (this.ready()) {
+          logger.debug("Data ready");
           var user = MyUsers.findOne({_id: this.params.userID});
           logger.trace("user: " + user.name);
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
-          console.log("Data ready");
           var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {
             Session.set("currentPrompt", prompt);
@@ -150,7 +150,7 @@ Router.map(function () {
             logger.warn("no prompt found with id: " + this.params.promptID);
           }
         } else {
-          console.log("Not ready");
+          logger.debug("Not ready");
         }
     },
     action: function(){

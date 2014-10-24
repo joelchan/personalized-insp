@@ -16,12 +16,17 @@ Template.MturkIdeationPage.rendered = function(){
 
 Template.MturkMainPrompt.rendered = function(){
   //Setup filters for users and filter update listener
-  updateFilters();
+  //updateFilters();
   //Update filters when current group changes
-  Groups.find({_id: Session.get("currentGroup")._id}).observe({
+  var group = Groups.findOne(
+      {_id: Session.get("currentPrompt").groupIDs[0]}
+  );
+  Groups.find({_id: group._id}).observe({
     changed: function(newDoc, oldDoc) {
       //Setup filters for users and filter update listener
-      updateFilters();
+      //updateFilters();
+      logger.debug("current group has been changed");
+      logger.trace(Session.get("currentGroup"));
     } 
   });
 
@@ -95,72 +100,3 @@ Template.MturkTaskLists.events({
 });
 
 
-updateFilters = function() {
-  /***************************************************************
-    * Check group ideators and update user filters
-    **************************************************************/
-  var prompt = Prompts.findOne({_id: Session.get("currentPrompt")._id});
-  //Assume the group is the first group of the prompt
-  var group = prompt.groupIDs[0];
-  logger.trace("Updating filters for group: " + group);
-  var ideators = GroupManager.getUsersInRole(group, 'Ideator');
-  logger.trace("current group has ideators: " + 
-      JSON.stringify(ideators));
-  var prev = Session.get("currentIdeators");
-  logger.trace("current ideators stored in session are: " + 
-      JSON.stringify(prev));
-  var newUsers = [];
-  var update = false;
-  ideators.forEach(function(user) {
-    if (!isInList(user, prev, '_id')) {
-      logger.trace("Found new ideator: " + 
-        JSON.stringify(user));
-      newUsers.push(user);
-      update = true;
-    }
-  });
-  var prevCluster = Session.get("currentSynthesizers");
-  logger.trace("current synthesizers stored in session are: " + 
-      JSON.stringify(prevCluster));
-  var newClusterers = [];
-  var clusterers = GroupManager.getUsersInRole(group, 'Synthesizer'); 
-  clusterers.forEach(function(user) {
-    if (!isInList(user, prevCluster, '_id')) {
-      logger.trace("Found new clusterer: " + 
-        JSON.stringify(user));
-      newClusterers.push(user);
-      update = true;
-    }
-  });
-
-  if (update) {
-    logger.trace("Updating session variable and filter");
-    //Create filter for user
-    newUsers.forEach(function(user) {
-      logger.debug("Creating new filter for ideator user: " + user.name);
-      var newFilter = FilterManager.create(ideaFilterName,
-          Session.get("currentUser"),
-          "ideas",
-          "userID",
-          user._id
-      );
-      prev.push(user);
-    });
-    newClusterers.forEach(function(user) {
-      logger.debug("Creating new filter for cluster user: " + user.name);
-      var newFilter = FilterManager.create(clusterFilterName,
-          Session.get("currentUser"),
-          "clusters",
-          "userID",
-          user._id
-      );
-      prevCluster.push(user);
-    });
-    logger.debug("Setting list of ideators: " + 
-        JSON.stringify(prev));
-    Session.set("currentIdeators", prev);
-    logger.debug("Setting list of synthesizers: " + 
-        JSON.stringify(prevCluster));
-    Session.set("currentSynthesizers", prevCluster);
- }
-};
