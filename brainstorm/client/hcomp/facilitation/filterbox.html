@@ -4,7 +4,7 @@
 		<div id="filterbox-header">
 		    <label>Show: </label>
 			<div class="btn-group filter-buttons">
-				<button type="button" class="btn btn-default all-ideas-filter-btn">Everything</button>
+				<button type="button" class="btn btn-default all-ideas-filter-btn btn-success">Everything</button>
 				<button type="button" class="btn btn-default misc-ideas-filter-btn">Un-categorized</button>
 				<button type="button" class="btn btn-default starred-ideas-filter-btn">Starred</button>
 			</div>
@@ -22,6 +22,7 @@
 		        </button>
 		      </span>
 		    </div> <!--close search bar input group-->	
+			
 		</div> <!--close filterbox header-->
 
 		<!--Participant Filter Dropdown-->
@@ -136,6 +137,11 @@
 			</div>
 		</div>
 
+		<div class="idea-box-header">
+		  <span>
+		    {{ numIdeas }} Ideas
+		  </span>
+		</div>
 		<ul id="idealist" class="ideadeck ui-sortable">
 			<li class="sort-disabled"></li>
 				{{#each ideas}}
