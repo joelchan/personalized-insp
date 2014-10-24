@@ -87,7 +87,7 @@ Template.IdeaList.helpers({
 * ClusterIdeaItem template Helpers
 ********************************************************************/
 Template.ClusterIdeaItem.rendered = function() {
-  $(this.firstNode).draggable({containment: '.clusterinterface',
+  $(this.firstNode).draggable({containment: '.cluster-interface',
     revert: true,
     zIndex: 50,
   });

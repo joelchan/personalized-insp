@@ -1,4 +1,25 @@
-<template name="AllIdeasItem">
+
+<template name="themeIdeasItem">
+<li id=idea-{{_id}} class="themeIdea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
+  <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
+  </i>
+  {{ content }} 
+</li>
+</template>
+
+<template name="themeIdeasList">
+  <div id="hcomp-themeIdeas-container">
+    <h3> {{themeName this}} </h3>
+    <p> Total ideas: {{numThemeIdeas this}} </p>
+    <ul class="hcompIdeaslist">
+      {{#each themeIdeas this}}
+        {{> themeIdeasItem}}
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="allIdeasItem">
 <li id=idea-{{_id}} class="allIdea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
   <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
   </i>
@@ -6,26 +27,35 @@
 </li>
 </template>
 
-<template name="AllIdeasList">
+<template name="allIdeasList">
   <div id="hcomp-allideas-container">
-    <ul id="allideaslist">
+    <p> Total ideas: {{numAllIdeas}} </p>
+    <ul class ="hcompIdeaslist">
       {{#each ideas}}
-        {{> AllIdeasItem}}
+        {{> allIdeasItem}}
       {{/each}}
     </ul>
   </div>
 </template>
 
 <template name = "HcompResultsPage">
-	<div id = "hccompresultspage">
+	<div id = "hcompresultspage">
 		<div class = "title-container">
-	      <h1>Brainstorm Results</h1>
-	    </div>
-	 	<div class="all-interface row">
-	   		<div id="allIdeasColumn" class="col-sm-3">
-		    	<h3> All Ideas </h3>
-		        {{> AllIdeasList }}
-			</div>
-	  	</div>
-  	</div>
+      <h1> {{promptQuestion}}</h1>
+      <h1>Brainstorm Results</h1>
+    </div>
+    <div id = "themeIdeas-column-container" class = "col-xs-9">
+      {{#each Clusters}}
+        <div class = "idea-column">
+          {{> themeIdeasList}}
+        </div>
+      {{/each}}
+    </div>
+    <div id ="idea-column-container" class = "col-xs-3">
+      <div class = "idea-column" id ="allIdeasColumn">
+        <h3> All Ideas </h3>
+          {{> allIdeasList }}
+      </div>
+    </div>
+	</div>
 </template>

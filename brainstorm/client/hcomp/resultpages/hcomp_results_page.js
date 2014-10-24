@@ -26,6 +26,16 @@ Template.HcompResultsPage.rendered = function(){
   );
   Session.set("currentIdeators", []);
   Session.set("currentSynthesizers", []);
+
+  FilterManager.create(promptFilterName,
+      Session.get("currentUser"),
+      "prompts",
+      "clusterIDs",
+      []
+  );
+  Session.set("currentIdeators", []);
+  Session.set("currentSynthesizers", []);
+
   //Setup filters for users and filter update listener
   // updateFilters();
   // //Update filters when current group changes
@@ -36,11 +46,59 @@ Template.HcompResultsPage.rendered = function(){
   //   } 
   // });
 };
+/********************************************************************
+* HcompResultsPage template Helpers
+********************************************************************/
+Template.HcompResultsPage.helpers({
+  promptQuestion : function() {
+    
+  },
+  Clusters : function() {
+    return Clusters.find();
+  },
+})
 
 /********************************************************************
-* AllIdeasList template Helpers
+* themeIdeasList template Helpers
 ********************************************************************/
-Template.AllIdeasList.helpers({
+Template.themeIdeasList.helpers({
+  themeIdeas : function(cluster) {
+    var IDs = cluster.ideaIDs;
+    return Ideas.find({_id:{$in: IDs}});
+  },
+  themeName : function(cluster) {
+    return cluster.name;
+  },
+  numThemeIdeas : function(cluster) {
+    var arrayOfThemeIdeas = Ideas.find({_id:{$in: cluster.ideaIDs}}).fetch();
+    return arrayOfThemeIdeas.length;
+  }
+})
+/********************************************************************
+* themeIdeasItem template Helpers
+********************************************************************/
+Template.themeIdeasItem.rendered = function() {
+  $(this.firstNode).draggable({containment: 'body',
+    revert: true,
+    zIndex: 50,
+  });
+  $(this.firstNode).droppable({accept: ".themeIdea-item",
+    tolerance: "pointer",
+  });
+};
+
+Template.themeIdeasItem.helpers({
+  gameChangerStatus : function(){
+    return this.isGamechanger;
+  },
+  isNotInCluster: function() {
+    return (this.clusterIDs.length === 0) ? true : false;
+  },
+})
+/********************************************************************
+* allIdeasList template Helpers
+********************************************************************/
+Template.allIdeasList.helpers({
   ideas : function(){
     var allIdeasInBrainstorm = FilterManager.performQuery(allIdeasFilterName, 
       Session.get("currentUser"), 
@@ -52,13 +110,19 @@ Template.AllIdeasList.helpers({
     return sortedAllIdeasInBrainstorm;
     //return Ideas.find();
   },
+  numAllIdeas : function(){
+    var arrayOfIdeas = FilterManager.performQuery(allIdeasFilterName, 
+      Session.get("currentUser"), 
+      "ideas").fetch();
+    return arrayOfIdeas.length;
+  },
 });
 
 /********************************************************************
-* AllIdeasItem template Helpers
+* allIdeasItem template Helpers
 ********************************************************************/
-Template.AllIdeasItem.rendered = function() {
-  $(this.firstNode).draggable({containment: '.clusterinterface',
+Template.allIdeasItem.rendered = function() {
+  $(this.firstNode).draggable({containment: 'body',
     revert: true,
     zIndex: 50,
   });
@@ -67,7 +131,7 @@ Template.AllIdeasItem.rendered = function() {
   });
 };
 
-Template.AllIdeasItem.helpers({
+Template.allIdeasItem.helpers({
   gameChangerStatus : function(){
     return this.isGamechanger;
   },
@@ -75,5 +139,4 @@ Template.AllIdeasItem.helpers({
     return (this.clusterIDs.length === 0) ? true : false;
   },
 })
-
 
