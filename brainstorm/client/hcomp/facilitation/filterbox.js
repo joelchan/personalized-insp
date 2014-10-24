@@ -141,78 +141,6 @@ Template.HcompActivefilters.helpers({
 
 Template.HcompFilterbox.events({
 
-	// apply new full-text search of idea content
-	'click .search-apply-btn' : function(){
-		var query = $('#search-query').val(); // grab query from text form
-		Session.set("searchQuery",query);
-		$('.search-apply-btn').toggleClass('btn-success');
-		console.log("Created new query: " + Session.get("searchQuery"));
-
-		if ($('.all-ideas-filter-btn').hasClass('btn-success')) {
-			$('.all-ideas-filter-btn').removeClass('btn-success');	
-		}
-	},
-
-	// clear full-text search of idea content
-	'click .search-remove-btn' : function(){
-		Session.set("searchQuery","");
-		$('.search-apply-btn').toggleClass('btn-success');
-		$('#search-query').val("");
-
-		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.starred-ideas-filter-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
-		}
-	},
-
-	'click .all-ideas-filter-btn' : function() {
-		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
-		$('.misc-ideas-filter-btn').removeClass('btn-success');
-		$('.starred-ideas-filter-btn').removeClass('btn-success');
-		$('.all-ideas-filter-btn').addClass('btn-success');
-
-		Session.set("searchQuery","");
-		$('.search-apply-btn').removeClass('btn-success');
-		$('#search-query').val("");
-	},
-
-	'click .misc-ideas-filter-btn' : function() {
-		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", [], 'ne');
-		
-		$('.misc-ideas-filter-btn').toggleClass('btn-success');
-		
-		// un-highlight the "everything" button
-		if ($('.all-ideas-filter-btn').hasClass('btn-success')) {
-			$('.all-ideas-filter-btn').removeClass('btn-success');	
-		}
-
-		// re-highlight the "everything" button if this is the last filter being removed
-		if (!($('.starred-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.search-apply-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
-		}
-		
-	},
-
-	'click .starred-ideas-filter-btn' : function() {
-		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "isGamechanger", true);
-		$('.starred-ideas-filter-btn').toggleClass('btn-success');
-		
-		// un-highlight the "everything" button
-		if ($('.all-ideas-filter-btn').hasClass('btn-success')) {
-			$('.all-ideas-filter-btn').removeClass('btn-success');	
-		}
-
-		// re-highlight the "everything" button if this is the last filter being removed
-		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.search-apply-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
-		}
-	},
-
 	'click .cat-filter-opts-btn' : function(){
 		// var options = $(event.currentTarget).find('option:selected');
 		// console.log(options);
@@ -376,6 +304,80 @@ Template.HcompFilterbox.events({
 	},
 });
 
+Template.HcompFilterBoxHeader.events({
+	// apply new full-text search of idea content
+	'click .search-apply-btn' : function(){
+		var query = $('#search-query').val(); // grab query from text form
+		Session.set("searchQuery",query);
+		$('.search-apply-btn').toggleClass('btn-success');
+		console.log("Created new query: " + Session.get("searchQuery"));
+
+		if ($('.all-ideas-filter-btn').hasClass('btn-success')) {
+			$('.all-ideas-filter-btn').removeClass('btn-success');	
+		}
+	},
+
+	// clear full-text search of idea content
+	'click .search-remove-btn' : function(){
+		Session.set("searchQuery","");
+		$('.search-apply-btn').toggleClass('btn-success');
+		$('#search-query').val("");
+
+		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
+			&& $('.starred-ideas-filter-btn').hasClass('btn-success'))
+			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
+				$('all-ideas-filter-btn').addClass('btn-success');
+		}
+	},
+
+	'click .all-ideas-filter-btn' : function() {
+		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+		$('.misc-ideas-filter-btn').removeClass('btn-success');
+		$('.starred-ideas-filter-btn').removeClass('btn-success');
+		$('.all-ideas-filter-btn').addClass('btn-success');
+
+		Session.set("searchQuery","");
+		$('.search-apply-btn').removeClass('btn-success');
+		$('#search-query').val("");
+	},
+
+	'click .misc-ideas-filter-btn' : function() {
+		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", [], 'ne');
+		
+		$('.misc-ideas-filter-btn').toggleClass('btn-success');
+		
+		// un-highlight the "everything" button
+		if ($('.all-ideas-filter-btn').hasClass('btn-success')) {
+			$('.all-ideas-filter-btn').removeClass('btn-success');	
+		}
+
+		// re-highlight the "everything" button if this is the last filter being removed
+		if (!($('.starred-ideas-filter-btn').hasClass('btn-success') 
+			&& $('.search-apply-btn').hasClass('btn-success'))
+			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
+				$('all-ideas-filter-btn').addClass('btn-success');
+		}
+		
+	},
+
+	'click .starred-ideas-filter-btn' : function() {
+		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "isGamechanger", true);
+		$('.starred-ideas-filter-btn').toggleClass('btn-success');
+		
+		// un-highlight the "everything" button
+		if ($('.all-ideas-filter-btn').hasClass('btn-success')) {
+			$('.all-ideas-filter-btn').removeClass('btn-success');	
+		}
+
+		// re-highlight the "everything" button if this is the last filter being removed
+		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
+			&& $('.search-apply-btn').hasClass('btn-success'))
+			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
+				$('all-ideas-filter-btn').addClass('btn-success');
+		}
+	},
+});
+
 Template.HcompActivefilters.events({
 	'click .reset-filters' : function(){
 		//console.log("resetting filters");
@@ -399,7 +401,7 @@ Template.HcompActivefilters.events({
 	},
 });
 
-function searchQueryMatch(idea,queryArr) {
+searchQueryMatch = function searchQueryMatch(idea,queryArr) {
 	// console.log("calling searchQueryMatch");
 	var match = false;
 	var ideaContent = idea.content;
@@ -421,7 +423,7 @@ function searchQueryMatch(idea,queryArr) {
 	return match;
 }
 
-function stringToWords(str) {
+stringToWords = function stringToWords(str) {
 	arr = str.split(" ");
 	arr.forEach(function(q) {
 		q = q.trim();

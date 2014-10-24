@@ -28,6 +28,15 @@
 	/*width: 50%;*/
 }
 
+.mturk-cluster-interface button {
+    margin-top:0px;
+}
+
+.mturk-cluster-interface #idealistwrapper{
+    /*overflow:auto;*/
+    /*width: 50%;*/
+}
+
 .mturk-cluster-interface #left-clustering{
   padding-left: 50px;
 }

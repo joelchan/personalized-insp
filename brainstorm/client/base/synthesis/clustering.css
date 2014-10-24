@@ -28,6 +28,11 @@
 	/*width: 50%;*/
 }
 
+.cluster-interface #idealistwrapper {
+    overflow:auto;
+    color:red;
+}
+
 .cluster-interface #left-clustering{
   padding-left: 50px;
 }

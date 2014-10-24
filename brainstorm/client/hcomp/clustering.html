@@ -8,9 +8,19 @@
 </template>
 
 <template name="MturkClusteringIdeaList">
-	<!--Idea List-->
+	
+  {{ > HcompFilterBoxHeader }}
+
+  <!--Idea List-->
   <div id="idealistwrapper">
-    <h3 id="idealistHeader">Idea List</h3>
+    <!-- <h3 id="idealistHeader">Idea List</h3> -->
+    
+    <div class="idea-box-header">
+      <span>
+        {{ numIdeas }} Ideas
+      </span>
+    </div>
+
     <ul id="idealist" class="ideadeck cluster-idea-list">
       {{#each ideas}}
         {{> MturkClusterIdeaItem}}

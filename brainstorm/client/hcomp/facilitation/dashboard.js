@@ -920,14 +920,10 @@ Template.TaskCard.helpers(
 	},
 	getIdeators : function()
 	{
-  		var assignedUsers = this.assignments;
-		if(!$.isNumeric(assignedUsers))
-		{
-			assignedUsers = 0;
-		}
+  		var numAssignedUsers = this.assignments.length;
 		var availableUsers = this.num;
 		var message = "";
-		message = assignedUsers + "/" + availableUsers;
+		message = numAssignedUsers + "/" + availableUsers;
 		return message;
 	},
 	getIdeas : function()
