@@ -159,12 +159,12 @@ Router.map(function () {
     },
     onBeforeAction: function() {
         console.log("before action");
-        if (!Session.get("currentUser")) {
-          //if there is no user currently logged in, then render the login page
-          this.render('MTurkLoginPage', {'promptID': params.promptID});
-          //Pause rendering the given page until the user is set
-          pause();
-        }
+        // if (!Session.get("currentUser")) {
+        //   //if there is no user currently logged in, then render the login page
+        //   this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+        //   //Pause rendering the given page until the user is set
+        //   pause();
+        // }
         if (this.ready()) {
           console.log("Data ready");
           var prompt = Prompts.findOne({_id: this.params._id});

@@ -27,15 +27,6 @@ Template.HcompResultsPage.rendered = function(){
   Session.set("currentIdeators", []);
   Session.set("currentSynthesizers", []);
 
-  FilterManager.create(promptFilterName,
-      Session.get("currentUser"),
-      "prompts",
-      "clusterIDs",
-      []
-  );
-  Session.set("currentIdeators", []);
-  Session.set("currentSynthesizers", []);
-
   //Setup filters for users and filter update listener
   // updateFilters();
   // //Update filters when current group changes
@@ -51,7 +42,8 @@ Template.HcompResultsPage.rendered = function(){
 ********************************************************************/
 Template.HcompResultsPage.helpers({
   promptQuestion : function() {
-    Session.get("currentPrompt");
+    var prompt =  Session.get("currentPrompt");
+    return prompt.question;
   },
   Clusters : function() {
     return Clusters.find();
@@ -69,10 +61,13 @@ Template.themeIdeasList.helpers({
   themeName : function(cluster) {
     return cluster.name;
   },
+  clusterID : function(cluster) {
+    return cluster._id;
+  },
   numThemeIdeas : function(cluster) {
     var arrayOfThemeIdeas = Ideas.find({_id:{$in: cluster.ideaIDs}}).fetch();
     return arrayOfThemeIdeas.length;
-  }
+  },
 })
 /********************************************************************
 * themeIdeasItem template Helpers
