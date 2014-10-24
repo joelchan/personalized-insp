@@ -145,18 +145,29 @@ RoleManager = (function () {
 
 GroupManager = (function () {
   //Define a default group template
+  var defTempaltes = []
   var defaultTempl = new GroupTemplate();
   defaultTempl.roles = [RoleManager.getTemplate("Ideator", -1),
     RoleManager.getTemplate('Synthesizer', -1),
     RoleManager.getTemplate('Facilitator', -1)
   ];
   defaultTempl.size = -1;
+  defTemplates.push(defaultTempl);
+  var defaultTempl = new GroupTemplate();
+  defaultTempl.roles = [RoleManager.getTemplate("HcompIdeator", -1),
+    RoleManager.getTemplate('HcompFacilitator', -1)
+  ];
+  defaultTempl.size = -1;
+  defTemplates.push(defaultTempl);
   return {
     /****************************************************************
      * Object that allows for most group manipulations including 
      *   assignment, creation, and modification
      ****************************************************************/
-    defaultTemplate: defaultTempl,
+    defaultTemplates: defTemplates,
+    defaultTemplate: function() {
+      return this.defaultTemplates[1];
+    },
     create: function(template) {
       /**************************************************************
       * Create a new group from a tempalte and perform an necessary

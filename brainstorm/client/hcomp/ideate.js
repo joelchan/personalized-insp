@@ -80,8 +80,8 @@ Template.MturkTaskLists.rendered = function() {
 };
 
 Template.MturkTaskLists.events({ 
-  'click .new-task': function(e, t) {
-    logger.trace("Retrieving a new task"); 
+  'click .get-task': function(e, t) {
+    logger.debug("Retrieving a new task"); 
   },
 });
 
