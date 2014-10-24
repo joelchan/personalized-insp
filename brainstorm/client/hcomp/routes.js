@@ -30,12 +30,8 @@ Router.map(function () {
       //var synthIDs = getIDs(group['assignments']['Synthesizer'])
       return [
           Meteor.subscribe('prompts'),
-          Meteor.subscribe('ideas')
-          // Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
-          //Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
-          //Meteor.subscribe('events'),
-          //Meteor.subscribe('filters'), 
-          //Meteor.subscribe('groups')
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('myUsers'),
       ];
     }, 
     onBeforeAction: function() {
@@ -46,6 +42,10 @@ Router.map(function () {
         pause();
       }
       if (this.ready()) {
+        logger.debug("Data ready");
+        var user = MyUsers.findOne({_id: this.params.userID});
+        LoginManager.loginUser(user.name);
+        Session.set("currentUser", user);
         var prompt = Prompts.findOne({_id: this.params.promptID});
         if (prompt) {
           var group = Groups.findOne({_id: prompt.groupIDs[0]})
@@ -57,11 +57,15 @@ Router.map(function () {
           } else {
 	          Session.set("sessionLength", 10);
           }
+        } else {
+          logger.warn("no prompt found with id: " + this.params.promptID);
         }
       }
     },
     onAfterAction: function() {
-      initRolePage();
+      if (this.ready()) {
+        initRolePage();
+      }
     }
   });
   this.route('MturkLoginPage', {
@@ -73,11 +77,13 @@ Router.map(function () {
     onBeforeAction: function() {
       console.log("before action");
       if (this.ready()) {
-        console.log("Data ready");
+        logger.debug("Data ready");
         var prompt = Prompts.findOne({_id: this.params.promptID});
         if (prompt) {
           console.log("setting current prompt");
           Session.set("currentPrompt", prompt);
+        } else {
+          logger.warn("no prompt found with id: " + this.params.promptID);
         }
       }
     },
@@ -86,28 +92,26 @@ Router.map(function () {
     path: 'crowd/Ideation/:promptID/:userID/',
   	template: 'MturkIdeationPage',
     waitOn: function() {
-      console.log("Waiting on...");
+      logger.debug("Waiting on...");
       if (Session.get("currentUser")) {
         // return Meteor.subscribe('ideas');
-        console.log("has current user...");
+        logger.debug("has current user...");
         return [
-          // Meteor.subscribe('ideas', 
-          // {userID: Session.get("currentUser")._id}),
           Meteor.subscribe('ideas'),
-          Meteor.subscribe('prompts')
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers'),
           ];
       } else {
         console.log("NO current user...");
         return [
           Meteor.subscribe('ideas'),
-          Meteor.subscribe('prompts')
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers'),
         ];
       }
     },
     onBeforeAction: function(pause) {
-        console.log("before action");
-        var user = MyUsers.find({_id: this.params.userID});
-        Session.set("currentUser", user);
+        logger.debug("before action");
         //if (!Session.get("currentUser")) {
           ////if there is no user currently logged in, then render the login page
           //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
@@ -115,10 +119,16 @@ Router.map(function () {
           //pause();
         //}
         if (this.ready()) {
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.trace(user.name);
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
           console.log("Data ready");
           var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {
             Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
           }
         } else {
           console.log("Not ready");
@@ -131,7 +141,61 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
-      initRolePage();
+      if (this.ready()) {
+        initRolePage();
+      }
+    }
+
+  });
+  this.route('MturkSynthesis', {
+    path: 'crowd/Categorize/:promptID/:userID/',
+  	template: 'MturkClustering',
+    waitOn: function() {
+      logger.debug("Waiting on...");
+      if (Session.get("currentUser")) {
+        // return Meteor.subscribe('ideas');
+        logger.debug("has current user...");
+        return [
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers')
+          ];
+      } else {
+        logger.debug("NO current user...");
+        return [
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers')
+        ];
+      }
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        if (this.ready()) {
+          var user = MyUsers.findOne({_id: this.params.userID});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+          console.log("Data ready");
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
+          }
+        } else {
+          console.log("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      if (this.ready()) {
+        initRolePage();
+      }
     }
 
   });
@@ -140,28 +204,33 @@ Router.map(function () {
     path: "/results/:promptID", 
     template: "HcompResultsPage",
     waitOn: function() {
-      if (Session.get("currentUser")) {
-        return Meteor.subscribe('ideas', 
-          {userID: Session.get("currentUser")._id});
-      } else {
-        return Meteor.subscribe('ideas');
-      }
+        return [
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers')
+        ];
     },
     onBeforeAction: function() {
-        console.log("before action");
-        if (!Session.get("currentUser")) {
-          //if there is no user currently logged in, then render the login page
-          this.render('MTurkLoginPage', {'promptID': params.promptID});
-          //Pause rendering the given page until the user is set
-          pause();
-        }
+        logger.debug("before action");
         if (this.ready()) {
+          logger.debug("Data ready");
+          var user = MyUsers.findOne({_id: this.params.userID});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
           console.log("Data ready");
           var prompt = Prompts.findOne({_id: this.params._id});
           if (prompt) {
             Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
           }
         }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
     },
   });
 

@@ -83,6 +83,15 @@ Template.MturkTaskLists.events({
   'click .new-task': function(e, t) {
     logger.trace("Retrieving a new task"); 
   },
+  'click .begin-synthesis': function(e, t) {
+    logger.debug("beginning new task"); 
+    logger.trace("PromptID: " + Session.get("currentPrompt")._id);
+    logger.trace("UserID: " + Session.get("currentUser")._id);
+    Router.go("MturkSynthesis", 
+      {promptID: Session.get("currentPrompt")._id,
+      userID: Session.get("currentUser")._id
+    });
+  },
 });
 
 
