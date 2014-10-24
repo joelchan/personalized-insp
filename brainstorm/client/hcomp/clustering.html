@@ -1,0 +1,88 @@
+
+<template name="MturkClusterIdeaItem">
+<li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
+  <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
+  </i>
+  {{ content }} 
+</li>
+</template>
+
+<template name="MturkClusteringIdeaList">
+	<!--Idea List-->
+  <div id="idealistwrapper">
+    <h3 id="idealistHeader">Idea List</h3>
+    <ul id="idealist" class="ideadeck cluster-idea-list">
+      {{#each ideas}}
+        {{> MturkClusterIdeaItem}}
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="MturkClusterList">
+  <div class="cluster-list">
+    <h3>Theme List</h3>
+    <!-- <ul class="newcluster ui-sortable" id="node-drag-target"> -->
+      <!-- </ul> -->
+    <div class="newcluster" id="new-cluster"> 
+      Drag idea here to create a new cluster
+    </div>
+    <ul id="clusterlist" class="deck clusterdeck">
+      {{#each clusters}}
+        <li id="ci-{{_id}}" class="cluster-item">
+          {{name}}
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="MturkClusterarea">
+	{{#each clusters}}
+		{{> MturkCluster}}
+	{{/each}}
+</template>
+
+<template name="MturkCluster">
+  <div class="cluster" id=cluster-{{_id}} 
+    style="top:{{position.top}}px; 
+    left:{{position.left}}px">
+    <!-- <div class="cluster" id=cluster-{{_id}}> -->
+    <div class="form-group form-group-inline">
+      <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
+      <label class="sort-disabled">
+        <span class="clusterlabel {{named}}">{{this.name}}</span>
+      </label>
+    </div>
+    <ul class="clusterul cluster-idea-list {{#if isCollapsed}} hidden {{else}} show {{/if}}" id="cluster-list-{{_id}}">
+      <input type="text" class="namecluster form-control input-sm sort-disabled" 
+        placeholder="Name this cluster"/>
+      {{#each clusterideas}}
+        {{> MturkClusterIdeaItem}}
+      {{/each}}
+    </ul>
+</div>
+</template>
+
+<template name="MturkClustering">
+  <div class="mturk-cluster-header row">
+    <div class="col-sm-12">
+      <h1 id="mturk-clusterprompt">
+        {{prompt}}
+      </h1>
+    </div>
+  </div>
+  <div class="mturk-cluster-interface row">
+    <div id="left-clustering" class="col-sm-3">
+        {{> MturkClusteringIdeaList }}
+	  </div>
+    <div id="middle-clustering" class="col-sm-2">
+      {{> MturkClusterList }}
+	  </div>
+	  <div id="right-clustering" class="col-sm-7">
+      <div  id="clusterarea">
+        {{> MturkClusterarea}}
+      </div>
+    </div>
+  </div>
+</template>
