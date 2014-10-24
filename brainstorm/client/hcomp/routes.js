@@ -13,11 +13,32 @@ Router.map(function () {
    * *************************************************************/
   this.route('CrowdPromptPage', {
       name: 'CrowdPromptPage',
-      path: 'crowd/Brainstorms/',
+      path: 'crowd/Brainstorms/:userID',
       template: 'CrowdPromptPage',
+    waitOn: function() {
+      //var group = Session.get("currentGroup");
+      //console.log(group['assignments']['Ideator']);
+      //console.log("************************************************");
+      //var ideatorIDs = getIDs(group['assignments']['Ideator'])
+      //var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      return [
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers'),
+      ];
+    }, 
+    onBeforeAction: function() {
+      if (this.ready()) {
+        logger.debug("Data ready");
+        if (!Session.get("currentUser")) {
+          var user = MyUsers.findOne({_id: this.params.userID});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+        }
+      }
+    },
   });
   this.route('HcompDashboard', {
-    path: 'crowd/Dashboard/:promptID',
+    path: 'crowd/Dashboard/:promptID/:userID',
     template: 'HcompDashboard',
     onRun: function() {
       //Session.set("currentUser", MyUsers.findOne({_id: "db"}));
@@ -32,24 +53,22 @@ Router.map(function () {
           Meteor.subscribe('prompts'),
           Meteor.subscribe('ideas'),
           Meteor.subscribe('myUsers'),
+          Meteor.subscribe('tasks'),
+          Meteor.subscribe('questions'),
       ];
     }, 
     onBeforeAction: function() {
-      if (!Session.get("currentUser")) {
-        //if there is no user currently logged in, then render the login page
-        this.render('HcompLoginPage');
-        //Pause rendering the given page until the user is set
-        pause();
-      }
       if (this.ready()) {
         logger.debug("Data ready");
-        var user = MyUsers.findOne({_id: this.params.userID});
-        LoginManager.loginUser(user.name);
-        Session.set("currentUser", user);
+        if (!Session.get("currentUser")) {
+          var user = MyUsers.findOne({_id: this.params.userID});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+        }
         var prompt = Prompts.findOne({_id: this.params.promptID});
         if (prompt) {
           var group = Groups.findOne({_id: prompt.groupIDs[0]})
-          console.log("setting current prompt");
+          logger.debug("setting current prompt");
           Session.set("currentPrompt", prompt);
           Session.set("currentGroup", group);
           if (prompt.length > 0) {
