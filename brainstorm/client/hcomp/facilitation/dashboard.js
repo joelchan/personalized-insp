@@ -349,7 +349,14 @@ Template.HcompDashIdeabox.helpers({
     return cursor;
   },
   numIdeas : function(){
-  	return Ideas.find().count();
+  	var cursor = FilterManager.performQuery("Ideas Filter", 
+          Session.get("currentUser"),
+          "ideas"
+        );
+    return cursor.fetch().length;
+  },
+  prompt : function(){
+    return Session.get("currentPrompt").question;
   },
 });
 

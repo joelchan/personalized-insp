@@ -2,7 +2,7 @@ Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
 	Session.set("searchQuery","");
-	//Ideas.ensureIndex({ content: "text" }); // to enable text search
+	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 var filterName;
 Template.HcompFilterbox.helpers({
@@ -123,6 +123,43 @@ Template.HcompFilterbox.events({
 		Session.set("searchQuery","");
 		$('.search-apply-btn').toggleClass('btn-success');
 		$('#search-query').val("");
+	},
+
+	'click .all-ideas-filter-btn' : function() {
+		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+		$('.misc-ideas-filter-btn').removeClass('btn-success');
+		$('.starred-ideas-filter-btn').removeClass('btn-success');
+	},
+
+	'click .misc-ideas-filter-btn' : function() {
+		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", [], 'ne');
+		$('.misc-ideas-filter-btn').toggleClass('btn-success');
+	},
+
+	'click .starred-ideas-filter-btn' : function() {
+		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "isGamechanger", true);
+		$('.starred-ideas-filter-btn').toggleClass('btn-success');
+	},
+
+	'click .cat-filter-opts-btn' : function(){
+		// var options = $(event.currentTarget).find('option:selected');
+		// console.log(options);
+		option = $(event.currentTarget).val();
+		console.log(option);
+		// if ($(event.target).parent().hasClass('open')) {
+		// 	console.log("closed");
+		// 	var catOpt = $(event.target).children('[data-bind="label"]');
+		// 	console.log(catOpt.innerHTML);
+		// } else {
+		// 	console.log("open");
+		// }
+	},
+
+	'click .star-filter-opt-btn' : function(){
+		// if (!$(event.target).parent().hasClass('open')) {
+		// 	var starOpt = $(event.currentTarget).children('[data-bind="label"]').text();
+		// 	console.log(starOpt);	
+		// }
 	},
 
 	'click .filter-drop-button' :function(){
