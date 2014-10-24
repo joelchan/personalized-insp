@@ -204,6 +204,7 @@ Router.map(function () {
     path: "/results/:promptID", 
     template: "HcompResultsPage",
     waitOn: function() {
+<<<<<<< HEAD
         return [
           Meteor.subscribe('ideas'),
           Meteor.subscribe('prompts'),
@@ -212,6 +213,29 @@ Router.map(function () {
     },
     onBeforeAction: function() {
         logger.debug("before action");
+=======
+      if (Session.get("currentUser")) {
+        return [ 
+          Meteor.subscribe('ideas', 
+            {userID: Session.get("currentUser")._id}),
+          Meteor.subscribe('prompts'),
+          ]
+      } else {
+        return [
+        Meteor.subscribe('ideas'),
+        Meteor.subscribe('prompts'),
+        ]
+      }
+    },
+    onBeforeAction: function() {
+        console.log("before action");
+        // if (!Session.get("currentUser")) {
+        //   //if there is no user currently logged in, then render the login page
+        //   this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+        //   //Pause rendering the given page until the user is set
+        //   pause();
+        // }
+>>>>>>> Angela_HCOMP
         if (this.ready()) {
           logger.debug("Data ready");
           var user = MyUsers.findOne({_id: this.params.userID});

@@ -47,12 +47,12 @@ Template.Clustering.rendered = function(){
   //});
 
   //Create isInCluster filter
-  FilterManager.create(ideaFilterName,
-      Session.get("currentUser"),
-      "ideas",
-      "clusterIDs",
-      []
-  );
+  //FilterManager.create(ideaFilterName,
+      //Session.get("currentUser"),
+      //"ideas",
+      //"clusterIDs",
+      //[]
+  //);
   Session.set("currentIdeators", []);
   Session.set("currentSynthesizers", []);
   //Setup filters for users and filter update listener
@@ -87,7 +87,7 @@ Template.IdeaList.helpers({
 * ClusterIdeaItem template Helpers
 ********************************************************************/
 Template.ClusterIdeaItem.rendered = function() {
-  $(this.firstNode).draggable({containment: '.clusterinterface',
+  $(this.firstNode).draggable({containment: '.cluster-interface',
     revert: true,
     zIndex: 50,
   });
