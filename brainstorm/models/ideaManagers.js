@@ -102,9 +102,9 @@ ClusterFactory = (function() {
       logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
       removeMember(cluster.ideaIDs, idea._id);
 
-      if (cluster.ideaIDs.length === 0) {
-        deleteCluster = true;
-      }
+      // if (cluster.ideaIDs.length === 0) {
+      //   deleteCluster = true;
+      // }
       logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas after remove");
       logger.debug("Idea has " + idea.clusterIDs.length + " clusters");
       removeMember(idea.clusterIDs, cluster._id);
