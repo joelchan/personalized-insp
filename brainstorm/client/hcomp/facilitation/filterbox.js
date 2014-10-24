@@ -125,6 +125,27 @@ Template.HcompFilterbox.events({
 		$('#search-query').val("");
 	},
 
+	'click .cat-filter-opts-btn option' : function(){
+		// var options = $(event.currentTarget).find('option:selected');
+		// console.log(options);
+		option = $(event.currentTarget).val();
+		console.log(option);
+		// if ($(event.target).parent().hasClass('open')) {
+		// 	console.log("closed");
+		// 	var catOpt = $(event.target).children('[data-bind="label"]');
+		// 	console.log(catOpt.innerHTML);
+		// } else {
+		// 	console.log("open");
+		// }
+	},
+
+	'click .star-filter-opts-btn' : function(){
+		// if (!$(event.target).parent().hasClass('open')) {
+		// 	var starOpt = $(event.currentTarget).children('[data-bind="label"]').text();
+		// 	console.log(starOpt);	
+		// }
+	},
+
 	'click .filter-drop-button' :function(){
 		$('.filter-dropdown').each(function(i){
 			$(this).slideUp()

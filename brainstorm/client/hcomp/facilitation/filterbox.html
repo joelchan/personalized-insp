@@ -20,7 +20,46 @@
 			    </span> -->
 			    </div><!-- /input-group -->
 			</div>
-			<label>Filter by: </label>
+			<form role="form" class="form-inline">
+				<div class="form-group">
+					<label>Show </label>
+					<select class="form-control cat-filter-opts-btn">
+					  <option>All</option>
+					  <option>Uncategorized</option>
+					</select>
+					<!-- <div class="btn-group">
+					  <button type="button" class="btn btn-sm btn-default dropdown-toggle cat-filter-opts-btn" data-toggle="dropdown">
+					    <span data-bind="label">Select One</span>&nbsp;<span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" role="menu">
+					    <li><a href="#">All</a></li>
+					    <li><a href="#">Uncategorized</a></li>
+					  </ul>
+					</div> -->
+					<label> ideas that are </label>
+					<select class="form-control star-filter-opts-btn">
+					  <option>Starred</option>
+					  <option>Unstarred</option>
+					  <option>Both</option>
+					</select>
+				</div>
+			</form>
+			<!-- <div class="btn-group">
+			  <button type="button" class="btn btn-sm btn-default dropdown-toggle star-filter-opts-btn" data-toggle="dropdown">
+			    <span data-bind="label">Select One</span>&nbsp;<span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu" role="menu">
+			    <li><a href="#">Starred</a></li>
+			    <li><a href="#">Unstarred</a></li>
+			    <li><a href="#">Both</a></li>
+			  </ul>
+			</div> -->
+			<!-- <div class="btn-group filter-buttons">
+			  <button type="button" class="btn btn-default all-ideas-filter-btn">All ideas</button>
+			  <button type="button" class="btn btn-default misc-ideas-filter-btn">Un-tasked ideas</button>
+			  <button type="button" class="btn btn-default starred-ideas-filter-btn">Starred ideas</button>
+			</div> -->
+			<!-- <label>Filter by: </label>
 			<br>
 			<span id="filter-box" class="btn-group btn-group-xs">
 				<button class="parts-filters filter-drop-button btn btn-primary">
@@ -29,16 +68,16 @@
 				<button class="memberOf-filters filter-drop-button btn btn-primary">
 					Theme <span class="caret"></span>
 				</button>
-				<!-- <button class="themed-filters filter-drop-button btn btn-primary">
+				<button class="themed-filters filter-drop-button btn btn-primary">
 					Status <span class="caret"></span>
-				</button> -->
+				</button>
 				<button class="time-filters filter-drop-button btn btn-primary">
 					Time<span class="caret"></span>
 				</button>
 				<button class="gamechange-filter filter-drop-button btn btn-primary">
 					<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
 				</button>
-			</span>
+			</span> -->
 		</div>
 	</div>
 

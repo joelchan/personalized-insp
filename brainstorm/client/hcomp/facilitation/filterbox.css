@@ -53,9 +53,15 @@
 	font-size:8px;
 }
 
+.filter-buttons {
+	/*font-size:8px;*/
+}
+
 #star-toggle-icon{
 	padding: 0px;
 }
+
+
 
 .fa-filter{
 	/*float: left;*/
