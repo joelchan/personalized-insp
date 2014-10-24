@@ -7,8 +7,8 @@ Logger.setLevel('Models:Tasks', 'trace');
 //Logger.setLevel('Models:Tasks', 'warn');
 
 Tasks = new Meteor.Collection("tasks");
-//Tasks.remove({})
 Questions = new Meteor.Collection("questions");
+Assignments = new Meteor.Collection("assignments");
 
 Task = function (user, prompt, group, desc, type, priority, num, ideasRequested, minutesRequested) {
   /*****************************************************************
@@ -33,7 +33,7 @@ Task = function (user, prompt, group, desc, type, priority, num, ideasRequested,
   //Set the priority of the task
   this.priority = priority;
   //Graph container of the Task. Allows for Task = theme
-  this.ideaNode;
+  this.ideaNodeID = ClusterFactory.create([], user, prompt)._id;
   //Q&A to clarify the task 
   //List of Question objects
   this.comments = [];
@@ -68,4 +68,13 @@ Question = function (question, user) {
   this.taskID;
   //the index in the list of comments
   this.commentIndex;
+};
+
+Assignment = function (task, user) {
+  /*****************************************************************
+   * Constructor for storing a user assignment to a task
+   *****************************************************************/
+  this.userID = user._id;
+  this.taskID = task._id;
+  this.assignmentTime = new Date().getTime();
 };

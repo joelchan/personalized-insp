@@ -64,6 +64,9 @@ Template.MturkIdeaEntryBox.events({
     }
     // Clear the text field
     inputBox.val('');
+    logger.debug("parent of idea entry box");
+    logger.trace(target.firstNode);
+    logger.trace($(target.firstNode).parent()[0]);
     //Scroll window to new idea
     // $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
   },
@@ -84,9 +87,35 @@ Template.MturkTaskLists.rendered = function() {
   
 };
 
+Template.MturkTaskLists.helpers({
+  getMyTasks: function() {
+    logger.debug("Getting a list of all tasks assigned to current user");
+    var assignments = 
+      Assignments.find({userID: Session.get("currentUser")._id}).fetch();
+    logger.trace(assignments);
+    var taskIDs = getValsFromField(assignments, 'taskID');
+    logger.trace(taskIDs);
+    var tasks = Tasks.find({_id: {$in: taskIDs}});
+    //Sort tasks by assignment time
+    return tasks;
+  },
+  
+});
+
 Template.MturkTaskLists.events({ 
   'click .get-task': function(e, t) {
     logger.debug("Retrieving a new task"); 
+    var task = TaskManager.assignTask(
+      Session.get("currentPrompt"),
+      Session.get("currentUser")
+    );
+    if (task) {
+      logger.info("Got a new task");
+      logger.trace(task);
+    } else {
+      logger.info("No new task was assigned");
+      alert("Sorry, there are no new tasks. Just keep on trying");
+    }
   },
   'click .begin-synthesis': function(e, t) {
     logger.debug("beginning new task"); 
@@ -100,3 +129,9 @@ Template.MturkTaskLists.events({
 });
 
 
+Template.TaskIdeaList.helpers({
+  ideas: function() {
+    logger.debug("getting idea list for task");
+    logger.trace(this);
+  },
+});

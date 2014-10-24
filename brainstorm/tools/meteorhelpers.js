@@ -26,20 +26,6 @@ getCollection = function (name) {
   // return undefined; // if none of the collections match
 };
 
-getValsFromField = function(objs, field) {
-  /******************************************************************
-   * Get the val from a specified field from a list of mongo objects
-   * @params:
-   *    objs - either an array of mongodb documents, or a cursor 
-   *        to a list of mongodb documents
-   *****************************************************************/
-  vals = []
-  objs.forEach(function(obj) {
-    logger.debug(obj[field]);
-    vals.push(obj[field]);
-  });
-  return vals;
-};
 
 getIDs = function(objs) {
   /******************************************************************

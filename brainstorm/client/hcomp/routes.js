@@ -52,9 +52,11 @@ Router.map(function () {
       return [
           Meteor.subscribe('prompts'),
           Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
           Meteor.subscribe('myUsers'),
           Meteor.subscribe('tasks'),
           Meteor.subscribe('questions'),
+          Meteor.subscribe('assignments'),
       ];
     }, 
     onBeforeAction: function() {
@@ -112,22 +114,14 @@ Router.map(function () {
   	template: 'MturkIdeationPage',
     waitOn: function() {
       logger.debug("Waiting on...");
-      if (Session.get("currentUser")) {
-        // return Meteor.subscribe('ideas');
-        logger.debug("has current user...");
-        return [
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers'),
-          ];
-      } else {
-        console.log("NO current user...");
-        return [
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers'),
-        ];
-      }
+      return [
+        Meteor.subscribe('ideas'),
+        Meteor.subscribe('prompts'),
+        Meteor.subscribe('myUsers'),
+        Meteor.subscribe('tasks'),
+        Meteor.subscribe('questions'),
+        Meteor.subscribe('assignments'),
+      ];
     },
     onBeforeAction: function(pause) {
         logger.debug("before action");
@@ -176,6 +170,7 @@ Router.map(function () {
         logger.debug("has current user...");
         return [
           Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
           Meteor.subscribe('prompts'),
           Meteor.subscribe('myUsers')
           ];
@@ -183,6 +178,7 @@ Router.map(function () {
         logger.debug("NO current user...");
         return [
           Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
           Meteor.subscribe('prompts'),
           Meteor.subscribe('myUsers')
         ];
@@ -226,12 +222,14 @@ Router.map(function () {
       if (Session.get("currentUser")) {
         return [ 
           Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
           Meteor.subscribe('prompts'),
           ]
       } else {
         return [
-        Meteor.subscribe('ideas'),
-        Meteor.subscribe('prompts'),
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
+          Meteor.subscribe('prompts'),
         ]
       }
     },

@@ -11,4 +11,10 @@ Meteor.startup(function(){
   Meteor.publish("tasks", function(){
 	  return Tasks.find();
   });
+  Meteor.publish("questions", function(){
+	  return Questions.find();
+  });
+  Meteor.publish("assignments", function(){
+	  return Assignments.find();
+  });
 });
