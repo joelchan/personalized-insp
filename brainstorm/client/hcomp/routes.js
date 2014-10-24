@@ -24,6 +24,7 @@ Router.map(function () {
       return [
           Meteor.subscribe('prompts'),
           Meteor.subscribe('myUsers'),
+          Meteor.subscribe('groups'),
       ];
     }, 
     onBeforeAction: function() {
@@ -51,6 +52,7 @@ Router.map(function () {
       //var synthIDs = getIDs(group['assignments']['Synthesizer'])
       return [
           Meteor.subscribe('prompts'),
+          Meteor.subscribe('groups'),
           Meteor.subscribe('ideas'),
           Meteor.subscribe('clusters'),
           Meteor.subscribe('myUsers'),

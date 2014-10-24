@@ -2,7 +2,7 @@ Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
 	Session.set("searchQuery","");
-	Ideas.ensureIndex({ content: "text" }); // to enable text search
+	//Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 var filterName;
 Template.HcompFilterbox.helpers({

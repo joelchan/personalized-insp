@@ -133,7 +133,8 @@ TaskManager = (function() {
       
     },
     addIdeaToTask: function (idea, task) {
-    
+      var cluster = Clusters.findOne({_id: task.ideaNodeID});
+      ClusterFactory.insertIdeaToCluster(idea, cluster);
     },
     addQuestion: function (question, task, user) {
       var q = new Question(question, user);

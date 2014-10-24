@@ -11,7 +11,7 @@ Template.MturkIdeationPage.rendered = function(){
   var height = $(window).height() - 50; //Navbar height=50
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
-  $(".task-list").height(height);
+  $(".task-list-pane").height(height-50);
 };
 
 Template.MturkMainPrompt.rendered = function(){
@@ -41,7 +41,9 @@ Template.MturkMainPrompt.helpers({
 
 Template.MturkIdeaList.helpers({
   ideas: function() {
-    return Ideas.find({userID: Session.get("currentUser")._id});
+    return Ideas.find({$and: [
+      {userID: Session.get("currentUser")._id},
+      {clusterIDs: []}]});
   },
 });
 
@@ -64,11 +66,15 @@ Template.MturkIdeaEntryBox.events({
     }
     // Clear the text field
     inputBox.val('');
+    //Adding Idea to list of task ideas if this is a task
     logger.debug("parent of idea entry box");
     logger.trace(target.firstNode);
-    logger.trace($(target.firstNode).parent()[0]);
-    //Scroll window to new idea
-    // $("html, body").animate({ scrollTop: $('.ideabox').height() }, "slow");
+    var parent = $(target.firstNode).parent();
+    if (parent.hasClass('ideate-task')) {
+      logger.debug("Adding a new idea to a task");
+      logger.trace(this);
+      TaskManager.addIdeaToTask(idea, this);
+    }
   },
   //waits 3 seconds after user stops typing to change isTyping flag to false
   'keyup textarea' : function(e, target){
@@ -133,5 +139,10 @@ Template.TaskIdeaList.helpers({
   ideas: function() {
     logger.debug("getting idea list for task");
     logger.trace(this);
+    var cluster = Clusters.findOne({_id: this.ideaNodeID});
+    logger.trace(cluster.ideaIDs)
+    var ideas = Ideas.find({_id: {$in: cluster.ideaIDs}});
+    logger.trace(ideas.fetch());
+    return ideas;
   },
 });

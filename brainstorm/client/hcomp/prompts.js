@@ -137,7 +137,7 @@ Template.CrowdPromptPage.events({
         PromptManager.setLength(newPrompt, parseInt(minutes));
       }
       var group = GroupManager.create(newPrompt.template);
-      PromptManager.addGroups(prompt, group);
+      PromptManager.addGroups(newPrompt, group);
     },
 
     'click .dash-button': function () {
@@ -146,11 +146,13 @@ Template.CrowdPromptPage.events({
       Session.set("currentPrompt", prompt);
       var group = Groups.findOne({'_id': this.groupIDs[0]});
       Session.set("currentGroup", group);
+      var user = Session.get("currentUser");
       if (prompt) {
         logger.trace("found current prompt with id: " + prompt._id);
         Session.set("currentPrompt", prompt);
         logger.debug("Prompt selected");
-        Router.go('HcompDashboard', {promptID: prompt._id});
+        Router.go('HcompDashboard', 
+            {promptID: prompt._id, userID: user._id});
       } else {
         logger.error("couldn't find current prompt with id: " + 
             prompt._id);

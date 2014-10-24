@@ -25,6 +25,7 @@
   width: 85%;
   margin: 0px 7% 15px 7%;
   padding: 5px;
+  display: block;
 }
 
 .hcomp-ideation-pane .idea-list-box {
@@ -44,12 +45,39 @@
   margin: 0;
 }
 
+.hcomp-ideation-pane .task-list-header {
+  padding: 0 20px;
+}
+
 .hcomp-ideation-pane .task-lists {
-  background: #FFF3CC; /*Light Yellow*/
-  overflow: scroll;
+  background: #FFF;
   position: absolute;
   top:0;
   bottom: 0;
   left: 25%;
   padding: 15px;
+}
+
+.hcomp-ideation-pane .task-list-pane {
+  white-space: nowrap;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.hcomp-ideation-pane .ideate-task {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+  max-height: 90%;
+  background: #FFF3CC; /*Light Yellow*/
+  border: 2px solid #464646;
+  border-radius: 15px;
+  margin: 15px;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.hcomp-ideation-pane .task-header {
+  padding: 0;
+  margin: 10px;
 }

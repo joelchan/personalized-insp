@@ -42,7 +42,7 @@
 </template>
 
 <template name="MturkTaskLists">
-  <div class='row'>
+  <div class='row task-list-header'>
     <div class="btn btn-success btn-large get-task">
       Get a new task
     </div>
@@ -52,7 +52,7 @@
     </div>
     <!-- *************************** Remove this code *************-->
   </div>
-  <div class='row task-list'>
+  <div class='task-list-pane'>
     {{#each getMyTasks}}
       {{> MturkIdeateTask }}
     {{/each}}
@@ -61,7 +61,7 @@
 
 <template name="MturkIdeateTask">
   <div class="ideate-task">
-    <h2>{{ desc }}</h2><br/>
+    <h3 class="task-header">{{ desc }}</h3>
     {{> MturkIdeaEntryBox }}
     {{> TaskIdeaList }}
   </div>

@@ -349,7 +349,7 @@ Template.HcompDashIdeabox.helpers({
     return cursor;
   },
   numIdeas : function(){
-  	return Ideas.ideas().count();
+  	return Ideas.find().count();
   },
 });
 
