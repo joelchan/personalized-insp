@@ -64,9 +64,9 @@ Router.map(function () {
       initRolePage();
     }
   });
-  this.route('MTurkLoginPage', {
-    path: '/crowd/LoginPage/:promptID',
-    template: 'MTurkLoginPage',
+  this.route('MturkLoginPage', {
+    path: '/crowd/Login/:promptID',
+    template: 'MturkLoginPage',
     waitOn: function() {
       return Meteor.subscribe('prompts', this.params.promptID);
     },
@@ -83,7 +83,7 @@ Router.map(function () {
     },
   });
   this.route('MturkIdeation', {
-    path: 'crowd/Ideation/:promptID',
+    path: 'crowd/Ideation/:promptID/:userID/',
   	template: 'MturkIdeationPage',
     waitOn: function() {
       console.log("Waiting on...");
@@ -94,25 +94,31 @@ Router.map(function () {
           // Meteor.subscribe('ideas', 
           // {userID: Session.get("currentUser")._id}),
           Meteor.subscribe('ideas'),
-          Meteor.subscribe('prompts')
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers')
           ];
       } else {
         console.log("NO current user...");
         return [
           Meteor.subscribe('ideas'),
-          Meteor.subscribe('prompts')
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers')
         ];
       }
     },
     onBeforeAction: function(pause) {
         console.log("before action");
-        if (!Session.get("currentUser")) {
-          //if there is no user currently logged in, then render the login page
-          this.render('MTurkLoginPage', {'promptID': this.params.promptID});
-          //Pause rendering the given page until the user is set
-          pause();
-        }
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
         if (this.ready()) {
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.debug("user: " + user.name);
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
           console.log("Data ready");
           var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {

@@ -6,7 +6,7 @@ Logger.setLevel('Client:Exp:MturkLogin', 'trace');
 //Logger.setLevel('Client:Exp:MturkLogin', 'info');
 //Logger.setLevel('Client:Exp:MturkLogin', 'warn');
 
-Template.MTurkLoginPage.rendered = function() {
+Template.MturkLoginPage.rendered = function() {
   // Ensure scroll to top of window
   window.scrollTo(0,0);
 }
@@ -14,20 +14,33 @@ Template.MTurkLoginPage.rendered = function() {
 /********************************************************************
  * Login Page event listeners 
  * *****************************************************************/
-Template.MTurkLoginPage.events({
+Template.MturkLoginPage.events({
     'click button.nextPage': function () {
         //console.log("clicked continue");
         //login user
         var prompt = Session.get("currentPrompt");
         var userName = $('input#name').val().trim();
         logger.info("Logging in user with name: " + userName);
-        LoginManager.loginUser(userName);
-        var group = GroupManager.create(prompt.template);
-        PromptManager.addGroups(prompt, [group]);
-        Session.set("currentPrompt", prompt);
-        var role = RoleManager.defaults['MturkIdeator'];
+        var user = LoginManager.loginUser(userName);
+        var group;
+        if (prompt.groupIDs.length == 0) {
+          group = GroupManager.create(prompt.template);
+          PromptManager.addGroups(prompt, [group]);
+        } else {
+          group = Groups.findOne({_id: prompt.groupIDs[0]});
+        }
+        var role;
+        if (GroupManager.hasUser(group, user)) {
+          role = RoleManager.defaults['HcompIdeator'];
+          GroupManager.addUser(group, user, role.title);
+        } else {
+          role = GroupManager.getRole(group, user);
+        }
         Session.set("currentRole", role);
-        Router.go("MturkIdeation", {promptID: prompt._id});
+        Session.set("currentGroup", group);
+        Session.set("currentPrompt", prompt);
+        Router.go("MturkIdeation", 
+          {promptID: prompt._id, userID: user._id});
 
     /********************* Disable experiment logic ************/
     },

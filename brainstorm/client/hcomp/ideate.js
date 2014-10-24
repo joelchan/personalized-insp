@@ -6,6 +6,14 @@ Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 //Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
+Template.MturkIdeationPage.rendered = function(){
+  //Set height of elements to viewport height
+  var height = $(window).height() - 50; //Navbar height=50
+  logger.debug("window viewport height = " + height.toString());
+  $(".main-prompt").height(height);
+  $(".task-list").height(height);
+};
+
 Template.MturkMainPrompt.rendered = function(){
   //Setup filters for users and filter update listener
   updateFilters();
@@ -22,7 +30,6 @@ Template.MturkMainPrompt.rendered = function(){
 Template.MturkMainPrompt.helpers({
   prompt: function() {
     var prompt = Session.get("currentPrompt");
-    return "testjkalsd;f";
     return prompt.question;
   },
 });
@@ -68,6 +75,15 @@ Template.MturkIdeaEntryBox.events({
   }
 });
 
+Template.MturkTaskLists.rendered = function() {
+  
+};
+
+Template.MturkTaskLists.events({ 
+  'click .get-task': function(e, t) {
+    logger.debug("Retrieving a new task"); 
+  },
+});
 
 
 updateFilters = function() {
