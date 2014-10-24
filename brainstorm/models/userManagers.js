@@ -145,7 +145,7 @@ RoleManager = (function () {
 
 GroupManager = (function () {
   //Define a default group template
-  var defTempaltes = []
+  var defTemplates = [];
   var defaultTempl = new GroupTemplate();
   defaultTempl.roles = [RoleManager.getTemplate("Ideator", -1),
     RoleManager.getTemplate('Synthesizer', -1),
