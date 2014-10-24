@@ -66,10 +66,11 @@ Template.HcompLoginPage.events({
         //login user
         var userName = $('input#name').val().trim();
         logger.info("Logging in user with name: " + userName);
-        LoginManager.loginUser(userName);
+        var user = LoginManager.loginUser(userName);
         var role = RoleManager.defaults['HcompFacilitator'];
         Session.set("currentRole", role);
-        Router.go("CrowdPromptPage");
+        Router.go("CrowdPromptPage",
+          {userID: user._id});
 
     /********************* Disable experiment logic ************/
     },

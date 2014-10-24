@@ -96,11 +96,14 @@ Template.CrowdBrainstorm.helpers({
 Template.CrowdBrainstorm.events({
   'click .dash-button': function() {
     console.log("go to dash");
-    Router.go("HcompDashboard", {promptID: this._id});
+    Router.go("HcompDashboard", 
+      {promptID: this._id,
+        userID: Session.get('currentUser')});
   },
   'click .review-button': function() {
     console.log("go to reviewpage");
-    Router.go("HcompResultsPage", {promptID: this._id});
+    Router.go("HcompResultsPage", 
+      {promptID: this._id, userID: Session.get("currentUser")});
   },
 });
 

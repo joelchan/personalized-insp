@@ -364,20 +364,8 @@ Template.HcompNewTaskModal.helpers({
 Template.HcompTaskList.helpers({
     
     // this should return the list of tasks
-    tasks : function() {
-    
-        // temporary creating a new task for making the UI
-        // var task1 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
-        //   "This is a test task", 'open', priority=5, num=5);
-        // //Attach inspiration to task
-        // task1._id = Tasks.insert(task1);
-        // var task2 = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), 
-        //   "This is another test task. Much much longer though. Will have to truncate to fit into the title bar", 'open', priority=3, num=5);
-        // //Attach inspiration to task
-        // task2._id = Tasks.insert(task2);
-
-        // console.log(Tasks.find().fetch());
-
+    tasks : function() 
+	{
         return Tasks.find().fetch();
     },
 
@@ -597,6 +585,76 @@ Template.HcompDashboard.events({
 		$('#new-prompt').val("");
 	},
 
+
+	'click #task-create' : function()
+	{
+		var message = $("#task-description").val();
+		var priorityText = $("#task-priority").val();
+		var priorityNum;
+		var ideatorsVal = $("#task-ideators").val();
+		var ideasVal = $("#task-ideas").val();
+		var minutesVal = $("#task-minutes").val();
+
+		console.log(priorityText);
+		switch (priorityText)
+		{
+			case "Low":
+				priorityNum = 1;
+				break;
+			case "Medium":
+				priorityNum = 2;
+				break;
+			case "High":
+				priorityNum = 3;
+				break;
+			default: 
+				priorityNum = 1;
+				break;
+		}
+		var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal, ideasRequested=ideasVal, minutesRequested=minutesVal); 
+		task._id = Tasks.insert(task);
+	},
+
+	'click .card-edit' : function()
+	{
+		var taskID = $(event.target).parent().parent().parent().attr('id');
+		console.log(taskID);
+		Tasks.update({ _id: taskID },{$set: { edited: true}});
+		
+		//var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal, ideasRequested=ideasVal, minutesRequested=minutesVal); 
+		//task._id = Tasks.insert(task);
+	},
+
+
+	'click .task-update' : function()
+	{
+		var taskID = $(event.target).parent().parent().parent().parent().attr('id');
+		var message = $("#"+taskID + " .task-description").val();
+		var priorityText = $("#"+taskID + " .task-priority").val();
+		var priorityNum;
+		var ideatorsVal = $("#"+taskID + " .task-ideators").val();
+		var ideasVal = $("#"+taskID + " .task-ideas").val();
+		var minutesVal = $("#"+taskID + " .task-minutes").val();
+
+		switch (priorityText)
+		{
+			case "Low":
+				priorityNum = 1;
+				break;
+			case "Medium":
+				priorityNum = 2;
+				break;
+			case "High":
+				priorityNum = 3;
+				break;
+			default: 
+				priorityNum = 1;
+				break;
+		}
+
+		Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal, ideasRequested: ideasVal, minutesRequested: minutesVal}});
+	},
+
     // event handler for publishing a new task
     'click #new-task > div > div > div.modal-footer > button.btn.btn-primary' : function(){
         // code goes here
@@ -778,7 +836,7 @@ function getCloudFromIdeas()
 
 Template.HcompIdeaWordCloud.rendered = function () 
 {
-	console.log(getCloudFromIdeas());
+	//console.log(getCloudFromIdeas());
 }
 
 
@@ -804,5 +862,99 @@ Template.HcompIdeaWordCloud.helpers(
 	{
 		var word = this.word;
 		return word;
+	}
+});
+
+
+
+Template.TaskCards.helpers(
+{
+	tasks : function()
+	{
+		cursor = Tasks.find({ desc: { $exists: true}}).fetch();
+    		return cursor;
+  	}
+});
+
+Template.TaskCard.helpers(
+{
+	getDescription : function()
+	{
+		var description = this.desc;
+		return description;
+  	},
+	isNotEdit : function()
+	{
+		var edited = this.edited;
+		if((edited == true))
+		{
+			return false;
+		}
+		return true;
+  	},
+	getPriority : function()
+	{
+		var priority = this.priority;
+		var message = "";
+		switch(priority)
+		{
+			case 1:
+				message = "Low";
+				break;
+			case 2:
+				message = "Medium";
+				break;
+			case 3:
+				message = "High";
+				break;
+			default:
+				message = "";
+				break;
+		}
+    		return message;
+	},
+	getIdeators : function()
+	{
+  		var assignedUsers = this.assignments;
+		if(!$.isNumeric(assignedUsers))
+		{
+			assignedUsers = 0;
+		}
+		var availableUsers = this.num;
+		var message = "";
+		message = assignedUsers + "/" + availableUsers;
+		return message;
+	},
+	getIdeas : function()
+	{
+		var ideas = this.attachments;
+		var count = ideas.length;
+		return count;
+	},
+	getQuestions : function()
+	{
+		var questions = this.comments;
+		var count = questions.length;
+		return count;
+	},
+	getIdeatorCount : function()
+	{
+		var count = this.num;
+		return count;
+	},
+	getIdeaCount : function()
+	{
+		var count = this.ideasRequested;
+		return count;
+	},
+	getMinuteCount : function()
+	{
+		var count = this.minutesRequested;
+		return count;
+	},
+	getID : function()
+	{
+		var id = this._id;
+		return id;
 	}
 });

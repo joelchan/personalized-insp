@@ -10,8 +10,10 @@ Logger.setLevel('Models:PromptManager', 'info');
 PromptManager  = (function() {
   return {
     create: function(question, user, template, title) {
+      logger.debug("Creating  new prompt with question: " + question);
       //Legacy support of no user specified during prompt creation
       if (!user) {
+        logger.debug("no user was supplied, using the currentUser");
         user = Session.get("currentUser");
       }
       var newPrompt = new Prompt(question, user);
@@ -19,7 +21,7 @@ PromptManager  = (function() {
       if (template) {
         newPrompt.template = template;
       } else {
-        newPrompt.template = GroupManager.defaultTemplate;
+        newPrompt.template = GroupManager.defaultTemplate();
       }
       //Store a shortened title
       if (title) {
@@ -28,6 +30,7 @@ PromptManager  = (function() {
         newPrompt.title = question;
       }
       newPrompt._id = Prompts.insert(newPrompt);
+      logger.trace(prompt);
       return newPrompt;
     },
     addGroups: function(prompt, groups) {

@@ -418,3 +418,60 @@
   text-decoration: underline;
 }
 
+
+#CreateTask, .edit-task
+{
+	border: solid black 1px;
+	padding: 15px 15px 0px 15px;
+}
+
+#CreateTask .task-options, .edit-task .task-options, 
+{
+	display: inline-block;
+}
+
+#CreateTask #task-description
+{
+	
+}
+
+#CreateTask #task-priority
+{
+
+}
+
+#CreateTask #task-ideators
+{
+
+}
+
+#CreateTask #task-ideas
+{
+	
+}
+
+#CreateTask #task-minutes
+{
+	
+}
+#CreateTask #task-create
+{
+	
+}
+
+.task-card
+{
+	border: solid black 1px;
+	margin: 10px 0px;
+	padding: 15px;
+}
+
+.task-card .row
+{
+	margin: 0px;
+}
+
+.task-card .card-ideators, .task-card .card-priority
+{
+	padding: 0px;
+}
