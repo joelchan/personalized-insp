@@ -92,29 +92,29 @@ Template.HcompIdeaWordCloud.rendered = function ()
 *********************************************************************/
 
 Template.HcompDashboard.helpers({
-	ideas : function(){
-		var cursor = FilterManager.performQuery("Ideas Filter", 
-      Session.get("currentUser"),
-      "ideas"
-    );
-		return cursor;
-  	},
+	// ideas : function(){
+	// 	var cursor = FilterManager.performQuery("Ideas Filter", 
+ //      Session.get("currentUser"),
+ //      "ideas"
+ //    );
+	// 	return cursor;
+ //  	},
 
 
-  	gamechangers : function(){
-  		return false;
-  	},
+ //  	gamechangers : function(){
+ //  		return false;
+ //  	},
 
 
-  	selectedparts : function(){
-  		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
-  	},
+ //  	selectedparts : function(){
+ //  		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
+ //  	},
 
-  	participants : function(){
-		// return MyUsers.find({type: "Experiment Participant"});
-		return MyUsers.find({type: "Ideator"});
-		// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
-	},
+ //  	participants : function(){
+	// 	// return MyUsers.find({type: "Experiment Participant"});
+	// 	return MyUsers.find({type: "Ideator"});
+	// 	// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
+	// },
 
   	//partFilters : function(){
   		//return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
@@ -164,10 +164,10 @@ Template.HcompIdeaWordCloud.helpers(
 
 Template.TaskCards.helpers(
 {
-    tasks : function()
-    {
-        cursor = Tasks.find({ desc: { $exists: true}}).fetch();
-            return cursor;
+    tasks : function() {
+        taskList = Tasks.find({ desc: { $exists: true}}).fetch();
+        var sortedTaskList = taskList.sort(function(a,b) { return b.time - a.time});
+        return sortedTaskList;
     }
 });
 
