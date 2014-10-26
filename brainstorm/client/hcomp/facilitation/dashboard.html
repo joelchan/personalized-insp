@@ -10,14 +10,21 @@
     <div class="notes-view col-sm-4">
       <!-- <h3>Understand What's Going On!</h3> -->
       {{> HcompBigPictureViz }}
+
+      <hr />
+
       {{> HcompScratchPad }}
     </div> <!-- close notes-view col -->
     <div class="tasks-view col-sm-4">
       <!-- <h3>Focus the Brainstorm!</h3> -->
 
-	   {{> CreateTask }}
+    {{> CreateTask }}
+    
+    <div style="background-color: white; height:15px;">
+      <hr />
+    </div>
 
-	   {{> TaskCards }}
+    {{> TaskCards }}
 
     </div>
     
@@ -88,11 +95,13 @@
 
 <template name="CreateTask">
 	<div id="CreateTask">
+    <span class="card-description">Create a new inspiration</span>
+    <hr />
 		<form role="form" class="form">
 			<div class="row">
 		  		<div class="col-xs-12">
 					<label class="sr-only" for="task-description">Task Instructions</label>
-					<textarea class="form-control" rows="3" id="task-description" placeholder="Enter task instructions here..."></textarea>
+					<textarea class="form-control" rows="2" id="task-description" placeholder="Describe your inspiration..."></textarea>
 				</div>
 			</div>
 			<div class="row">
@@ -208,6 +217,8 @@
 		</div>
 	{{else}} 
 		<div class="edit-task" id="{{getID}}">
+      <span class="card-description">Editing this inspiration</span>
+      <hr />
 			<form role="form" class="form">
 				<div class="row">
 			  		<div class="col-xs-12">
