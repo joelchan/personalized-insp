@@ -75,6 +75,9 @@ Router.map(function () {
           logger.debug("setting current prompt");
           Session.set("currentPrompt", prompt);
           Session.set("currentGroup", group);
+          // FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+          // FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+          // FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
           if (prompt.length > 0) {
 	          Session.set("sessionLength", prompt.length);	
           } else {

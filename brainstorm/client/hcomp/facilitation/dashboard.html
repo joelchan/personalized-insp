@@ -17,14 +17,12 @@
     </div> <!-- close notes-view col -->
     <div class="tasks-view col-sm-4">
       <!-- <h3>Focus the Brainstorm!</h3> -->
-
-    {{> CreateTask }}
-    
-    <div style="background-color: white; height:15px;">
-      <hr />
-    </div>
-
-    {{> TaskCards }}
+      <h1>Inspirations</h1>
+      {{> CreateTask }}
+      <div style="background-color: white; height:15px;">
+        <hr />
+      </div>
+      {{> TaskCards }}
 
     </div>
     
@@ -71,11 +69,15 @@
 
 <template name="HcompIdeaWordCloud">
   <div id="ideawordcloud">
-    {{#each ideas}}
-      <span class="cloudItem" style="font-size: {{getFontSize}}px;">
-            <a href="">{{getWord}}</a>
-            </span>
-    {{/each}}
+    {{#if ideas}}  
+      {{#each ideas}}
+        <span class="cloudItem" style="font-size: {{getFontSize}}px;">
+              <a href="">{{getWord}}</a>
+              </span>
+      {{/each}}
+    {{else}}
+      No ideas yet!
+    {{/if}}
   </div>
 </template>
 
@@ -152,9 +154,13 @@
 
 <template name="TaskCards">
 	<div id="task-card-list">
-		{{#each tasks}}
-			{{> TaskCard }}
-		{{/each}}
+		{{#if tasks}}
+      {{#each tasks}}
+  			{{> TaskCard }}
+  		{{/each}}
+    {{else}}
+      No inspirations yet!
+    {{/if}}
 	</div>
 </template>
 

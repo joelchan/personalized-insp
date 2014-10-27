@@ -12,6 +12,14 @@ Template.HcompDashboard.rendered = function(){
   Session.set("selectedParts", []);
   Session.set("selectedIdeas", []);
   
+  // make sure we start with a clean slate on render
+  FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
+  FilterManager.reset("Tasks Filter", Session.get("currentUser"), "tasks");
+  
+  
+  FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+  FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
+  
   // window.scrollTo(0,0);
   // $('.menu-link').bigSlide();
   // Notifications.find({
@@ -139,7 +147,7 @@ Template.HcompIdeaWordCloud.helpers(
 {
     ideas : function()
     {
-        console.log("calling ideas for HcompIdeaWordCloud");
+        // console.log("calling ideas for HcompIdeaWordCloud");
         cursor = getCloudFromIdeas();
             return cursor;
     },
@@ -165,7 +173,8 @@ Template.HcompIdeaWordCloud.helpers(
 Template.TaskCards.helpers(
 {
     tasks : function() {
-        taskList = Tasks.find({ desc: { $exists: true}}).fetch();
+        // taskList = Tasks.find({ desc: { $exists: true}}).fetch();
+        taskList = FilterManager.performQuery("Tasks Filter", Session.get("currentUser"), "tasks").fetch();
         var sortedTaskList = taskList.sort(function(a,b) { return b.time - a.time});
         return sortedTaskList;
     }
@@ -344,8 +353,12 @@ Template.HcompDashboard.events({
 
 function getCloudFromIdeas()
 {
-	var ideas = Ideas.find({ content: { $exists: true}}).fetch();
-    console.log(ideas);
+	// var ideas = Ideas.find({ content: { $exists: true}}).fetch();
+  // var ideas = Ideas.find({ prompt._id : Session.get("currentPrompt")._id}).fetch();
+  var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
+      Session.get("currentUser"),   
+      "ideas").fetch();
+  // console.log(ideas);
 	var cloud = [];
 	for (var i = 0; i < ideas.length; i++) 
 	{
