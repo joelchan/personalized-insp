@@ -33,7 +33,8 @@
 }
 
 .hcomp-ideation-pane .idea-list-box {
-  overflow: scroll;
+  overflow: auto;
+  z-index: 15;
 }
 
 .hcomp-ideation-pane .idea-box {
@@ -66,7 +67,7 @@
 .hcomp-ideation-pane .task-list-pane {
   white-space: nowrap;
   overflow-x: scroll;
-  overflow-y: hidden;
+  overflow-y: scroll;
 }
 
 .hcomp-ideation-pane .ideate-task {
