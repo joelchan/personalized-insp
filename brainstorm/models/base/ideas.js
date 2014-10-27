@@ -60,6 +60,8 @@ Cluster = function(user, prompt, ideaIDs){
   this.position = {top: jitterTop , left: jitterLeft};
   this.children = [];
   this.isCollapsed = false; //used only for clustering interface
+  //Used to mark a cluster as trash without deleting the data
+  this.isTrash = false;
 }
 
 root = {
