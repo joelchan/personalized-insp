@@ -18,11 +18,6 @@ var clusterFilterName = "Clustering droppable";
 * Attaches sortable to idea and cluster lists, new cluster area.
 ********************************************************************/
 Template.MturkClustering.rendered = function(){
-  //$('.idea-item').draggable({containment: '.clusterinterface',
-    //revert: true,
-    //zIndex: 50,
-  //});
-
   Session.set("searchQuery","");
   
   $('.cluster-idea-list').droppable({accept: ".idea-item",
@@ -48,14 +43,9 @@ Template.MturkClustering.rendered = function(){
   $('.cluster-trash-can').droppable({accept: ".cluster",
     tolerance: "pointer",
     drop: function(event, ui) {
-      receiveDroppable(event, ui, this);
+      trashCluster(event, ui, this);
     }
   });
-
-  //$('#clusterlist').sortable({containment: '.clusterinterface',
-    //revert: true,
-    //zIndex: 50,
-  //});
 
   //Create isInCluster filter
   FilterManager.create(ideaFilterName,
@@ -67,14 +57,15 @@ Template.MturkClustering.rendered = function(){
   Session.set("currentIdeators", []);
   Session.set("currentSynthesizers", []);
   //Setup filters for users and filter update listener
-  updateFilters();
+  //updateFilters();
   //Update filters when current group changes
-  Groups.find({_id: Session.get("currentGroup")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-      //Setup filters for users and filter update listener
-      updateFilters();
-    } 
-  });
+  //Groups.find({_id: Session.get("currentGroup")._id}).observe({
+    //changed: function(newDoc, oldDoc) {
+      //logger.trace("Current Group has changed");
+      ////Setup filters for users and filter update listener
+      ////updateFilters();
+    //} 
+  //});
 };
 
 /********************************************************************
@@ -243,7 +234,7 @@ Template.MturkClusterarea.rendered = function(){
 
 Template.MturkClusterarea.helpers({
   clusters : function(){
-    return Clusters.find({isRoot: {$ne: true}});
+    return Clusters.find({isTrash: {$ne: true}});
   },
 });
 
@@ -315,75 +306,6 @@ Template.MturkCluster.helpers({
 });
 
 
-/********************************************************************
-* Creates new cluster, adds it to collection, and updates Ideas list*
-********************************************************************/
-//function createCluster(item) {
-  //var ideaID = item.attr('id');
-  //var ideas = [Ideas.findOne({_id: ideaID})];
-  //var cluster = new Cluster([ideaID]);//ClusterFactory.create(ideas);
-  //var cluster = ClusterFactory.create(ideas);
-  ////add jitter to position
-  //var jitterTop = 30 + getRandomInt(0, 30);
-  //var jitterLeft = getRandomInt(0, 30);
-  //cluster.position = {top: jitterTop , left: jitterLeft};
-  //var clusterID = Clusters.insert(cluster);
-  //updateIdeas(ideaID, true);
-  //updateClusterList(ideaID, clusterID, true);
-//}
-
-
-/********************************************************************
-* Takes a ui and id of idea being moved. Returns an idea and updates
-* the sender.  
-********************************************************************/
-//function processIdeaSender(ui, ideaID){
-  //var myIdea;
-  //var senderID = $(ui.sender).attr('id');
-  //var sender = Clusters.findOne({_id: senderID});//remove that idea from sending cluster
-   // 
-  ////find all ideas in clusters idea list with matching id (should be one)>need error check here
-  //myIdea = $.grep(sender.ideaIDs, function(idea){
-    //return idea === ideaID;
-  //})[0];
-//
-  //Clusters.update({_id: senderID},
-    //{$pull:
-      //{ideaIDs: ideaID}
-  //});
-//
-  ////if sending cluster now has no ideas, get rid of it
-  //var numIdeas = Clusters.findOne({_id: senderID}).ideaIDs.length;
-  ////console.log(ideasLength);
-  //if(numIdeas === 0){
-    //Clusters.remove(senderID);
-  //}
-  //return senderID;
-//}
-
-/********************************************************************
-* Convenince function used to update items in the Ideas Collection  *
-********************************************************************/
-//function updateIdeas(ideaID, inCluster){
-  //Ideas.update({_id: ideaID}, 
-    //{$set:
-      //{inCluster: inCluster}
-  //});
-//}
-//
-//function updateClusterList(ideaID, clusterID, adding){
-  //if (adding){
-    //Ideas.update({_id: ideaID}, 
-      //{$addToSet:
-        //{clusters: clusterID}
-    //});
-  //} else {
-    //Ideas.update({_id: ideaID}, 
-      //{$pull:
-        //{clusters: clusterID}
-    //});
-  //}
-//}
 var getDroppableSource = function(item) {
   /*****************************************************************
    * Return the Cluster associated with origin of item. Return null 
@@ -492,7 +414,7 @@ updateFilters = function() {
     **************************************************************/
   var group = Groups.findOne({_id: Session.get("currentGroup")._id});
   logger.trace("Updating filters for group: " + group);
-  var ideators = GroupManager.getUsersInRole(group, 'Ideator');
+  var ideators = GroupManager.getUsersInRole(group, 'HcompIdeator');
   logger.trace("current group has ideators: " + 
       JSON.stringify(ideators));
   var prev = Session.get("currentIdeators");
@@ -552,4 +474,14 @@ updateFilters = function() {
         JSON.stringify(prevCluster));
     Session.set("currentSynthesizers", prevCluster);
  }
+};
+
+function trashCluster (e, obj) {
+  logger.debug("Trashing a cluster");
+  logger.trace(e);
+  logger.trace(obj.draggable[0]);
+  var clusterDiv = obj.draggable[0];
+  var clusterID = trimFromString($(clusterDiv).attr('id'), 'cluster-');
+  logger.debug("Trashing cluster with ID: " + clusterID);
+  ClusterFactory.trash(Clusters.findOne({_id: clusterID}));
 };
