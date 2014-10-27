@@ -15,6 +15,4 @@ mrt:moment@2.6.0
 iron:router
 velocity:html-reporter
 jag:pince
-mike:mocha
 mrt:natural
-

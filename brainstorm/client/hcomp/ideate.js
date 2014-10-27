@@ -97,11 +97,17 @@ Template.MturkTaskLists.helpers({
   getMyTasks: function() {
     logger.debug("Getting a list of all tasks assigned to current user");
     var assignments = 
-      Assignments.find({userID: Session.get("currentUser")._id}).fetch();
+      Assignments.find({userID: Session.get("currentUser")._id}, 
+        {sort: {'assignmentTime': -1}}).fetch();
     logger.trace(assignments);
     var taskIDs = getValsFromField(assignments, 'taskID');
     logger.trace(taskIDs);
-    var tasks = Tasks.find({_id: {$in: taskIDs}});
+    var tasks = [];
+    for (var i=0; i<taskIDs.length; i++) {
+      tasks.push(Tasks.findOne({_id: taskIDs[i]}));
+      logger.trace(tasks);
+    };
+    //var tasks = Tasks.find({_id: {$in: taskIDs}});
     //Sort tasks by assignment time
     return tasks;
   },
