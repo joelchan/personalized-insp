@@ -328,7 +328,30 @@ Template.HcompFilterBoxHeader.events({
 		}
 	},
 
+	'keyup input' : function(e, target){
+	    // logger.debug(e);
+	    // logger.debug(target);
+	    console.log("key pressed")
+	    if(e.keyCode===13) {
+	      console.log("enter pressed")
+	      var btn = $('.search-apply-btn')
+	      btn.click();
+	    }
+  	},
+
 	// clear full-text search of idea content
+	'click .search-remove-btn' : function(){
+		Session.set("searchQuery","");
+		$('.search-apply-btn').toggleClass('btn-success');
+		$('#search-query').val("");
+
+		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
+			&& $('.starred-ideas-filter-btn').hasClass('btn-success'))
+			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
+				$('all-ideas-filter-btn').addClass('btn-success');
+		}
+	},
+
 	'click .search-remove-btn' : function(){
 		Session.set("searchQuery","");
 		$('.search-apply-btn').toggleClass('btn-success');
