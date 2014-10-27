@@ -194,13 +194,13 @@ Template.TaskCard.helpers(
         switch(priority)
         {
             case 1:
-                message = "Low";
+                message = "Lo";
                 break;
             case 2:
-                message = "Medium";
+                message = "Mid";
                 break;
             case 3:
-                message = "High";
+                message = "Hi";
                 break;
             default:
                 message = "";
