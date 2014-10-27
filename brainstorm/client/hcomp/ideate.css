@@ -76,11 +76,12 @@
   width: 200px;
   background: #FFF3CC; /*Light Yellow*/
   background: #82837E;
-  color: #FFF;
+  color: #000;
   border: 2px solid #464646;
   border-radius: 15px;
   margin: 15px;
   vertical-align: top;
+  white-space: normal
 }
 
 .hcomp-ideation-pane .task-header {

@@ -42,9 +42,10 @@ Template.MturkMainPrompt.helpers({
 
 Template.MturkIdeaList.helpers({
   ideas: function() {
-    return Ideas.find({$and: [
-      {userID: Session.get("currentUser")._id},
-      {clusterIDs: []}]});
+    //return Ideas.find({$and: [
+      //{userID: Session.get("currentUser")._id},
+      //{clusterIDs: []}]});
+    return Ideas.find({userID: Session.get("currentUser")._id});
   },
 });
 
