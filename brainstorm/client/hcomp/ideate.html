@@ -7,6 +7,7 @@
       {{> MturkTaskLists}}
     </div>
   </div>
+  {{> HcompNoNewTaskModal }}
 </template>
 
 <template name="MturkMainPrompt">
@@ -74,3 +75,22 @@
     {{/each}}
   </div>
 </template>
+
+<template name="HcompNoNewTaskModal">
+  <!--Change Prompt Modal-->
+  <div class="modal fade" id="hcomp-new-task-modal" tabindex="-1" 
+    role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <h3 class="modal-title" id="myModalLabel">
+          No New Tasks Available
+        </h3>
+        <button type="button" class="btn btn-success" 
+          data-dismiss="modal">
+          Continue
+        </button>
+      </div> <!-- close modal-content -->
+    </div> <!-- close modal-dialog -->
+  </div> <!-- close changeModal -->
+</template>
+

@@ -12,6 +12,7 @@ Template.MturkIdeationPage.rendered = function(){
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-50);
+  
 };
 
 Template.MturkMainPrompt.rendered = function(){
@@ -126,7 +127,8 @@ Template.MturkTaskLists.events({
       logger.trace(task);
     } else {
       logger.info("No new task was assigned");
-      alert("Sorry, there are no new tasks. Just keep on trying");
+      //alert("Sorry, there are no new tasks. Just keep on trying");
+      $("#hcomp-new-task-modal").modal('show');
     }
   },
   'click .begin-synthesis': function(e, t) {

@@ -87,3 +87,23 @@
   margin: 15px 15px 5px 15px;
   white-space: normal;
 }
+
+/* no new task modal */
+.hcomp-ideation-pane #new-task-modal .modal-footer {
+    height: 80px;
+    margin-top:0px;
+    padding: 10px;
+}
+
+#hcomp-new-task-modal {
+    /*float:right;*/
+  text-align: center;
+}
+#hcomp-new-task-modal .btn {
+  margin: 20px;
+}
+.hcomp-ideation-pane #new-task-modal #task-options {
+    text-align: left;
+    float:left;
+}
+
