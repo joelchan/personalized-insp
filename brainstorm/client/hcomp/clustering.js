@@ -1,9 +1,9 @@
  // Configure logger for server tests
  var logger = new Logger('Client:Clustering');
  // Comment out to use global logging level
- Logger.setLevel('Client:Clustering', 'trace');
+ //Logger.setLevel('Client:Clustering', 'trace');
  //Logger.setLevel('Client:Clustering', 'debug');
- //Logger.setLevel('Client:Clustering', 'info');
+ Logger.setLevel('Client:Clustering', 'info');
  //Logger.setLevel('Client:Clustering', 'warn');
 
 /*******************************************************************
