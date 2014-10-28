@@ -62,6 +62,33 @@ Template.MturkIdeaList.helpers({
   },
 });
 
+Template.MturkIdeabox.helpers({
+  hasNotVoted: function() {
+    if (isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("User has already voted");
+      return false;
+    } else {
+      logger.debug("User has not voted");
+      return true;
+    }
+  },
+  voteNum: function() {
+    return this.votes.length;
+  },
+});
+
+Template.MturkIdeabox.events({
+  'click .up-vote': function(e, elm) {
+    if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("voting for idea");
+      IdeaFactory.upVote(this, Session.get("currentUser"));
+    } else {
+      logger.debug("undo voting for idea");
+      IdeaFactory.downVote(this, Session.get("currentUser"));
+    }
+  },
+
+});
 Template.MturkIdeaEntryBox.events({
   'click .submit-idea': function (e, target) {
     //console.log("event submitted");

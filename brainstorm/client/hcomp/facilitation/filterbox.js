@@ -1,3 +1,12 @@
+// Configure logger for Tools
+var logger = new Logger('Client:Hcomp:Filterbox');
+// Comment out to use global logging level
+Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
+//Logger.setLevel('Client:Hcomp:Filterbox', 'debug');
+//Logger.setLevel('Client:Hcomp:Filterbox', 'info');
+//Logger.setLevel('Client:Hcomp:Filterbox', 'warn');
+
+
 Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
@@ -89,7 +98,32 @@ Template.HcompFilterbox.helpers({
 Template.HcompFilterBoxIdeaItem.helpers({
 	gameChangerStatus: function() {
 		return this.isGamechanger;
-	}
+	},
+  hasNotVoted: function() {
+    if (isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("User has already voted");
+      return false;
+    } else {
+      logger.debug("User has not voted");
+      return true;
+    }
+  },
+  voteNum: function() {
+    return this.votes.length;
+  },
+});
+
+Template.HcompFilterBoxIdeaItem.events({
+  'click .up-vote': function(e, elm) {
+    if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("voting for idea");
+      IdeaFactory.upVote(this, Session.get("currentUser"));
+    } else {
+      logger.debug("undo voting for idea");
+      IdeaFactory.downVote(this, Session.get("currentUser"));
+    }
+  },
+
 });
 
 Template.HcompActivefilters.helpers({

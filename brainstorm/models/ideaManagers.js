@@ -24,6 +24,16 @@ IdeaFactory = (function() {
         {$set: {isGamechanger: idea.isGamechanger}
       });
     },
+    upVote: function(idea, user) {
+      idea.votes.push(user._id);
+      Ideas.update({_id: idea._id}, 
+        {$push: {votes: user._id}});
+    },
+    downVote: function(idea, user) {
+      removeMember(idea.votes, user._id)
+      Ideas.update({_id: idea._id}, 
+        {$pull: {votes: user._id}});
+    },
     getWithIDs: function(ids) {
       if (hasForEach(ids)) {
         return Ideas.find({_id: {$in: ids}});

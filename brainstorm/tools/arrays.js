@@ -2,9 +2,9 @@
 // Configure logger for Tools
 var logger = new Logger('Tools:Arrays');
 // Comment out to use global logging level
-//Logger.setLevel('Tools:Arrays', 'trace');
+Logger.setLevel('Tools:Arrays', 'trace');
 //Logger.setLevel('Tools:Arrays', 'debug');
-Logger.setLevel('Tools:Arrays', 'info');
+//Logger.setLevel('Tools:Arrays', 'info');
 //Logger.setLevel('Tools:Arrays', 'warn');
 
 

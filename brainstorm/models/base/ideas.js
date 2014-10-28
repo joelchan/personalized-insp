@@ -34,6 +34,8 @@ Idea = function (content, user, prompt, participant) {
   this.userName = user.name;
   this.prompt = prompt;
   this.isGamechanger = false;
+  //List of userIDs of users who have voted
+  this.votes = [];
   this.inCluster = false;
   this.clusterIDs = [];
   //Optional fields not logged during non-experiments
@@ -41,6 +43,7 @@ Idea = function (content, user, prompt, participant) {
     this.participantID = participant._id;
   }
 };
+
 
 
 Cluster = function(user, prompt, ideaIDs){
