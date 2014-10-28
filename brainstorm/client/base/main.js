@@ -43,7 +43,7 @@ Template.IdeaGen.events({
 
     'click button.submitLogout': function () {
         console.log("logging out");
-        LoginManager.logout();
+        LoginManager.logout(Session.get("currentUser"));
         //Meteor.logout();
     },
 
@@ -67,7 +67,7 @@ decrementTimer = function decrementTimer() {
   }
 };
 
-exitPage = function () {
+exitPage = function (destination, params) {
   /******************************************************************
   * switch to next view to end ideation
   ******************************************************************/
@@ -88,7 +88,11 @@ exitPage = function () {
   }
   //Transition to next page
   if (Session.get("loggingOut")) {
-    Router.go("Home");
+    if (destination) {
+      Router.go(destination, params);
+    } else {
+      Router.go("Home");
+    }
     Session.set("loggingOut", false);
   } else {
     Router.goToNextPage();
