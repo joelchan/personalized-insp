@@ -11,8 +11,14 @@ Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
 	Session.set("searchQuery","");
+
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
+
+Template.HcompFilterBoxHeader.rendered = function(){
+	$('.all-ideas-filter-btn').click();
+}
+
 var filterName;
 Template.HcompFilterbox.helpers({
 	setFilterName : function(name){
@@ -29,34 +35,38 @@ Template.HcompFilterbox.helpers({
 	},
 	ideas : function(){
 		
-		var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-		  Session.get("currentUser"), 	
-		  "ideas").fetch();
+		filteredIdeas = getFilteredIdeas("Ideas Filter");
+		// console.log("Filtered ideas: ");
+		// console.log(filteredIdeas);
+		return filteredIdeas;
+		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+		//   Session.get("currentUser"), 	
+		//   "ideas").fetch();
 
-		// apply search query, if it exists
-		var query = Session.get("searchQuery");
-		var queriedIdeas = [];
-		if (query != "") {
-			queryArr = stringToWords(query);
-			filteredIdeas.forEach(function(idea){
-				// console.log(idea);
-				if (searchQueryMatch(idea,queryArr)) {
-					// console.log("Matched query");
-					queriedIdeas.push(idea);
-				} else {
-					// console.log("Not matching");
-					// filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-				}
-			});
-			// create an array from the query
+		// // apply search query, if it exists
+		// var query = Session.get("searchQuery");
+		// var queriedIdeas = [];
+		// if (query != "") {
+		// 	queryArr = stringToWords(query);
+		// 	filteredIdeas.forEach(function(idea){
+		// 		// console.log(idea);
+		// 		if (searchQueryMatch(idea,queryArr)) {
+		// 			// console.log("Matched query");
+		// 			queriedIdeas.push(idea);
+		// 		} else {
+		// 			// console.log("Not matching");
+		// 			// filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
+		// 		}
+		// 	});
+		// 	// create an array from the query
 			
-		} else {
-			queriedIdeas = filteredIdeas.slice();
-		}
+		// } else {
+		// 	queriedIdeas = filteredIdeas.slice();
+		// }
 
-		var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-		// console.log(sortedIdeas);
-		return sortedIdeas;
+		// var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+		// // console.log(sortedIdeas);
+		// return sortedIdeas;
 		// return cursor;
 	},
 	currentClusters: function(){
@@ -64,34 +74,35 @@ Template.HcompFilterbox.helpers({
 	},
 
 	numIdeas : function() {
-		var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-		  Session.get("currentUser"), 	
-		  "ideas").fetch();
+		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+		//   Session.get("currentUser"), 	
+		//   "ideas").fetch();
 
-		// apply search query, if it exists
-		var query = Session.get("searchQuery");
-		var queriedIdeas = [];
-		if (query != "") {
-			queryArr = stringToWords(query);
-			filteredIdeas.forEach(function(idea){
-				// console.log(idea);
-				if (searchQueryMatch(idea,queryArr)) {
-					// console.log("Matched query");
-					queriedIdeas.push(idea);
-				} else {
-					// console.log("Not matching");
-					// filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-				}
-			});
-			// create an array from the query
+		// // apply search query, if it exists
+		// var query = Session.get("searchQuery");
+		// var queriedIdeas = [];
+		// if (query != "") {
+		// 	queryArr = stringToWords(query);
+		// 	filteredIdeas.forEach(function(idea){
+		// 		// console.log(idea);
+		// 		if (searchQueryMatch(idea,queryArr)) {
+		// 			// console.log("Matched query");
+		// 			queriedIdeas.push(idea);
+		// 		} else {
+		// 			// console.log("Not matching");
+		// 			// filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
+		// 		}
+		// 	});
+		// 	// create an array from the query
 			
-		} else {
-			queriedIdeas = filteredIdeas.slice();
-		}
+		// } else {
+		// 	queriedIdeas = filteredIdeas.slice();
+		// }
 
-		var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-		// console.log(sortedIdeas);
-		return sortedIdeas.length;
+		// var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+		// // console.log(sortedIdeas);
+		// return sortedIdeas.length;
+		return getFilteredIdeas("Ideas Filter").length;
 	}
 });
 
@@ -303,39 +314,39 @@ Template.HcompFilterbox.events({
 		}
 	},
 
-	'mouseover .idea-item' : function(){
-		var id = $(event.target).attr("id");
-		// id = id.split("-")[1];
-		var thisIdea = Ideas.findOne({_id: id});
-		var thisIdeaAuthor = thisIdea.userName;
-		if (thisIdea.clusterIDs.length > 0) {
-			var thisIdeaTheme = Clusters.findOne({_id: thisIdea.clusterIDs[0]}).name;	
-		} else {
-			var thisIdeaTheme = "Not in a theme";
-		}
+	// 'mouseover .idea-item' : function(){
+	// 	var id = $(event.target).attr("id");
+	// 	// id = id.split("-")[1];
+	// 	var thisIdea = Ideas.findOne({_id: id});
+	// 	var thisIdeaAuthor = thisIdea.userName;
+	// 	if (thisIdea.clusterIDs.length > 0) {
+	// 		var thisIdeaTheme = Clusters.findOne({_id: thisIdea.clusterIDs[0]}).name;	
+	// 	} else {
+	// 		var thisIdeaTheme = "Not in a theme";
+	// 	}
 		
-		$('<span class="idea-tip"></span>')
-			.appendTo('body')
-			.css('top', (event.pageY- 10) + 'px')
-			.css('left', (event.pageX + 20) + 'px')
-			.fadeIn('slow');
-		$('<span></span>').text("Author: " + thisIdeaAuthor)
-			.appendTo('.idea-tip');
-		$('<br>')
-			.appendTo('.idea-tip');
-		$('<span></span>').text("Theme: " + thisIdeaTheme)
-			.appendTo('.idea-tip');
-	},
+	// 	$('<span class="idea-tip"></span>')
+	// 		.appendTo('body')
+	// 		.css('top', (event.pageY- 10) + 'px')
+	// 		.css('left', (event.pageX + 20) + 'px')
+	// 		.fadeIn('slow');
+	// 	$('<span></span>').text("Author: " + thisIdeaAuthor)
+	// 		.appendTo('.idea-tip');
+	// 	$('<br>')
+	// 		.appendTo('.idea-tip');
+	// 	$('<span></span>').text("Theme: " + thisIdeaTheme)
+	// 		.appendTo('.idea-tip');
+	// },
 
-	'mouseout .idea-item' : function(){
-		$('.idea-tip').remove();
-	},
+	// 'mouseout .idea-item' : function(){
+	// 	$('.idea-tip').remove();
+	// },
 
-	'mousemove .idea-item' : function(){
-		$('.idea-tip')
-		.css('top', (event.pageY - 10) + 'px')
-		.css('left', (event.pageX + 20) + 'px');
-	},
+	// 'mousemove .idea-item' : function(){
+	// 	$('.idea-tip')
+	// 	.css('top', (event.pageY - 10) + 'px')
+	// 	.css('left', (event.pageX + 20) + 'px');
+	// },
 });
 
 Template.HcompFilterBoxHeader.events({
@@ -351,21 +362,33 @@ Template.HcompFilterBoxHeader.events({
 		}
 	},
 
+	'keyup input' : function(e, target){
+	    // logger.debug(e);
+	    // logger.debug(target);
+	    console.log("key pressed")
+	    if(e.keyCode===13) {
+	      console.log("enter pressed")
+	      var btn = $('.search-apply-btn')
+	      btn.click();
+	    }
+  	},
+
 	// clear full-text search of idea content
 	'click .search-remove-btn' : function(){
 		Session.set("searchQuery","");
 		$('.search-apply-btn').toggleClass('btn-success');
 		$('#search-query').val("");
 
-		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.starred-ideas-filter-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
+		// re-highlight the "everything" button if we're removing the last filter
+		if (isLastFilter()) {
+			console.log("Last filter");
+			$('.all-ideas-filter-btn').addClass('btn-success');
 		}
 	},
 
 	'click .all-ideas-filter-btn' : function() {
 		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
 		$('.misc-ideas-filter-btn').removeClass('btn-success');
 		$('.starred-ideas-filter-btn').removeClass('btn-success');
 		$('.all-ideas-filter-btn').addClass('btn-success');
@@ -376,20 +399,16 @@ Template.HcompFilterBoxHeader.events({
 	},
 
 	'click .misc-ideas-filter-btn' : function() {
+		
 		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", [], 'ne');
 		
 		$('.misc-ideas-filter-btn').toggleClass('btn-success');
-		
-		// un-highlight the "everything" button
-		if ($('.all-ideas-filter-btn').hasClass('btn-success')) {
-			$('.all-ideas-filter-btn').removeClass('btn-success');	
-		}
+		$('.all-ideas-filter-btn').removeClass('btn-success');
 
-		// re-highlight the "everything" button if this is the last filter being removed
-		if (!($('.starred-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.search-apply-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
+		// un-highlight the "everything" button if it's the last filter
+		if (isLastFilter()) {
+			console.log("Last filter");
+			$('.all-ideas-filter-btn').addClass('btn-success');
 		}
 		
 	},
@@ -403,11 +422,10 @@ Template.HcompFilterBoxHeader.events({
 			$('.all-ideas-filter-btn').removeClass('btn-success');	
 		}
 
-		// re-highlight the "everything" button if this is the last filter being removed
-		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.search-apply-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
+		// re-highlight the "everything" button if we're removing the last filter
+		if (isLastFilter()) {
+			console.log("Last filter");
+			$('.all-ideas-filter-btn').addClass('btn-success');
 		}
 	},
 });
@@ -463,4 +481,44 @@ stringToWords = function stringToWords(str) {
 		q = q.trim();
 	});
 	return arr;
+}
+
+getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
+	var filteredIdeas = FilterManager.performQuery(ideasFilterName, 
+		  Session.get("currentUser"), 	
+		  "ideas").fetch();
+
+	// apply search query, if it exists
+	var query = Session.get("searchQuery");
+	var queriedIdeas = [];
+	if (query != "") {
+		queryArr = stringToWords(query);
+		filteredIdeas.forEach(function(idea){
+			// console.log(idea);
+			if (searchQueryMatch(idea,queryArr)) {
+				// console.log("Matched query");
+				queriedIdeas.push(idea);
+			} else {
+				// console.log("Not matching");
+				// filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
+			}
+		});
+		// create an array from the query
+		
+	} else {
+		queriedIdeas = filteredIdeas.slice();
+	}
+
+	var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+	// console.log(sortedIdeas);
+	return sortedIdeas;
+}
+
+isLastFilter = function() {
+	existingCatFilters = Filters.find({$and: [{name: "Ideas Filter"},
+											  {user: Session.get("currentUser")}, 
+											  {collection: "ideas"},
+											  {field: {$ne: "prompt._id"}}] 
+											}).fetch();
+	return existingCatFilters.length === 0;
 }

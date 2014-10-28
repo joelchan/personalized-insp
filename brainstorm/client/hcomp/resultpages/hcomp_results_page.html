@@ -44,6 +44,7 @@
 <template name="allIdeasList">
   <div id="hcomp-allideas-container">
     <p> Total ideas: {{numAllIdeas}} </p>
+    {{ > HcompFilterBoxHeader }}
     <ul class ="hcompIdeaslist">
       {{#each ideas}}
         {{> allIdeasItem}}

@@ -10,7 +10,8 @@
  * ***************  HcompResultsPage Template **********************
  * ****************************************************************/
 // Name for filters applied to idea list of unclustered ideas
-var allIdeasFilterName = "All Ideas"; 
+var allIdeasFilterName = "Ideas Filter"; 
+var allClustersFilterName = "All Clusters"
 
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
@@ -18,14 +19,36 @@ var allIdeasFilterName = "All Ideas";
 Template.HcompResultsPage.rendered = function(){
 
   //Create isInCluster filter
-  FilterManager.create(allIdeasFilterName,
-      Session.get("currentUser"),
-      "ideas",
-      "clusterIDs",
-      []
-  );
+  // FilterManager.create(allIdeasFilterName,
+  //     Session.get("currentUser"),
+  //     "ideas",
+  //     "clusterIDs",
+  //     []
+  // );
+  
+  // start with a fresh set of filters
+  FilterManager.reset(allIdeasFilterName,
+    Session.get("currentUser"),
+    "ideas");
+  
+  FilterManager.create(allIdeasFilterName, 
+    Session.get("currentUser"), 
+    "ideas", 
+    "prompt._id", 
+    Session.get("currentPrompt")._id);
+  FilterManager.create(allClustersFilterName, 
+    Session.get("currentUser"), 
+    "clusters", 
+    "promptID", 
+    Session.get("currentPrompt")._id);
+  FilterManager.create(allClustersFilterName, 
+    Session.get("currentUser"), 
+    "clusters", 
+    "isTrash", 
+    false);
   Session.set("currentIdeators", []);
   Session.set("currentSynthesizers", []);
+  Session.set("searchQuery","");
 
   //Setup filters for users and filter update listener
   // updateFilters();
@@ -46,7 +69,8 @@ Template.HcompResultsPage.helpers({
     return prompt.question;
   },
   Clusters : function() {
-    return Clusters.find();
+    // return Clusters.find();
+    return getFilteredClusters(allClustersFilterName);
   },
 })
 
@@ -95,21 +119,23 @@ Template.themeIdeasItem.helpers({
 ********************************************************************/
 Template.allIdeasList.helpers({
   ideas : function(){
-    var allIdeasInBrainstorm = FilterManager.performQuery(allIdeasFilterName, 
-      Session.get("currentUser"), 
-      "ideas").fetch();
-    // return filteredIdeas;
-    var sortedAllIdeasInBrainstorm = allIdeasInBrainstorm.sort(function(a,b) { 
-      return b.time - a.time
-    });
-    return sortedAllIdeasInBrainstorm;
+    // var allIdeasInBrainstorm = FilterManager.performQuery(allIdeasFilterName, 
+    //   Session.get("currentUser"), 
+    //   "ideas").fetch();
+    // // return filteredIdeas;
+    // var sortedAllIdeasInBrainstorm = allIdeasInBrainstorm.sort(function(a,b) { 
+    //   return b.time - a.time
+    // });
+    // return sortedAllIdeasInBrainstorm;
     //return Ideas.find();
+    return getFilteredIdeas(allIdeasFilterName);
   },
   numAllIdeas : function(){
-    var arrayOfIdeas = FilterManager.performQuery(allIdeasFilterName, 
-      Session.get("currentUser"), 
-      "ideas").fetch();
-    return arrayOfIdeas.length;
+    // var arrayOfIdeas = FilterManager.performQuery(allIdeasFilterName, 
+    //   Session.get("currentUser"), 
+    //   "ideas").fetch();
+    // return arrayOfIdeas.length;
+    return getFilteredIdeas(allIdeasFilterName).length;
   },
 });
 
