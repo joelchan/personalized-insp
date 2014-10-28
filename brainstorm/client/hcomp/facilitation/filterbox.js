@@ -106,6 +106,23 @@ Template.HcompFilterbox.helpers({
 	}
 });
 
+Template.HcompFilterBoxIdeaItem.rendered = function() {
+  $(this.firstNode).draggable({containment: '.hcomp-dashboard',
+    revert: true,
+    zIndex: 50,
+    helper: 'clone',
+    appendTo: ".hcomp-dashboard",
+    refreshPositions: true,
+    start: function(e, ui) {
+      logger.debug("Began dragging an idea");
+      logger.trace(ui.helper[0]);
+      var width = $(this).css('width');
+      logger.trace(width);
+      $(ui.helper[0]).css('width', width);
+    },
+  });
+
+};
 Template.HcompFilterBoxIdeaItem.helpers({
 	gameChangerStatus: function() {
 		return this.isGamechanger;

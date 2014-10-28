@@ -16,6 +16,19 @@ var filters = {
 MS_PER_MINUTE = 60000;
 
 Template.HcompDashboard.rendered = function(){
+  
+  //Set height of elements to viewport height
+  //Navbar height=50, header up to idealist = 150, clustering interface header=63
+  var height = $(window).height() - 50; 
+  logger.debug("window viewport height = " + height.toString());
+  $(".ideas-view").height(height);
+  $(".tasks-view").height(height);
+  $(".notes-view").height(height);
+  logger.debug(height.toString());
+  logger.debug((height*0.7).toString());
+  $("#big-picture-viz").height(height*0.7);
+  $("#scratchpad").height(height*0.2);
+  $(".scratchpad-form").height(height*0.18);
 
   Session.set("idealistFilters", filters);
   Session.set("selectedParts", []);

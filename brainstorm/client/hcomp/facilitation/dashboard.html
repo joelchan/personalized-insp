@@ -24,16 +24,6 @@
 
       {{> HcompScratchPad }}
     </div> <!-- close notes-view col -->
-    <div class="tasks-view col-sm-4">
-      <!-- <h3>Focus the Brainstorm!</h3> -->
-      <h1>Inspirations</h1>
-      {{> CreateTask }}
-      <div style="background-color: white; height:15px;">
-        <hr />
-      </div>
-      {{> TaskCards }}
-
-    </div>
     
   </div> <!-- close dashboard container -->
 </template>
@@ -100,7 +90,7 @@
   <div class="row" id="scratchpad">
     <!-- <h3>Scratchpad</h3> -->
     <div class="form-group">
-      <textarea class="form-control scratchpad-form" rows="15" id="fac-notes" 
+      <textarea class="form-control scratchpad-form" id="fac-notes" 
         placeholder="Take notes here..."></textarea>
     </div>
   </div>
