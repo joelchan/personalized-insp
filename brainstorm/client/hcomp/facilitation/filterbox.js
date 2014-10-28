@@ -26,7 +26,7 @@ Template.HcompFilterbox.helpers({
 	},
 	ideas : function(){
 		
-		filteredIdeas = getFilteredIdeas();
+		filteredIdeas = getFilteredIdeas("Ideas Filter");
 		// console.log("Filtered ideas: ");
 		// console.log(filteredIdeas);
 		return filteredIdeas;
@@ -93,7 +93,7 @@ Template.HcompFilterbox.helpers({
 		// var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
 		// // console.log(sortedIdeas);
 		// return sortedIdeas.length;
-		return getFilteredIdeas().length;
+		return getFilteredIdeas("Ideas Filter").length;
 	}
 });
 
@@ -449,8 +449,8 @@ stringToWords = function stringToWords(str) {
 	return arr;
 }
 
-getFilteredIdeas = function getFilteredIdeas() {
-	var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
+	var filteredIdeas = FilterManager.performQuery(ideasFilterName, 
 		  Session.get("currentUser"), 	
 		  "ideas").fetch();
 

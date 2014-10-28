@@ -173,7 +173,7 @@ Template.MturkClusterIdeaItem.helpers({
 ********************************************************************/
 Template.MturkClusterList.helpers({
   clusters : function(){
-    return getFilteredClusters();
+    return getFilteredClusters(clusterFilterName);
   },
 });
 
@@ -241,7 +241,7 @@ Template.MturkClusterarea.rendered = function(){
 
 Template.MturkClusterarea.helpers({
   clusters : function(){
-    return getFilteredClusters();
+    return getFilteredClusters(clusterFilterName);
     // return Clusters.find({isTrash: {$ne: true}});
   },
 });
@@ -494,7 +494,7 @@ function trashCluster (e, obj) {
   ClusterFactory.trash(Clusters.findOne({_id: clusterID}));
 };
 
-getFilteredClusters = function(){
+getFilteredClusters = function(clusterFilterName){
 /***************************************************************
 * Get filtered clusters for cluster list and cluster area
 **************************************************************/  
