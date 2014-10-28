@@ -36,6 +36,16 @@
 	display: inline-block;
 	/*width: 50%;*/
 }
+.mturk-cluster-interface .idea-item .vote-box {
+  position: absolute;
+  right: 15px;
+  height: 1.5em;
+}
+
+.mturk-cluster-interface .idea-item .vote-box .vote {
+  margin-right: 5px;
+}
+
 
 .mturk-cluster-interface button {
     margin-top:0px;
