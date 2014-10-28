@@ -237,27 +237,27 @@ Template.TaskCard.helpers(
         var ideas = Ideas.find({_id : {$in : ideaIDs}}).fetch();
         return ideas;
     },
-    getQuestions : function()
-    {
-        var questions = this.comments;
-        var count = questions.length;
-        return count;
-    },
+    // getQuestions : function()
+    // {
+    //     var questions = this.comments;
+    //     var count = questions.length;
+    //     return count;
+    // },
     getIdeatorCount : function()
     {
         var count = this.num;
         return count;
     },
-    getIdeaCount : function()
-    {
-        var count = this.ideasRequested;
-        return count;
-    },
-    getMinuteCount : function()
-    {
-        var count = this.minutesRequested;
-        return count;
-    },
+    // getIdeaCount : function()
+    // {
+    //     var count = this.ideasRequested;
+    //     return count;
+    // },
+    // getMinuteCount : function()
+    // {
+    //     var count = this.minutesRequested;
+    //     return count;
+    // },
     getID : function()
     {
         var id = this._id;
@@ -283,29 +283,45 @@ Template.HcompDashboard.events({
 	'click #task-create' : function()
 	{
 		var message = $("#task-description").val();
-		var priorityText = $("#task-priority").val();
-		var priorityNum;
-		var ideatorsVal = $("#task-ideators").val();
-		var ideasVal = $("#task-ideas").val();
-		var minutesVal = $("#task-minutes").val();
+		// var priorityText = $("#task-priority").val();
+    // console.log("Creating task with priority: " + priorityText);
+		var priorityNum = parseInt($("#CreateTask" + " input[type='radio'][name='taskPriorityOptions']:checked").val());
+		var ideatorsVal;
+    switch (priorityNum) {
+      case 1:
+        ideatorsVal = 10; // change this later once we have group assignment working
+        break;
+      case 2:
+        ideatorsVal = 20;
+        break;
+      case 3:
+        ideatorsVal = 30;
+        break;
+      default:
+        ideatorsVal = 20;
+        break;
+    }
+    // var ideatorsVal = $("#task-ideators").val();
+		// var ideasVal = $("#task-ideas").val();
+		// var minutesVal = $("#task-minutes").val();
 
-		console.log(priorityText);
-		switch (priorityText)
-		{
-			case "Low":
-				priorityNum = 1;
-				break;
-			case "Medium":
-				priorityNum = 2;
-				break;
-			case "High":
-				priorityNum = 3;
-				break;
-			default: 
-				priorityNum = 1;
-				break;
-		}
-		var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal, ideasRequested=ideasVal, minutesRequested=minutesVal); 
+		// switch (priorityText)
+		// {
+		// 	case "Low":
+		// 		priorityNum = 1;
+		// 		break;
+		// 	case "Medium":
+		// 		priorityNum = 2;
+		// 		break;
+		// 	case "High":
+		// 		priorityNum = 3;
+		// 		break;
+		// 	default: 
+		// 		priorityNum = 1;
+		// 		break;
+		// }
+		// var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal, ideasRequested=ideasVal, minutesRequested=minutesVal); 
+    var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal); 
 		task._id = Tasks.insert(task);
 
     // clear the message description
@@ -327,29 +343,46 @@ Template.HcompDashboard.events({
 	{
 		var taskID = $(event.target).parent().parent().parent().parent().attr('id');
 		var message = $("#"+taskID + " .task-description").val();
-		var priorityText = $("#"+taskID + " .task-priority").val();
-		var priorityNum;
-		var ideatorsVal = $("#"+taskID + " .task-ideators").val();
-		var ideasVal = $("#"+taskID + " .task-ideas").val();
-		var minutesVal = $("#"+taskID + " .task-minutes").val();
+    var priorityNum = parseInt($("#"+taskID + " input[type='radio'][name='taskPriorityOptions']:checked").val());
+    var ideatorsVal;
+    switch (priorityNum) {
+      case 1:
+        ideatorsVal = 10; // change this later once we have group assignment working
+        break;
+      case 2:
+        ideatorsVal = 20;
+        break;
+      case 3:
+        ideatorsVal = 30;
+        break;
+      default:
+        ideatorsVal = 20;
+        break;
+    }
+		// var priorityText = $("#"+taskID + " .task-priority").val();
+		// var priorityNum;
+		// var ideatorsVal = $("#"+taskID + " .task-ideators").val();
+		// var ideasVal = $("#"+taskID + " .task-ideas").val();
+		// var minutesVal = $("#"+taskID + " .task-minutes").val();
 
-		switch (priorityText)
-		{
-			case "Low":
-				priorityNum = 1;
-				break;
-			case "Medium":
-				priorityNum = 2;
-				break;
-			case "High":
-				priorityNum = 3;
-				break;
-			default: 
-				priorityNum = 1;
-				break;
-		}
+		// switch (priorityText)
+		// {
+		// 	case "Low":
+		// 		priorityNum = 1;
+		// 		break;
+		// 	case "Medium":
+		// 		priorityNum = 2;
+		// 		break;
+		// 	case "High":
+		// 		priorityNum = 3;
+		// 		break;
+		// 	default: 
+		// 		priorityNum = 1;
+		// 		break;
+		// }
 
-		Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal, ideasRequested: ideasVal, minutesRequested: minutesVal}});
+		// Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal, ideasRequested: ideasVal, minutesRequested: minutesVal}});
+    Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal}});
 	},
 
 });
