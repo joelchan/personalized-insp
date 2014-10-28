@@ -70,6 +70,10 @@
   overflow: scroll;
 }
 
+.mturk-cluster-interface #clusterarea {
+  height: 100%;
+  overflow:normal;
+}
 
 .mturk-cluster-interface #sortMenuButton{
 	margin: 20px 0px 5px 15px;

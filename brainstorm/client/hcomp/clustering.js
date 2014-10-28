@@ -171,8 +171,6 @@ Template.MturkClusterIdeaItem.rendered = function() {
       var width = $(this).css('width');
       logger.trace(width);
       $(ui.helper[0]).css('width', width);
-
-      
     },
   });
   $(this.firstNode).droppable({accept: ".idea-item",
@@ -308,15 +306,14 @@ Template.MturkCluster.events({
 });
 
 Template.MturkCluster.rendered = function(){
-  console.log("****************************************************");
-  console.log(this);
-  console.log("****************************************************");
   $('.cluster').draggable({
     stop: function() {
       logger.debug("dragged object");
       var id = trimFromString($(this).attr("id"), "cluster-");
       var cluster = ClusterFactory.getWithIDs(id);
-      var pos = $(this).position();
+      var pos = {'top': parseFloat(trimFromString($(this).css('top'),'px')),
+        'left': parseFloat(trimFromString($(this).css('left'),'px'))
+      };
       ClusterFactory.updatePosition(cluster, pos);
       EventLogger.logMovedCluster(cluster, pos);
     },
