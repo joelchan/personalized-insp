@@ -1,3 +1,12 @@
+// Configure logger for Tools
+var logger = new Logger('Client:Hcomp:Dashboard');
+// Comment out to use global logging level
+Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
+//Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
+//Logger.setLevel('Client:Hcomp:Dashboard', 'info');
+//Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
+
+
 var filters = {
 	partFilters: [],
 	clusterFilters: [],
@@ -81,6 +90,20 @@ Template.HcompDashboard.rendered = function(){
   });
 
 }
+
+Template.HcompBeginSynthesis.events({
+  'click .begin-synthesis': function() {
+    logger.info("Pushing Ideators to begin synthesis");
+    var groupID = Session.get("currentPrompt").groupIDs[0];
+    var group = Groups.findOne({_id: groupID});
+    var userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+    logger.trace(userIDs);
+    userIDs.forEach(function (id) {
+      logger.debug("Updating route for user with id: " + id);
+      MyUsers.update({_id: id}, {$set: {'route': "MturkSynthesis"}});
+    });
+  },
+});
 
 Template.HcompTaskItem.rendered = function(){
 

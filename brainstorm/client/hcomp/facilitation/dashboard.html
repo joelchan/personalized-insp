@@ -4,6 +4,7 @@
       {{> HcompDashIdeabox }}
     </div>
     <div class="tasks-view col-sm-4">
+      {{> HcompBeginSynthesis }}
       <h3>Focus the Brainstorm!</h3>
 
 	{{> CreateTask }}
@@ -17,6 +18,14 @@
       {{> HcompScratchPad }}
     </div> <!-- close notes-view col -->
   </div> <!-- close dashboard container -->
+</template>
+
+<template name="HcompBeginSynthesis">
+  <div class="ideator-control">
+    <button class="begin-synthesis btn btn-large btn-success">
+      Begin Synthesis
+    </button>
+  </div>
 </template>
 
 <template name="HcompDashIdeabox">

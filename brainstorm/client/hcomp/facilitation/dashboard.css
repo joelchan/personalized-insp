@@ -26,6 +26,16 @@
 	margin-top: 0px;
 }
 
+.hcomp-dashboard .ideator-control {
+  text-align: center;
+}
+
+.hcomp-dashboard .ideator-control .btn {
+  margin: 10px 0;
+  height: 50px;
+  width: 50%;
+}
+
 /* new task creation */
 .hcomp-dashboard .tasks-view #new-task-modal .modal-footer {
     height: 80px;
