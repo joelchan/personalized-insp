@@ -307,6 +307,9 @@ Template.HcompDashboard.events({
 		}
 		var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal, ideasRequested=ideasVal, minutesRequested=minutesVal); 
 		task._id = Tasks.insert(task);
+
+    // clear the message description
+    $("#task-description").val("");
 	},
 
 	'click .card-edit' : function()

@@ -345,22 +345,10 @@ Template.HcompFilterBoxHeader.events({
 		$('.search-apply-btn').toggleClass('btn-success');
 		$('#search-query').val("");
 
-		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.starred-ideas-filter-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
-		}
-	},
-
-	'click .search-remove-btn' : function(){
-		Session.set("searchQuery","");
-		$('.search-apply-btn').toggleClass('btn-success');
-		$('#search-query').val("");
-
-		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.starred-ideas-filter-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
+		// re-highlight the "everything" button if we're removing the last filter
+		if (isLastFilter()) {
+			console.log("Last filter");
+			$('.all-ideas-filter-btn').addClass('btn-success');
 		}
 	},
 
@@ -377,20 +365,16 @@ Template.HcompFilterBoxHeader.events({
 	},
 
 	'click .misc-ideas-filter-btn' : function() {
+		
 		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", [], 'ne');
 		
 		$('.misc-ideas-filter-btn').toggleClass('btn-success');
-		
-		// un-highlight the "everything" button
-		if ($('.all-ideas-filter-btn').hasClass('btn-success')) {
-			$('.all-ideas-filter-btn').removeClass('btn-success');	
-		}
+		$('.all-ideas-filter-btn').removeClass('btn-success');
 
-		// re-highlight the "everything" button if this is the last filter being removed
-		if (!($('.starred-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.search-apply-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
+		// un-highlight the "everything" button if it's the last filter
+		if (isLastFilter()) {
+			console.log("Last filter");
+			$('.all-ideas-filter-btn').addClass('btn-success');
 		}
 		
 	},
@@ -404,11 +388,10 @@ Template.HcompFilterBoxHeader.events({
 			$('.all-ideas-filter-btn').removeClass('btn-success');	
 		}
 
-		// re-highlight the "everything" button if this is the last filter being removed
-		if (!($('.misc-ideas-filter-btn').hasClass('btn-success') 
-			&& $('.search-apply-btn').hasClass('btn-success'))
-			&& !$('all-ideas-filter-btn').hasClass('btn-success')) {
-				$('all-ideas-filter-btn').addClass('btn-success');
+		// re-highlight the "everything" button if we're removing the last filter
+		if (isLastFilter()) {
+			console.log("Last filter");
+			$('.all-ideas-filter-btn').addClass('btn-success');
 		}
 	},
 });
@@ -495,4 +478,13 @@ getFilteredIdeas = function getFilteredIdeas() {
 	var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
 	// console.log(sortedIdeas);
 	return sortedIdeas;
+}
+
+isLastFilter = function() {
+	existingCatFilters = Filters.find({$and: [{name: "Ideas Filter"},
+											  {user: Session.get("currentUser")}, 
+											  {collection: "ideas"},
+											  {field: {$ne: "prompt._id"}}] 
+											}).fetch();
+	return existingCatFilters.length === 0;
 }
