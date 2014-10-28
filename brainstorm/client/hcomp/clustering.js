@@ -19,6 +19,15 @@ var clusterFilterName = "Clustering droppable";
 ********************************************************************/
 Template.MturkClustering.rendered = function(){
   Session.set("searchQuery","");
+
+  //Set height of elements to viewport height
+  //Navbar height=50, header up to idealist = 150, clustering interface header=63
+  var height = $(window).height() - 113; 
+  var idealistHeader = 150;
+  logger.debug("window viewport height = " + height.toString());
+  $("#left-clustering").height(height);
+  $("#middle-clustering").height(height);
+  $("#right-clustering").height(height);
   
   $('.cluster-idea-list').droppable({accept: ".idea-item",
     tolerance: "pointer",
@@ -150,9 +159,21 @@ Template.MturkClusteringIdeaList.helpers({
 * ClusterIdeaItem template Helpers
 ********************************************************************/
 Template.MturkClusterIdeaItem.rendered = function() {
-  $(this.firstNode).draggable({containment: '.clusterinterface',
+  $(this.firstNode).draggable({containment: '.mturk-cluster-interface',
     revert: true,
     zIndex: 50,
+    helper: 'clone',
+    appendTo: ".mturk-cluster-interface",
+    refreshPositions: true,
+    start: function(e, ui) {
+      logger.debug("Began dragging an idea");
+      logger.trace(ui.helper[0]);
+      var width = $(this).css('width');
+      logger.trace(width);
+      $(ui.helper[0]).css('width', width);
+
+      
+    },
   });
   $(this.firstNode).droppable({accept: ".idea-item",
     tolerance: "pointer",

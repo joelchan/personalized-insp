@@ -30,6 +30,7 @@
 	list-style-type: none;
 	padding-left: 0px;
   padding: 5px;
+  overflow: scroll;
 }
 
 .mturk-cluster-interface #idealistHeader{
@@ -58,6 +59,15 @@
 
 .mturk-cluster-interface #left-clustering{
   padding-left: 50px;
+  overflow: scroll;
+}
+
+.mturk-cluster-interface #middle-clustering{
+  overflow: scroll;
+}
+
+.mturk-cluster-interface #right-clustering{
+  overflow: scroll;
 }
 
 
@@ -97,6 +107,8 @@ i {
 	padding: 5px;
 	background-color: #fff;
 	cursor: pointer;
+  min-width: 100px;
+  position: relative;
 }
 
 li.idea-item .gamechangestar{
