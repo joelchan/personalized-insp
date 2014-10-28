@@ -35,7 +35,7 @@ Template.MturkLoginPage.events({
           group = Groups.findOne({_id: prompt.groupIDs[0]});
         }
         var role;
-        if (GroupManager.hasUser(group, user)) {
+        if (!GroupManager.hasUser(group, user)) {
           role = RoleManager.defaults['HcompIdeator'];
           GroupManager.addUser(group, user, role.title);
         } else {
