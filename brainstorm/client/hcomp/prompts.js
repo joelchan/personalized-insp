@@ -11,7 +11,7 @@ Logger.setLevel('Client:Hcomp:Prompts', 'trace');
  * *****************************************************************/
 Template.CrowdPromptPage.helpers({
   prompts: function() {
-    return Prompts.find();
+    return Prompts.find({userIDs: Session.get("currentUser")._id});
   },
 });
 
