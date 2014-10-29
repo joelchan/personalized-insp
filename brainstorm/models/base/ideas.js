@@ -32,7 +32,8 @@ Idea = function (content, user, prompt, participant) {
   this.content = content;
   this.userID = user._id;
   this.userName = user.name;
-  this.prompt = prompt;
+  this.prompt = prompt; /*** Deprecated **/
+  this.promptID = prompt._id;
   this.isGamechanger = false;
   //List of userIDs of users who have voted
   this.votes = [];

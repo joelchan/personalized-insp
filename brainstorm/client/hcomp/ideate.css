@@ -46,6 +46,7 @@
   width: 85%;
   margin: 5px 7% 0px 7%;
   padding: 5px;
+  resize: none;
 }
 
 .hcomp-ideation-pane .submit-idea {
@@ -56,8 +57,26 @@
 }
 
 .hcomp-ideation-pane .idea-list-box {
-  overflow: auto;
+  position: relative;
   z-index: 15;
+}
+
+.hcomp-ideation-pane .general-idea-entry .idea-count {
+  margin-right: 50px;
+}
+
+.hcomp-ideation-pane .idea-count {
+  text-align: right;
+  margin-right: 25px;
+  color: #000;
+}
+.hcomp-ideation-pane .idea-count h3, h4{
+  display: inline-block;
+}
+
+.hcomp-ideation-pane .idea-count-label {
+  right: 100px;
+  font-color: #000;
 }
 
 .hcomp-ideation-pane .idea-box {
@@ -123,8 +142,6 @@
   vertical-align: top;
   white-space: normal;
   text-align: center;
-  position: absolute;
-  top: 80px;
 }
 
 .hcomp-ideation-pane .task-header {

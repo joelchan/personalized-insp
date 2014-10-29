@@ -11,7 +11,7 @@ Template.MturkIdeationPage.rendered = function(){
   var height = $(window).height() - 50; //Navbar height=50
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
-  $(".task-list-pane").height(height-50);
+  $(".task-list-pane").height(height-85);
   //Setup Facilitation push to synthesis listener
   MyUsers.find({_id: Session.get("currentUser")._id}).observe({
     changed: function(newDoc, oldDoc) {
@@ -59,9 +59,19 @@ Template.MturkIdeaList.helpers({
     //return Ideas.find({$and: [
       //{userID: Session.get("currentUser")._id},
       //{clusterIDs: []}]});
-    var generalIdeas = Ideas.find({userID: Session.get("currentUser")._id});
-    return generalIdeas.fetch().reverse();
+    var generalIdeas = Ideas.find(
+      {userID: Session.get("currentUser")._id,
+      'prompt._id': Session.get("currentPrompt")._id},
+      {sort: {time: -1}});
+    return generalIdeas;
   },
+  ideaCount: function() { 
+    logger.debug("Counting Ideas"); 
+    var generalIdeas = Ideas.find(
+      {userID: Session.get("currentUser")._id,
+      'prompt._id': Session.get("currentPrompt")._id});
+    return generalIdeas.count();
+  }, 
 });
 
 Template.MturkIdeabox.helpers({
@@ -188,23 +198,36 @@ Template.MturkTaskLists.events({
   },
 });
 
+var getTaskIdeas = function (task) {
+  logger.debug("Getting Idea list");
+  logger.debug("Cluster ID: "  + task.ideaNodeID);
+    var cluster = Clusters.findOne({_id: task.ideaNodeID});
+    logger.trace(cluster.ideaIDs)
+    logger.trace("Current UserID: " + Session.get("currentUser")._id);
+    logger.trace("Current PromptID: " + Session.get("currentPrompt")._id);
+    var ideas = Ideas.find(
+      {
+        _id: {$in: cluster.ideaIDs},
+        userID: Session.get("currentUser")._id,
+        'prompt._id': Session.get("currentPrompt")._id
+      },
+      {sort: {time: -1}}
+    );
+    logger.trace(ideas);
+    return ideas;
+
+}
+
 Template.TaskIdeaList.helpers({
   ideas: function() {
     logger.debug("getting idea list for task");
     logger.trace(this);
-    var cluster = Clusters.findOne({_id: this.ideaNodeID});
-    logger.trace(cluster.ideaIDs)
-    var ideasAllInClusterFind = Ideas.find({_id: {$in: cluster.ideaIDs}});
-    var ideasAllInCluster = ideasAllInClusterFind.fetch();
-    curUserID = Session.get("currentUser")._id;
-    logger.debug("CURRENT USER IS = " + curUserID);
-    var ideas = [];
-    for (var i = 0; i < ideasAllInCluster.length; i++) {
-      if (ideasAllInCluster[i].userID == curUserID) {
-        ideas.push(ideasAllInCluster[i]);
-      }
-    }
-    logger.trace(ideas);
-    return ideas.reverse();
+    return getTaskIdeas(this);
   },
+  ideaCount: function() { 
+    logger.debug("Counting Ideas"); 
+    logger.trace(this); 
+    return getTaskIdeas(this).count();
+  }, 
 });
+

@@ -35,6 +35,12 @@
 
 <template name="MturkIdeaList">
   <div class="idea-list-box">
+  <div class="idea-count">
+    <span class="idea-count-label">
+      <h4>Total Ideas: </h4>
+      <h3>{{ ideaCount }} </h3>
+    </span>
+  </div>
     {{#each ideas }}
       {{> MturkIdeabox}}
     {{/each}}
@@ -44,10 +50,12 @@
 <template name="MturkIdeabox">
   <div class="idea-box">
     <span>{{ content }}</span>
+    <!--
     <span class='vote-box'> 
       <span class="up-vote vote glyphicon glyphicon-thumbs-up"></span>
       {{ voteNum }}
     </span>
+    -->
   </div>
 </template>
 
@@ -84,6 +92,12 @@
 
 <template name="TaskIdeaList">
   <div class="idea-list-box">
+    <div class="idea-count">
+      <span class="idea-count-label">
+        <h4>Total Ideas: </h4>
+        <h3>{{ ideaCount }} </h3>
+      </span>
+    </div>
     {{#each ideas }}
       {{> MturkIdeabox}}
     {{/each}}
