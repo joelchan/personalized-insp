@@ -70,6 +70,7 @@
   border-radius: 5px;
   color: black;
   text-align: left;
+  position: relative;
 }
 .hcomp-ideation-pane .idea-box p {
   margin: 0;
@@ -78,7 +79,7 @@
 
 .hcomp-ideation-pane .idea-box .vote-box {
   position: absolute;
-  right: 35px;
+  right: 15px;
   height: 1.5em;
 }
 

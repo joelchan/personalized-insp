@@ -106,13 +106,14 @@ i {
 	padding-left: 0px;
 }
 .mturk-cluster-interface li.idea-item{
-	border: solid 1px #ddd;
+	border: solid 2px #ddd;
 	margin: 5px;
 	padding: 5px;
 	background-color: #fff;
 	cursor: pointer;
   min-width: 100px;
   position: relative;
+	list-style-type: none;
 }
 
 li.idea-item .gamechangestar{
