@@ -1,0 +1,80 @@
+
+<template name="themeIdeasItem">
+<li id=idea-{{_id}} class="themeIdea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
+  <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
+  </i>
+  {{ content }} 
+</li>
+</template>
+
+<template name="themeIdeasList">
+  <div id="hcomp-themeIdeas-container">
+    <div class = "panel-group" id = "accordion">
+      <div class = "panel panel-default">
+        <div class = "panel-heading">
+          <h4 class = "panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href= "#{{clusterID this}}">
+            {{themeName this}}
+              <p> Total ideas: {{numThemeIdeas this}} </p>
+            </a>
+          </h4>
+        </div>
+        <div id="{{clusterID this}}" class="panel-collapse collapse">
+          <div class = "panel-body">
+            <ul class="dropdownIdeaslist">
+              {{#each themeIdeas this}}
+                {{> themeIdeasItem}}
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="allIdeasItem">
+<li id=idea-{{_id}} class="allIdea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
+  <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
+  </i>
+  {{ content }} 
+</li>
+</template>
+
+<template name="allIdeasList">
+  <div id="hcomp-allideas-container">
+    <p> Total ideas: {{numAllIdeas}} </p>
+    {{ > HcompFilterBoxHeader }}
+    <ul class ="hcompIdeaslist">
+      {{#each ideas}}
+        {{> allIdeasItem}}
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name = "HcompResultsPage">
+	<div id = "hcompresultspage">
+    <div class = "col-xs-9 hcomp-align-top">
+  		<div class = "title-container">
+        <h1> {{promptQuestion}}</h1>
+        <h1>Brainstorm Results</h1>
+        <p>Click on a theme to reveal ideas associated with it</p>
+      </div>
+      <div id = "themeIdeas-column-container">
+        {{#each Clusters}}
+          <div class = "themeIdea-column">
+            {{> themeIdeasList}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    <div id ="idea-column-container" class = "col-xs-3 hcomp-align-top">
+      <div class = "idea-column" id ="allIdeasColumn">
+        <h3> All Ideas </h3>
+          <!-- {{> allIdeasList }} -->
+          {{> HcompFilterbox}}
+      </div>
+    </div>
+	</div>
+</template>
