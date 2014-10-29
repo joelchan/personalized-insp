@@ -22,11 +22,19 @@ Template.MturkClustering.rendered = function(){
 
   //Set height of elements to viewport height
   //Navbar height=50, header up to idealist = 150, clustering interface header=63
-  var height = $(window).height() - 113; 
-  var idealistHeader = 150;
+  var clusterHeaderHeight = $(".mturk-cluster-header").height() + 10; //10px margin
+  var navbarHeight = $("#header").height();
+  var height = $(window).height() - 
+    navbarHeight - clusterHeaderHeight - 5;
   logger.debug("window viewport height = " + height.toString());
   $("#left-clustering").height(height);
+  var ideaHeaderHeight = $('.idea-box-header').height() + 
+    $("#filterbox-header").height() + 75; //unknown manual tweak
+  $("#idealist").height(height - ideaHeaderHeight);
   $("#middle-clustering").height(height);
+  var themeHeaderHeight = $(".cluster-list h3").height() +
+    $("#new-cluster").height() + 80;
+  $("#clusterlist").height(height-themeHeaderHeight);
   $("#right-clustering").height(height);
   
   $('.cluster-idea-list').droppable({accept: ".idea-item",
