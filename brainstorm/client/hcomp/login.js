@@ -19,33 +19,37 @@ Template.MturkLoginPage.events({
         //console.log("clicked continue");
         //login user
         var prompt = Session.get("currentPrompt");
-        if ($("input#nickname").val() == null) {
+        if ($("input#name").val() == "") {
+          alert("Please enter your Mturk ID");
+        } else {
           var userName = $('input#name').val().trim();
+          logger.info("Logging in user with name: " + userName);
+          var user = LoginManager.loginUser(userName);
+          if ($("input#nickname").val() !== "") {
+            logger.info("Adding alias to user");
+            var alias = $('input#nickname').val().trim();
+            LoginManager.setAlias(alias, user);
+          }
+          var group;
+          if (prompt.groupIDs.length == 0) {
+            group = GroupManager.create(prompt.template);
+            PromptManager.addGroups(prompt, [group]);
+          } else {
+            group = Groups.findOne({_id: prompt.groupIDs[0]});
+          }
+          var role;
+          if (!GroupManager.hasUser(group, user)) {
+            role = RoleManager.defaults['HcompIdeator'];
+            GroupManager.addUser(group, user, role.title);
+          } else {
+            role = GroupManager.getRole(group, user);
+          }
+          Session.set("currentRole", role);
+          Session.set("currentGroup", group);
+          Session.set("currentPrompt", prompt);
+          Router.go("MturkIdeation", 
+            {promptID: prompt._id, userID: user._id});
         }
-        else {
-          var userName = $('input#nickname').val().trim();
-        }
-        logger.info("Logging in user with name: " + userName);
-        var user = LoginManager.loginUser(userName);
-        var group;
-        if (prompt.groupIDs.length == 0) {
-          group = GroupManager.create(prompt.template);
-          PromptManager.addGroups(prompt, [group]);
-        } else {
-          group = Groups.findOne({_id: prompt.groupIDs[0]});
-        }
-        var role;
-        if (!GroupManager.hasUser(group, user)) {
-          role = RoleManager.defaults['HcompIdeator'];
-          GroupManager.addUser(group, user, role.title);
-        } else {
-          role = GroupManager.getRole(group, user);
-        }
-        Session.set("currentRole", role);
-        Session.set("currentGroup", group);
-        Session.set("currentPrompt", prompt);
-        Router.go("MturkIdeation", 
-          {promptID: prompt._id, userID: user._id});
 
     /********************* Disable experiment logic ************/
     },

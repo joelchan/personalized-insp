@@ -15,6 +15,7 @@ Router.map(function () {
   this.route("Home", {
       path: '/',
       template: 'HcompLoginPage',
+
   });
   this.route('PromptPage', {
       path: 'Brainstorms/',
@@ -59,7 +60,8 @@ Router.map(function () {
 
   });
   this.route('CustomConsentPage', {
-      path: 'ConsentPage/:_id',
+      //path: 'ConsentPage/:_id',
+      path: 'consent/:_id',
       template: 'ConsentPage'
   });
   this.route('MTurkConsentPage', {
@@ -150,6 +152,7 @@ Router.map(function () {
       } else {
 	      Session.set("sessionLength", 30);
       }
+      this.next();
     },
     action: function(){
       if(this.ready())
@@ -188,6 +191,9 @@ Router.configure({
       //this.render('LoginPage');
       //Pause rendering the given page until the user is set
       //pause();
+      this.next();
+    } else {
+      this.next();
     }
   },
   action: function(){

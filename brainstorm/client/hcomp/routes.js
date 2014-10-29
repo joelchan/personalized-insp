@@ -35,6 +35,7 @@ Router.map(function () {
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
         }
+        this.next();
       }
     },
   });
@@ -86,6 +87,7 @@ Router.map(function () {
         } else {
           logger.warn("no prompt found with id: " + this.params.promptID);
         }
+        this.next();
       }
     },
     onAfterAction: function() {
@@ -102,6 +104,7 @@ Router.map(function () {
     },
     onBeforeAction: function() {
       console.log("before action");
+      Session.set("currentUser", null);
       if (this.ready()) {
         logger.debug("Data ready");
         var prompt = Prompts.findOne({_id: this.params.promptID});
@@ -111,6 +114,14 @@ Router.map(function () {
         } else {
           logger.warn("no prompt found with id: " + this.params.promptID);
         }
+        this.next();
+      }
+    },
+    action: function() {
+      if (this.ready()) {
+        this.render();
+      } else {
+        this.render('loading');
       }
     },
   });
@@ -149,6 +160,7 @@ Router.map(function () {
           } else {
             logger.warn("no prompt found with id: " + this.params.promptID);
           }
+          this.next();
         } else {
           logger.debug("Not ready");
         }
@@ -204,6 +216,7 @@ Router.map(function () {
           } else {
             logger.warn("no prompt found with id: " + this.params.promptID);
           }
+          this.next();
         } else {
           console.log("Not ready");
         }
@@ -261,6 +274,7 @@ Router.map(function () {
           } else {
             logger.warn("no prompt found with id: " + this.params.promptID);
           }
+          this.next();
         }
     },
     action: function(){
