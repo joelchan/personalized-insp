@@ -4,6 +4,14 @@
 .login-box {
   margin: 20px 0 30px;
 }
+
+.hcomp-prompts-page {
+}
+
+.hcomp-prompts-page .new-bs{
+  margin-top: 30px;
+}
+
 .hcomp-prompt-list .prompt-panel {
   width: 85%;
   margin-left: 7%;
