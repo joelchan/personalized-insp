@@ -527,6 +527,13 @@ LoginManager = (function () {
       }
       return myUser
     },
+    setAlias: function (alias, user) {
+      /************************************************************
+       * allow users to create an alias
+       * **********************************************************/
+      user.alias = alias;
+      MyUsers.update({_id: user._id}, {$set: {'alias': alias}});
+    },
     loginAdmin: function (userName) {
       /***************************************************************
       * Quick hack for detecting an admin login

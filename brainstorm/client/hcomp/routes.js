@@ -104,6 +104,7 @@ Router.map(function () {
     },
     onBeforeAction: function() {
       console.log("before action");
+      Session.set("currentUser", null);
       if (this.ready()) {
         logger.debug("Data ready");
         var prompt = Prompts.findOne({_id: this.params.promptID});
@@ -114,6 +115,13 @@ Router.map(function () {
           logger.warn("no prompt found with id: " + this.params.promptID);
         }
         this.next();
+      }
+    },
+    action: function() {
+      if (this.ready()) {
+        this.render();
+      } else {
+        this.render('loading');
       }
     },
   });

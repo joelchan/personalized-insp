@@ -21,6 +21,24 @@ Template.IdeaGen.helpers({
  * *****************************************************************/
     return Session.get("currentUser").name;
   },
+  hasAlias: function() {
+    logger.debug("Checking if user has alias");
+    logger.trace(this);
+    if (Session.get("currentUser").alias == null) {
+      logger.debug("User has no alias");
+      return false;
+    } else {
+      logger.debug("User has an alias");
+      return true;
+    }
+  },
+
+  alias: function() {
+    logger.debug("Getting user alias");
+    logger.trace(this);
+    return Session.get("currentUser").alias;
+  },
+
 });
 
 
