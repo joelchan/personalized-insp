@@ -352,23 +352,6 @@ Template.HcompDashboard.events({
     $('#CreateTask').toggleClass('in');
   },
 
-  // 'mouseover .task-card' : function() {
-  //   $(event.target)
-  //     .find('.card-edit')[1]
-  //     .attr('opacity',1)
-  //   // console.log(edits);
-  //   // edits.attr('opacity',1);
-  //   // console.log($(event.target));
-  //   // edits.forEach(function(t){
-  //   //   console.log(t);
-  //   // })
-  //   // console.log($(target).find('.card-edit')[0]);
-  // },
-
-  // 'mouseout .task-card' : function() {
-
-  // },
-
 	'click .card-edit' : function()
 	{
 		var taskID = $(event.target).parent().parent().parent().attr('id');
@@ -386,26 +369,6 @@ Template.HcompDashboard.events({
 		var message = $("#"+taskID + " .task-description").val();
     var priorityNum = parseInt($("#"+taskID + " input[type='radio'][name='taskPriorityOptions']:checked").val());
     var ideatorsVal = priorityToNumIdeators(priorityNum);
-    // var ideatorsVal;
-    // switch (priorityNum) {
-    //   case 1:
-    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.33); // change this later once we have group assignment working
-    //     break;
-    //   case 2:
-    //     ideatorsValTemp = parseInt(Session.get("currentGroup").users.length*0.66);
-    //     if (ideatorsValTemp < 1) {
-    //       ideatorsVal = 1;
-    //     } else {
-    //       ideatorsVal = ideatorsValTemp;
-    //     }
-    //     break;
-    //   case 3:
-    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length);
-    //     break;
-    //   default:
-    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
-    //     break;
-    // }
 		// var priorityText = $("#"+taskID + " .task-priority").val();
 		// var priorityNum;
 		// var ideatorsVal = $("#"+taskID + " .task-ideators").val();
@@ -438,6 +401,21 @@ Template.HcompDashboard.events({
   },
 
 });
+
+Template.HcompIdeaWordCloud.events({
+  'click .cloudItem' : function() {
+    var clickedWord = $(event.target).children().context.text;
+    currentSearchQuery = $('#search-query').val();
+    
+    // toggling logic
+    if (currentSearchQuery === clickedWord) { 
+      $('.search-remove-btn').click();
+    } else {
+      $('#search-query').val(clickedWord);
+      $('.search-apply-btn').click();  
+    }
+  },
+})
 
 function getCloudFromIdeas()
 {
