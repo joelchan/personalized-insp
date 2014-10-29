@@ -79,4 +79,6 @@ Assignment = function (task, user) {
   this.userID = user._id;
   this.taskID = task._id;
   this.assignmentTime = new Date().getTime();
+  this.promptID = task.promptID;
+  this.groupID = task.groupID;
 };

@@ -151,7 +151,8 @@ Template.MturkTaskLists.helpers({
   getMyTasks: function() {
     logger.debug("Getting a list of all tasks assigned to current user");
     var assignments = 
-      Assignments.find({userID: Session.get("currentUser")._id}, 
+      Assignments.find({userID: Session.get("currentUser")._id,
+        promptID: Session.get("currentPrompt")._id}, 
         {sort: {'assignmentTime': -1}}).fetch();
     logger.trace(assignments);
     var taskIDs = getValsFromField(assignments, 'taskID');
