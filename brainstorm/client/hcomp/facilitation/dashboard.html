@@ -22,8 +22,8 @@
         </div>
         <div class="col-sm-5 other-fac-actions">
           <strong><u>Other actions:</u></strong>
-          <p class="begin-synthesis"><a href="">Begin synthesis</a></p>
-          <p class="review-brainstorm"><a href="">Review brainstorm</a></p>
+          <div class="begin-synthesis"><a href="">Begin synthesis</a></div>
+          <div class="review-brainstorm"><a href="">Review brainstorm</a></div>
         </div>
           <!-- {{> HcompBeginSynthesis }} -->
       </div>
@@ -236,16 +236,10 @@
       <span class="card-description">Editing this inspiration</span>
       <hr />
 			<form role="form" class="form">
-				<div class="row">
-			  		<div class="col-xs-12">
-						<label class="sr-only">Task Instructions</label>
-						<textarea class="form-control task-description" rows="2" id="" placeholder="Describe your inspiration...">{{getDescription}}</textarea>
-					</div>
-				</div>
-				<div class="row task-main-options">
-					<div class="col-xs-7">
-            <form id="task-priority" role="form">
-              <label class="">Priority </label>
+        <div class="row task-priority">
+          <!-- <form id="task-priority" role="form"> -->
+          <form role="form">
+              <label class="">Priority: &nbsp;</label>
               {{#if getPriority 'Lo'}}
                 <label class="radio-inline">
                   <input type="radio" name="taskPriorityOptions" value="1" checked=""> Lo
@@ -282,8 +276,15 @@
                 {{/if}}
               {{/if}}
             </form>
+        </div>
+				<div class="row">
+			  		<div class="col-xs-12">
+						<label class="sr-only">Task Instructions</label>
+						<textarea class="form-control task-description" rows="2" id="" placeholder="Describe your inspiration...">{{getDescription}}</textarea>
 					</div>
-          <div class="form-group task-options col-xs-5 pull-right">
+				</div>
+				<div class="row task-main-options">
+          <div class="form-group task-options pull-right">
             <button type="button" class="btn btn-default task-update-cancel">
               Cancel
             </button>

@@ -302,9 +302,9 @@ Template.HcompDashboard.events({
     // MyUsers.update({_id: Session.get("currentUser")._id}, {$set: {'route': "MturkSynthesis"}});
   },
 
-  '.click .review-brainstorm' : function() {
+  'click .review-brainstorm' : function() {
     logger.debug("Sending self to review brainstorm page");
-    Router.go('HCompResultsPage', {promptID: Session.get("currentPrompt")._id, userID: Session.get("currentUser")._id});
+    Router.go('HcompResultsPage', {promptID: Session.get("currentPrompt")._id, userID: Session.get("currentUser")._id});
   },
 
   'click .gamechangestar' : function(){
