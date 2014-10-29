@@ -1,9 +1,11 @@
 
 <template name="MturkClusterIdeaItem">
 <li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
-  <i class="gamechangestar fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}}">
-  </i>
   {{ content }} 
+    <span class='vote-box'> 
+      <span class="up-vote vote glyphicon glyphicon-thumbs-up"></span>
+      {{ voteNum }}
+    </span>
 </li>
 </template>
 

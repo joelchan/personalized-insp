@@ -1,3 +1,12 @@
+// Configure logger for Tools
+var logger = new Logger('Client:Hcomp:Dashboard');
+// Comment out to use global logging level
+Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
+//Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
+//Logger.setLevel('Client:Hcomp:Dashboard', 'info');
+//Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
+
+
 var filters = {
 	partFilters: [],
 	clusterFilters: [],
@@ -7,6 +16,39 @@ var filters = {
 MS_PER_MINUTE = 60000;
 
 Template.HcompDashboard.rendered = function(){
+  
+  //Set height of elements to viewport height
+  //Navbar height=50, header up to idealist = 150, clustering interface header=63
+  var height = $(window).height() - 75; 
+  logger.debug("window viewport height = " + height.toString());
+  $(".ideas-view").height(height);
+  $(".tasks-view").height(height);
+  $(".notes-view").height(height);
+  logger.debug(height.toString());
+  logger.debug((height*0.7).toString());
+  $("#big-picture-viz").height(height*0.45);
+  $("#scratchpad").height(height*0.45);
+  var scratchpadHeight = $("#scratchpad").height();
+  // console.log("Scratchpad height:" + scratchpadHeight);
+  // $(".scratchpad-form").height(height*0.38);
+  $(".scratchpad-form").height(scratchpadHeight*0.8);
+
+  // var filterboxContainerHeight = $('.Hcomp-filterbox-container').height();
+  var promptHeaderHeight = $('.ideas-view h1').height();
+  var filterboxHeaderHeight = $('#filterbox-header').height();
+  var ideaboxHeaderHeight = $('.idea-box-header').height();
+  $('.ideadeck-container').height(height
+                                  -promptHeaderHeight
+                                  -filterboxHeaderHeight
+                                  -ideaboxHeaderHeight
+                                  -70); // promptheader margin-top/bottom (30) + ideas number header margin-top (10) + filterboxheader padding-top/bottom (30)
+
+  var facActionsHeight = $('.fac-actions').height();
+  var inspirationsHeaderHeight = $('.tasks-view h1').height();
+  $('#task-card-list').height(height
+                              -facActionsHeight
+                              -inspirationsHeaderHeight
+                              -80); // padding-top/bottom for fac-actions (30) + margin-top/bottom for inspirations header (30) + padding-top/bottom for task-card list
 
   Session.set("idealistFilters", filters);
   Session.set("selectedParts", []);
@@ -86,52 +128,26 @@ Template.HcompDashboard.rendered = function(){
   //       //$('#uname-' + newMsg.sender)
   //     }
   //   }
-  // });
-
-}
-
-Template.HcompIdeaWordCloud.rendered = function () 
-{
-    //console.log(getCloudFromIdeas());
-}
-
-/********************************************************************
-* Template Helpers
-*********************************************************************/
-
-Template.HcompDashboard.helpers({
-	// ideas : function(){
-	// 	var cursor = FilterManager.performQuery("Ideas Filter", 
- //      Session.get("currentUser"),
- //      "ideas"
- //    );
-	// 	return cursor;
- //  	},
-
-
- //  	gamechangers : function(){
- //  		return false;
- //  	},
-
-
- //  	selectedparts : function(){
- //  		return MyUsers.find({_id: {$in: Session.get("selectedParts")}});
- //  	},
-
- //  	participants : function(){
-	// 	// return MyUsers.find({type: "Experiment Participant"});
-	// 	return MyUsers.find({type: "Ideator"});
-	// 	// return FilterManager.performQuery(userSeriesFilter,Session.get("currentUser"),"myUsers");
-	// },
-
-  	//partFilters : function(){
-  		//return MyUsers.find({_id: {$in: Session.get("idealistFilters").partFilters}});
-  	//},
+  };
 //
-  	//clusterFilters : function(){
-  		//return Session.get("idealistFilters").clusterFilters;
-  	//}
+Template.HcompBeginSynthesis.events({
+  'click .begin-synthesis': function() {
+    logger.info("Pushing Ideators to begin synthesis");
+    var groupID = Session.get("currentPrompt").groupIDs[0];
+    var group = Groups.findOne({_id: groupID});
+    var userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+    logger.trace(userIDs);
+    userIDs.forEach(function (id) {
+      logger.debug("Updating route for user with id: " + id);
+      MyUsers.update({_id: id}, {$set: {'route': "MturkSynthesis"}});
+    });
+  },
 });
+
+///********************************************************************
+//* Template Helpers
+//*********************************************************************/
+
 
 Template.HcompDashIdeabox.helpers({
   prompt : function(){
@@ -326,7 +342,31 @@ Template.HcompDashboard.events({
 
     // clear the message description
     $("#task-description").val("");
+
+    $('#CreateTask').toggleClass('in');
+
 	},
+
+  'click #task-create-cancel' : function() {
+    $('#CreateTask').toggleClass('in');
+  },
+
+  // 'mouseover .task-card' : function() {
+  //   $(event.target)
+  //     .find('.card-edit')[1]
+  //     .attr('opacity',1)
+  //   // console.log(edits);
+  //   // edits.attr('opacity',1);
+  //   // console.log($(event.target));
+  //   // edits.forEach(function(t){
+  //   //   console.log(t);
+  //   // })
+  //   // console.log($(target).find('.card-edit')[0]);
+  // },
+
+  // 'mouseout .task-card' : function() {
+
+  // },
 
 	'click .card-edit' : function()
 	{
@@ -385,6 +425,11 @@ Template.HcompDashboard.events({
     Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal}});
 	},
 
+  'click .task-update-cancel' : function() {
+    var taskID = $(event.target).parent().parent().parent().parent().attr('id');
+    Tasks.update({ _id: taskID },{$set: { edited: false}});
+  },
+
 });
 
 function getCloudFromIdeas()
@@ -424,16 +469,16 @@ function getCloudFromIdeas()
 			if(containsWord == false && stopWords.words.indexOf(word) == -1)
 			{
 				// console.log(stopWords);
-                cloudItem.word = word;
+        cloudItem.word = word;
 				cloudItem.count = 1;
 				cloud.push(cloudItem);
 			}
 		}	
 	}
-    var sortedCloud = cloud.sort(function(a,b) {
-        if(a.word < b.word) return -1;
-        if(a.word > b.word) return 1;
-        return 0;
-    });
+  var sortedCloud = cloud.sort(function(a,b) {
+      if(a.word < b.word) return -1;
+      if(a.word > b.word) return 1;
+      return 0;
+  });
 	return sortedCloud;
-    }
+};

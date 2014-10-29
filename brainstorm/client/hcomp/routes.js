@@ -140,6 +140,7 @@ Router.map(function () {
           logger.debug("Data ready");
           var user = MyUsers.findOne({_id: this.params.userID});
           logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
           var prompt = Prompts.findOne({_id: this.params.promptID});
@@ -195,6 +196,7 @@ Router.map(function () {
           var user = MyUsers.findOne({_id: this.params.userID});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
+          MyUsers.update({_id: user._id}, {$set: {route: 'MturkSynthesis'}});
           console.log("Data ready");
           var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {

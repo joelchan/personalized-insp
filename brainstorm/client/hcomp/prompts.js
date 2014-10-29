@@ -11,7 +11,7 @@ Logger.setLevel('Client:Hcomp:Prompts', 'trace');
  * *****************************************************************/
 Template.CrowdPromptPage.helpers({
   prompts: function() {
-    return Prompts.find();
+    return Prompts.find({userIDs: Session.get("currentUser")._id});
   },
 });
 
@@ -124,7 +124,6 @@ Template.CrowdPromptPage.events({
     },
 
     'click button.createPrompt': function () {
-      //Create a new Experiment with 1 condition and a default group template
       var newQuestion = $("input#prompt-text").val();
       var newTitle = $("input#prompt-title").val();
       var minutes = parseInt($("input#prompt-length").val());
@@ -138,6 +137,8 @@ Template.CrowdPromptPage.events({
       }
       var group = GroupManager.create(newPrompt.template);
       PromptManager.addGroups(newPrompt, group);
+      GroupManager.addUser(group, Session.get("currentUser"),
+          RoleManager.defaults['HcompFacilitator'].title);
     },
 
     'click .dash-button': function () {

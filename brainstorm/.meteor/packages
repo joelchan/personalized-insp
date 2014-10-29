@@ -13,6 +13,5 @@ d3
 mrt:nvd3js@0.1.0
 mrt:moment@2.6.0
 iron:router
-velocity:html-reporter
 jag:pince
 mrt:natural

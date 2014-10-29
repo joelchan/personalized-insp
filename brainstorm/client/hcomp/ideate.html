@@ -44,6 +44,10 @@
 <template name="MturkIdeabox">
   <div class="idea-box">
     <span>{{ content }}</span>
+    <span class='vote-box'> 
+      <span class="up-vote vote glyphicon glyphicon-thumbs-up"></span>
+      {{ voteNum }}
+    </span>
   </div>
 </template>
 
@@ -60,14 +64,6 @@
         Begin Synthesis
       </div>
     </div>
-  <!--   <div class="btn btn-success btn-large get-task col-xs-2">
-      Inspire Me!
-    </div> -->
-    <!-- *************************** Remove this code *************-->
-    <!-- <div class="btn btn-success btn-large begin-synthesis col-xs-2">
-      Go To Synthesis
-    </div> -->
-    <!-- *************************** Remove this code *************-->
   </div>
   <div class='task-list-pane'>
     {{#each getMyTasks}}

@@ -1,6 +1,5 @@
 .hcomp-ideation-pane {
   position: relative;
-  margin-top: -29px;
   z-index: 10;
 }
 
@@ -71,6 +70,16 @@
 .hcomp-ideation-pane .idea-box p {
   margin: 0;
   color: #000;
+}
+
+.hcomp-ideation-pane .idea-box .vote-box {
+  position: absolute;
+  right: 15px;
+  height: 1.5em;
+}
+
+.hcomp-ideation-pane .idea-box .vote-box .vote {
+  margin-right: 5px;
 }
 
 .hcomp-ideation-pane .task-list-header {

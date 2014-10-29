@@ -30,12 +30,23 @@
 	list-style-type: none;
 	padding-left: 0px;
   padding: 5px;
+  overflow: scroll;
 }
 
 .mturk-cluster-interface #idealistHeader{
 	display: inline-block;
 	/*width: 50%;*/
 }
+.mturk-cluster-interface .idea-item .vote-box {
+  position: absolute;
+  right: 15px;
+  height: 1.5em;
+}
+
+.mturk-cluster-interface .idea-item .vote-box .vote {
+  margin-right: 5px;
+}
+
 
 .mturk-cluster-interface button {
     margin-top:0px;
@@ -48,8 +59,21 @@
 
 .mturk-cluster-interface #left-clustering{
   padding-left: 50px;
+  overflow: scroll;
 }
 
+.mturk-cluster-interface #middle-clustering{
+  overflow: scroll;
+}
+
+.mturk-cluster-interface #right-clustering{
+  overflow: scroll;
+}
+
+.mturk-cluster-interface #clusterarea {
+  height: 100%;
+  overflow:normal;
+}
 
 .mturk-cluster-interface #sortMenuButton{
 	margin: 20px 0px 5px 15px;
@@ -87,6 +111,8 @@ i {
 	padding: 5px;
 	background-color: #fff;
 	cursor: pointer;
+  min-width: 100px;
+  position: relative;
 }
 
 li.idea-item .gamechangestar{

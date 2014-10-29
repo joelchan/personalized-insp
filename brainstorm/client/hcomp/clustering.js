@@ -1,9 +1,9 @@
  // Configure logger for server tests
  var logger = new Logger('Client:Clustering');
  // Comment out to use global logging level
- Logger.setLevel('Client:Clustering', 'trace');
+ //Logger.setLevel('Client:Clustering', 'trace');
  //Logger.setLevel('Client:Clustering', 'debug');
- //Logger.setLevel('Client:Clustering', 'info');
+ Logger.setLevel('Client:Clustering', 'info');
  //Logger.setLevel('Client:Clustering', 'warn');
 
 /*******************************************************************
@@ -19,6 +19,15 @@ var clusterFilterName = "Clustering droppable";
 ********************************************************************/
 Template.MturkClustering.rendered = function(){
   Session.set("searchQuery","");
+
+  //Set height of elements to viewport height
+  //Navbar height=50, header up to idealist = 150, clustering interface header=63
+  var height = $(window).height() - 113; 
+  var idealistHeader = 150;
+  logger.debug("window viewport height = " + height.toString());
+  $("#left-clustering").height(height);
+  $("#middle-clustering").height(height);
+  $("#right-clustering").height(height);
   
   $('.cluster-idea-list').droppable({accept: ".idea-item",
     tolerance: "pointer",
@@ -150,9 +159,19 @@ Template.MturkClusteringIdeaList.helpers({
 * ClusterIdeaItem template Helpers
 ********************************************************************/
 Template.MturkClusterIdeaItem.rendered = function() {
-  $(this.firstNode).draggable({containment: '.clusterinterface',
+  $(this.firstNode).draggable({containment: '.mturk-cluster-interface',
     revert: true,
     zIndex: 50,
+    helper: 'clone',
+    appendTo: ".mturk-cluster-interface",
+    refreshPositions: true,
+    start: function(e, ui) {
+      logger.debug("Began dragging an idea");
+      logger.trace(ui.helper[0]);
+      var width = $(this).css('width');
+      logger.trace(width);
+      $(ui.helper[0]).css('width', width);
+    },
   });
   $(this.firstNode).droppable({accept: ".idea-item",
     tolerance: "pointer",
@@ -166,8 +185,32 @@ Template.MturkClusterIdeaItem.helpers({
   isNotInCluster: function() {
     return (this.clusterIDs.length === 0) ? true : false;
   },
+  hasNotVoted: function() {
+    if (isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("User has already voted");
+      return false;
+    } else {
+      logger.debug("User has not voted");
+      return true;
+    }
+  },
+  voteNum: function() {
+    return this.votes.length;
+  },
 })
 
+Template.MturkClusterIdeaItem.events({
+  'click .up-vote': function(e, elm) {
+    if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("voting for idea");
+      IdeaFactory.upVote(this, Session.get("currentUser"));
+    } else {
+      logger.debug("undo voting for idea");
+      IdeaFactory.downVote(this, Session.get("currentUser"));
+    }
+  },
+
+});
 /********************************************************************
 * ClusterList template Helpers
 ********************************************************************/
@@ -263,15 +306,14 @@ Template.MturkCluster.events({
 });
 
 Template.MturkCluster.rendered = function(){
-  console.log("****************************************************");
-  console.log(this);
-  console.log("****************************************************");
   $('.cluster').draggable({
     stop: function() {
       logger.debug("dragged object");
       var id = trimFromString($(this).attr("id"), "cluster-");
       var cluster = ClusterFactory.getWithIDs(id);
-      var pos = $(this).position();
+      var pos = {'top': parseFloat(trimFromString($(this).css('top'),'px')),
+        'left': parseFloat(trimFromString($(this).css('left'),'px'))
+      };
       ClusterFactory.updatePosition(cluster, pos);
       EventLogger.logMovedCluster(cluster, pos);
     },
