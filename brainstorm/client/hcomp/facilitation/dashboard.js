@@ -19,16 +19,36 @@ Template.HcompDashboard.rendered = function(){
   
   //Set height of elements to viewport height
   //Navbar height=50, header up to idealist = 150, clustering interface header=63
-  var height = $(window).height() - 50; 
+  var height = $(window).height() - 75; 
   logger.debug("window viewport height = " + height.toString());
   $(".ideas-view").height(height);
   $(".tasks-view").height(height);
   $(".notes-view").height(height);
   logger.debug(height.toString());
   logger.debug((height*0.7).toString());
-  $("#big-picture-viz").height(height*0.7);
-  $("#scratchpad").height(height*0.2);
-  $(".scratchpad-form").height(height*0.18);
+  $("#big-picture-viz").height(height*0.45);
+  $("#scratchpad").height(height*0.45);
+  var scratchpadHeight = $("#scratchpad").height();
+  // console.log("Scratchpad height:" + scratchpadHeight);
+  // $(".scratchpad-form").height(height*0.38);
+  $(".scratchpad-form").height(scratchpadHeight*0.8);
+
+  // var filterboxContainerHeight = $('.Hcomp-filterbox-container').height();
+  var promptHeaderHeight = $('.ideas-view h1').height();
+  var filterboxHeaderHeight = $('#filterbox-header').height();
+  var ideaboxHeaderHeight = $('.idea-box-header').height();
+  $('.ideadeck-container').height(height
+                                  -promptHeaderHeight
+                                  -filterboxHeaderHeight
+                                  -ideaboxHeaderHeight
+                                  -70); // promptheader margin-top/bottom (30) + ideas number header margin-top (10) + filterboxheader padding-top/bottom (30)
+
+  var facActionsHeight = $('.fac-actions').height();
+  var inspirationsHeaderHeight = $('.tasks-view h1').height();
+  $('#task-card-list').height(height
+                              -facActionsHeight
+                              -inspirationsHeaderHeight
+                              -80); // padding-top/bottom for fac-actions (30) + margin-top/bottom for inspirations header (30) + padding-top/bottom for task-card list
 
   Session.set("idealistFilters", filters);
   Session.set("selectedParts", []);
@@ -322,7 +342,31 @@ Template.HcompDashboard.events({
 
     // clear the message description
     $("#task-description").val("");
+
+    $('#CreateTask').toggleClass('in');
+
 	},
+
+  'click #task-create-cancel' : function() {
+    $('#CreateTask').toggleClass('in');
+  },
+
+  // 'mouseover .task-card' : function() {
+  //   $(event.target)
+  //     .find('.card-edit')[1]
+  //     .attr('opacity',1)
+  //   // console.log(edits);
+  //   // edits.attr('opacity',1);
+  //   // console.log($(event.target));
+  //   // edits.forEach(function(t){
+  //   //   console.log(t);
+  //   // })
+  //   // console.log($(target).find('.card-edit')[0]);
+  // },
+
+  // 'mouseout .task-card' : function() {
+
+  // },
 
 	'click .card-edit' : function()
 	{
@@ -380,6 +424,11 @@ Template.HcompDashboard.events({
 		// Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal, ideasRequested: ideasVal, minutesRequested: minutesVal}});
     Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal}});
 	},
+
+  'click .task-update-cancel' : function() {
+    var taskID = $(event.target).parent().parent().parent().parent().attr('id');
+    Tasks.update({ _id: taskID },{$set: { edited: false}});
+  },
 
 });
 

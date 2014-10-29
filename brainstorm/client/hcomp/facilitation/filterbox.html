@@ -3,129 +3,19 @@
 		<!-- <i class="fa fa-filter"></i> -->
 		{{ > HcompFilterBoxHeader }}
 
-		<!--Participant Filter Dropdown-->
-		<div class="select-parts-filters filter-dropdown col-md-3">
-			<h5>Select Participants</h5>
-			<div class="filter-list">
-				<select multiple class="select-participants form-control">
-					{{#each participants}}
-						<option val="pf-{{this._id}}">{{this.name}}</option>
-					{{/each}}
-				</select>
-			</div>
-			<div class="apply-filter">
-				<button class="btn btn-default">Cancel</button>
-				<button class="btn btn-primary apply">Apply</button>
-			</div>
-		</div>
-
-		<!--Themed Filter Dropdown-->
-		<!-- <div class="select-themed-filters filter-dropdown col-md-3">
-			<h5>Select Status</h5>
-			<div class="filter-list">
-				<div class="radio">
-				  <label>
-				    <input type="radio" name="themedRadios" id="themedRadios1" value="true">
-				   	In a theme
-				  </label>
-				</div>
-				<div class="radio">
-				  <label>
-				    <input type="radio" name="themedRadios" id="themedRadios2" value="false">
-				    Not in a theme
-				  </label>
-				</div>
-				<div class="radio disabled">
-				  <label>
-				    <input type="radio" name="themedRadios" id="themedRadios3" value="neither">
-				    Both
-				  </label>
-				</div>
-			</div>
-			<div class="apply-filter">
-				<button class="btn btn-default">Cancel</button>
-				<button class="btn btn-primary apply">Apply</button>
-			</div>
-		</div> -->
-
-		<!--Member Of Selection Filter-->
-		<div class="select-memberOf-filters filter-dropdown col-md-3">
-			<h5>Select Themes</h5>
-			<div class="filter-list">
-				<select multiple class="select-themes form-control">
-					{{#each currentClusters}}
-						<option val="mo-{{this._id}}">{{this.name}}</option>
-					{{/each}}
-				</select>
-			</div>
-			<div class="apply-filter">
-				<button class="btn btn-default">Cancel</button>
-				<button class="btn btn-primary apply">Apply</button>
-			</div>
-		</div>
-
-		<!--Time Filter Dropdown-->
-		<div class="select-time-filters filter-dropdown col-md-3">
-			<div class="filter-list">
-				<h5>Select Time Window</h5>
-				<!-- <div class="time-select-box"> -->
-					Between
-					<select class="select-start form-control time-select">
-						<option>0</option>
-	  					<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option>5</option>
-						<option>6</option>
-						<option>7</option>
-						<option>8</option>
-						<option>9</option>
-						<option>10</option>
-						<option>11</option>
-						<option>12</option>
-						<option>13</option>
-						<option>14</option>
-					</select>
-					<span> minutes ago and</span>
-				
-					<select class="select-end form-control time-select">
-	  					<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option>5</option>
-						<option>6</option>
-						<option>7</option>
-						<option>8</option>
-						<option>9</option>
-						<option>10</option>
-						<option>11</option>
-						<option>12</option>
-						<option>13</option>
-						<option>14</option>
-						<option>15</option>
-					</select>
-					<span> minutes ago.</span>
-				<!-- </div> -->
-			</div>
-			<div class="apply-filter">
-				<button class="btn btn-default">Cancel</button>
-				<button class="btn btn-primary apply">Apply</button>
-			</div>
-		</div>
-
 		<div class="idea-box-header">
 		  <span>
 		    {{ numIdeas }} Ideas
 		  </span>
 		</div>
-		<ul id="hcomp-idealist" class="ideadeck ui-sortable">
-			<li class="sort-disabled"></li>
-				{{#each ideas}}
-					{{> HcompFilterBoxIdeaItem}}
-				{{/each}}
-		</ul>
+		<div class="ideadeck-container">
+			<ul id="hcomp-idealist" class="ideadeck ui-sortable">
+				<li class="sort-disabled"></li>
+					{{#each ideas}}
+						{{> HcompFilterBoxIdeaItem}}
+					{{/each}}
+			</ul>
+		</div>
 	</div>
 </template>
 
@@ -269,3 +159,113 @@
 					<i id="star-toggle-icon" class="fa fa-lg fa-star-o"></i>
 				</button>
 			</span> -->
+
+			<!--Participant Filter Dropdown-->
+		<!-- <div class="select-parts-filters filter-dropdown col-md-3">
+			<h5>Select Participants</h5>
+			<div class="filter-list">
+				<select multiple class="select-participants form-control">
+					{{#each participants}}
+						<option val="pf-{{this._id}}">{{this.name}}</option>
+					{{/each}}
+				</select>
+			</div>
+			<div class="apply-filter">
+				<button class="btn btn-default">Cancel</button>
+				<button class="btn btn-primary apply">Apply</button>
+			</div>
+		</div> -->
+
+		<!--Themed Filter Dropdown-->
+		<!-- <div class="select-themed-filters filter-dropdown col-md-3">
+			<h5>Select Status</h5>
+			<div class="filter-list">
+				<div class="radio">
+				  <label>
+				    <input type="radio" name="themedRadios" id="themedRadios1" value="true">
+				   	In a theme
+				  </label>
+				</div>
+				<div class="radio">
+				  <label>
+				    <input type="radio" name="themedRadios" id="themedRadios2" value="false">
+				    Not in a theme
+				  </label>
+				</div>
+				<div class="radio disabled">
+				  <label>
+				    <input type="radio" name="themedRadios" id="themedRadios3" value="neither">
+				    Both
+				  </label>
+				</div>
+			</div>
+			<div class="apply-filter">
+				<button class="btn btn-default">Cancel</button>
+				<button class="btn btn-primary apply">Apply</button>
+			</div>
+		</div> -->
+
+		<!-- <div class="select-memberOf-filters filter-dropdown col-md-3">
+			<h5>Select Themes</h5>
+			<div class="filter-list">
+				<select multiple class="select-themes form-control">
+					{{#each currentClusters}}
+						<option val="mo-{{this._id}}">{{this.name}}</option>
+					{{/each}}
+				</select>
+			</div>
+			<div class="apply-filter">
+				<button class="btn btn-default">Cancel</button>
+				<button class="btn btn-primary apply">Apply</button>
+			</div>
+		</div>
+
+		<div class="select-time-filters filter-dropdown col-md-3">
+			<div class="filter-list">
+				<h5>Select Time Window</h5>
+				<div class="time-select-box">
+					Between
+					<select class="select-start form-control time-select">
+						<option>0</option>
+	  					<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+						<option>6</option>
+						<option>7</option>
+						<option>8</option>
+						<option>9</option>
+						<option>10</option>
+						<option>11</option>
+						<option>12</option>
+						<option>13</option>
+						<option>14</option>
+					</select>
+					<span> minutes ago and</span>
+				
+					<select class="select-end form-control time-select">
+	  					<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+						<option>6</option>
+						<option>7</option>
+						<option>8</option>
+						<option>9</option>
+						<option>10</option>
+						<option>11</option>
+						<option>12</option>
+						<option>13</option>
+						<option>14</option>
+						<option>15</option>
+					</select>
+					<span> minutes ago.</span>
+				</div>
+			</div>
+			<div class="apply-filter">
+				<button class="btn btn-default">Cancel</button>
+				<button class="btn btn-primary apply">Apply</button>
+			</div>
+		</div> -->

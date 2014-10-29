@@ -20,6 +20,10 @@
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.hcomp-dashboard-container {
+  height: 500px;
+}
+
 .hcomp-dashboard h3{
 	margin-top: 10px;
 	margin-bottom: 5px;
@@ -34,22 +38,29 @@
 	margin-top: 0px;
 }
 
-.hcomp-dashboard .ideator-control {
+.hcomp-dashboard .fac-actions {
+  /*display:inline;*/
   text-align: center;
+  padding:15px;
 }
 
-.hcomp-dashboard .ideator-control .btn {
-  margin: 10px 0;
-  height: 50px;
-  width: 50%;
+.hcomp-dashboard .ideator-control, .hcomp-dashboard .create-task-btn {
+  text-align: center;
+  font-weight:bold;
+  font-size:16px;
 }
 
-/* new task creation */
-.hcomp-dashboard .tasks-view #new-task-modal .modal-footer {
-    height: 80px;
-    margin-top:0px;
-    padding: 10px;
+.hcomp-dashboard .ideator-control {
+  /*margin: 10px 0;*/
+  /*height: 50px;*/
+  /*width: 50%;*/
+  margin-left:10px;
 }
+
+.hcomp-dashboard .create-task-btn {
+  margin-right:10px;
+}
+
 /* ########################## */
 /* IDEAS VIEW */
 /* ########################## */
@@ -59,24 +70,41 @@
   /*border-right: solid 1px #ddd;*/
   /*max-height: 685px;*/
   /*height:100%;*/
+  /*height:inherit;*/
   padding-left:15px;
   padding-right:15px;
-
+  position:relative;
+  /*overflow: scroll;*/
 }
 
 .hcomp-dashboard .ideadeck{
   list-style: none;
-  overflow: auto;
+  /*overflow: auto;*/
   /*height: 720px;*/
   padding-left:15px;
   padding-right:15px;
+}
+
+.hcomp-dashboard .ideas {
+  /*overflow:auto;*/
+  /*height:inherit;*/
 }
 
 .hcomp-dashboard #idealist {
   padding-right:0px;
 }
 
+.hcomp-dashboard li.idea-item{
+  border: solid 2px #ddd;
+  margin: 5px 0;
+  padding: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  list-style-type: none;
+}
+
 .hcomp-dashboard .idea-item{
+  position: relative;
   cursor: default;
 }
 
@@ -89,11 +117,23 @@
   /*height:100%;*/
   padding-left:15px;
   padding-right:15px;
+  /*padding-top:15px;*/
+  /*overflow: scroll;*/
+}
+
+.hcomp-dashboard #big-picture-viz {
+  /*height:60%;*/
+  padding:15px;
 }
 
 .hcomp-dashboard #scratchpad {
   padding-left:15px;
   padding-right: 15px;
+  /*height:40%;*/
+}
+
+.hcomp-dashboard .scratchpad-form {
+  /*height:100%;*/
 }
 
 /* ########################## */
@@ -101,17 +141,20 @@
 /* ########################## */
 
 .hcomp-dashboard .tasks-view {
-  overflow:auto;
+  /*overflow:auto;*/
   /*max-height: 685px;*/
   /*height:100%;*/
-  padding-left:10px;
-  padding-right:10px;
+  /*overflow-y: scroll;*/
+  /*overflow-x: hidden;*/
+  padding-left:30px;
+  padding-right:30px;
   /*background-color: #f5f5f5;*/
 }
 
 .hcomp-dashboard #task-card-list {
   background-color: #f5f5f5;
   padding:10px;
+  overflow:auto;
 }
 
 .hcomp-dashboard .task-card {
@@ -132,8 +175,17 @@
   background-color: white;
 }
 
+.hcomp-dashboard .task-main-options {
+  padding-top:10px;
+}
+
 .hcomp-dashboard #CreateTask .task-options, .edit-task .task-options, {
-  display: inline-block;
+  /*display: inline-block;*/
+}
+
+.hcomp-dashboard #task-create, .hcomp-dashboard .task-update {
+  margin-left:15px;
+  margin-right:5px;
 }
 
 .hcomp-dashboard .task-card-main {
@@ -146,16 +198,16 @@
   float:right;
   padding:5px 5px 0px 0px;
   cursor:pointer;
-  opacity:0;
+  opacity:0.75;
 }
 
-.hcomp-dashboard .card-edit:hover {
+/*.hcomp-dashboard .card-edit:hover {
   margin-left:0px;
   float:right;
   padding:5px 5px 0px 0px;
   cursor:pointer;
   opacity:1;
-}
+}*/
 
 .hcomp-dashboard .card-description {
   font-size:20px;
@@ -210,7 +262,7 @@
   background-color: #f5f5f5;
   /* height: 300px; */
   /*min-height: 500px;*/
-  max-height:500px;
+  /*max-height:500px;*/
   list-style: none;
   list-style-type: none;
   padding-left: 0px;

@@ -1,8 +1,8 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Filterbox');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
-//Logger.setLevel('Client:Hcomp:Filterbox', 'debug');
+// Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
+Logger.setLevel('Client:Hcomp:Filterbox', 'debug');
 //Logger.setLevel('Client:Hcomp:Filterbox', 'info');
 //Logger.setLevel('Client:Hcomp:Filterbox', 'warn');
 
@@ -431,7 +431,7 @@ Template.HcompFilterBoxHeader.events({
 	},
 
 	'click .starred-ideas-filter-btn' : function() {
-		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "isGamechanger", true);
+		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "votes", [], 'ne');
 		$('.starred-ideas-filter-btn').toggleClass('btn-success');
 		
 		// un-highlight the "everything" button
