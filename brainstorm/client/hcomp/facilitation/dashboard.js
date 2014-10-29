@@ -302,21 +302,22 @@ Template.HcompDashboard.events({
 		// var priorityText = $("#task-priority").val();
     // console.log("Creating task with priority: " + priorityText);
 		var priorityNum = parseInt($("#CreateTask" + " input[type='radio'][name='taskPriorityOptions']:checked").val());
-		var ideatorsVal;
-    switch (priorityNum) {
-      case 1:
-        ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.33); // change this later once we have group assignment working
-        break;
-      case 2:
-        ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
-        break;
-      case 3:
-        ideatorsVal = parseInt(Session.get("currentGroup").users.length);
-        break;
-      default:
-        ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
-        break;
-    }
+		var ideatorsVal = priorityToNumIdeators(priorityNum);
+    // var ideatorsVal;
+    // switch (priorityNum) {
+    //   case 1:
+    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.33); // change this later once we have group assignment working
+    //     break;
+    //   case 2:
+    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
+    //     break;
+    //   case 3:
+    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length);
+    //     break;
+    //   default:
+    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
+    //     break;
+    // }
     // var ideatorsVal = $("#task-ideators").val();
 		// var ideasVal = $("#task-ideas").val();
 		// var minutesVal = $("#task-minutes").val();
@@ -384,21 +385,27 @@ Template.HcompDashboard.events({
 		var taskID = $(event.target).parent().parent().parent().parent().attr('id');
 		var message = $("#"+taskID + " .task-description").val();
     var priorityNum = parseInt($("#"+taskID + " input[type='radio'][name='taskPriorityOptions']:checked").val());
-    var ideatorsVal;
-    switch (priorityNum) {
-      case 1:
-        ideatorsVal = 10; // change this later once we have group assignment working
-        break;
-      case 2:
-        ideatorsVal = 20;
-        break;
-      case 3:
-        ideatorsVal = 30;
-        break;
-      default:
-        ideatorsVal = 20;
-        break;
-    }
+    var ideatorsVal = priorityToNumIdeators(priorityNum);
+    // var ideatorsVal;
+    // switch (priorityNum) {
+    //   case 1:
+    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.33); // change this later once we have group assignment working
+    //     break;
+    //   case 2:
+    //     ideatorsValTemp = parseInt(Session.get("currentGroup").users.length*0.66);
+    //     if (ideatorsValTemp < 1) {
+    //       ideatorsVal = 1;
+    //     } else {
+    //       ideatorsVal = ideatorsValTemp;
+    //     }
+    //     break;
+    //   case 3:
+    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length);
+    //     break;
+    //   default:
+    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
+    //     break;
+    // }
 		// var priorityText = $("#"+taskID + " .task-priority").val();
 		// var priorityNum;
 		// var ideatorsVal = $("#"+taskID + " .task-ideators").val();
@@ -482,3 +489,29 @@ function getCloudFromIdeas()
   });
 	return sortedCloud;
 };
+
+priorityToNumIdeators = function(priorityNum) {
+  switch (priorityNum) {
+    case 1:
+      var prop = 0.33;
+      break;
+    case 2:
+      var prop = 0.66;
+      break;
+    case 3:
+      var prop = 1.0;
+      break;
+    default:
+      var prop = 0.66;
+      break;
+  }
+
+  var ideatorsValTemp = parseInt(Session.get("currentGroup").users.length*prop);
+  if (ideatorsValTemp < 1) {
+    var ideatorsVal = 1;
+  } else {
+    var ideatorsVal = ideatorsValTemp;
+  }
+
+  return ideatorsVal;
+}
