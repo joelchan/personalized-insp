@@ -431,6 +431,7 @@ Template.HcompFilterBoxHeader.events({
 	},
 
 	'click .starred-ideas-filter-btn' : function() {
+		// console.log("*******************Toggling votes filter*******************");
 		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "votes", [], 'ne');
 		$('.starred-ideas-filter-btn').toggleClass('btn-success');
 		
