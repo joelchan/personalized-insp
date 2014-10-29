@@ -48,10 +48,10 @@ Template.MturkMainPrompt.rendered = function(){
 };
 
 Template.MturkMainPrompt.helpers({
-  prompt: function() {
-    var prompt = Session.get("currentPrompt");
-    return prompt.question;
-  },
+  // prompt: function() {
+  //   var prompt = Session.get("currentPrompt");
+  //   return prompt.question;
+  // },
 });
 
 Template.MturkIdeaList.helpers({
@@ -59,7 +59,8 @@ Template.MturkIdeaList.helpers({
     //return Ideas.find({$and: [
       //{userID: Session.get("currentUser")._id},
       //{clusterIDs: []}]});
-    return Ideas.find({userID: Session.get("currentUser")._id});
+    var generalIdeas = Ideas.find({userID: Session.get("currentUser")._id});
+    return generalIdeas.fetch().reverse();
   },
 });
 
@@ -154,7 +155,10 @@ Template.MturkTaskLists.helpers({
     //Sort tasks by assignment time
     return tasks;
   },
-  
+  prompt: function() {
+    var prompt = Session.get("currentPrompt");
+    return prompt.question;
+  },
 });
 
 Template.MturkTaskLists.events({ 
@@ -184,15 +188,23 @@ Template.MturkTaskLists.events({
   },
 });
 
-
 Template.TaskIdeaList.helpers({
   ideas: function() {
     logger.debug("getting idea list for task");
     logger.trace(this);
     var cluster = Clusters.findOne({_id: this.ideaNodeID});
     logger.trace(cluster.ideaIDs)
-    var ideas = Ideas.find({_id: {$in: cluster.ideaIDs}});
-    logger.trace(ideas.fetch());
-    return ideas;
+    var ideasAllInClusterFind = Ideas.find({_id: {$in: cluster.ideaIDs}});
+    var ideasAllInCluster = ideasAllInClusterFind.fetch();
+    curUserID = Session.get("currentUser")._id;
+    logger.debug("CURRENT USER IS = " + curUserID);
+    var ideas = [];
+    for (var i = 0; i < ideasAllInCluster.length; i++) {
+      if (ideasAllInCluster[i].userID == curUserID) {
+        ideas.push(ideasAllInCluster[i]);
+      }
+    }
+    logger.trace(ideas);
+    return ideas.reverse();
   },
 });

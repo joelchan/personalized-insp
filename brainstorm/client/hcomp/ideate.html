@@ -11,12 +11,17 @@
 </template>
 
 <template name="MturkMainPrompt">
-  <div class="header">
-    <h1>{{ prompt }}</h1> <br/>
+  <div class = "ideator-directions">
+    <h3> Directions</h3>
+    <p> 1) Begin entering for the prompt here<br>
+        2) If you get stuck, hit the "Inspire Me!" button for a new stream of thought<br>
+        3) Continue to ideate until the time is up
+    </p>
   </div>
-  {{> MturkIdeaEntryBox }}
-  {{> MturkIdeaList }}
-
+  <div class = "general-idea-entry">
+    {{> MturkIdeaEntryBox }}
+    {{> MturkIdeaList }}
+  </div>
 </template>
 
 <template name="MturkIdeaEntryBox">
@@ -48,16 +53,17 @@
 
 <template name="MturkTaskLists">
   <div class='row task-list-header'>
-    <div class="btn btn-success btn-large get-task">
-      Get a new task
+    <div class="header">
+      <div class="btn btn-success btn-large get-task col-xs-2">
+        Inspire Me!
+      </div>
+      <div class = "col-xs-8">
+        <h1>{{ prompt }}</h1> <br/>
+      </div>
+      <div class="btn btn-success btn-large begin-synthesis col-xs-2">
+        Begin Synthesis
+      </div>
     </div>
-    <!-- *************************** Remove this code *************-->
-    <!--
-    <div class="btn btn-success btn-large begin-synthesis">
-      Go To Synthesis
-    </div>
-    -->
-    <!-- *************************** Remove this code *************-->
   </div>
   <div class='task-list-pane'>
     {{#each getMyTasks}}
@@ -91,7 +97,7 @@
         <h3 class="modal-title" id="myModalLabel">
           No New Tasks Available
         </h3>
-        <button type="button" class="btn btn-success" 
+        <button type="button" class="btn btn-success popup-continue" 
           data-dismiss="modal">
           Continue
         </button>
