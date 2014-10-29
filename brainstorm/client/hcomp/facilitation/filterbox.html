@@ -47,11 +47,22 @@
 <template name="HcompFilterBoxIdeaItem">
 <li id={{_id}} class="idea-item">
 <!-- <i class="sort-disabled fa fa-lg {{#if gameChangerStatus}} fa-star {{else}} fa-star-o {{/if}} gamechangestar"></i> -->
-  {{content}} 
-  <span class='vote-box'> 
-    <span class="up-vote vote glyphicon glyphicon-thumbs-up"></span>
-    {{ voteNum }}
-  </span>
+	<div class="row">
+		<div class="col-xs-10 filterbox-idea-content">
+  			{{content}} 
+  		</div>
+  		<div class="col-xs-2 vote-box">
+	  		<!-- <span class='vote-box'>  -->
+	    	{{#if hasVotes }}
+		    	<span class="up-vote vote fa fa-thumbs-up"></span>
+		    	{{ voteNum }}
+			{{else}}
+				<span class="up-vote vote fa fa-thumbs-o-up"></span>
+				{{ voteNum }}
+			{{/if}}
+			<!-- </span> -->
+		</div>
+	</div>
 </li>
 </template>
 

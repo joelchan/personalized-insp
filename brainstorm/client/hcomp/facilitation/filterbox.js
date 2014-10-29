@@ -139,6 +139,13 @@ Template.HcompFilterBoxIdeaItem.helpers({
   voteNum: function() {
     return this.votes.length;
   },
+  hasVotes: function() {
+  	if (this.votes.length > 0) {
+  		return true
+  	} else {
+  		return false
+  	}
+  },
 });
 
 Template.HcompFilterBoxIdeaItem.events({
