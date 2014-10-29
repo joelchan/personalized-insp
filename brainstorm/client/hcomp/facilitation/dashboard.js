@@ -325,6 +325,11 @@ Template.HcompDashboard.events({
     Router.go('HcompResultsPage', {promptID: Session.get("currentPrompt")._id, userID: Session.get("currentUser")._id});
   },
 
+  'click .goto-prompts-page' : function() {
+    logger.debug("Sending self to prompts page");
+    Router.go('CrowdPromptPage', {userID: Session.get("currentUser")._id});
+  },
+
   'click .gamechangestar' : function(){
     EventLogger.logToggleGC(this);
 		IdeaFactory.toggleGameChanger(this);

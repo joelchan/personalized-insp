@@ -38,6 +38,7 @@
   /*display:inline;*/
   text-align: center;
   padding:15px;
+  vertical-align: center;
 }
 
 .hcomp-dashboard .ideator-control, .hcomp-dashboard .create-task-btn {
