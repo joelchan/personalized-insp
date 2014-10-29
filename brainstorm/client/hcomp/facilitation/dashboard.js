@@ -305,16 +305,16 @@ Template.HcompDashboard.events({
 		var ideatorsVal;
     switch (priorityNum) {
       case 1:
-        ideatorsVal = 10; // change this later once we have group assignment working
+        ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.33); // change this later once we have group assignment working
         break;
       case 2:
-        ideatorsVal = 20;
+        ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
         break;
       case 3:
-        ideatorsVal = 30;
+        ideatorsVal = parseInt(Session.get("currentGroup").users.length);
         break;
       default:
-        ideatorsVal = 20;
+        ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
         break;
     }
     // var ideatorsVal = $("#task-ideators").val();
