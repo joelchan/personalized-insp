@@ -38,6 +38,7 @@
   /*display:inline;*/
   text-align: center;
   padding:15px;
+  vertical-align: center;
 }
 
 .hcomp-dashboard .ideator-control, .hcomp-dashboard .create-task-btn {
@@ -120,6 +121,16 @@
 .hcomp-dashboard #big-picture-viz {
   /*height:60%;*/
   padding:15px;
+  /*overflow:auto;*/
+}
+
+.hcomp-dashboard #ideawordcloud {
+  overflow:auto;
+}
+
+.hcomp-dashboard .stat {
+  font-size:30px;
+  font-weight:bold;
 }
 
 .hcomp-dashboard #scratchpad {
@@ -171,8 +182,34 @@
   background-color: white;
 }
 
+.hcomp-dashboard .task-priority {
+  /*text-align: center;*/
+  padding: 0px 0px 15px 20px;
+}
+
 .hcomp-dashboard .task-main-options {
   padding-top:10px;
+  font-size:12px;
+  vertical-align: center;
+}
+
+.hcomp-dashboard .task-main-options .btn {
+  font-size:12px;
+}
+
+.hcomp-dashboard #CreateTask .task-options, .hcomp-dashboard .edit-task .task-options {
+  /*display: inline-block;*/
+  vertical-align: bottom;
+  padding-right:20px;
+}
+
+.hcomp-dashboard .create-task-btn {
+  width:100%;
+}
+
+.hcomp-dashboard .other-fac-actions {
+  text-align: right;
+  font-size:12px;
 }
 
 .hcomp-dashboard #CreateTask .task-options, .edit-task .task-options, {
@@ -180,8 +217,8 @@
 }
 
 .hcomp-dashboard #task-create-cancel, .hcomp-dashboard .task-update-cancel {
-  margin-left:15px;
-  margin-right:5px;
+  /*margin-left:15px;*/
+  /*margin-right:5px;*/
 }
 
 .hcomp-dashboard .task-card-main {

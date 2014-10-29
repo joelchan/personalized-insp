@@ -17,9 +17,25 @@
     </div> <!-- close notes-view col -->
     <div class="tasks-view col-sm-4">
       <div class="row fac-actions">
+        <div class="col-xs-7">
           {{> HcompCreateTaskButton }}
-
-          {{> HcompBeginSynthesis }}
+        </div>
+        <div class="col-sm-5 other-fac-actions">
+          <strong><u>Other actions:</u></strong>
+          <div class="goto-prompts-page">
+            <i class="fa fa-chevron-right"></i>
+            <a href="">Prompts page</a>
+          </div>
+          <div class="begin-synthesis">
+            <i class="fa fa-chevron-right"></i>
+            <a href="">Begin synthesis</a>
+          </div>
+          <div class="review-brainstorm">
+            <i class="fa fa-chevron-right"></i>
+            <a href="">Review brainstorm</a>
+          </div>
+        </div>
+          <!-- {{> HcompBeginSynthesis }} -->
       </div>
       <div class="row" id="create-task-container">
 	    {{> CreateTask }}
@@ -55,7 +71,7 @@
 
 <template name="HcompBigPictureViz">
   <div class="row" id="big-picture-viz">
-      <div class="col-md-1">
+      <div class="col-md-2">
         {{> HcompOverallStats}}
       </div>
       <div class="col-md-10">
@@ -66,7 +82,16 @@
 </template>
 
 <template name="HcompOverallStats">
-  <span class="fa fa-lightbulb-o"></span>
+  <!-- <span class="fa fa-lightbulb-o"></span> -->
+  <!-- <div class="overall-stats"> -->
+    <span class="stat">{{numIdeasAll}}</span>
+    <br>
+     ideas
+    <br>
+    <span class="stat">{{numIdeatorsAll}}</span>
+    <br>
+    ideators
+  <!-- </div> -->
 </template>
 
 <template name="HcompIdeaWordCloud">
@@ -121,6 +146,20 @@
     <span class="card-description">Create a new inspiration</span>
     <hr />
 		<form role="form" class="form">
+      <div class="row task-priority">
+        <form id="task-priority" role="form">
+          <label class="">Choose a Priority: &nbsp;</label>
+          <label class="radio-inline">
+            <input type="radio" name="taskPriorityOptions" value="1"> Lo
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="taskPriorityOptions" value="2" checked=""> Mid
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="taskPriorityOptions" value="3"> Hi
+          </label>
+        </form>
+      </div>
 			<div class="row">
 		  		<div class="col-xs-12">
 					<label class="sr-only" for="task-description">Task Instructions</label>
@@ -128,21 +167,10 @@
 				</div>
 			</div>
 			<div class="row task-main-options">
-				<div class="col-xs-7">
-          <form id="task-priority" role="form">
-            <label class="">Priority </label>
-            <label class="radio-inline">
-              <input type="radio" name="taskPriorityOptions" value="1"> Lo
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="taskPriorityOptions" value="2" checked=""> Mid
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="taskPriorityOptions" value="3"> Hi
-            </label>
-          </form>
-				</div>
-        <div class="form-group task-options col-xs-5 pull-right">
+				<!-- <div class="col-xs-7">
+          
+				</div> -->
+        <div class="form-group task-options pull-right">
           <button id="task-create-cancel" type="button" class="btn btn-default">
             Cancel
           </button>
@@ -227,16 +255,10 @@
       <span class="card-description">Editing this inspiration</span>
       <hr />
 			<form role="form" class="form">
-				<div class="row">
-			  		<div class="col-xs-12">
-						<label class="sr-only">Task Instructions</label>
-						<textarea class="form-control task-description" rows="2" id="" placeholder="Describe your inspiration...">{{getDescription}}</textarea>
-					</div>
-				</div>
-				<div class="row task-main-options">
-					<div class="col-xs-7">
-            <form id="task-priority" role="form">
-              <label class="">Priority </label>
+        <div class="row task-priority">
+          <!-- <form id="task-priority" role="form"> -->
+          <form role="form">
+              <label class="">Priority: &nbsp;</label>
               {{#if getPriority 'Lo'}}
                 <label class="radio-inline">
                   <input type="radio" name="taskPriorityOptions" value="1" checked=""> Lo
@@ -273,8 +295,15 @@
                 {{/if}}
               {{/if}}
             </form>
+        </div>
+				<div class="row">
+			  		<div class="col-xs-12">
+						<label class="sr-only">Task Instructions</label>
+						<textarea class="form-control task-description" rows="2" id="" placeholder="Describe your inspiration...">{{getDescription}}</textarea>
 					</div>
-          <div class="form-group task-options col-xs-5 pull-right">
+				</div>
+				<div class="row task-main-options">
+          <div class="form-group task-options pull-right">
             <button type="button" class="btn btn-default task-update-cancel">
               Cancel
             </button>

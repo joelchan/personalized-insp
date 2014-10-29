@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Dashboard');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
-//Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
-//Logger.setLevel('Client:Hcomp:Dashboard', 'info');
+// Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
+Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
+// Logger.setLevel('Client:Hcomp:Dashboard', 'info');
 //Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
 
 
@@ -131,17 +131,17 @@ Template.HcompDashboard.rendered = function(){
   };
 //
 Template.HcompBeginSynthesis.events({
-  'click .begin-synthesis': function() {
-    logger.info("Pushing Ideators to begin synthesis");
-    var groupID = Session.get("currentPrompt").groupIDs[0];
-    var group = Groups.findOne({_id: groupID});
-    var userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
-    logger.trace(userIDs);
-    userIDs.forEach(function (id) {
-      logger.debug("Updating route for user with id: " + id);
-      MyUsers.update({_id: id}, {$set: {'route': "MturkSynthesis"}});
-    });
-  },
+  // 'click .begin-synthesis': function() {
+  //   logger.info("Pushing Ideators to begin synthesis");
+  //   var groupID = Session.get("currentPrompt").groupIDs[0];
+  //   var group = Groups.findOne({_id: groupID});
+  //   var userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+  //   logger.trace(userIDs);
+  //   userIDs.forEach(function (id) {
+  //     logger.debug("Updating route for user with id: " + id);
+  //     MyUsers.update({_id: id}, {$set: {'route': "MturkSynthesis"}});
+  //   });
+  // },
 });
 
 ///********************************************************************
@@ -157,6 +157,24 @@ Template.HcompDashIdeabox.helpers({
 
 Template.HcompOverallStats.helpers({
     // code for ideation stats here
+  numIdeasAll : function(){
+    // allIdeas = Ideas.find({prompt: {$elemMatch: {_id: Session.get("currentPrompt")._id}}}).fetch();
+    // allIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id").fetch();
+    // FilterManager.create("All Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+    var allIdeas = FilterManager.performQuery("IdeaWordCloud Filter", 
+        Session.get("currentUser"),   
+        "ideas").fetch();
+    return allIdeas.length;
+    // return getFilteredIdeas("Ideas Filter").length;
+  },
+
+  numIdeatorsAll : function(){
+    var groupID = Session.get("currentPrompt").groupIDs[0];
+    var group = Groups.findOne({_id: groupID});
+    var userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+    logger.trace(userIDs);
+    return userIDs.length;
+  },
 });
 
 Template.HcompIdeaWordCloud.helpers(
@@ -286,7 +304,33 @@ Template.TaskCard.helpers(
 *********************************************************************/
 
 Template.HcompDashboard.events({
-	'click .gamechangestar' : function(){
+	
+  'click .begin-synthesis': function() {
+    // logger.info("Pushing Ideators to begin synthesis");
+    var groupID = Session.get("currentPrompt").groupIDs[0];
+    var group = Groups.findOne({_id: groupID});
+    var userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+    logger.trace(userIDs);
+    // userIDs.forEach(function (id) {
+    //   logger.debug("Updating route for user with id: " + id);
+    //   MyUsers.update({_id: id}, {$set: {'route': "MturkSynthesis"}});
+    // });
+    logger.debug("Sending self to synthesis");
+    Router.go('MturkSynthesis', {promptID: Session.get("currentPrompt")._id, userID: Session.get("currentUser")._id});
+    // MyUsers.update({_id: Session.get("currentUser")._id}, {$set: {'route': "MturkSynthesis"}});
+  },
+
+  'click .review-brainstorm' : function() {
+    logger.debug("Sending self to review brainstorm page");
+    Router.go('HcompResultsPage', {promptID: Session.get("currentPrompt")._id, userID: Session.get("currentUser")._id});
+  },
+
+  'click .goto-prompts-page' : function() {
+    logger.debug("Sending self to prompts page");
+    Router.go('CrowdPromptPage', {userID: Session.get("currentUser")._id});
+  },
+
+  'click .gamechangestar' : function(){
     EventLogger.logToggleGC(this);
 		IdeaFactory.toggleGameChanger(this);
 	},
