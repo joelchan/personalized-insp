@@ -61,7 +61,7 @@
 
 <template name="HcompBigPictureViz">
   <div class="row" id="big-picture-viz">
-      <div class="col-md-1">
+      <div class="col-md-2">
         {{> HcompOverallStats}}
       </div>
       <div class="col-md-10">
@@ -72,7 +72,16 @@
 </template>
 
 <template name="HcompOverallStats">
-  <span class="fa fa-lightbulb-o"></span>
+  <!-- <span class="fa fa-lightbulb-o"></span> -->
+  <!-- <div class="overall-stats"> -->
+    <span class="stat">{{numIdeasAll}}</span>
+    <br>
+     ideas
+    <br>
+    <span class="stat">{{numIdeatorsAll}}</span>
+    <br>
+    ideators
+  <!-- </div> -->
 </template>
 
 <template name="HcompIdeaWordCloud">

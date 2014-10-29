@@ -120,7 +120,16 @@
 .hcomp-dashboard #big-picture-viz {
   /*height:60%;*/
   padding:15px;
+  /*overflow:auto;*/
+}
+
+.hcomp-dashboard #ideawordcloud {
   overflow:auto;
+}
+
+.hcomp-dashboard .stat {
+  font-size:30px;
+  font-weight:bold;
 }
 
 .hcomp-dashboard #scratchpad {

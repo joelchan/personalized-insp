@@ -157,6 +157,24 @@ Template.HcompDashIdeabox.helpers({
 
 Template.HcompOverallStats.helpers({
     // code for ideation stats here
+  numIdeasAll : function(){
+    // allIdeas = Ideas.find({prompt: {$elemMatch: {_id: Session.get("currentPrompt")._id}}}).fetch();
+    // allIdeas = FilterManager.performQuery("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id").fetch();
+    // FilterManager.create("All Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+    var allIdeas = FilterManager.performQuery("IdeaWordCloud Filter", 
+        Session.get("currentUser"),   
+        "ideas").fetch();
+    return allIdeas.length;
+    // return getFilteredIdeas("Ideas Filter").length;
+  },
+
+  numIdeatorsAll : function(){
+    var groupID = Session.get("currentPrompt").groupIDs[0];
+    var group = Groups.findOne({_id: groupID});
+    var userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+    logger.trace(userIDs);
+    return userIDs.length;
+  },
 });
 
 Template.HcompIdeaWordCloud.helpers(
