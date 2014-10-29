@@ -417,7 +417,7 @@ Template.HcompFilterBoxHeader.events({
 
 	'click .misc-ideas-filter-btn' : function() {
 		
-		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", [], 'ne');
+		FilterManager.toggle("Ideas Filter", Session.get("currentUser"), "ideas", "clusterIDs", []);
 		
 		$('.misc-ideas-filter-btn').toggleClass('btn-success');
 		$('.all-ideas-filter-btn').removeClass('btn-success');
