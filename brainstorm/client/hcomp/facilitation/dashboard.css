@@ -183,7 +183,7 @@
   /*display: inline-block;*/
 }
 
-.hcomp-dashboard #task-create, .hcomp-dashboard .task-update {
+.hcomp-dashboard #task-create-cancel, .hcomp-dashboard .task-update-cancel {
   margin-left:15px;
   margin-right:5px;
 }
