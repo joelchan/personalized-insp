@@ -1,9 +1,9 @@
  // Configure logger for server tests
  var logger = new Logger('Client:Clustering');
  // Comment out to use global logging level
- Logger.setLevel('Client:Clustering', 'trace');
+ //Logger.setLevel('Client:Clustering', 'trace');
  //Logger.setLevel('Client:Clustering', 'debug');
- //Logger.setLevel('Client:Clustering', 'info');
+ Logger.setLevel('Client:Clustering', 'info');
  //Logger.setLevel('Client:Clustering', 'warn');
 
 /*******************************************************************
@@ -18,12 +18,24 @@ var clusterFilterName = "Clustering droppable";
 * Attaches sortable to idea and cluster lists, new cluster area.
 ********************************************************************/
 Template.MturkClustering.rendered = function(){
-  //$('.idea-item').draggable({containment: '.clusterinterface',
-    //revert: true,
-    //zIndex: 50,
-  //});
-
   Session.set("searchQuery","");
+
+  //Set height of elements to viewport height
+  //Navbar height=50, header up to idealist = 150, clustering interface header=63
+  var clusterHeaderHeight = $(".mturk-cluster-header").height() + 10; //10px margin
+  var navbarHeight = $("#header").height();
+  var height = $(window).height() - 
+    navbarHeight - clusterHeaderHeight - 5;
+  logger.debug("window viewport height = " + height.toString());
+  $("#left-clustering").height(height);
+  var ideaHeaderHeight = $('.idea-box-header').height() + 
+    $("#filterbox-header").height() + 75; //unknown manual tweak
+  $("#idealist").height(height - ideaHeaderHeight);
+  $("#middle-clustering").height(height);
+  var themeHeaderHeight = $(".cluster-list h3").height() +
+    $("#new-cluster").height() + 80;
+  $("#clusterlist").height(height-themeHeaderHeight);
+  $("#right-clustering").height(height);
   
   $('.cluster-idea-list').droppable({accept: ".idea-item",
     tolerance: "pointer",
@@ -48,14 +60,9 @@ Template.MturkClustering.rendered = function(){
   $('.cluster-trash-can').droppable({accept: ".cluster",
     tolerance: "pointer",
     drop: function(event, ui) {
-      receiveDroppable(event, ui, this);
+      trashCluster(event, ui, this);
     }
   });
-
-  //$('#clusterlist').sortable({containment: '.clusterinterface',
-    //revert: true,
-    //zIndex: 50,
-  //});
 
   //Create isInCluster filter
   FilterManager.create(ideaFilterName,
@@ -66,15 +73,24 @@ Template.MturkClustering.rendered = function(){
   );
   Session.set("currentIdeators", []);
   Session.set("currentSynthesizers", []);
+
+  FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+  FilterManager.reset("Cluster Filter", Session.get("currentUser"), "clusters");
+
+  FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+  FilterManager.create(clusterFilterName, Session.get("currentUser"), "clusters", "promptID", Session.get("currentPrompt")._id);
+  FilterManager.create(clusterFilterName, Session.get("currentUser"), "clusters", "isTrash", false);
+
   //Setup filters for users and filter update listener
-  updateFilters();
+  //updateFilters();
   //Update filters when current group changes
-  Groups.find({_id: Session.get("currentGroup")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-      //Setup filters for users and filter update listener
-      updateFilters();
-    } 
-  });
+  //Groups.find({_id: Session.get("currentGroup")._id}).observe({
+    //changed: function(newDoc, oldDoc) {
+      //logger.trace("Current Group has changed");
+      ////Setup filters for users and filter update listener
+      ////updateFilters();
+    //} 
+  //});
 };
 
 /********************************************************************
@@ -82,65 +98,68 @@ Template.MturkClustering.rendered = function(){
 ********************************************************************/
 Template.MturkClusteringIdeaList.helpers({
   ideas : function(){
-    var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-      Session.get("currentUser"),   
-      "ideas").fetch();
+    
+    return getFilteredIdeas();
+    // var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+    //   Session.get("currentUser"),   
+    //   "ideas").fetch();
 
-    // apply search query, if it exists
-    var query = Session.get("searchQuery");
-    var queriedIdeas = [];
-    if (query != "") {
-      queryArr = stringToWords(query);
-      filteredIdeas.forEach(function(idea){
-        // console.log(idea);
-        if (searchQueryMatch(idea,queryArr)) {
-          // console.log("Matched query");
-          queriedIdeas.push(idea);
-        } else {
-          // console.log("Not matching");
-          // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-        }
-      });
-      // create an array from the query
+    // // apply search query, if it exists
+    // var query = Session.get("searchQuery");
+    // var queriedIdeas = [];
+    // if (query != "") {
+    //   queryArr = stringToWords(query);
+    //   filteredIdeas.forEach(function(idea){
+    //     // console.log(idea);
+    //     if (searchQueryMatch(idea,queryArr)) {
+    //       // console.log("Matched query");
+    //       queriedIdeas.push(idea);
+    //     } else {
+    //       // console.log("Not matching");
+    //       // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
+    //     }
+    //   });
+    //   // create an array from the query
       
-    } else {
-      queriedIdeas = filteredIdeas.slice();
-    }
+    // } else {
+    //   queriedIdeas = filteredIdeas.slice();
+    // }
 
-    var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-    // console.log(sortedIdeas);
-    return sortedIdeas;
+    // var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+    // // console.log(sortedIdeas);
+    // return sortedIdeas;
   },
 
   numIdeas : function(){
-    var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-      Session.get("currentUser"),   
-      "ideas").fetch();
+    // var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
+    //   Session.get("currentUser"),   
+    //   "ideas").fetch();
 
-    // apply search query, if it exists
-    var query = Session.get("searchQuery");
-    var queriedIdeas = [];
-    if (query != "") {
-      queryArr = stringToWords(query);
-      filteredIdeas.forEach(function(idea){
-        // console.log(idea);
-        if (searchQueryMatch(idea,queryArr)) {
-          // console.log("Matched query");
-          queriedIdeas.push(idea);
-        } else {
-          // console.log("Not matching");
-          // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-        }
-      });
-      // create an array from the query
+    // // apply search query, if it exists
+    // var query = Session.get("searchQuery");
+    // var queriedIdeas = [];
+    // if (query != "") {
+    //   queryArr = stringToWords(query);
+    //   filteredIdeas.forEach(function(idea){
+    //     // console.log(idea);
+    //     if (searchQueryMatch(idea,queryArr)) {
+    //       // console.log("Matched query");
+    //       queriedIdeas.push(idea);
+    //     } else {
+    //       // console.log("Not matching");
+    //       // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
+    //     }
+    //   });
+    //   // create an array from the query
       
-    } else {
-      queriedIdeas = filteredIdeas.slice();
-    }
+    // } else {
+    //   queriedIdeas = filteredIdeas.slice();
+    // }
 
-    var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-    // console.log(sortedIdeas);
-    return sortedIdeas.length;
+    // var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+    // // console.log(sortedIdeas);
+    // return sortedIdeas.length;
+    return getFilteredIdeas().length;
   },
 });
 
@@ -148,9 +167,19 @@ Template.MturkClusteringIdeaList.helpers({
 * ClusterIdeaItem template Helpers
 ********************************************************************/
 Template.MturkClusterIdeaItem.rendered = function() {
-  $(this.firstNode).draggable({containment: '.clusterinterface',
+  $(this.firstNode).draggable({containment: '.mturk-cluster-interface',
     revert: true,
     zIndex: 50,
+    helper: 'clone',
+    appendTo: ".mturk-cluster-interface",
+    refreshPositions: true,
+    start: function(e, ui) {
+      logger.debug("Began dragging an idea");
+      logger.trace(ui.helper[0]);
+      var width = $(this).css('width');
+      logger.trace(width);
+      $(ui.helper[0]).css('width', width);
+    },
   });
   $(this.firstNode).droppable({accept: ".idea-item",
     tolerance: "pointer",
@@ -164,18 +193,38 @@ Template.MturkClusterIdeaItem.helpers({
   isNotInCluster: function() {
     return (this.clusterIDs.length === 0) ? true : false;
   },
+  hasNotVoted: function() {
+    if (isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("User has already voted");
+      return false;
+    } else {
+      logger.debug("User has not voted");
+      return true;
+    }
+  },
+  voteNum: function() {
+    return this.votes.length;
+  },
 })
 
+Template.MturkClusterIdeaItem.events({
+  'click .up-vote': function(e, elm) {
+    if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("voting for idea");
+      IdeaFactory.upVote(this, Session.get("currentUser"));
+    } else {
+      logger.debug("undo voting for idea");
+      IdeaFactory.downVote(this, Session.get("currentUser"));
+    }
+  },
+
+});
 /********************************************************************
 * ClusterList template Helpers
 ********************************************************************/
 Template.MturkClusterList.helpers({
   clusters : function(){
-    var filteredClusters = FilterManager.performQuery(
-      clusterFilterName, 
-      Session.get("currentUser"), 
-      "clusters");
-    return filteredClusters;
+    return getFilteredClusters(clusterFilterName);
   },
 });
 
@@ -243,7 +292,8 @@ Template.MturkClusterarea.rendered = function(){
 
 Template.MturkClusterarea.helpers({
   clusters : function(){
-    return Clusters.find({isRoot: {$ne: true}});
+    return getFilteredClusters(clusterFilterName);
+    // return Clusters.find({isTrash: {$ne: true}});
   },
 });
 
@@ -264,15 +314,14 @@ Template.MturkCluster.events({
 });
 
 Template.MturkCluster.rendered = function(){
-  console.log("****************************************************");
-  console.log(this);
-  console.log("****************************************************");
   $('.cluster').draggable({
     stop: function() {
       logger.debug("dragged object");
       var id = trimFromString($(this).attr("id"), "cluster-");
       var cluster = ClusterFactory.getWithIDs(id);
-      var pos = $(this).position();
+      var pos = {'top': parseFloat(trimFromString($(this).css('top'),'px')),
+        'left': parseFloat(trimFromString($(this).css('left'),'px'))
+      };
       ClusterFactory.updatePosition(cluster, pos);
       EventLogger.logMovedCluster(cluster, pos);
     },
@@ -315,75 +364,6 @@ Template.MturkCluster.helpers({
 });
 
 
-/********************************************************************
-* Creates new cluster, adds it to collection, and updates Ideas list*
-********************************************************************/
-//function createCluster(item) {
-  //var ideaID = item.attr('id');
-  //var ideas = [Ideas.findOne({_id: ideaID})];
-  //var cluster = new Cluster([ideaID]);//ClusterFactory.create(ideas);
-  //var cluster = ClusterFactory.create(ideas);
-  ////add jitter to position
-  //var jitterTop = 30 + getRandomInt(0, 30);
-  //var jitterLeft = getRandomInt(0, 30);
-  //cluster.position = {top: jitterTop , left: jitterLeft};
-  //var clusterID = Clusters.insert(cluster);
-  //updateIdeas(ideaID, true);
-  //updateClusterList(ideaID, clusterID, true);
-//}
-
-
-/********************************************************************
-* Takes a ui and id of idea being moved. Returns an idea and updates
-* the sender.  
-********************************************************************/
-//function processIdeaSender(ui, ideaID){
-  //var myIdea;
-  //var senderID = $(ui.sender).attr('id');
-  //var sender = Clusters.findOne({_id: senderID});//remove that idea from sending cluster
-   // 
-  ////find all ideas in clusters idea list with matching id (should be one)>need error check here
-  //myIdea = $.grep(sender.ideaIDs, function(idea){
-    //return idea === ideaID;
-  //})[0];
-//
-  //Clusters.update({_id: senderID},
-    //{$pull:
-      //{ideaIDs: ideaID}
-  //});
-//
-  ////if sending cluster now has no ideas, get rid of it
-  //var numIdeas = Clusters.findOne({_id: senderID}).ideaIDs.length;
-  ////console.log(ideasLength);
-  //if(numIdeas === 0){
-    //Clusters.remove(senderID);
-  //}
-  //return senderID;
-//}
-
-/********************************************************************
-* Convenince function used to update items in the Ideas Collection  *
-********************************************************************/
-//function updateIdeas(ideaID, inCluster){
-  //Ideas.update({_id: ideaID}, 
-    //{$set:
-      //{inCluster: inCluster}
-  //});
-//}
-//
-//function updateClusterList(ideaID, clusterID, adding){
-  //if (adding){
-    //Ideas.update({_id: ideaID}, 
-      //{$addToSet:
-        //{clusters: clusterID}
-    //});
-  //} else {
-    //Ideas.update({_id: ideaID}, 
-      //{$pull:
-        //{clusters: clusterID}
-    //});
-  //}
-//}
 var getDroppableSource = function(item) {
   /*****************************************************************
    * Return the Cluster associated with origin of item. Return null 
@@ -492,7 +472,7 @@ updateFilters = function() {
     **************************************************************/
   var group = Groups.findOne({_id: Session.get("currentGroup")._id});
   logger.trace("Updating filters for group: " + group);
-  var ideators = GroupManager.getUsersInRole(group, 'Ideator');
+  var ideators = GroupManager.getUsersInRole(group, 'HcompIdeator');
   logger.trace("current group has ideators: " + 
       JSON.stringify(ideators));
   var prev = Session.get("currentIdeators");
@@ -553,3 +533,25 @@ updateFilters = function() {
     Session.set("currentSynthesizers", prevCluster);
  }
 };
+
+function trashCluster (e, obj) {
+  logger.debug("Trashing a cluster");
+  logger.trace(e);
+  logger.trace(obj.draggable[0]);
+  var clusterDiv = obj.draggable[0];
+  var clusterID = trimFromString($(clusterDiv).attr('id'), 'cluster-');
+  logger.debug("Trashing cluster with ID: " + clusterID);
+  ClusterFactory.trash(Clusters.findOne({_id: clusterID}));
+};
+
+getFilteredClusters = function(clusterFilterName){
+/***************************************************************
+* Get filtered clusters for cluster list and cluster area
+**************************************************************/  
+
+  var filteredClusters = FilterManager.performQuery(
+    clusterFilterName, 
+    Session.get("currentUser"), 
+    "clusters");
+  return filteredClusters;
+}

@@ -12,6 +12,20 @@ Template.MturkIdeationPage.rendered = function(){
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-50);
+  //Setup Facilitation push to synthesis listener
+  MyUsers.find({_id: Session.get("currentUser")._id}).observe({
+    changed: function(newDoc, oldDoc) {
+        logger.info("change to current user detected");
+        logger.trace(newDoc.route);
+        var route = newDoc.route;
+        logger.debug("Going to page with route: " + route);
+        var promptID = Session.get("currentPrompt")._id;
+        logger.debug("promptID: " + promptID);
+        var userID = Session.get("currentUser")._id;
+        logger.debug("userID: " + userID);
+        Router.go(route, {'promptID': promptID, 'userID': userID}); 
+    },
+  });
   
 };
 
@@ -34,10 +48,10 @@ Template.MturkMainPrompt.rendered = function(){
 };
 
 Template.MturkMainPrompt.helpers({
-  prompt: function() {
-    var prompt = Session.get("currentPrompt");
-    return prompt.question;
-  },
+  // prompt: function() {
+  //   var prompt = Session.get("currentPrompt");
+  //   return prompt.question;
+  // },
 });
 
 Template.MturkIdeaList.helpers({
@@ -45,10 +59,38 @@ Template.MturkIdeaList.helpers({
     //return Ideas.find({$and: [
       //{userID: Session.get("currentUser")._id},
       //{clusterIDs: []}]});
-    return Ideas.find({userID: Session.get("currentUser")._id});
+    var generalIdeas = Ideas.find({userID: Session.get("currentUser")._id});
+    return generalIdeas.fetch().reverse();
   },
 });
 
+Template.MturkIdeabox.helpers({
+  hasNotVoted: function() {
+    if (isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("User has already voted");
+      return false;
+    } else {
+      logger.debug("User has not voted");
+      return true;
+    }
+  },
+  voteNum: function() {
+    return this.votes.length;
+  },
+});
+
+Template.MturkIdeabox.events({
+  'click .up-vote': function(e, elm) {
+    if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("voting for idea");
+      IdeaFactory.upVote(this, Session.get("currentUser"));
+    } else {
+      logger.debug("undo voting for idea");
+      IdeaFactory.downVote(this, Session.get("currentUser"));
+    }
+  },
+
+});
 Template.MturkIdeaEntryBox.events({
   'click .submit-idea': function (e, target) {
     //console.log("event submitted");
@@ -113,7 +155,10 @@ Template.MturkTaskLists.helpers({
     //Sort tasks by assignment time
     return tasks;
   },
-  
+  prompt: function() {
+    var prompt = Session.get("currentPrompt");
+    return prompt.question;
+  },
 });
 
 Template.MturkTaskLists.events({ 
@@ -143,15 +188,23 @@ Template.MturkTaskLists.events({
   },
 });
 
-
 Template.TaskIdeaList.helpers({
   ideas: function() {
     logger.debug("getting idea list for task");
     logger.trace(this);
     var cluster = Clusters.findOne({_id: this.ideaNodeID});
     logger.trace(cluster.ideaIDs)
-    var ideas = Ideas.find({_id: {$in: cluster.ideaIDs}});
-    logger.trace(ideas.fetch());
-    return ideas;
+    var ideasAllInClusterFind = Ideas.find({_id: {$in: cluster.ideaIDs}});
+    var ideasAllInCluster = ideasAllInClusterFind.fetch();
+    curUserID = Session.get("currentUser")._id;
+    logger.debug("CURRENT USER IS = " + curUserID);
+    var ideas = [];
+    for (var i = 0; i < ideasAllInCluster.length; i++) {
+      if (ideasAllInCluster[i].userID == curUserID) {
+        ideas.push(ideasAllInCluster[i]);
+      }
+    }
+    logger.trace(ideas);
+    return ideas.reverse();
   },
 });

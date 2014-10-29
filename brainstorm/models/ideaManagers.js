@@ -24,6 +24,16 @@ IdeaFactory = (function() {
         {$set: {isGamechanger: idea.isGamechanger}
       });
     },
+    upVote: function(idea, user) {
+      idea.votes.push(user._id);
+      Ideas.update({_id: idea._id}, 
+        {$push: {votes: user._id}});
+    },
+    downVote: function(idea, user) {
+      removeMember(idea.votes, user._id)
+      Ideas.update({_id: idea._id}, 
+        {$pull: {votes: user._id}});
+    },
     getWithIDs: function(ids) {
       if (hasForEach(ids)) {
         return Ideas.find({_id: {$in: ids}});
@@ -125,6 +135,19 @@ ClusterFactory = (function() {
         });
       }
     },
+    removeIdeaFromTrashCluster: function(idea, cluster) {
+      logger.trace("Removing idea from cluster before trashing cluster");
+      logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
+      logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas after remove");
+      logger.debug("Idea has " + idea.clusterIDs.length + " clusters");
+      removeMember(idea.clusterIDs, cluster._id);
+      logger.debug("Idea has " + idea.clusterIDs.length + " clusters after remove");
+      //Update the corresponding db entries for each idea and cluster
+      Ideas.update({_id: idea._id}, 
+          {$pull: 
+            {clusterIDs: cluster._id}
+      });
+    },
     getWithIDs: function(ids) {
       if (hasForEach(ids)) {
         return Clusters.find({_id: {$in: ids}});
@@ -155,6 +178,44 @@ ClusterFactory = (function() {
       }
       return clusters;
     },
+    trash: function(clusters) {
+      if (hasForEach(clusters)) {
+        clusters.forEach(function(cluster) {
+          var ideaIDs = cluster.ideaIDs;
+          logger.trace("Deleting cluster from ideas with ids: " + JSON.stringify(ideaIDs));
+          for (var i=0; i<ideaIDs.length; i++) {
+            var id = ideaIDs[i];
+            logger.trace(ideaIDs);
+            logger.trace("Deleting cluster from idea with id: " + id);
+
+            var idea = Ideas.findOne({_id: id});
+            this.removeIdeaFromTrashCluster(idea, cluster);
+          };
+          logger.trace("ideaIDs after delete: " + JSON.stringify(ideaIDs));
+          Clusters.update({_id: cluster._id}, {$set:
+            {'isTrash': true}
+          });
+        });
+      } else {
+        if (clusters) {
+          var ideaIDs = clusters.ideaIDs;
+          logger.trace("Deleting cluster from ideas with ids: " + JSON.stringify(ideaIDs));
+          for (var i=0; i<ideaIDs.length; i++) {
+            var id = ideaIDs[i];
+            logger.trace(ideaIDs);
+            logger.trace("Deleting cluster from idea with id: " + id);
+
+            var idea = Ideas.findOne({_id: id});
+            this.removeIdeaFromTrashCluster(idea, clusters);
+          };
+          logger.trace("ideaIDs after delete: " + JSON.stringify(ideaIDs));
+          Clusters.update({_id: clusters._id}, {$set:
+            {'isTrash': true}
+          });
+          logger.trace(Clusters.findOne({_id: clusters._id}));
+        }
+      }
+    },
     remove: function(clusters) {
       if (hasForEach(clusters)) {
         ids = getIDs(clusters);
@@ -173,5 +234,8 @@ ClusterFactory = (function() {
           Clusters.remove({_id: clusters._id});
       }
     }
+
+
+
   };
 }());

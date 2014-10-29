@@ -538,16 +538,29 @@ LoginManager = (function () {
         return false;
       }
     },
-    logout: function () {
+    logout: function (user) {
       /**************************************************************
        * Simply user logout clearing user session variables
        *************************************************************/
-      //Clear user session tracking
-      Session.set("currentUser", null);
-      Session.set("currentRole", null);
-      Session.set("currentPrompt", null);
-      Session.set("loggingOut", true);
-      exitPage();
+      if (Session.get("currentPrompt")) {
+        var promptID = Session.get("currentPrompt")._id;
+        //Clear user session tracking
+        Session.set("currentUser", null);
+        Session.set("currentRole", null);
+        Session.set("currentPrompt", null);
+        Session.set("loggingOut", true);
+        if (user) {
+          exitPage('MturkLoginPage', {'promptID': promptID});
+        } else {
+          exitPage();
+        }
+      } else {
+        Session.set("currentUser", null);
+        Session.set("currentRole", null);
+        Session.set("currentPrompt", null);
+        Session.set("loggingOut", true);
+        exitPage();
+      }
 
 
       //Router.go("LoginPage");

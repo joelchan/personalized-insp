@@ -76,6 +76,9 @@ Router.map(function () {
           logger.debug("setting current prompt");
           Session.set("currentPrompt", prompt);
           Session.set("currentGroup", group);
+          // FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+          // FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+          // FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
           if (prompt.length > 0) {
 	          Session.set("sessionLength", prompt.length);	
           } else {
@@ -140,6 +143,7 @@ Router.map(function () {
           logger.debug("Data ready");
           var user = MyUsers.findOne({_id: this.params.userID});
           logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
           var prompt = Prompts.findOne({_id: this.params.promptID});
@@ -196,6 +200,7 @@ Router.map(function () {
           var user = MyUsers.findOne({_id: this.params.userID});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
+          MyUsers.update({_id: user._id}, {$set: {route: 'MturkSynthesis'}});
           console.log("Data ready");
           var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {

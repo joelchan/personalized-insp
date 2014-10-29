@@ -36,8 +36,16 @@ h3 {
   font-size: 25px;
 }
 
+.submitLogout {
+  border-radius: 5px;
+  margin-left: 5px;
+}
 
 h2 {
   font-size: 15px;
   font-family: 'Open Sans', sans-serif;
+}
+
+#ideastorm {
+  margin-top: -29px;
 }

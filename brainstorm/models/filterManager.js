@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Managers:Filter');
 // Comment out to use global logging level
-//Logger.setLevel('Managers:Filter', 'trace');
-//Logger.setLevel('Managers:Filter', 'debug');
- Logger.setLevel('Managers:Filter', 'info');
+Logger.setLevel('Managers:Filter', 'trace');
+// Logger.setLevel('Managers:Filter', 'debug');
+ // Logger.setLevel('Managers:Filter', 'info');
 //Logger.setLevel('Managers:Filter', 'warn');
 
 FilterManager = (function () {
@@ -106,19 +106,38 @@ FilterManager = (function () {
        *    boolean - true if toggle filter on, false if toggle off
        * ***********************************************************/
       logger.trace("Beginning FilterManager.toggle");
-      var filter = Filters.findOne({name: name, 
-            user: user, 
-            collection: col,
-            field: field,
-            val: val
-      });
-      if (filter) {
-        this.remove(name, user, col, field, val);
-        return false;
+      
+      if (op) {
+        var filter = Filters.findOne({name: name, 
+              user: user, 
+              collection: col,
+              field: field,
+              val: val,
+              op: op
+        });
+        if (filter) {
+          this.remove(name, user, col, field, val, op);
+          return false;
+        } else {
+          this.create(name, user, col, field, val, op);
+          return true;
+        }
       } else {
-        this.create(name, user, col, field, val);
-        return true;
+        var filter = Filters.findOne({name: name, 
+              user: user, 
+              collection: col,
+              field: field,
+              val: val
+        });
+        if (filter) {
+          this.remove(name, user, col, field, val);
+          return false;
+        } else {
+          this.create(name, user, col, field, val);
+          return true;
+        }
       }
+      
     },
     getFilterList: function(name, user, col) {
       /**************************************************************
