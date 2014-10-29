@@ -17,9 +17,15 @@
     </div> <!-- close notes-view col -->
     <div class="tasks-view col-sm-4">
       <div class="row fac-actions">
+        <div class="col-xs-7">
           {{> HcompCreateTaskButton }}
-
-          {{> HcompBeginSynthesis }}
+        </div>
+        <div class="col-sm-5 other-fac-actions">
+          <strong><u>Other actions:</u></strong>
+          <p class="begin-synthesis"><a href="">Begin synthesis</a></p>
+          <p class="review-brainstorm"><a href="">Review brainstorm</a></p>
+        </div>
+          <!-- {{> HcompBeginSynthesis }} -->
       </div>
       <div class="row" id="create-task-container">
 	    {{> CreateTask }}
@@ -121,6 +127,20 @@
     <span class="card-description">Create a new inspiration</span>
     <hr />
 		<form role="form" class="form">
+      <div class="row task-priority">
+        <form id="task-priority" role="form">
+          <label class="">Choose a Priority: &nbsp;</label>
+          <label class="radio-inline">
+            <input type="radio" name="taskPriorityOptions" value="1"> Lo
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="taskPriorityOptions" value="2" checked=""> Mid
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="taskPriorityOptions" value="3"> Hi
+          </label>
+        </form>
+      </div>
 			<div class="row">
 		  		<div class="col-xs-12">
 					<label class="sr-only" for="task-description">Task Instructions</label>
@@ -128,21 +148,10 @@
 				</div>
 			</div>
 			<div class="row task-main-options">
-				<div class="col-xs-7">
-          <form id="task-priority" role="form">
-            <label class="">Priority </label>
-            <label class="radio-inline">
-              <input type="radio" name="taskPriorityOptions" value="1"> Lo
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="taskPriorityOptions" value="2" checked=""> Mid
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="taskPriorityOptions" value="3"> Hi
-            </label>
-          </form>
-				</div>
-        <div class="form-group task-options col-xs-5 pull-right">
+				<!-- <div class="col-xs-7">
+          
+				</div> -->
+        <div class="form-group task-options pull-right">
           <button id="task-create-cancel" type="button" class="btn btn-default">
             Cancel
           </button>
