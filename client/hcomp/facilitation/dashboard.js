@@ -58,7 +58,7 @@ Template.HcompDashboard.rendered = function(){
   FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
   FilterManager.reset("Tasks Filter", Session.get("currentUser"), "tasks");
   
-  
+  FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
   FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
   FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
   

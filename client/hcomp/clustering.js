@@ -99,7 +99,7 @@ Template.MturkClustering.rendered = function(){
 Template.MturkClusteringIdeaList.helpers({
   ideas : function(){
     
-    return getFilteredIdeas();
+    return getFilteredIdeas("Ideas Filter");
     // var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
     //   Session.get("currentUser"),   
     //   "ideas").fetch();
@@ -159,7 +159,7 @@ Template.MturkClusteringIdeaList.helpers({
     // var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
     // // console.log(sortedIdeas);
     // return sortedIdeas.length;
-    return getFilteredIdeas().length;
+    return getFilteredIdeas("Ideas Filter").length;
   },
 });
 
