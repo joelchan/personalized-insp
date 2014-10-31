@@ -11,7 +11,7 @@ Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
 	Session.set("searchQuery","");
-
+	FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 

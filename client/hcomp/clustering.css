@@ -20,7 +20,10 @@
 }*/
 
 .mturk-cluster-interface .clusterlabel {
-  margin-left: 7px;
+  /*margin-left: 7px;*/
+  padding-left:7px;
+  padding-right:7px;
+  font-size:18px;
 }
 
 .mturk-cluster-interface #idealist, #clusterlist{

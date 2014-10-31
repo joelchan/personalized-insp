@@ -350,6 +350,13 @@ Template.MturkCluster.helpers({
     return cursor
   },
 
+  numclusterideas : function() {
+    var ideaIDs = $(this)[0].ideaIDs;
+    var cursor = Ideas.find({_id: {$in: ideaIDs}}).fetch();
+    // logger.debug("found cluster with ideas: ")
+    return cursor.length;
+  },
+
   named : function(){
     if ($(this)[0].name == "Not named yet")
       return 'text-danger';

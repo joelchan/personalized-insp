@@ -26,6 +26,7 @@
     <ul id="idealist" class="ideadeck cluster-idea-list">
       {{#each ideas}}
         {{> MturkClusterIdeaItem}}
+        <!-- {{> HcompFilterBoxIdeaItem}} -->
       {{/each}}
     </ul>
   </div>
@@ -61,10 +62,10 @@
     style="top:{{position.top}}px; 
     left:{{position.left}}px">
     <!-- <div class="cluster" id=cluster-{{_id}}> -->
-    <div class="form-group form-group-inline">
-      <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
+    <div class="form-group form-group-inline clusterlabel">
+      <!-- <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i> -->
       <label class="sort-disabled">
-        <span class="clusterlabel {{named}}">{{this.name}}</span>
+        <span class="collapser {{named}}"><a href="">{{this.name}} ({{numclusterideas}})</a></span>
       </label>
     </div>
     <ul class="clusterul cluster-idea-list {{#if isCollapsed}} hidden {{else}} show {{/if}}" id="cluster-list-{{_id}}">
