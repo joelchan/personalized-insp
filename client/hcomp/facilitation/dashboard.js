@@ -465,6 +465,18 @@ function getCloudFromIdeas()
 {
 	// var ideas = Ideas.find({ content: { $exists: true}}).fetch();
   // var ideas = Ideas.find({ prompt._id : Session.get("currentPrompt")._id}).fetch();
+  
+  // get prompt specific stopwords
+  var promptStopWords = []
+  var promptWords = Session.get("currentPrompt").question.split(" ");
+  for (var i = 0; i < promptWords.length; i++) {
+    promptStopWords[i] = promptWords[i].trim()
+                                       .toLowerCase()
+                                       .replace(/[^\w\s]|_/g, "")
+                                       .replace(/\s{2,}/g," ");
+  }
+  logger.debug("Prompt stop words: " + promptStopWords.toString());
+
   var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
@@ -495,8 +507,9 @@ function getCloudFromIdeas()
             // && stopWords.words.indexOf(word) >= 0
             // console.log(stopWords);
             // console.log(stopWords.words)
-			if(containsWord == false && stopWords.words.indexOf(word) == -1)
-			{
+			if(containsWord == false 
+        && stopWords.words.indexOf(word) == -1
+        && promptStopWords.indexOf(word) == -1) {
 				// console.log(stopWords);
         cloudItem.word = word;
 				cloudItem.count = 1;
