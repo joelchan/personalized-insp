@@ -1,6 +1,7 @@
 .hcomp-ideation-pane {
   position: relative;
   z-index: 10;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .hcomp-ideation-pane .task-list-header .header h1 {
@@ -60,6 +61,13 @@
   margin: 0px 7% 15px 7%;
   padding: 5px;
   display: block;
+  font-weight: bold;
+  font-size:18px;
+}
+
+.hcomp-ideation-pane .get-task {
+  font-weight: bold;
+  font-size:18px; 
 }
 
 .hcomp-ideation-pane .idea-list-box {
@@ -174,6 +182,8 @@
 }
 #hcomp-new-task-modal .popup-continue {
   margin-bottom: 10px;
+  font-weight: bold;
+  font-size:18px;
 }
 
 .hcomp-ideation-pane #new-task-modal #task-options {

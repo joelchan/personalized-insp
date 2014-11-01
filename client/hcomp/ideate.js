@@ -103,16 +103,16 @@ Template.MturkIdeabox.events({
 });
 
 Template.MturkIdeaEntryBox.rendered = function(){
-    console.log("**********trace for idea entry box render*********");
+    // console.log("**********trace for idea entry box render*********");
     // console.log($(context));
     var parentContainer = $(this.firstNode).parent();
     var ideaEntryField = $(this.firstNode).children('textArea');
-    console.log(ideaEntryField);
+    // console.log(ideaEntryField);
     if (parentContainer.hasClass('general-idea-entry')) {
-      console.log("Parent is general idea entry");
-      ideaEntryField.attr("placeholder", "Enter your ideas for the general prompt here...")
+      // console.log("Parent is general idea entry");
+      ideaEntryField.attr("placeholder", "Enter ideas for the general prompt here")
     } else {
-      ideaEntryField.attr("placeholder", "Enter ideas that this inspiration makes you think of here...")
+      ideaEntryField.attr("placeholder", "Enter ideas related this inspiration here")
     };
     // console.log($(this.firstNode).parent());
 };
