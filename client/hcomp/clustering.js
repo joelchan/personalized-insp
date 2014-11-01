@@ -42,13 +42,6 @@ Template.MturkClustering.rendered = function(){
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
-  });
-  $('.cluster').droppable({accept: ".idea-item",
-    tolerance: "pointer",
-    hoverClass: 'ui-state-hover',
-    drop: function(event, ui) {
-      receiveDroppable(event, ui, this);
-    }
   }); 
   $('#new-cluster').droppable({accept: ".idea-item",
     tolerance: "pointer",
@@ -215,6 +208,13 @@ Template.MturkClusterIdeaItem.helpers({
   voteNum: function() {
     return this.votes.length;
   },
+  hasVotes: function() {
+    if (this.votes.length > 0) {
+      return true
+    } else {
+      return false
+    }
+  },
 })
 
 Template.MturkClusterIdeaItem.events({
@@ -229,6 +229,71 @@ Template.MturkClusterIdeaItem.events({
   },
 
 });
+
+/********************************************************************
+* ClusteringIdeaListIdeaItem template Helpers
+********************************************************************/
+Template.MturkClusteringIdeaListIdeaItem.rendered = function() {
+  $(this.firstNode).draggable({containment: '.mturk-cluster-interface',
+    revert: true,
+    zIndex: 50,
+    helper: 'clone',
+    appendTo: ".mturk-cluster-interface",
+    refreshPositions: true,
+    start: function(e, ui) {
+      logger.debug("Began dragging an idea");
+      logger.trace(ui.helper[0]);
+      var width = $(this).css('width');
+      logger.trace(width);
+      $(ui.helper[0]).css('width', width);
+    },
+  });
+  $(this.firstNode).droppable({accept: ".idea-item",
+    tolerance: "pointer",
+  });
+};
+
+Template.MturkClusteringIdeaListIdeaItem.helpers({
+  gameChangerStatus : function(){
+    return this.isGamechanger;
+  },
+  isNotInCluster: function() {
+    return (this.clusterIDs.length === 0) ? true : false;
+  },
+  hasNotVoted: function() {
+    if (isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("User has already voted");
+      return false;
+    } else {
+      logger.debug("User has not voted");
+      return true;
+    }
+  },
+  voteNum: function() {
+    return this.votes.length;
+  },
+  hasVotes: function() {
+    if (this.votes.length > 0) {
+      return true
+    } else {
+      return false
+    }
+  },
+})
+
+Template.MturkClusteringIdeaListIdeaItem.events({
+  'click .up-vote': function(e, elm) {
+    if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("voting for idea");
+      IdeaFactory.upVote(this, Session.get("currentUser"));
+    } else {
+      logger.debug("undo voting for idea");
+      IdeaFactory.downVote(this, Session.get("currentUser"));
+    }
+  },
+
+});
+
 /********************************************************************
 * ClusterList template Helpers
 ********************************************************************/
@@ -281,7 +346,12 @@ Template.MturkClustering.events({
   //Collapse clusters and makes them unsortable until expanded
   'click .collapser' : function(){
     EventLogger.logClusterCollapse(this);
+    // logger.debug("collapsing");
+    // console.log(this);
+    // var id = trimFromString($(this).parent().attr("id"), "cluster-");
+    // logger.debug("collapsed" + id)
     Clusters.update({_id: this._id}, 
+    // Clusters.update({_id: id}, 
       {$set: {isCollapsed: !this.isCollapsed}}
     );
   },
@@ -345,8 +415,15 @@ Template.MturkCluster.rendered = function(){
       receiveDroppable(event, ui, this);
     }
   });
-  $('.cluster-item').droppable({accept: ".idea-item",
+  // $('.cluster-item').droppable({accept: ".idea-item",
+  //   tolerance: "pointer",
+  //   drop: function(event, ui) {
+  //     receiveDroppable(event, ui, this);
+  //   }
+  // });
+  $('.cluster').droppable({accept: ".idea-item",
     tolerance: "pointer",
+    hoverClass: 'ui-state-hover',
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
