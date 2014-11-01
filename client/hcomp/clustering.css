@@ -6,6 +6,14 @@
 	margin-top: 0px;
 }
 
+.mturk-cluster-interface .collapser a {
+    color:black;
+}
+
+.mturk-cluster-interface .ui-state-hover {
+    outline: #FFCC99  solid 3px;
+}
+
 .mturk-cluster-interface .cluster-trash-can {
     background-color: #FFF;
     width:100px;
@@ -31,8 +39,8 @@
 	list-style: none;
 	list-style-type: none;
 	padding-left: 0px;
-  padding: 5px;
-  overflow: scroll;
+    padding: 5px;
+    overflow: scroll;
 }
 
 .mturk-cluster-interface #idealistHeader{
@@ -82,15 +90,16 @@
 }
 
 .mturk-cluster-interface .cluster{
-  position: absolute;
+    position: absolute;
 	border: 1px solid black;
 	border-radius: 5px;
 	background-color: #f5f5f5;
-  display: inline-block;
+    display: inline-block;
 	padding-left: 5px;
 	padding-right: 5px;
 	cursor: move;
-  width: 175px;
+    /*width: 175px;*/
+    width: 200px;
 }
 
 .mturk-cluster-interface .cluster .form-group{

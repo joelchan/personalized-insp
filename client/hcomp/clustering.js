@@ -37,14 +37,22 @@ Template.MturkClustering.rendered = function(){
   $("#clusterlist").height(height-themeHeaderHeight);
   $("#right-clustering").height(height);
   
-  $('.cluster-idea-list').droppable({accept: ".idea-item",
+  // $('.cluster-idea-list').droppable({accept: ".idea-item",
+  //   tolerance: "pointer",
+  //   drop: function(event, ui) {
+  //     receiveDroppable(event, ui, this);
+  //   }
+  // });
+  $('.cluster').droppable({accept: ".idea-item",
     tolerance: "pointer",
+    hoverClass: 'ui-state-hover',
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
-  });
+  }); 
   $('#new-cluster').droppable({accept: ".idea-item",
     tolerance: "pointer",
+    hoverClass: 'ui-state-hover',
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
@@ -52,6 +60,7 @@ Template.MturkClustering.rendered = function(){
 
   $('.cluster-item').droppable({accept: ".idea-item",
     tolerance: "pointer",
+    hoverClass: "ui-state-hover",
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
@@ -379,10 +388,13 @@ var getDroppableSource = function(item) {
   var itemSource = $(item.draggable).parent();
   logger.trace("idea source: ******************************");
   logger.trace(itemSource);
-  if (itemSource.hasClass("clusterul")) {
+  // if (itemSource.hasClass("clusterul")) {
+  if (itemSource.hasClass("cluster")) {
     logger.trace("idea came from cluster");
     var clusterID = trimFromString(itemSource.attr('id'),
-        "cluster-list-");
+        "cluster-");
+    // var clusterID = trimFromString(itemSource.attr('id'),
+    //     "cluster-list-");
     logger.trace("found cluster with ID: " + clusterID);
     var cluster = ClusterFactory.getWithIDs(clusterID);
     logger.trace(cluster);
@@ -426,14 +438,22 @@ receiveDroppable = function(event, ui, context) {
     }
     target = null;
     //ui.item.remove();
-  } else if (target.hasClass("clusterul")) {
+  } else if (target.hasClass("cluster")) {
     logger.info("Moving idea to a cluster");
     var targetID = trimFromString(target.attr('id'), 
-        "cluster-list-");
+        "cluster-");
     logger.debug("Adding to cluster with ID: " + targetID);
     target = ClusterFactory.getWithIDs(targetID);
     logger.debug("Cluster: " + JSON.stringify(target));
     EventLogger.logIdeaClustered(idea, source, target);
+  // } else if (target.hasClass("clusterul")) {
+  //   logger.info("Moving idea to a cluster");
+  //   var targetID = trimFromString(target.attr('id'), 
+  //       "cluster-list-");
+  //   logger.debug("Adding to cluster with ID: " + targetID);
+  //   target = ClusterFactory.getWithIDs(targetID);
+  //   logger.debug("Cluster: " + JSON.stringify(target));
+  //   EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("newcluster")) {
     logger.info("Creating a new cluster for idea");
     target = ClusterFactory.create(null,
