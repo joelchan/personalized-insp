@@ -1,9 +1,9 @@
  // Configure logger for server tests
  var logger = new Logger('Client:Clustering');
  // Comment out to use global logging level
- //Logger.setLevel('Client:Clustering', 'trace');
- //Logger.setLevel('Client:Clustering', 'debug');
- Logger.setLevel('Client:Clustering', 'info');
+ Logger.setLevel('Client:Clustering', 'trace');
+ // Logger.setLevel('Client:Clustering', 'debug');
+ // Logger.setLevel('Client:Clustering', 'info');
  //Logger.setLevel('Client:Clustering', 'warn');
 
 /*******************************************************************
@@ -37,12 +37,12 @@ Template.MturkClustering.rendered = function(){
   $("#clusterlist").height(height-themeHeaderHeight);
   $("#right-clustering").height(height);
   
-  // $('.cluster-idea-list').droppable({accept: ".idea-item",
-  //   tolerance: "pointer",
-  //   drop: function(event, ui) {
-  //     receiveDroppable(event, ui, this);
-  //   }
-  // });
+  $('.cluster-idea-list').droppable({accept: ".idea-item",
+    tolerance: "pointer",
+    drop: function(event, ui) {
+      receiveDroppable(event, ui, this);
+    }
+  });
   $('.cluster').droppable({accept: ".idea-item",
     tolerance: "pointer",
     hoverClass: 'ui-state-hover',
@@ -336,7 +336,8 @@ Template.MturkCluster.rendered = function(){
     },
     grid: [5, 5]
   });
-  $(this.firstNode).find('.cluster-idea-list').droppable({
+  // $(this.firstNode).find('.cluster-idea-list').droppable({
+  $(this.firstNode).find('.cluster').droppable({
     accept: ".idea-item",
     tolerance: "pointer",
     drop: function(event, ui) {
@@ -385,7 +386,8 @@ var getDroppableSource = function(item) {
    * Return the Cluster associated with origin of item. Return null 
    * if item is from unsorted list
    *****************************************************************/
-  var itemSource = $(item.draggable).parent();
+  var itemSource = $(item.draggable).parent().parent();
+  // var itemSource = $(item.draggable);
   logger.trace("idea source: ******************************");
   logger.trace(itemSource);
   // if (itemSource.hasClass("clusterul")) {
@@ -446,14 +448,14 @@ receiveDroppable = function(event, ui, context) {
     target = ClusterFactory.getWithIDs(targetID);
     logger.debug("Cluster: " + JSON.stringify(target));
     EventLogger.logIdeaClustered(idea, source, target);
-  // } else if (target.hasClass("clusterul")) {
-  //   logger.info("Moving idea to a cluster");
-  //   var targetID = trimFromString(target.attr('id'), 
-  //       "cluster-list-");
-  //   logger.debug("Adding to cluster with ID: " + targetID);
-  //   target = ClusterFactory.getWithIDs(targetID);
-  //   logger.debug("Cluster: " + JSON.stringify(target));
-  //   EventLogger.logIdeaClustered(idea, source, target);
+  } else if (target.hasClass("clusterul")) {
+    logger.info("Moving idea to a cluster");
+    var targetID = trimFromString(target.attr('id'), 
+        "cluster-list-");
+    logger.debug("Adding to cluster with ID: " + targetID);
+    target = ClusterFactory.getWithIDs(targetID);
+    logger.debug("Cluster: " + JSON.stringify(target));
+    EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("newcluster")) {
     logger.info("Creating a new cluster for idea");
     target = ClusterFactory.create(null,
