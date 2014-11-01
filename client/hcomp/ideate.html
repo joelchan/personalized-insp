@@ -12,11 +12,17 @@
 
 <template name="MturkMainPrompt">
   <div class = "ideator-directions">
-    <h3> Directions</h3>
-    <p> 1) Begin entering ideas for the main prompt here.<br>
-        2) If you get stuck, hit the "Inspire Me!" button for a new stream of thought.<br>
-        3) Continue to ideate until the time is up.
-    </p>
+    <label class="directions-header"> Directions </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">&nbsp;(show/hide)</a>
+    <!-- <div class="row"> -->
+      <div id="directions-container">
+        <div id="directions-content" class="collapse in">
+          <p> 1) Begin entering ideas for the main prompt here.<br>
+              2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
+              3) Continue to ideate until the time is up.
+          </p>
+        </div>
+      </div>
+    <!-- </div> -->
   </div>
   <div class = "general-idea-entry">
     {{> MturkIdeaEntryBox }}
@@ -37,8 +43,9 @@
   <div class="idea-list-box">
   <div class="idea-count">
     <span class="idea-count-label">
-      <h4>Total Ideas: </h4>
+      <!-- <h4>You have</h4> -->
       <h3>{{ ideaCount }} </h3>
+      <h4>total ideas for the brainstorm! </h4>
     </span>
   </div>
     {{#each ideas }}
@@ -94,8 +101,9 @@
   <div class="idea-list-box">
     <div class="idea-count">
       <span class="idea-count-label">
-        <h4>Total Ideas: </h4>
         <h3>{{ ideaCount }} </h3>
+        <h4>Ideas for this Inspiration!</h4>
+        
       </span>
     </div>
     {{#each ideas }}
