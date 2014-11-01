@@ -151,7 +151,7 @@ Template.HcompBeginSynthesis.events({
 
 Template.HcompDashIdeabox.helpers({
   prompt : function(){
-    return Session.get("currentPrompt").question;
+    return Session.get("currentPrompt").title;
   },
 });
 

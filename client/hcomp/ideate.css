@@ -65,10 +65,16 @@
   font-size:18px;
 }
 
+.hcomp-ideation-pane .ideation-prompt {
+  margin-top:0px;
+}
+
 .hcomp-ideation-pane .get-task {
   font-weight: bold;
   font-size:20px; 
   border-radius: 15px;
+  width:250px;
+  margin-bottom: 15px;
 }
 
 .hcomp-ideation-pane .get-task-icon {
