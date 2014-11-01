@@ -112,7 +112,7 @@ Template.MturkIdeaEntryBox.rendered = function(){
       // console.log("Parent is general idea entry");
       ideaEntryField.attr("placeholder", "Enter ideas for the general prompt here")
     } else {
-      ideaEntryField.attr("placeholder", "Enter ideas related this inspiration here")
+      ideaEntryField.attr("placeholder", "Enter ideas related to this inspiration here")
     };
     // console.log($(this.firstNode).parent());
 };
