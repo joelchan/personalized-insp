@@ -68,6 +68,7 @@ Template.MturkClustering.rendered = function(){
 
   $('.cluster-trash-can').droppable({accept: ".cluster",
     tolerance: "pointer",
+    hoverClass: 'ui-state-hover',
     drop: function(event, ui) {
       trashCluster(event, ui, this);
     }
