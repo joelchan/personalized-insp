@@ -233,6 +233,7 @@ Template.TaskCard.helpers(
     getPriority : function()
     {
         var priority = this.priority;
+        // return priority;
         var message = "";
         switch(priority)
         {

@@ -181,6 +181,11 @@
 .hcomp-dashboard .task-priority {
   /*text-align: center;*/
   padding: 0px 0px 15px 20px;
+  display:inline-block;
+}
+
+.hcomp-dashboard .task-priority .radio-inline input[type=radio] {
+  position:relative;
 }
 
 .hcomp-dashboard .task-main-options {
@@ -195,7 +200,7 @@
 
 .hcomp-dashboard #CreateTask .task-options, .hcomp-dashboard .edit-task .task-options {
   /*display: inline-block;*/
-  vertical-align: bottom;
+  /*vertical-align: bottom;*/
   padding-right:20px;
 }
 
