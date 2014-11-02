@@ -187,9 +187,14 @@
 </template>
 
 <template name="TaskCards">
-	<h1>Inspirations</h1>
+	<!-- <h1>Inspirations</h1> -->
+  <div class="task-list-header">
+    <span>
+      {{ numTasks }} Inspirations
+    </span>
+  </div>
   <div class="row" id="task-card-list">
-		{{#if tasks}}
+    {{#if tasks}}
       {{#each tasks}}
   			{{> TaskCard }}
   		{{/each}}

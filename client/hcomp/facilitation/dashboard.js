@@ -211,7 +211,14 @@ Template.TaskCards.helpers(
         taskList = FilterManager.performQuery("Tasks Filter", Session.get("currentUser"), "tasks").fetch();
         var sortedTaskList = taskList.sort(function(a,b) { return b.time - a.time});
         return sortedTaskList;
+    },
+    numTasks : function() {
+        // taskList = Tasks.find({ desc: { $exists: true}}).fetch();
+        taskList = FilterManager.performQuery("Tasks Filter", Session.get("currentUser"), "tasks").fetch();
+        var sortedTaskList = taskList.sort(function(a,b) { return b.time - a.time});
+        return sortedTaskList.length;
     }
+
 });
 
 Template.TaskCard.helpers(
