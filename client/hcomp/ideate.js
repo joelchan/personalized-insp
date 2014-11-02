@@ -101,6 +101,22 @@ Template.MturkIdeabox.events({
   },
 
 });
+
+Template.MturkIdeaEntryBox.rendered = function(){
+    // console.log("**********trace for idea entry box render*********");
+    // console.log($(context));
+    var parentContainer = $(this.firstNode).parent();
+    var ideaEntryField = $(this.firstNode).children('textArea');
+    // console.log(ideaEntryField);
+    if (parentContainer.hasClass('general-idea-entry')) {
+      // console.log("Parent is general idea entry");
+      ideaEntryField.attr("placeholder", "Enter ideas for the general prompt here")
+    } else {
+      ideaEntryField.attr("placeholder", "Enter ideas related to this inspiration here")
+    };
+    // console.log($(this.firstNode).parent());
+};
+
 Template.MturkIdeaEntryBox.events({
   'click .submit-idea': function (e, target) {
     //console.log("event submitted");
@@ -151,7 +167,8 @@ Template.MturkTaskLists.helpers({
   getMyTasks: function() {
     logger.debug("Getting a list of all tasks assigned to current user");
     var assignments = 
-      Assignments.find({userID: Session.get("currentUser")._id}, 
+      Assignments.find({userID: Session.get("currentUser")._id,
+        promptID: Session.get("currentPrompt")._id}, 
         {sort: {'assignmentTime': -1}}).fetch();
     logger.trace(assignments);
     var taskIDs = getValsFromField(assignments, 'taskID');

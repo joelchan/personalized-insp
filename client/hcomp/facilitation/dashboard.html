@@ -187,9 +187,14 @@
 </template>
 
 <template name="TaskCards">
-	<h1>Inspirations</h1>
+	<!-- <h1>Inspirations</h1> -->
+  <div class="task-list-header">
+    <span>
+      {{ numTasks }} Inspirations
+    </span>
+  </div>
   <div class="row" id="task-card-list">
-		{{#if tasks}}
+    {{#if tasks}}
       {{#each tasks}}
   			{{> TaskCard }}
   		{{/each}}
@@ -257,9 +262,11 @@
 			<form role="form" class="form">
         <div class="row task-priority">
           <!-- <form id="task-priority" role="form"> -->
-          <form role="form">
-              <label class="">Priority: &nbsp;</label>
-              {{#if getPriority 'Lo'}}
+          <form role="form-control">
+              <label>Priority: &nbsp;</label>
+              <!-- {{#if getPriority "Lo"}} -->
+              {{#if isLoPriority}}
+                <!-- <label>A low inspiration!</label> -->
                 <label class="radio-inline">
                   <input type="radio" name="taskPriorityOptions" value="1" checked=""> Lo
                 </label>
@@ -270,7 +277,9 @@
                   <input type="radio" name="taskPriorityOptions" value="3"> Hi
                 </label>
               {{else}}
-                {{#if getPriority 'Mid'}}
+                {{#if isMidPriority}}
+                <!-- {{#if getPriority "Mid"}} -->
+                  <!-- <label>A mid inspiration!</label> -->
                   <label class="radio-inline">
                     <input type="radio" name="taskPriorityOptions" value="1"> Lo
                   </label>
@@ -281,7 +290,9 @@
                     <input type="radio" name="taskPriorityOptions" value="3"> Hi
                   </label>
                 {{else}}
-                  {{#if getPriority 'Hi'}}
+                  <!-- {{#if getPriority "Hi"}} -->
+                  {{#if isHiPriority}}
+                    <!-- <label>A high inspiration!</label> -->
                     <label class="radio-inline">
                       <input type="radio" name="taskPriorityOptions" value="1"> Lo
                     </label>

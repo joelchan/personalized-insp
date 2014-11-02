@@ -1,9 +1,9 @@
  // Configure logger for server tests
  var logger = new Logger('Client:Clustering');
  // Comment out to use global logging level
- //Logger.setLevel('Client:Clustering', 'trace');
- //Logger.setLevel('Client:Clustering', 'debug');
- Logger.setLevel('Client:Clustering', 'info');
+ Logger.setLevel('Client:Clustering', 'trace');
+ // Logger.setLevel('Client:Clustering', 'debug');
+ // Logger.setLevel('Client:Clustering', 'info');
  //Logger.setLevel('Client:Clustering', 'warn');
 
 /*******************************************************************
@@ -42,9 +42,10 @@ Template.MturkClustering.rendered = function(){
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
-  });
+  }); 
   $('#new-cluster').droppable({accept: ".idea-item",
     tolerance: "pointer",
+    hoverClass: 'ui-state-hover',
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
@@ -52,6 +53,7 @@ Template.MturkClustering.rendered = function(){
 
   $('.cluster-item').droppable({accept: ".idea-item",
     tolerance: "pointer",
+    hoverClass: "ui-state-hover",
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
@@ -59,6 +61,7 @@ Template.MturkClustering.rendered = function(){
 
   $('.cluster-trash-can').droppable({accept: ".cluster",
     tolerance: "pointer",
+    hoverClass: 'ui-state-hover',
     drop: function(event, ui) {
       trashCluster(event, ui, this);
     }
@@ -99,7 +102,7 @@ Template.MturkClustering.rendered = function(){
 Template.MturkClusteringIdeaList.helpers({
   ideas : function(){
     
-    return getFilteredIdeas();
+    return getFilteredIdeas("Ideas Filter");
     // var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
     //   Session.get("currentUser"),   
     //   "ideas").fetch();
@@ -159,7 +162,7 @@ Template.MturkClusteringIdeaList.helpers({
     // var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
     // // console.log(sortedIdeas);
     // return sortedIdeas.length;
-    return getFilteredIdeas().length;
+    return getFilteredIdeas("Ideas Filter").length;
   },
 });
 
@@ -205,6 +208,13 @@ Template.MturkClusterIdeaItem.helpers({
   voteNum: function() {
     return this.votes.length;
   },
+  hasVotes: function() {
+    if (this.votes.length > 0) {
+      return true
+    } else {
+      return false
+    }
+  },
 })
 
 Template.MturkClusterIdeaItem.events({
@@ -219,6 +229,71 @@ Template.MturkClusterIdeaItem.events({
   },
 
 });
+
+/********************************************************************
+* ClusteringIdeaListIdeaItem template Helpers
+********************************************************************/
+Template.MturkClusteringIdeaListIdeaItem.rendered = function() {
+  $(this.firstNode).draggable({containment: '.mturk-cluster-interface',
+    revert: true,
+    zIndex: 50,
+    helper: 'clone',
+    appendTo: ".mturk-cluster-interface",
+    refreshPositions: true,
+    start: function(e, ui) {
+      logger.debug("Began dragging an idea");
+      logger.trace(ui.helper[0]);
+      var width = $(this).css('width');
+      logger.trace(width);
+      $(ui.helper[0]).css('width', width);
+    },
+  });
+  $(this.firstNode).droppable({accept: ".idea-item",
+    tolerance: "pointer",
+  });
+};
+
+Template.MturkClusteringIdeaListIdeaItem.helpers({
+  gameChangerStatus : function(){
+    return this.isGamechanger;
+  },
+  isNotInCluster: function() {
+    return (this.clusterIDs.length === 0) ? true : false;
+  },
+  hasNotVoted: function() {
+    if (isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("User has already voted");
+      return false;
+    } else {
+      logger.debug("User has not voted");
+      return true;
+    }
+  },
+  voteNum: function() {
+    return this.votes.length;
+  },
+  hasVotes: function() {
+    if (this.votes.length > 0) {
+      return true
+    } else {
+      return false
+    }
+  },
+})
+
+Template.MturkClusteringIdeaListIdeaItem.events({
+  'click .up-vote': function(e, elm) {
+    if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      logger.debug("voting for idea");
+      IdeaFactory.upVote(this, Session.get("currentUser"));
+    } else {
+      logger.debug("undo voting for idea");
+      IdeaFactory.downVote(this, Session.get("currentUser"));
+    }
+  },
+
+});
+
 /********************************************************************
 * ClusterList template Helpers
 ********************************************************************/
@@ -271,7 +346,12 @@ Template.MturkClustering.events({
   //Collapse clusters and makes them unsortable until expanded
   'click .collapser' : function(){
     EventLogger.logClusterCollapse(this);
+    // logger.debug("collapsing");
+    // console.log(this);
+    // var id = trimFromString($(this).parent().attr("id"), "cluster-");
+    // logger.debug("collapsed" + id)
     Clusters.update({_id: this._id}, 
+    // Clusters.update({_id: id}, 
       {$set: {isCollapsed: !this.isCollapsed}}
     );
   },
@@ -327,15 +407,23 @@ Template.MturkCluster.rendered = function(){
     },
     grid: [5, 5]
   });
-  $(this.firstNode).find('.cluster-idea-list').droppable({
+  // $(this.firstNode).find('.cluster-idea-list').droppable({
+  $(this.firstNode).find('.cluster').droppable({
     accept: ".idea-item",
     tolerance: "pointer",
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
   });
-  $('.cluster-item').droppable({accept: ".idea-item",
+  // $('.cluster-item').droppable({accept: ".idea-item",
+  //   tolerance: "pointer",
+  //   drop: function(event, ui) {
+  //     receiveDroppable(event, ui, this);
+  //   }
+  // });
+  $('.cluster').droppable({accept: ".idea-item",
     tolerance: "pointer",
+    hoverClass: 'ui-state-hover',
     drop: function(event, ui) {
       receiveDroppable(event, ui, this);
     }
@@ -348,6 +436,13 @@ Template.MturkCluster.helpers({
     var ideaIDs = $(this)[0].ideaIDs;
     var cursor = Ideas.find({_id: {$in: ideaIDs}});
     return cursor
+  },
+
+  numclusterideas : function() {
+    var ideaIDs = $(this)[0].ideaIDs;
+    var cursor = Ideas.find({_id: {$in: ideaIDs}}).fetch();
+    // logger.debug("found cluster with ideas: ")
+    return cursor.length;
   },
 
   named : function(){
@@ -369,13 +464,17 @@ var getDroppableSource = function(item) {
    * Return the Cluster associated with origin of item. Return null 
    * if item is from unsorted list
    *****************************************************************/
-  var itemSource = $(item.draggable).parent();
+  var itemSource = $(item.draggable).parent().parent();
+  // var itemSource = $(item.draggable);
   logger.trace("idea source: ******************************");
   logger.trace(itemSource);
-  if (itemSource.hasClass("clusterul")) {
+  // if (itemSource.hasClass("clusterul")) {
+  if (itemSource.hasClass("cluster")) {
     logger.trace("idea came from cluster");
     var clusterID = trimFromString(itemSource.attr('id'),
-        "cluster-list-");
+        "cluster-");
+    // var clusterID = trimFromString(itemSource.attr('id'),
+    //     "cluster-list-");
     logger.trace("found cluster with ID: " + clusterID);
     var cluster = ClusterFactory.getWithIDs(clusterID);
     logger.trace(cluster);
@@ -419,6 +518,14 @@ receiveDroppable = function(event, ui, context) {
     }
     target = null;
     //ui.item.remove();
+  } else if (target.hasClass("cluster")) {
+    logger.info("Moving idea to a cluster");
+    var targetID = trimFromString(target.attr('id'), 
+        "cluster-");
+    logger.debug("Adding to cluster with ID: " + targetID);
+    target = ClusterFactory.getWithIDs(targetID);
+    logger.debug("Cluster: " + JSON.stringify(target));
+    EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("clusterul")) {
     logger.info("Moving idea to a cluster");
     var targetID = trimFromString(target.attr('id'), 

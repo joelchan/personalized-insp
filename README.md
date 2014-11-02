@@ -7,14 +7,9 @@ Explores group/crowd Ideation
 =============
 Node.js
 Meteor 0.8
-Metoerite
-iron-router
-crypto-base
 moment
-nvd3js
 fontawesome4
 pince
-mocha-web
 
 
 
@@ -22,30 +17,47 @@ mocha-web
 =====================
 1. Install Node.js
 2. Install npm (node package manager)
-3. Install Metoerite (http://oortcloud.github.io/meteorite/)
-4. Install iron-router with meteorite (https://github.com/EventedMind/iron-router)
-4. Install crypto-base with meteorite (http://atmospherejs.com/package/crypto-base)
+3. Install Meteor curl https://install.meteor.com | /bin/sh
+4. Clone git repo
+5. Run app as below
 
 # Run Directions
 ===================
-To run locally, just enter the brainstorm directory and run meteor
+To run locally, just enter the root git directory and execute using
+run shell script.  
 
 ```
-> cd brainstorm
-> meteor
+> cd CrowdIdeation
+> ./run.sh
+```
+Alternatively you may also have success using the simple meteor command
+```
+> cd CrowdIdeation
+> meteor 
 ```
 
-To run with live tests, you will have to build the environment first time you run the tests:
+# Heroku directions
+===================
+To setup this project within your own heroku account, you'll need
+an external db such as those supplied by compose.io and have setup
+a db along with a user for that db.
 
+1. Install the heroku toolbelt (https://toolbelt.heroku.com)
+2. Setup the heroku app with environment variables
 ```
-> cd brainstorm
-> METEOR_MOCHA_TEST_DIRS="../tests" meteor rebuild-all
+> heroku login 
+> heroku create <app-name> --stack cedar --buildpack https://github.com/djhi/heroku-buildpack-meteorite 
+> heroku config:set --app <app-name> MONGO_URL=mongodb://<mongo-user:<pswd@<url_to_mongodb>:<mongodb_port>/<remainder_of_url>
+> heroku config:set --app <app_name> ROOT_URL=http://<app_name>.herokuapp.com
+```
+3. From within the CrowdIdeation project, add the git repo provided by heroku for your app
+```
+> git remote add heroku git@heroku.com:<app_name>.git
+> git push heroku master
+```
+4. Start the app
+```
+> heroku logs --app <app_name>
 ```
 
-After rebuilding (or if you have already built, then you can run the meteor server with tests wiht this command:
 
-```
-> METEOR_MOCHA_TEST_DIRS="../tests" mrt
-```
-
-Anytime you add a test file you will have to rebuilt, but if you just modiy existing test files, you do not need to rebuild.  To view the test results, you can go to http://localhost:3000/test.  These tests will rerun everytime the server restarts.

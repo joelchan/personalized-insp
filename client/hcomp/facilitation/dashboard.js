@@ -58,7 +58,7 @@ Template.HcompDashboard.rendered = function(){
   FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
   FilterManager.reset("Tasks Filter", Session.get("currentUser"), "tasks");
   
-  
+  // FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
   FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
   FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
   
@@ -151,7 +151,7 @@ Template.HcompBeginSynthesis.events({
 
 Template.HcompDashIdeabox.helpers({
   prompt : function(){
-    return Session.get("currentPrompt").question;
+    return Session.get("currentPrompt").title;
   },
 });
 
@@ -211,7 +211,14 @@ Template.TaskCards.helpers(
         taskList = FilterManager.performQuery("Tasks Filter", Session.get("currentUser"), "tasks").fetch();
         var sortedTaskList = taskList.sort(function(a,b) { return b.time - a.time});
         return sortedTaskList;
+    },
+    numTasks : function() {
+        // taskList = Tasks.find({ desc: { $exists: true}}).fetch();
+        taskList = FilterManager.performQuery("Tasks Filter", Session.get("currentUser"), "tasks").fetch();
+        var sortedTaskList = taskList.sort(function(a,b) { return b.time - a.time});
+        return sortedTaskList.length;
     }
+
 });
 
 Template.TaskCard.helpers(
@@ -233,6 +240,7 @@ Template.TaskCard.helpers(
     getPriority : function()
     {
         var priority = this.priority;
+        // return priority;
         var message = "";
         switch(priority)
         {
@@ -249,8 +257,37 @@ Template.TaskCard.helpers(
                 message = "";
                 break;
         }
-            return message;
+        console.log("Priority is " + message);
+        return message;
     },
+
+    isLoPriority : function() {
+      var priority = this.priority;
+      if (priority == 1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    isMidPriority : function() {
+      var priority = this.priority;
+      if (priority == 2) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    isHiPriority : function() {
+      var priority = this.priority;
+      if (priority == 3) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     getIdeators : function()
     {
         var numAssignedUsers = this.assignments.length;
@@ -390,10 +427,21 @@ Template.HcompDashboard.events({
 
     $('#CreateTask').toggleClass('in');
 
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='1']").prop("checked",false);
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").prop("checked",true);
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='3']").prop("checked",false);
+
+    // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").parent().attr("checked","checked");
+    // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").attr("checked","checked");
+
 	},
 
   'click #task-create-cancel' : function() {
     $('#CreateTask').toggleClass('in');
+    $("#task-description").val("");
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='1']").prop("checked",false);
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").prop("checked",true);
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='3']").prop("checked",false);
   },
 
 	'click .card-edit' : function()
@@ -465,6 +513,18 @@ function getCloudFromIdeas()
 {
 	// var ideas = Ideas.find({ content: { $exists: true}}).fetch();
   // var ideas = Ideas.find({ prompt._id : Session.get("currentPrompt")._id}).fetch();
+  
+  // get prompt specific stopwords
+  var promptStopWords = []
+  var promptWords = Session.get("currentPrompt").question.split(" ");
+  for (var i = 0; i < promptWords.length; i++) {
+    promptStopWords[i] = promptWords[i].trim()
+                                       .toLowerCase()
+                                       .replace(/[^\w\s]|_/g, "")
+                                       .replace(/\s{2,}/g," ");
+  }
+  logger.debug("Prompt stop words: " + promptStopWords.toString());
+
   var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
@@ -495,8 +555,9 @@ function getCloudFromIdeas()
             // && stopWords.words.indexOf(word) >= 0
             // console.log(stopWords);
             // console.log(stopWords.words)
-			if(containsWord == false && stopWords.words.indexOf(word) == -1)
-			{
+			if(containsWord == false 
+        && stopWords.words.indexOf(word) == -1
+        && promptStopWords.indexOf(word) == -1) {
 				// console.log(stopWords);
         cloudItem.word = word;
 				cloudItem.count = 1;
