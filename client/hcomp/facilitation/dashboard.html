@@ -152,7 +152,7 @@
           <label class="radio-inline">
             <input type="radio" name="taskPriorityOptions" value="1"> Lo
           </label>
-          <label class="radio-inline">
+          <label class="radio-inline active">
             <input type="radio" name="taskPriorityOptions" value="2" checked=""> Mid
           </label>
           <label class="radio-inline">
@@ -259,8 +259,10 @@
           <!-- <form id="task-priority" role="form"> -->
           <form role="form-control">
               <label>Priority: &nbsp;</label>
-              {{#if getPriority 'Lo'}}
-                <label class="radio-inline">
+              <!-- {{#if getPriority "Lo"}} -->
+              {{#if isLoPriority}}
+                <!-- <label>A low inspiration!</label> -->
+                <label class="radio-inline active">
                   <input type="radio" name="taskPriorityOptions" value="1" checked=""> Lo
                 </label>
                 <label class="radio-inline">
@@ -270,25 +272,29 @@
                   <input type="radio" name="taskPriorityOptions" value="3"> Hi
                 </label>
               {{else}}
-                {{#if getPriority 'Mid'}}
+                {{#if isMidPriority}}
+                <!-- {{#if getPriority "Mid"}} -->
+                  <!-- <label>A mid inspiration!</label> -->
                   <label class="radio-inline">
                     <input type="radio" name="taskPriorityOptions" value="1"> Lo
                   </label>
-                  <label class="radio-inline">
+                  <label class="radio-inline active">
                     <input type="radio" name="taskPriorityOptions" value="2" checked=""> Mid
                   </label>
                   <label class="radio-inline">
                     <input type="radio" name="taskPriorityOptions" value="3"> Hi
                   </label>
                 {{else}}
-                  {{#if getPriority 'Hi'}}
+                  <!-- {{#if getPriority "Hi"}} -->
+                  {{#if isHiPriority}}
+                    <!-- <label>A high inspiration!</label> -->
                     <label class="radio-inline">
                       <input type="radio" name="taskPriorityOptions" value="1"> Lo
                     </label>
                     <label class="radio-inline">
                       <input type="radio" name="taskPriorityOptions" value="2"> Mid
                     </label>
-                    <label class="radio-inline">
+                    <label class="radio-inline active">
                       <input type="radio" name="taskPriorityOptions" value="3" checked=""> Hi
                     </label>
                   {{/if}}

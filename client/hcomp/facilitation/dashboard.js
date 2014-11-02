@@ -250,8 +250,37 @@ Template.TaskCard.helpers(
                 message = "";
                 break;
         }
-            return message;
+        console.log("Priority is " + message);
+        return message;
     },
+
+    isLoPriority : function() {
+      var priority = this.priority;
+      if (priority == 1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    isMidPriority : function() {
+      var priority = this.priority;
+      if (priority == 2) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    isHiPriority : function() {
+      var priority = this.priority;
+      if (priority == 3) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     getIdeators : function()
     {
         var numAssignedUsers = this.assignments.length;
@@ -390,6 +419,8 @@ Template.HcompDashboard.events({
     $("#task-description").val("");
 
     $('#CreateTask').toggleClass('in');
+
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").attr("checked","checked");
 
 	},
 
