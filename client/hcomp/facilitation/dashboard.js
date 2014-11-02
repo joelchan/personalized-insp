@@ -431,6 +431,10 @@ Template.HcompDashboard.events({
 
   'click #task-create-cancel' : function() {
     $('#CreateTask').toggleClass('in');
+    $("#task-description").val("");
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='1']").prop("checked",false);
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").prop("checked",true);
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='3']").prop("checked",false);
   },
 
 	'click .card-edit' : function()
