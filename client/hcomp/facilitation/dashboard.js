@@ -420,7 +420,12 @@ Template.HcompDashboard.events({
 
     $('#CreateTask').toggleClass('in');
 
-    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").attr("checked","checked");
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='1']").prop("checked",false);
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").prop("checked",true);
+    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='3']").prop("checked",false);
+
+    // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").parent().attr("checked","checked");
+    // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").attr("checked","checked");
 
 	},
 
