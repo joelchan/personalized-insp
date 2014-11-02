@@ -76,12 +76,16 @@ decrementTimer = function decrementTimer() {
   Session.set("timeLeft", nextTime);
   var time = $('#time').text(nextTime);
   if (nextTime > 0) {
-    Meteor.setTimeout(decrementTimer, 60000);
+    Meteor.setTimeout(decrementTimer, 6000);
     // console.log("Decrementing timer")
   } else {
     logger.info("Exitting current page");
     //EventLogger.logEndRole();
     //exitPage();
+    Router.go("LegionFinalPage", {
+      'promptID': Session.get("currentPrompt")._id,
+      'userID': Session.get("currentUser")._id
+    });
   }
 };
 
