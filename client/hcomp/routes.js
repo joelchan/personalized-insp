@@ -346,7 +346,7 @@ var initRolePage = function() {
       Session.set("timeLeft", prompt.length + 1);
       $('#time').text(prompt.length);
       if (Session.get("useTimer")) {
-        Meteor.setTimeout(decrementTimer, 6000);
+        Meteor.setTimeout(decrementTimer, 60000);
       }
     }
   }
