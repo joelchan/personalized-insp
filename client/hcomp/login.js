@@ -25,6 +25,7 @@ Template.MturkLoginPage.events({
           var userName = $('input#name').val().trim();
           logger.info("Logging in user with name: " + userName);
           var user = LoginManager.loginUser(userName);
+          UserFactory.setMturkCode(user);
           if ($("input#nickname").val() !== "") {
             logger.info("Adding alias to user");
             var alias = $('input#nickname').val().trim();
@@ -47,7 +48,7 @@ Template.MturkLoginPage.events({
           Session.set("currentRole", role);
           Session.set("currentGroup", group);
           Session.set("currentPrompt", prompt);
-          Router.go("MturkIdeation", 
+          Router.go("HcompConsentPage", 
             {promptID: prompt._id, userID: user._id});
         }
 

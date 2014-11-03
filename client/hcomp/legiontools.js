@@ -8,6 +8,11 @@ Logger.setLevel('Client:Hcomp:LegionTools', 'trace');
 //Logger.setLevel('Client:Hcomp:LegionTools', 'warn');
 
 Template.LegionFinalPage.rendered = function() {
+  //hide exit early
+  $("#exitStudy").remove();
+  if ($('.btn-login').hasClass("hidden")) {
+    $('.btn-login').toggleClass("hidden"); 
+  }
   // selector used by jquery to identify your form
   var form_selector = "#mturk-form";
   // is assigntmentId is a URL parameter
@@ -59,3 +64,8 @@ gup = function gup(name) {
 }
 
 //  Turkify the captioning page.
+Template.LegionFinalPage.helpers({ 
+  mturkCode: function() {
+    return UserFactory.getMturkCode(Session.get("currentUser"));
+  },
+});

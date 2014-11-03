@@ -67,9 +67,6 @@ Router.map(function () {
   this.route('MTurkConsentPage', {
       path: 'ConsentPage/:_id',
       template: 'ConsentPage',
-      data: function() {
-        return Experiments.findOne({_id: this.params._id});
-      }
   });
   this.route('FinalizePage', {
     path: 'FinalizePage/:_id',

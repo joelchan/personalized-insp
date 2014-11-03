@@ -7,6 +7,8 @@ Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
+  //Hide logout
+  $(".btn-login").toggleClass("hidden");
   //Set height of elements to viewport height
   var height = $(window).height() - 50; //Navbar height=50
   logger.debug("window viewport height = " + height.toString());

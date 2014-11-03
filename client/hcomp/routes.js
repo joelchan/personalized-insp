@@ -119,8 +119,6 @@ Router.map(function () {
     },
     action: function() {
       if (this.ready()) {
-        var user = Session.get("currentUser");
-        UserFactory.setMturkCode(user);
         this.render();
       } else {
         this.render('loading');
@@ -177,6 +175,7 @@ Router.map(function () {
     onAfterAction: function() {
       if (this.ready()) {
         initRolePage();
+        insertExitStudy();
       }
     }
 
@@ -281,6 +280,58 @@ Router.map(function () {
     },
 
   });
+  this.route('HcompConsentPage', {
+      path: 'consent/:promptID/:userID',
+      template: 'HcompConsentPage',
+    waitOn: function() {
+      if (Session.get("currentUser")) {
+        return [ 
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
+          Meteor.subscribe('prompts'),
+          ]
+      } else {
+        return [
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
+          Meteor.subscribe('prompts'),
+        ]
+      }
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready()) {
+        Session.set("useTimer", true);
+        this.render();
+      } else
+        this.render('loading');
+    },
+  });
 
   this.route("HcompResultsPage", {
     path: "/results/:promptID/:userID", 
@@ -335,6 +386,23 @@ Router.map(function () {
 
 });
 
+var insertExitStudy = function() {
+  if ($('.exitStudy').length == 0) {
+    var exitStudyBtn = UI.render(Template.ExitStudy);
+    UI.insert(exitStudyBtn, $('.login')[0]);
+  }
+  //Add event handler for the exit study button
+  $('.exitStudy').click(function() {
+    logger.info("exiting study early");
+    EventLogger.logExitStudy();
+    EventLogger.logEndRole();
+    Router.go("LegionFinalPage", {
+      'promptID': Session.get("currentPrompt")._id,
+      'userID': Session.get("currentUser")._id
+    });
+  });
+};
+
 var initRolePage = function() {
   //Add timer
   var prompt = Session.get("currentPrompt");
@@ -348,7 +416,7 @@ var initRolePage = function() {
       Session.set("timeLeft", prompt.length + 1);
       $('#time').text(prompt.length);
       if (Session.get("useTimer")) {
-        Meteor.setTimeout(decrementTimer, 60000);
+        Meteor.setTimeout(decrementTimer, 6000);
       }
     }
   }

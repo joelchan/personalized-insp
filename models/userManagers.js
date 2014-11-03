@@ -23,6 +23,9 @@ UserFactory  = (function() {
         user.mturk = makeID(16);
         MyUsers.update({_id: user._id}, {$set: {'mturk': user.mturk}});
      },
+     getMturkCode: function(user) {
+       return user.mturk;
+     },
      getAdmin: function() {
        var admin = MyUsers.find({"type": "admin"});
        if (admin.count() == 0) {
