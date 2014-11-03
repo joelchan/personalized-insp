@@ -299,7 +299,9 @@ Template.MturkClusteringIdeaListIdeaItem.events({
 ********************************************************************/
 Template.MturkClusterList.helpers({
   clusters : function(){
-    return getFilteredClusters(clusterFilterName);
+    // return getFilteredClusters(clusterFilterName);
+    var sessionPromptID = Session.get("currentPrompt")
+    return Clusters.find({promptID: sessionPromptID._id, isTrash: {$ne: true}}).fetch();
   },
 });
 
@@ -372,7 +374,9 @@ Template.MturkClusterarea.rendered = function(){
 
 Template.MturkClusterarea.helpers({
   clusters : function(){
-    return getFilteredClusters(clusterFilterName);
+    // return getFilteredClusters(clusterFilterName);
+    var sessionPromptID = Session.get("currentPrompt")
+    return Clusters.find({promptID: sessionPromptID._id, isTrash: {$ne: true}}).fetch();
     // return Clusters.find({isTrash: {$ne: true}});
   },
 });

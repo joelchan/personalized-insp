@@ -1,7 +1,7 @@
  // // Configure logger for server tests
- // var logger = new Logger('Client:HcompResults');
+ var logger = new Logger('Client:HcompResults');
  // // Comment out to use global logging level
- // Logger.setLevel('Client:HcompResults', 'trace');
+ Logger.setLevel('Client:HcompResults', 'trace');
  // //Logger.setLevel('Client:Clustering', 'debug');
  // //Logger.setLevel('Client:Clustering', 'info');
  // //Logger.setLevel('Client:Clustering', 'warn');
@@ -36,6 +36,11 @@ Template.HcompResultsPage.rendered = function(){
     "ideas", 
     "prompt._id", 
     Session.get("currentPrompt")._id);
+  // FilterManager.create("total ideas overall", 
+  //   Session.get("currentUser"), 
+  //   "ideas", 
+  //   "prompt._id", 
+  //   Session.get("currentPrompt")._id);
   FilterManager.create(allClustersFilterName, 
     Session.get("currentUser"), 
     "clusters", 
@@ -66,11 +71,26 @@ Template.HcompResultsPage.rendered = function(){
 Template.HcompResultsPage.helpers({
   promptQuestion : function() {
     var prompt =  Session.get("currentPrompt");
-    return prompt.question;
+    return prompt.title;
+  },
+  numIdeasOverall : function() {
+    // return 
+    var sessionPromptID = Session.get("currentPrompt")
+    return Ideas.find({promptID: sessionPromptID._id}).fetch().length;
   },
   Clusters : function() {
     // return Clusters.find();
-    return getFilteredClusters(allClustersFilterName);
+    // return getFilteredClusters(allClustersFilterName);
+    var sessionPromptID = Session.get("currentPrompt")
+    return Clusters.find({promptID: sessionPromptID._id}).fetch();
+  },
+  ifShowAll : function() {
+    if (this.showAllIdeas == true) {
+      return true;
+    }
+    else {
+      return false
+    }
   },
 })
 
@@ -78,9 +98,53 @@ Template.HcompResultsPage.helpers({
 * themeIdeasList template Helpers
 ********************************************************************/
 Template.themeIdeasList.helpers({
+  hasMoreThanThreeIdeas : function(cluster) {
+    var IDs = cluster.ideaIDs;
+    var ideasArray = Ideas.find({_id:{$in: IDs}}).fetch();
+    if (ideasArray.length > 3) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
   themeIdeas : function(cluster) {
     var IDs = cluster.ideaIDs;
-    return Ideas.find({_id:{$in: IDs}});
+    var unsortedIdeas = Ideas.find({_id:{$in: IDs}}).fetch();
+    function compare(a,b) {
+      if (a.votes.length < b.votes.length)
+         return -1;
+      if (a.votes.length > b.votes.length)
+        return 1;
+      return 0;
+    }
+    var sortedIdeas = unsortedIdeas.sort(compare);
+    //take out top 3 ideas
+    for (var i = 0; i < 3; i++) {
+      sortedIdeas.pop(i);
+    }
+    return sortedIdeas.reverse();
+  },
+  topThemeIdeas : function(cluster) {
+    var IDs = cluster.ideaIDs;
+    var unsortedIdeas = Ideas.find({_id:{$in: IDs}}).fetch();
+    function compare(a,b) {
+      if (a.votes.length < b.votes.length)
+         return -1;
+      if (a.votes.length > b.votes.length)
+        return 1;
+      return 0;
+    }
+    var sortedIdeas = unsortedIdeas.sort(compare);
+    sortedIdeas.reverse();
+    var topIdeas = [];
+    //get the top 3 ideas
+    for (var i = 0; i < 3; i++) {
+      if (sortedIdeas[i] != null) {
+        topIdeas.push(sortedIdeas[i]);
+      }
+    }
+    return topIdeas;
   },
   themeName : function(cluster) {
     return cluster.name;
@@ -112,6 +176,16 @@ Template.themeIdeasItem.helpers({
   },
   isNotInCluster: function() {
     return (this.clusterIDs.length === 0) ? true : false;
+  },
+  voteNum: function() {
+    return this.votes.length;
+  },
+  hasVotes: function() {
+    if (this.votes.length > 0) {
+      return true
+    } else {
+      return false
+    }
   },
 })
 /********************************************************************
