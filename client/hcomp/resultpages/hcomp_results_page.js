@@ -36,6 +36,11 @@ Template.HcompResultsPage.rendered = function(){
     "ideas", 
     "prompt._id", 
     Session.get("currentPrompt")._id);
+  // FilterManager.create("total ideas overall", 
+  //   Session.get("currentUser"), 
+  //   "ideas", 
+  //   "prompt._id", 
+  //   Session.get("currentPrompt")._id);
   FilterManager.create(allClustersFilterName, 
     Session.get("currentUser"), 
     "clusters", 
@@ -66,11 +71,18 @@ Template.HcompResultsPage.rendered = function(){
 Template.HcompResultsPage.helpers({
   promptQuestion : function() {
     var prompt =  Session.get("currentPrompt");
-    return prompt.question;
+    return prompt.title;
+  },
+  numIdeasOverall : function() {
+    // return 
+    var sessionPromptID = Session.get("currentPrompt")
+    return Ideas.find({promptID: sessionPromptID._id}).fetch().length;
   },
   Clusters : function() {
     // return Clusters.find();
-    return getFilteredClusters(allClustersFilterName);
+    // return getFilteredClusters(allClustersFilterName);
+    var sessionPromptID = Session.get("currentPrompt")
+    return Clusters.find({promptID: sessionPromptID._id}).fetch();
   },
   ifShowAll : function() {
     if (this.showAllIdeas == true) {
