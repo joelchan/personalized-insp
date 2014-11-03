@@ -119,6 +119,8 @@ Router.map(function () {
     },
     action: function() {
       if (this.ready()) {
+        var user = Session.get("currentUser");
+        UserFactory.setMturkCode(user);
         this.render();
       } else {
         this.render('loading');
