@@ -27,6 +27,7 @@ Template.HcompDashboard.rendered = function(){
   logger.debug(height.toString());
   logger.debug((height*0.7).toString());
   $("#big-picture-viz").height(height*0.45);
+  $("#ideawordcloud").height(height*0.45);
   $("#scratchpad").height(height*0.45);
   var scratchpadHeight = $("#scratchpad").height();
   // console.log("Scratchpad height:" + scratchpadHeight);
@@ -41,7 +42,7 @@ Template.HcompDashboard.rendered = function(){
                                   -promptHeaderHeight
                                   -filterboxHeaderHeight
                                   -ideaboxHeaderHeight
-                                  -70); // promptheader margin-top/bottom (30) + ideas number header margin-top (10) + filterboxheader padding-top/bottom (30)
+                                  -40); // promptheader margin-top/bottom (30) + ideas number header margin-top (10)
 
   var facActionsHeight = $('.fac-actions').height();
   var inspirationsHeaderHeight = $('.tasks-view h1').height();
