@@ -1,11 +1,53 @@
 
 <template name="MturkClusterIdeaItem">
 <li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
-  {{ content }} 
+    <div class="row">
+      <div class="col-xs-9 filterbox-idea-content">
+          {{content}} 
+        </div>
+        <div class="col-xs-3 vote-box">
+          <!-- <span class='vote-box'>  -->
+          {{#if hasVotes }}
+            <span class="up-vote vote fa fa-thumbs-up"></span>
+            {{ voteNum }}
+        {{else}}
+          <span class="up-vote vote fa fa-thumbs-o-up"></span>
+          {{ voteNum }}
+        {{/if}}
+        <!-- </span> -->
+      </div>
+    </div>
+  <!-- {{ content }} 
     <span class='vote-box'> 
       <span class="up-vote vote glyphicon glyphicon-thumbs-up"></span>
       {{ voteNum }}
-    </span>
+    </span> -->
+</li>
+</template>
+
+<template name="MturkClusteringIdeaListIdeaItem">
+<li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
+    <div class="row">
+      <div class="col-xs-9 filterbox-idea-content">
+          {{content}} 
+        </div>
+        <div class="col-xs-3 vote-box">
+          <!-- <span class='vote-box'>  -->
+          {{#if hasVotes }}
+            <span class="up-vote vote fa fa-thumbs-up"></span>
+            {{ voteNum }}
+        {{else}}
+          <span class="up-vote vote fa fa-thumbs-o-up"></span>
+          {{ voteNum }}
+        {{/if}}
+        <!-- </span> -->
+      </div>
+    </div>
+  <!-- {{ content }} 
+    <span class='vote-box'> 
+      <span class="up-vote vote glyphicon glyphicon-thumbs-up"></span>
+      {{ voteNum }}
+    </span> -->
 </li>
 </template>
 
@@ -25,7 +67,8 @@
 
     <ul id="idealist" class="ideadeck cluster-idea-list">
       {{#each ideas}}
-        {{> MturkClusterIdeaItem}}
+        <!-- {{> MturkClusterIdeaItem}} -->
+        {{> MturkClusteringIdeaListIdeaItem}}
       {{/each}}
     </ul>
   </div>
@@ -61,11 +104,15 @@
     style="top:{{position.top}}px; 
     left:{{position.left}}px">
     <!-- <div class="cluster" id=cluster-{{_id}}> -->
-    <div class="form-group form-group-inline">
-      <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i>
+    <div class="form-group form-group-inline clusterlabel">
+      <!-- <i class="fa fa-lg {{#if isCollapsed}}fa-chevron-circle-right{{else}}fa-chevron-circle-down{{/if}} collapser"></i> -->
       <label class="sort-disabled">
-        <span class="clusterlabel {{named}}">{{this.name}}</span>
+        <!-- <span class="collapser {{named}}"><a href="">{{this.name}} ({{numclusterideas}})</a></span> -->
+        <span class="{{named}}">{{this.name}}</span>
       </label>
+    </div>
+    <div class="cluster-data row collapser">
+      <a href=""><span class="badge">{{numclusterideas}}</span> &nbsp;ideas</a>
     </div>
     <ul class="clusterul cluster-idea-list {{#if isCollapsed}} hidden {{else}} show {{/if}}" id="cluster-list-{{_id}}">
       <input type="text" class="namecluster form-control input-sm sort-disabled" 

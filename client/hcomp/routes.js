@@ -166,9 +166,10 @@ Router.map(function () {
         }
     },
     action: function(){
-      if(this.ready())
+      if(this.ready()) {
+        Session.set("useTimer", true);
         this.render();
-      else
+      } else
         this.render('loading');
     },
     onAfterAction: function() {
@@ -234,6 +235,50 @@ Router.map(function () {
     }
 
   });
+  this.route('LegionFinalPage', {
+    path: 'crowd/finished/:promptID/:userID/',
+  	template: 'LegionFinalPage',
+    waitOn: function() {
+      logger.debug("Waiting on...");
+      return [
+        Meteor.subscribe('prompts'),
+        Meteor.subscribe('myUsers'),
+      ];
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    },
+
+  });
 
   this.route("HcompResultsPage", {
     path: "/results/:promptID/:userID", 
@@ -292,14 +337,17 @@ var initRolePage = function() {
   //Add timer
   var prompt = Session.get("currentPrompt");
   if (prompt.length > 0) {
-    if ($('.timer').length == 0) {
+    if ($('.timer').length == 0 && Session.get("useTimer")) {
+      console.log("using a timer");
       Session.set("hasTimer", true);
       var timerTemplate = UI.render(Template.Timer);
       UI.insert(timerTemplate, $('#nav-right')[0]);
       //Setup timer for decrementing onscreen timer with 17 minute timeout
       Session.set("timeLeft", prompt.length + 1);
       $('#time').text(prompt.length);
-      Meteor.setTimeout(decrementTimer, 60000);
+      if (Session.get("useTimer")) {
+        Meteor.setTimeout(decrementTimer, 6000);
+      }
     }
   }
 };
