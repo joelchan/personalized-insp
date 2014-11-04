@@ -35,7 +35,7 @@ Template.LegionFinalPage.rendered = function() {
     console.log(name);
     var regexS = "[\\?&]"+name+"=([^&#]*)";
     var regex = new RegExp(regexS);
-    var results = regex.exec(window.location.href);
+    var results = regex.exec(document.referrer);
     console.log(window.location.href);
     console.log(document.referrer);
     console.log(results);
