@@ -15,6 +15,30 @@ Template.LegionFinalPage.rendered = function() {
   }
   // selector used by jquery to identify your form
   var form_selector = "#mturk-form";
+  console.log(form_selector);
+/**
+ *  
+ *  gup(name) :: retrieves URL parameters if provided
+ *
+ *  Prepares the page for MTurk on load.
+ *  1. looks for a form element with id="mturk_form", and sets its METHOD / ACTION
+ *    1a. All that the task page needs to do is submit the form element when ready
+ *  2. disables form elements if HIT hasn't been accepted
+ *
+ **/
+
+
+  // function for getting URL parameters
+  var gup = function gup(name) {
+    console.log("calling gup");
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.href);
+    if(results == null)
+      return "";
+    else return unescape(results[1]);
+  };
   // is assigntmentId is a URL parameter
   if((aid = gup("assignmentId"))!="" && $(form_selector).length>0) {
 
@@ -40,32 +64,3 @@ Template.LegionFinalPage.rendered = function() {
    
 };
 
-/**
- *  
- *  gup(name) :: retrieves URL parameters if provided
- *
- *  Prepares the page for MTurk on load.
- *  1. looks for a form element with id="mturk_form", and sets its METHOD / ACTION
- *    1a. All that the task page needs to do is submit the form element when ready
- *  2. disables form elements if HIT hasn't been accepted
- *
- **/
-
-
-// function for getting URL parameters
-gup = function gup(name) {
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp(regexS);
-  var results = regex.exec(window.location.href);
-  if(results == null)
-    return "";
-  else return unescape(results[1]);
-}
-
-//  Turkify the captioning page.
-Template.LegionFinalPage.helpers({ 
-  mturkCode: function() {
-    return UserFactory.getMturkCode(Session.get("currentUser"));
-  },
-});
