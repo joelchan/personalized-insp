@@ -32,18 +32,30 @@ Template.LegionFinalPage.rendered = function() {
   var gup = function gup(name) {
     console.log("calling gup");
     name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    console.log(name);
     var regexS = "[\\?&]"+name+"=([^&#]*)";
     var regex = new RegExp(regexS);
     var results = regex.exec(window.location.href);
-    if(results == null)
+    console.log(results);
+    if(results == null) {
+      console.log("not results in window location href");
       return "";
-    else return unescape(results[1]);
+    }
+    else {
+      console.log("not results in window location href");
+      console.log(unescape(results[1]));
+      return unescape(results[1]);
+    }
   };
   // is assigntmentId is a URL parameter
+  console.log("form selector length" + parseInt($(form_selector).length));
   if((aid = gup("assignmentId"))!="" && $(form_selector).length>0) {
+    console.log("entered main conditional");
+    console.log(aid);
 
     // If the HIT hasn't been accepted yet, disabled the form fields.
     if(aid == "ASSIGNMENT_ID_NOT_AVAILABLE") {
+      console.log("assnID not available");
 	    $('input,textarea,select').attr("DISABLED", "disabled");
     }
 
