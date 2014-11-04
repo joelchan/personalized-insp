@@ -15,11 +15,49 @@ Template.LegionFinalPage.rendered = function() {
   }
   // selector used by jquery to identify your form
   var form_selector = "#mturk-form";
+  console.log(form_selector);
+/**
+ *  
+ *  gup(name) :: retrieves URL parameters if provided
+ *
+ *  Prepares the page for MTurk on load.
+ *  1. looks for a form element with id="mturk_form", and sets its METHOD / ACTION
+ *    1a. All that the task page needs to do is submit the form element when ready
+ *  2. disables form elements if HIT hasn't been accepted
+ *
+ **/
+
+
+  // function for getting URL parameters
+  var gup = function gup(name) {
+    console.log("calling gup");
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    console.log(name);
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(document.referrer);
+    console.log(window.location.href);
+    console.log(document.referrer);
+    console.log(results);
+    if(results == null) {
+      console.log("not results in window location href");
+      return "";
+    }
+    else {
+      console.log("not results in window location href");
+      console.log(unescape(results[1]));
+      return unescape(results[1]);
+    }
+  };
   // is assigntmentId is a URL parameter
+  console.log("form selector length" + parseInt($(form_selector).length));
   if((aid = gup("assignmentId"))!="" && $(form_selector).length>0) {
+    console.log("entered main conditional");
+    console.log(aid);
 
     // If the HIT hasn't been accepted yet, disabled the form fields.
     if(aid == "ASSIGNMENT_ID_NOT_AVAILABLE") {
+      console.log("assnID not available");
 	    $('input,textarea,select').attr("DISABLED", "disabled");
     }
 
@@ -40,32 +78,3 @@ Template.LegionFinalPage.rendered = function() {
    
 };
 
-/**
- *  
- *  gup(name) :: retrieves URL parameters if provided
- *
- *  Prepares the page for MTurk on load.
- *  1. looks for a form element with id="mturk_form", and sets its METHOD / ACTION
- *    1a. All that the task page needs to do is submit the form element when ready
- *  2. disables form elements if HIT hasn't been accepted
- *
- **/
-
-
-// function for getting URL parameters
-gup = function gup(name) {
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp(regexS);
-  var results = regex.exec(window.location.href);
-  if(results == null)
-    return "";
-  else return unescape(results[1]);
-}
-
-//  Turkify the captioning page.
-Template.LegionFinalPage.helpers({ 
-  mturkCode: function() {
-    return UserFactory.getMturkCode(Session.get("currentUser"));
-  },
-});
