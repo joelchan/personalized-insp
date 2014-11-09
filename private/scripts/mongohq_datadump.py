@@ -120,6 +120,8 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
           rowDict["starred"] = idea[u'isGamechanger']
        else:
           rowDict["starred"] = "-"
+       rowDict["userID"] = idea[u'userID']
+       rowDict["promptID"] = idea[u'promptID']
        ideas.append(rowDict)
 
    ideasDF = pd.DataFrame(ideas)
@@ -129,6 +131,35 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
    users = {}
    for user in db.myUsers.find():
        users[user[u'_id']] = user[u'name']
+   # usersDF = pd.DataFrame.from_dict(users)
+   usersOutFile = open(path.join(dir_path, "users.csv"),'w')
+   for userID, userName in users.items():
+    usersOutFile.write(userID + "," + userName + "\n")
+   usersOutFile.close()
+
+   # file_path = path.join(dir_path, "users.csv")
+   # usersDF.to_csv(file_path)
+   ideasByPrompt = []
+   for prompt in db.prompts.find():
+     # rowDict = {}
+     thisPromptID = prompt[u'_id']
+     promptQuestion = prompt[u'question']
+     for idea in db.ideas.find({u'promptID':thisPromptID}):
+        rowDict = {}
+        rowDict['promptID'] = thisPromptID
+        rowDict['promptQuestion'] = promptQuestion
+        rowDict['ideaID'] = idea[u'_id']
+        rowDict['idea'] = idea[u'content']
+        rowDict['userID'] = idea[u'userID']
+        rowDict['userName'] = idea[u'userName']
+        rowDict['submissionTime'] = idea[u'time']
+        if len(idea[u'clusterIDs']) > 0:
+            clusterID = idea[u'clusterIDs'][0]
+            rowDict["theme"] = clusters[clusterID]
+        ideasByPrompt.append(rowDict)
+   ideasByPromptDF = pd.DataFrame(ideasByPrompt)
+   file_path = path.join(dir_path,"ideasByPrompt.csv")
+   ideasByPromptDF.to_csv(file_path)
 
    notifications = []
    for notification in db.notifications.find():
@@ -157,8 +188,8 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
    notificationsDF.to_csv(file_path)
 
 if __name__ == '__main__':
-    clear_db(mongohq.ideagenstest)
+    # clear_db(mongohq.ideagenstest)
     # dump_db('data/chi1', mongohq.chi1)
-    restore_db('data/chi3_raw', mongohq.ideagenstest)
-    # get_data_output('data/chi2', mongohq.chi1)
+    # restore_db('data/chi3_raw', mongohq.ideagenstest)
+    get_data_output('data/hcompTest', mongohq.ideagens)
 
