@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 data
 =======
 *.csv
 data
 *.pyc
->>>>>>> d0752016fb03cc789f5cb5c18cc78c0ac9839c2d
+mturkconfig.json*

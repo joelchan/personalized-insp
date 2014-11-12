@@ -5,6 +5,8 @@ import pandas as pd
 from os import mkdir, listdir, path
 from datetime import datetime
 import dateutil.parser
+from file_out import write_json_to_file
+from ideagens import Db_Manager
 
 # collections to ignore
 default_collections = [
@@ -15,21 +17,6 @@ default_collections = [
 
 def date_handler(obj):
         return obj.isoformat() if hasattr(obj, 'isoformat') else obj
-
-
-def write_json_to_file(data='', dir_name='data', file_name='default'):
-    print "writing to directory: " + dir_name
-    if not path.exists(dir_name):
-        mkdir(dir_name, 0774)
-    # Create file path
-    file_path = path.join(dir_name, file_name + '.json')
-    print "writing to: " + file_path
-    # Write data to file
-    resultsFile = open(file_path,'w')
-    resultsFile.write(
-        json.dumps(data, indent=2, default=date_handler)
-    )
-    resultsFile.close()
 
 
 def dump_db(dir_name='data', db_params=mongohq.ideagenstest):
@@ -95,6 +82,7 @@ def clear_db(db_params=mongohq.ideagenstest):
     for col in clear_cols:
         # Remove all docs from collection
         db[col].remove()
+
 
 def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
    if not path.exists(dir_path):
@@ -186,6 +174,7 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
    # Create file path
    file_path = path.join(dir_path, "notifications.csv")
    notificationsDF.to_csv(file_path)
+
 
 if __name__ == '__main__':
     # clear_db(mongohq.ideagenstest)
