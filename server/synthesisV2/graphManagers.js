@@ -22,12 +22,10 @@ Meteor.methods({
   },
   graphCreateNode: function(graph, type, metadata) {
     /*************************************************************
-     * Create a graph
+     * Create a graph node
      * **********************************************************/
     logger.debug("Creating new Graph Node");
     var node = createGraphNode(graph, type, metadata);
-    //var node = new GraphNode(graph, type, metadata);
-    //node._id = Nodes.insert(node);
     return node;
   },
   graphCreateEdge: function(graph, source, target, metadata) {
@@ -70,13 +68,37 @@ Meteor.methods({
       Nodes.remove({_id: nodes._id});
     }
   },
+  graphCreateIdeaNode: function(graph, idea, metadata) {
+    //Only create node if a node for this idea doesn't exist in this graph
+    var result = Nodes.findOne({'graphID': graph._id,'ideaID': idea._id})
+    if (!result) {
+      logger.debug("Creating a new node with an idea");
+      if (!metadata) {
+        metadata = {}
+      }
+      metadata['ideaID'] = idea._id;
+      metadata['content'] = idea.content;
+      metadata['time'] = idea.time;
+      return createGraphNode(graph, 'idea', metadata);
+    } else {
+      logger.debug("Node already exists for this idea and graph");
+      return result;
+    }
+  },
     
 });
 
+
+/*****************************************************************
+ *    Helper Functions
+ * ***************************************************************/
+
 createGraphNode = function(graph, type, metadata) {
-    var node = new GraphNode(graph, type, metadata);
-    node._id = Nodes.insert(node);
-    Graphs.update({_id: graph._id}, {$push: {nodeIDs: node._id}});
-    return node;
+  var node = new GraphNode(graph, type, metadata);
+  node._id = Nodes.insert(node);
+  Graphs.update({_id: graph._id}, {$push: {nodeIDs: node._id}});
+  return node;
 };
+
+
 

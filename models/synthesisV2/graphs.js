@@ -13,7 +13,7 @@ Edges = new Mongo.Collection("edges");
 
 /* list of minimum required fields for a given node type */
 NODE_TYPES = {
-  'ideas': ['content', 'time'],
+  'ideas': ['ideaID', 'content', 'time'],
   'theme': ['name', 'time', 'isTrash', 'isMerged'],
 };
 
@@ -63,7 +63,6 @@ GraphNode = function(graph, type, data) {
       this[fields[i]] = data[fields[i]];
     }
   }
-
 };
 
 GraphEdge = function(type, source, target, data) {

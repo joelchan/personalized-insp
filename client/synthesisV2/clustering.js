@@ -114,6 +114,18 @@ Template.MturkClustering.rendered = function(){
     setSharedGraphListener(sharedGraph);
   }
 
+  //Setup Idea listener for node creation
+  logger.debug("initializing idea nodes");
+  setIdeaListener(Session.get("currentGroup").users);
+
+  //Update Idea Listener when new members join group
+  logger.debug("creating group listener for new users");
+  Groups.find({_id: group._id}).observe({
+    changed: function(newDoc, oldDoc) {
+      var users = newDoc.users;
+      setIdeaListener(users);
+    },
+  });
 
   //Create isInCluster filter
   FilterManager.create(ideaFilterName,
@@ -132,16 +144,6 @@ Template.MturkClustering.rendered = function(){
   FilterManager.create(clusterFilterName, Session.get("currentUser"), "clusters", "promptID", Session.get("currentPrompt")._id);
   FilterManager.create(clusterFilterName, Session.get("currentUser"), "clusters", "isTrash", false);
 
-  //Setup filters for users and filter update listener
-  //updateFilters();
-  //Update filters when current group changes
-  //Groups.find({_id: Session.get("currentGroup")._id}).observe({
-    //changed: function(newDoc, oldDoc) {
-      //logger.trace("Current Group has changed");
-      ////Setup filters for users and filter update listener
-      ////updateFilters();
-    //} 
-  //});
 };
 
 var setSharedGraphListener = function(graph) {
@@ -164,6 +166,24 @@ var setSharedGraphListener = function(graph) {
     },
   });
 };
+
+var setIdeaListener = function(users) {
+  var currentListener = Session.get("ideaObserver");
+  var userIDs = getIDs(users);
+  var observer = Ideas.find({userID: {$in: userIDs}}).observe({
+    added: function(idea) {
+      createIdeaNode(idea);
+    },
+  });
+};
+
+var createIdeaNode = function(idea) {
+  logger.debug("creating node for idea");
+  Meteor.call("graphCreateIdeaNode", 
+    Session.get("currentGraph"), idea, null
+  );
+},
+
 
 createTheme = function(theme) {
   //Test function for creating a theme
@@ -352,7 +372,11 @@ Template.MturkClusteringIdeaListIdeaItem.helpers({
     }
   },
   voteNum: function() {
-    return this.votes.length;
+    if (this.votes) {
+      return this.votes.length;
+    } else {
+      return 0;
+    }
   },
   hasVotes: function() {
     if (this.votes.length > 0) {
