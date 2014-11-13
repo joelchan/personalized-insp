@@ -12,27 +12,35 @@ Router.map(function () {
   /***************************************************************
    * Define custom routes for SynthesisV2 pages
    * *************************************************************/
-  this.route('ParallelSynthesis', {
-    path: 'crowd/Categorize2/:promptID/:userID/',
-  	template: 'ParallelClustering',
+  this.route('MturkSynthesis', {
+    path: 'crowd/Categorize/:promptID/:userID/',
+  	template: 'MturkClustering',
     waitOn: function() {
       logger.debug("Waiting on...");
       if (Session.get("currentUser")) {
         // return Meteor.subscribe('ideas');
         logger.debug("has current user...");
         return [
+          Meteor.subscribe('groups'),
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers'),
           Meteor.subscribe('ideas'),
           Meteor.subscribe('clusters'),
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers')
+          Meteor.subscribe('graphs'),
+          Meteor.subscribe('nodes'),
+          Meteor.subscribe('edges'),
           ];
       } else {
         logger.debug("NO current user...");
         return [
+          Meteor.subscribe('groups'),
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('myUsers'),
           Meteor.subscribe('ideas'),
           Meteor.subscribe('clusters'),
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers')
+          Meteor.subscribe('graphs'),
+          Meteor.subscribe('nodes'),
+          Meteor.subscribe('edges'),
         ];
       }
     },
@@ -43,10 +51,17 @@ Router.map(function () {
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
           MyUsers.update({_id: user._id}, {$set: {route: 'MturkSynthesis'}});
-          console.log("Data ready");
+          logger.debug("Data ready");
           var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {
+            logger.debug("setting current Prompt");
             Session.set("currentPrompt", prompt);
+            var groupIDs = prompt.groupIDs;
+            logger.trace("group IDS of the prompt");
+            logger.trace(groupIDs);
+            var group = Groups.findOne({_id: prompt.groupIDs[0]});
+            logger.trace(group);
+            Session.set("currentGroup", group);
           } else {
             logger.warn("no prompt found with id: " + this.params.promptID);
           }
@@ -70,4 +85,40 @@ Router.map(function () {
   });
 
 });
+
+var insertExitStudy = function() {
+  if ($('.exitStudy').length == 0) {
+    var exitStudyBtn = UI.render(Template.ExitStudy);
+    UI.insert(exitStudyBtn, $('.login')[0]);
+  }
+  //Add event handler for the exit study button
+  $('.exitStudy').click(function() {
+    logger.info("exiting study early");
+    EventLogger.logExitStudy();
+    EventLogger.logEndRole();
+    Router.go("LegionFinalPage", {
+      'promptID': Session.get("currentPrompt")._id,
+      'userID': Session.get("currentUser")._id
+    });
+  });
+};
+
+var initRolePage = function() {
+  //Add timer
+  var prompt = Session.get("currentPrompt");
+  if (prompt.length > 0) {
+    if ($('.timer').length == 0 && Session.get("useTimer")) {
+      console.log("using a timer");
+      Session.set("hasTimer", true);
+      var timerTemplate = UI.render(Template.Timer);
+      UI.insert(timerTemplate, $('#nav-right')[0]);
+      //Setup timer for decrementing onscreen timer with 17 minute timeout
+      Session.set("timeLeft", prompt.length + 1);
+      $('#time').text(prompt.length);
+      if (Session.get("useTimer")) {
+        Meteor.setTimeout(decrementTimer, 60000);
+      }
+    }
+  }
+};
 

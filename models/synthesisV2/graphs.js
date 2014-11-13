@@ -10,19 +10,36 @@ Graphs = new Mongo.Collection("graphs");
 Nodes = new Mongo.Collection("nodes");
 Edges = new Mongo.Collection("edges");
 
-Graph = function() {
+NODE_TYPES = {
+  'ideas': ['content', 'time'],
+  'theme': ['name', 'time', 'isTrash', 'isMerged'],
+};
+
+EDGE_TYPES = {
+  'parent_child': ['sourceID', 'targetID'],
+  'merged': ['sourceID', 'targetID'],
+  'graph_link': ['sharedNodeID', 'userNodeID'],
+};
+
+Graph = function(prompt, group, user) {
   /********************************************************************
   * Graph constructor
   *
   * @return {object} Graph object 
   ********************************************************************/
-  this.type;
+  this.promptID = prompt._id;
+  this.groupID = group._id;
+  if (user) {
+    this.userID = user._id;
+  } else {
+    this.userID = null;
+  }
   this.nodeIDs = [];
   this.edgeIDs = [];
 
 };
 
-GraphNode = function(graph, metadata) {
+GraphNode = function(graph, type, data) {
   /********************************************************************
   * GraphNode constructor
   *
@@ -34,17 +51,17 @@ GraphNode = function(graph, metadata) {
   * @return {object} GraphNode object 
   ********************************************************************/
   this.graphID = graph._id;
-  if (metadata) {
+  if (data) {
     // Add metadata fields if any are given
-    var fields = metadata.fields;
+    var fields = data.fields;
     for (var i=0; i<fields.length; i++) {
-      this[fields[i]] = metadata[fields[i]];
+      this[fields[i]] = data[fields[i]];
     }
   }
 
 };
 
-GraphEdge = function(graph, source, target, metadata) {
+GraphEdge = function(type, source, target, data) {
   /********************************************************************
   * GraphEdge constructor
   *
@@ -60,10 +77,10 @@ GraphEdge = function(graph, source, target, metadata) {
   this.graphID = graph._id;
   this.sourceID = source._id;
   this.targetID = target._id;
-  if (metadata) {
-    var fields = metadata.fields;
+  if (data) {
+    var fields = data.fields;
     for (var i=0; i<fields.length; i++) {
-      this[fields[i]] = metadata[fields[i]];
+      this[fields[i]] = data[fields[i]];
     }
   }
 

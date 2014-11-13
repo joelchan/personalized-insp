@@ -36,7 +36,8 @@ Template.MturkClustering.rendered = function(){
     $("#new-cluster").height() + 80;
   $("#clusterlist").height(height-themeHeaderHeight);
   $("#right-clustering").height(height);
-  
+ 
+  // Set draggable and droppable properties of appropriate components 
   $('.cluster-idea-list').droppable({accept: ".idea-item",
     tolerance: "pointer",
     drop: function(event, ui) {
@@ -66,6 +67,48 @@ Template.MturkClustering.rendered = function(){
       trashCluster(event, ui, this);
     }
   });
+
+  //Get Data and setup listeners
+  var prompt = Session.get("currentPrompt");
+  var group = Session.get("currentGroup");
+  var user = Session.get("currentUser");
+  var userGraph = Graphs.findOne({
+    'promptID': prompt._id,
+    'groupID': group._id,
+    'userID': user._id
+  });
+  logger.trace(userGraph);
+  if (!userGraph) {
+    logger.info("No user graph found.  Initializing new graph");
+    Meteor.call("graphCreate", prompt, group, user,
+      function (error, result) {
+        logger.debug("Setting User graph");
+        Session.set("currentGraph", result);
+      }
+    );
+  } else {
+    logger.debug("Setting User graph");
+    Session.set("currentGraph", userGraph);
+  }
+
+  var sharedGraph = Graphs.findOne({
+    'promptID': prompt._id,
+    'groupID': group._id,
+    'userID': null,
+  });
+  logger.trace(sharedGraph);
+  if (!sharedGraph) {
+    logger.info("No shared graph found.  Initializing new graph");
+    Meteor.call("graphCreate", prompt, group, null,
+      function (error, result) {
+        logger.debug("Setting User graph");
+        Session.set("currentGraph", result);
+      }
+    );
+  } else {
+    logger.debug("Setting shared graph");
+    Session.set("currentGraph", sharedGraph);
+  }
 
   //Create isInCluster filter
   FilterManager.create(ideaFilterName,

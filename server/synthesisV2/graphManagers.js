@@ -11,12 +11,12 @@ Meteor.methods({
   /****************************************************************
    * Graph management functions
    * *************************************************************/
-  graphCreate: function() {
+  graphCreate: function(prompt, group, user) {
     /*************************************************************
      * Create a graph
      * **********************************************************/
     logger.debug("Creating new Graph");
-    var graph = new Graph();
+    var graph = new Graph(prompt, group, user);
     graph._id = Graphs.insert(graph);
     return Graph;
   },

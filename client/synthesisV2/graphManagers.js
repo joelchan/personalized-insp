@@ -11,9 +11,9 @@ Meteor.methods({
   /****************************************************************
    * Graph management functions
    * *************************************************************/
-  graphCreate: function() {
+  graphCreate: function(prompt, group, user) {
     logger.trace("Creating new temp graph on client");
-    var graph = new Graph();
+    var graph = new Graph(prompt, group, user);
     graph._id = Graphs.insert(graph);
     return Graph;
   },

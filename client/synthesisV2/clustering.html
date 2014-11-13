@@ -1,3 +1,43 @@
+<template name="MturkClustering">
+  <div class="mturk-cluster-header row">
+    <div class="col-sm-12">
+      <h1 id="mturk-clusterprompt">
+        {{prompt}}
+      </h1>
+    </div>
+  </div>
+  <div class="mturk-cluster-interface row">
+    <div id="left-clustering" class="col-sm-3">
+        {{> MturkClusteringIdeaList }}
+	  </div>
+    <div id="middle-clustering" class="col-sm-2">
+      {{> MturkClusterList }}
+	  </div>
+	  <div id="right-clustering" class="col-sm-7">
+      <div  id="clusterarea">
+        {{> MturkClusterarea}}
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="MturkClusterList">
+  <div class="cluster-list">
+    <h3>Theme List</h3>
+    <!-- <ul class="newcluster ui-sortable" id="node-drag-target"> -->
+      <!-- </ul> -->
+    <div class="newcluster" id="new-cluster"> 
+      Drag idea here to create a new cluster
+    </div>
+    <ul id="clusterlist" class="deck clusterdeck">
+      {{#each clusters}}
+        <li id="ci-{{_id}}" class="cluster-item">
+          {{name}}
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+</template>
 
 <template name="MturkClusterIdeaItem">
 <li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
@@ -74,23 +114,6 @@
   </div>
 </template>
 
-<template name="MturkClusterList">
-  <div class="cluster-list">
-    <h3>Theme List</h3>
-    <!-- <ul class="newcluster ui-sortable" id="node-drag-target"> -->
-      <!-- </ul> -->
-    <div class="newcluster" id="new-cluster"> 
-      Drag idea here to create a new cluster
-    </div>
-    <ul id="clusterlist" class="deck clusterdeck">
-      {{#each clusters}}
-        <li id="ci-{{_id}}" class="cluster-item">
-          {{name}}
-        </li>
-      {{/each}}
-    </ul>
-  </div>
-</template>
 
 <template name="MturkClusterarea">
   <img src="/trash_can-512.png" class="cluster-trash-can"/>
@@ -124,25 +147,3 @@
 </div>
 </template>
 
-<template name="MturkClustering">
-  <div class="mturk-cluster-header row">
-    <div class="col-sm-12">
-      <h1 id="mturk-clusterprompt">
-        {{prompt}}
-      </h1>
-    </div>
-  </div>
-  <div class="mturk-cluster-interface row">
-    <div id="left-clustering" class="col-sm-3">
-        {{> MturkClusteringIdeaList }}
-	  </div>
-    <div id="middle-clustering" class="col-sm-2">
-      {{> MturkClusterList }}
-	  </div>
-	  <div id="right-clustering" class="col-sm-7">
-      <div  id="clusterarea">
-        {{> MturkClusterarea}}
-      </div>
-    </div>
-  </div>
-</template>
