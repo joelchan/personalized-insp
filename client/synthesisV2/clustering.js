@@ -127,23 +127,19 @@ Template.MturkClustering.rendered = function(){
     },
   });
 
-  //Create isInCluster filter
+  //Create base filters for ideas
   FilterManager.create(ideaFilterName,
       Session.get("currentUser"),
-      "ideas",
-      "clusterIDs",
-      []
+      "nodes",
+      "type",
+      'idea'
   );
-  Session.set("currentIdeators", []);
-  Session.set("currentSynthesizers", []);
-
-  FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
-  FilterManager.reset("Cluster Filter", Session.get("currentUser"), "clusters");
-
-  FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
-  FilterManager.create(clusterFilterName, Session.get("currentUser"), "clusters", "promptID", Session.get("currentPrompt")._id);
-  FilterManager.create(clusterFilterName, Session.get("currentUser"), "clusters", "isTrash", false);
-
+  FilterManager.create(ideaFilterName,
+      Session.get("currentUser"),
+      "nodes",
+      "graphID",
+      Session.get("currentGraph")._id
+  );
 };
 
 var setSharedGraphListener = function(graph) {
@@ -203,68 +199,18 @@ createTheme = function(theme) {
 ********************************************************************/
 Template.MturkClusteringIdeaList.helpers({
   ideas : function(){
+	 return FilterManager.performQuery(
+      ideaFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes");
     
-    return getFilteredIdeas("Ideas Filter");
-    // var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-    //   Session.get("currentUser"),   
-    //   "ideas").fetch();
-
-    // // apply search query, if it exists
-    // var query = Session.get("searchQuery");
-    // var queriedIdeas = [];
-    // if (query != "") {
-    //   queryArr = stringToWords(query);
-    //   filteredIdeas.forEach(function(idea){
-    //     // console.log(idea);
-    //     if (searchQueryMatch(idea,queryArr)) {
-    //       // console.log("Matched query");
-    //       queriedIdeas.push(idea);
-    //     } else {
-    //       // console.log("Not matching");
-    //       // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-    //     }
-    //   });
-    //   // create an array from the query
-      
-    // } else {
-    //   queriedIdeas = filteredIdeas.slice();
-    // }
-
-    // var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-    // // console.log(sortedIdeas);
-    // return sortedIdeas;
   },
 
   numIdeas : function(){
-    // var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-    //   Session.get("currentUser"),   
-    //   "ideas").fetch();
-
-    // // apply search query, if it exists
-    // var query = Session.get("searchQuery");
-    // var queriedIdeas = [];
-    // if (query != "") {
-    //   queryArr = stringToWords(query);
-    //   filteredIdeas.forEach(function(idea){
-    //     // console.log(idea);
-    //     if (searchQueryMatch(idea,queryArr)) {
-    //       // console.log("Matched query");
-    //       queriedIdeas.push(idea);
-    //     } else {
-    //       // console.log("Not matching");
-    //       // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-    //     }
-    //   });
-    //   // create an array from the query
-      
-    // } else {
-    //   queriedIdeas = filteredIdeas.slice();
-    // }
-
-    // var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-    // // console.log(sortedIdeas);
-    // return sortedIdeas.length;
-    return getFilteredIdeas("Ideas Filter").length;
+	 return FilterManager.performQuery(
+      ideaFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes").count();
   },
 });
 
