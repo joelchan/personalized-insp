@@ -13,8 +13,9 @@ Edges = new Mongo.Collection("edges");
 
 /* list of minimum required fields for a given node type */
 NODE_TYPES = {
-  'ideas': ['ideaID', 'content', 'time'],
-  'theme': ['name', 'time', 'isTrash', 'isMerged'],
+  'ideas': ['ideaID', 'content', 'time', 'vote'],
+  'theme': ['name', 'time', 'isTrash', 'isMerged', 
+      'position', 'isCollapsed'],
 };
 
 /* list of minimum required fields for a given edge type */
@@ -84,7 +85,7 @@ GraphEdge = function(type, source, target, data) {
   this.targetID = target._id;
   this.nodeIDs = [source._id, target._id];
   if (data) {
-    var fields = data.fields;
+    var fields = Object.keys(data);
     for (var i=0; i<fields.length; i++) {
       this[fields[i]] = data[fields[i]];
     }

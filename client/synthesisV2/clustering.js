@@ -140,6 +140,19 @@ Template.MturkClustering.rendered = function(){
       "graphID",
       Session.get("currentGraph")._id
   );
+  //Create base filters for themes
+  FilterManager.create(clusterFilterName,
+      Session.get("currentUser"),
+      "nodes",
+      "type",
+      'theme'
+  );
+  FilterManager.create(clusterFilterName,
+      Session.get("currentUser"),
+      "nodes",
+      "graphID",
+      Session.get("currentGraph")._id
+  );
 };
 
 var setSharedGraphListener = function(graph) {
@@ -343,9 +356,11 @@ Template.MturkClusteringIdeaListIdeaItem.events({
 ********************************************************************/
 Template.MturkClusterList.helpers({
   clusters : function(){
-    // return getFilteredClusters(clusterFilterName);
-    var sessionPromptID = Session.get("currentPrompt")
-    return Clusters.find({promptID: sessionPromptID._id, isTrash: {$ne: true}}).fetch();
+	  return FilterManager.performQuery(
+      clusterFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes"
+    );
   },
 });
 
@@ -402,10 +417,6 @@ Template.MturkClustering.events({
     );
   },
 
-	'click .gamechangestar' : function(){
-    EventLogger.logToggleGC(this);
-		IdeaFactory.toggleGameChanger(this);
-	},
 });
 
 
@@ -418,10 +429,11 @@ Template.MturkClusterarea.rendered = function(){
 
 Template.MturkClusterarea.helpers({
   clusters : function(){
-    // return getFilteredClusters(clusterFilterName);
-    var sessionPromptID = Session.get("currentPrompt")
-    return Clusters.find({promptID: sessionPromptID._id, isTrash: {$ne: true}}).fetch();
-    // return Clusters.find({isTrash: {$ne: true}});
+	  return FilterManager.performQuery(
+      clusterFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes"
+    );
   },
 });
 
@@ -524,7 +536,7 @@ var getDroppableSource = function(item) {
     // var clusterID = trimFromString(itemSource.attr('id'),
     //     "cluster-list-");
     logger.trace("found cluster with ID: " + clusterID);
-    var cluster = ClusterFactory.getWithIDs(clusterID);
+    var cluster = Nodes.findOne({_id: clusterID});
     logger.trace(cluster);
     return cluster
   } else {
@@ -539,7 +551,7 @@ getDraggableIdea = function(item) {
   var ideaID = trimFromString(item.draggable[0].id,
     "idea-");
   logger.debug("Creating cluster with idea ID: " + ideaID);
-  var idea = IdeaFactory.getWithIDs(ideaID);
+  var idea = Nodes.findOne({_id: ideaID});
   logger.debug("Creating cluster with idea: " + 
     JSON.stringify(idea));
   return idea;
@@ -549,6 +561,8 @@ getDraggableIdea = function(item) {
 receiveDroppable = function(event, ui, context) {
   logger.trace("idealist received idea**********************");
   logger.trace(context);
+  logger.trace("********* data of ui object ***************");
+  logger.trace($(ui).data());
   var idea = getDraggableIdea(ui)
   logger.debug("************* idea *************");
   logger.debug(idea);
@@ -558,6 +572,8 @@ receiveDroppable = function(event, ui, context) {
   var target = $(context)
   logger.debug("************* target *************");
   logger.debug(target);
+  var userGraph = Session.get("currentGraph");
+  var sharedGraph = Session.get("sharedGraph");
   if (target.hasClass("ideadeck")) {
     logger.info("Removing idea from cluster and unsorting idea");
     if (source) {
@@ -584,11 +600,16 @@ receiveDroppable = function(event, ui, context) {
     EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("newcluster")) {
     logger.info("Creating a new cluster for idea");
-    target = ClusterFactory.create(null,
-      Session.get("currentUser"),
-      Session.get("currentPrompt")
+    Meteor.call("graphCreateThemeNode", sharedGraph, null, 
+      function(error, newTheme) {
+        logger.debug("Connecting Theme with idea nodes with new edge");
+        Meteor.call("graphLinkChild", newTheme, idea, null,
+          function(error, newLink) {
+            logger.debug("Created new Parent/child link");
+          }
+        );
+      }
     );
-    EventLogger.logCreateCluster(idea, source, target);
   } else if (target.hasClass("cluster-item")) {
     logger.info("Inserting idea into cluster using cluster list");
     var clusterID = trimFromString(context.id, 'ci-');
@@ -610,83 +631,15 @@ receiveDroppable = function(event, ui, context) {
         logger.trace("Removing idea from source cluster: " +
           JSON.stringify(source));
         EventLogger.logIdeaRemovedFromCluster(idea, source, target);
-        ClusterFactory.removeIdeaFromCluster(idea, source);
-        ClusterFactory.insertIdeaToCluster(idea, target);
+        //ClusterFactory.removeIdeaFromCluster(idea, source);
+        //ClusterFactory.insertIdeaToCluster(idea, target);
         //ui.item.remove();
       }
     } else {
-      ClusterFactory.insertIdeaToCluster(idea, target);
+      //ClusterFactory.insertIdeaToCluster(idea, target);
       //ui.item.remove();
     }
   }
-};
-
-updateFilters = function() {
-  /***************************************************************
-    * Check group ideators and update user filters
-    **************************************************************/
-  var group = Groups.findOne({_id: Session.get("currentGroup")._id});
-  logger.trace("Updating filters for group: " + group);
-  var ideators = GroupManager.getUsersInRole(group, 'HcompIdeator');
-  logger.trace("current group has ideators: " + 
-      JSON.stringify(ideators));
-  var prev = Session.get("currentIdeators");
-  logger.trace("current ideators stored in session are: " + 
-      JSON.stringify(prev));
-  var newUsers = [];
-  var update = false;
-  ideators.forEach(function(user) {
-    if (!isInList(user, prev, '_id')) {
-      logger.trace("Found new ideator: " + 
-        JSON.stringify(user));
-      newUsers.push(user);
-      update = true;
-    }
-  });
-  var prevCluster = Session.get("currentSynthesizers");
-  logger.trace("current synthesizers stored in session are: " + 
-      JSON.stringify(prevCluster));
-  var newClusterers = [];
-  var clusterers = GroupManager.getUsersInRole(group, 'Synthesizer'); 
-  clusterers.forEach(function(user) {
-    if (!isInList(user, prevCluster, '_id')) {
-      logger.trace("Found new clusterer: " + 
-        JSON.stringify(user));
-      newClusterers.push(user);
-      update = true;
-    }
-  });
-
-  if (update) {
-    logger.trace("Updating session variable and filter");
-    //Create filter for user
-    newUsers.forEach(function(user) {
-      logger.debug("Creating new filter for ideator user: " + user.name);
-      var newFilter = FilterManager.create(ideaFilterName,
-          Session.get("currentUser"),
-          "ideas",
-          "userID",
-          user._id
-      );
-      prev.push(user);
-    });
-    newClusterers.forEach(function(user) {
-      logger.debug("Creating new filter for cluster user: " + user.name);
-      var newFilter = FilterManager.create(clusterFilterName,
-          Session.get("currentUser"),
-          "clusters",
-          "userID",
-          user._id
-      );
-      prevCluster.push(user);
-    });
-    logger.debug("Setting list of ideators: " + 
-        JSON.stringify(prev));
-    Session.set("currentIdeators", prev);
-    logger.debug("Setting list of synthesizers: " + 
-        JSON.stringify(prevCluster));
-    Session.set("currentSynthesizers", prevCluster);
- }
 };
 
 function trashCluster (e, obj) {
@@ -699,14 +652,3 @@ function trashCluster (e, obj) {
   ClusterFactory.trash(Clusters.findOne({_id: clusterID}));
 };
 
-getFilteredClusters = function(clusterFilterName){
-/***************************************************************
-* Get filtered clusters for cluster list and cluster area
-**************************************************************/  
-
-  var filteredClusters = FilterManager.performQuery(
-    clusterFilterName, 
-    Session.get("currentUser"), 
-    "clusters");
-  return filteredClusters;
-}

@@ -86,6 +86,31 @@ Meteor.methods({
       return result;
     }
   },
+  graphCreateThemeNode: function(graph, metadata) {
+    if (!metadata) {
+      metadata = {}
+    }
+    logger.debug("Creating a theme node");
+    metadata['name'] = "";
+    metadata['time'] = new Date().getTime();
+    metadata['isTrash'] = false;
+    metadata['isMerged'] = false;
+    var jitterTop = 30 + getRandomInt(0, 30);
+    var jitterLeft = getRandomInt(0, 30);
+    metadata['position'] = {top: jitterTop , left: jitterLeft};
+    metadata['isCollapsed'] = false; //used only for clustering interface
+    logger.trace(metadata);
+    return createGraphNode(graph, 'theme', metadata);
+  },
+  graphLinkChild: function(parent, child, metadata) {
+    if (!metadata) {
+      metadata = {}
+    }
+    var edge = new GraphEdge('parent_child', parent, child, metadata);
+    edge._id = Edges.insert(edge);
+    return edge;
+    
+  }
     
 });
 
