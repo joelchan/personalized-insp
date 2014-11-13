@@ -72,6 +72,7 @@ Template.MturkClustering.rendered = function(){
   var prompt = Session.get("currentPrompt");
   var group = Session.get("currentGroup");
   var user = Session.get("currentUser");
+  //Get user graph
   var userGraph = Graphs.findOne({
     'promptID': prompt._id,
     'groupID': group._id,
@@ -90,7 +91,8 @@ Template.MturkClustering.rendered = function(){
     logger.debug("Setting User graph");
     Session.set("currentGraph", userGraph);
   }
-
+  
+  //Get shared graph
   var sharedGraph = Graphs.findOne({
     'promptID': prompt._id,
     'groupID': group._id,
@@ -101,14 +103,17 @@ Template.MturkClustering.rendered = function(){
     logger.info("No shared graph found.  Initializing new graph");
     Meteor.call("graphCreate", prompt, group, null,
       function (error, result) {
-        logger.debug("Setting User graph");
-        Session.set("currentGraph", result);
+        logger.debug("Setting shared graph");
+        Session.set("sharedGraph", result);
+        setSharedGraphListener(result);
       }
     );
   } else {
     logger.debug("Setting shared graph");
-    Session.set("currentGraph", sharedGraph);
+    Session.set("sharedGraph", sharedGraph);
+    setSharedGraphListener(sharedGraph);
   }
+
 
   //Create isInCluster filter
   FilterManager.create(ideaFilterName,
@@ -138,6 +143,40 @@ Template.MturkClustering.rendered = function(){
     //} 
   //});
 };
+
+var setSharedGraphListener = function(graph) {
+  logger.debug("Setting up shared graph listener");
+  Nodes.find({graphID: graph._id}).observe({
+    added: function(node) {
+      logger.debug("new node added for this shared graph");
+      var myNodeIDs = Session.get("currentGraph").nodeIDs;
+      if (Edges.find({$and: [{nodeIDs: node._id}, 
+          {nodeIDs: {$in: myNodeIDs}}]}).count() > 0) {
+        logger.debug("Shared node is already in user graph");
+      } else {
+        logger.debug("creating duplicate shared node");
+        Meteor.call("graphDuplicateShared", node, Session.get("currentGraph"),
+          function(error, result) {
+            logger.debug("finished creating duplicate shared node");
+          }
+        );
+      }
+    },
+  });
+};
+
+createTheme = function(theme) {
+  //Test function for creating a theme
+  var graph = Session.get("sharedGraph");
+  var type = theme;
+  var data = {name: "Test Theme1",
+      time:  new Date().getTime(),
+      isTrash: false,
+      isMerged: false
+  };
+  Meteor.call("graphCreateNode", graph, type, data);
+};
+   
 
 /********************************************************************
 * IdeaList template Helpers

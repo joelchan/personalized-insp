@@ -10,11 +10,14 @@ Graphs = new Mongo.Collection("graphs");
 Nodes = new Mongo.Collection("nodes");
 Edges = new Mongo.Collection("edges");
 
+
+/* list of minimum required fields for a given node type */
 NODE_TYPES = {
   'ideas': ['content', 'time'],
   'theme': ['name', 'time', 'isTrash', 'isMerged'],
 };
 
+/* list of minimum required fields for a given edge type */
 EDGE_TYPES = {
   'parent_child': ['sourceID', 'targetID'],
   'merged': ['sourceID', 'targetID'],
@@ -45,15 +48,17 @@ GraphNode = function(graph, type, data) {
   *
   * @params
   *   graph - the parent graph of this edge
+  *   type - a string that matches a field in the NODE_TYPES enum
   *   metadata(optional) - a key-value object of additional metadata 
   *       to store as key-value pairs for the edge.
   *
   * @return {object} GraphNode object 
   ********************************************************************/
   this.graphID = graph._id;
+  this.type = type;
   if (data) {
     // Add metadata fields if any are given
-    var fields = data.fields;
+    var fields = Object.keys(data);
     for (var i=0; i<fields.length; i++) {
       this[fields[i]] = data[fields[i]];
     }
@@ -74,9 +79,11 @@ GraphEdge = function(type, source, target, data) {
   *
   * @return {object} GraphEdge object 
   ********************************************************************/
-  this.graphID = graph._id;
+//  this.graphID = graph._id;
+  this.type = type;
   this.sourceID = source._id;
   this.targetID = target._id;
+  this.nodeIDs = [source._id, target._id];
   if (data) {
     var fields = data.fields;
     for (var i=0; i<fields.length; i++) {
