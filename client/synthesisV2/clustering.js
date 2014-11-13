@@ -238,26 +238,21 @@ Template.MturkClusterIdeaItem.rendered = function() {
 };
 
 Template.MturkClusterIdeaItem.helpers({
-  gameChangerStatus : function(){
-    return this.isGamechanger;
-  },
   isNotInCluster: function() {
-    return (this.clusterIDs.length === 0) ? true : false;
+    var num = Edges.find({nodeIDs: this._id}).count();
+    return (num === 0) ? true : false;
   },
   hasNotVoted: function() {
-    if (isInList(Session.get("currentUser")._id, this.votes)) {
-      logger.debug("User has already voted");
-      return false;
-    } else {
-      logger.debug("User has not voted");
-      return true;
-    }
+    return this.vote;
   },
   voteNum: function() {
-    return this.votes.length;
+    return Nodes.find({ideaID: this.ideaID, 
+      vote: true}).count();
   },
   hasVotes: function() {
-    if (this.votes.length > 0) {
+    var num =  Nodes.find({ideaID: this.ideaID, 
+      vote: true}).count();
+    if (num > 0) {
       return true
     } else {
       return false
@@ -267,12 +262,10 @@ Template.MturkClusterIdeaItem.helpers({
 
 Template.MturkClusterIdeaItem.events({
   'click .up-vote': function(e, elm) {
-    if (!isInList(Session.get("currentUser")._id, this.votes)) {
-      logger.debug("voting for idea");
-      IdeaFactory.upVote(this, Session.get("currentUser"));
+    if (this.vote) {
+      Nodes.update({_id: this._id}, {$set: {vote: !this.vote}});
     } else {
-      logger.debug("undo voting for idea");
-      IdeaFactory.downVote(this, Session.get("currentUser"));
+      Nodes.update({_id: this._id}, {$set: {vote: true}});
     }
   },
 
@@ -306,26 +299,20 @@ Template.MturkClusteringIdeaListIdeaItem.helpers({
     return this.isGamechanger;
   },
   isNotInCluster: function() {
-    return (this.clusterIDs.length === 0) ? true : false;
+    var num = Edges.find({nodeIDs: this._id}).count();
+    return (num === 0) ? true : false;
   },
   hasNotVoted: function() {
-    if (isInList(Session.get("currentUser")._id, this.votes)) {
-      logger.debug("User has already voted");
-      return false;
-    } else {
-      logger.debug("User has not voted");
-      return true;
-    }
+    return this.vote;
   },
   voteNum: function() {
-    if (this.votes) {
-      return this.votes.length;
-    } else {
-      return 0;
-    }
+    return Nodes.find({ideaID: this.ideaID, 
+      vote: true}).count();
   },
   hasVotes: function() {
-    if (this.votes.length > 0) {
+    var num =  Nodes.find({ideaID: this.ideaID, 
+      vote: true}).count();
+    if (num > 0) {
       return true
     } else {
       return false
@@ -335,13 +322,18 @@ Template.MturkClusteringIdeaListIdeaItem.helpers({
 
 Template.MturkClusteringIdeaListIdeaItem.events({
   'click .up-vote': function(e, elm) {
-    if (!isInList(Session.get("currentUser")._id, this.votes)) {
-      logger.debug("voting for idea");
-      IdeaFactory.upVote(this, Session.get("currentUser"));
+    if (this.vote) {
+      Nodes.update({_id: this._id}, {$set: {vote: !this.vote}});
     } else {
-      logger.debug("undo voting for idea");
-      IdeaFactory.downVote(this, Session.get("currentUser"));
+      Nodes.update({_id: this._id}, {$set: {vote: true}});
     }
+    //if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      //logger.debug("voting for idea");
+      //IdeaFactory.upVote(this, Session.get("currentUser"));
+    //} else {
+      //logger.debug("undo voting for idea");
+      //IdeaFactory.downVote(this, Session.get("currentUser"));
+    //}
   },
 
 });

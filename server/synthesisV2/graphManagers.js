@@ -79,6 +79,7 @@ Meteor.methods({
       metadata['ideaID'] = idea._id;
       metadata['content'] = idea.content;
       metadata['time'] = idea.time;
+      metadata['vote'] = false;
       return createGraphNode(graph, 'idea', metadata);
     } else {
       logger.debug("Node already exists for this idea and graph");
