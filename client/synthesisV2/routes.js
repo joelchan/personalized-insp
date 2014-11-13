@@ -13,7 +13,7 @@ Router.map(function () {
    * Define custom routes for SynthesisV2 pages
    * *************************************************************/
   this.route('ParallelSynthesis', {
-    path: 'crowd/Categorize/:promptID/:userID/',
+    path: 'crowd/Categorize2/:promptID/:userID/',
   	template: 'ParallelClustering',
     waitOn: function() {
       logger.debug("Waiting on...");

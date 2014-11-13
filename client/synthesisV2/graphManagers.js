@@ -15,17 +15,15 @@ Meteor.methods({
     logger.trace("Creating new temp graph on client");
     var graph = new Graph();
     graph._id = Graphs.insert(graph);
-    //var factory = this;
-    //if (hasForEach(ideas)) {
-      //ideas.forEach(function(idea) {
-        //logger.trace("Adding idea with id + " + idea._id + " to cluster");
-        //ClusterFactory.insertIdeaToCluster(idea, cluster);
-      //});
-    //} else if (ideas) {
-      //logger.trace("Adding idea with id + " + ideas._id + " to cluster");
-      //ClusterFactory.insertIdeaToCluster(ideas, cluster);
-    //}
     return Graph;
+  },
+  graphCreateNode: function(graph, metadata) {
+    /*************************************************************
+     * Client stub for temporary graph node
+     * **********************************************************/
+    logger.debug("Creating new Graph Node on client");
+    return "node";
+
   },
 
 });

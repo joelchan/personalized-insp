@@ -28,15 +28,18 @@ GraphNode = function(graph, metadata) {
   *
   * @params
   *   graph - the parent graph of this edge
-  *   metadata - a key-value object of additional metadata to store
-  *       as key-value pairs for the edge.
+  *   metadata(optional) - a key-value object of additional metadata 
+  *       to store as key-value pairs for the edge.
   *
   * @return {object} GraphNode object 
   ********************************************************************/
   this.graphID = graph._id;
-  var fields = metadata.fields;
-  for (var i=0; i<fields.length; i++) {
-    this[fields[i]] = metadata[fields[i]];
+  if (metadata) {
+    // Add metadata fields if any are given
+    var fields = metadata.fields;
+    for (var i=0; i<fields.length; i++) {
+      this[fields[i]] = metadata[fields[i]];
+    }
   }
 
 };
@@ -49,17 +52,19 @@ GraphEdge = function(graph, source, target, metadata) {
   *   graph - the parent graph of this edge
   *   source - the source node of the edge
   *   target - the destination node of the edge
-  *   metadata - a key-value object of additional metadata to store
-  *       as key-value pairs for the edge.
+  *   metadata(optional) - a key-value object of additional metadata 
+  *       to store as key-value pairs for the edge.
   *
   * @return {object} GraphEdge object 
   ********************************************************************/
   this.graphID = graph._id;
   this.sourceID = source._id;
   this.targetID = target._id;
-  var fields = metadata.fields;
-  for (var i=0; i<fields.length; i++) {
-    this[fields[i]] = metadata[fields[i]];
+  if (metadata) {
+    var fields = metadata.fields;
+    for (var i=0; i<fields.length; i++) {
+      this[fields[i]] = metadata[fields[i]];
+    }
   }
 
 }
