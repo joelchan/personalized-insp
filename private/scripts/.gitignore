@@ -1,6 +1,9 @@
-data
-=======
+###################
 *.csv
 data
 *.pyc
-mturkconfig.json*
+
+# Mturk config files 
+####################
+mturkconfig.json
+

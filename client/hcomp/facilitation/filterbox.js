@@ -501,11 +501,15 @@ searchQueryMatch = function searchQueryMatch(idea,queryArr) {
 }
 
 stringToWords = function stringToWords(str) {
+  if (str) {
 	arr = str.split(" ");
 	arr.forEach(function(q) {
 		q = q.trim();
 	});
 	return arr;
+  } else {
+    return [];
+  };
 }
 
 getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
