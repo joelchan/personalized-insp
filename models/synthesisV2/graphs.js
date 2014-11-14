@@ -50,7 +50,7 @@ GraphNode = function(graph, type, data) {
   * @params
   *   graph - the parent graph of this edge
   *   type - a string that matches a field in the NODE_TYPES enum
-  *   metadata(optional) - a key-value object of additional metadata 
+  *   data(optional) - a key-value object of additional metadata 
   *       to store as key-value pairs for the edge.
   *
   * @return {object} GraphNode object 
@@ -74,7 +74,7 @@ GraphEdge = function(type, source, target, data) {
   *   graph - the parent graph of this edge
   *   source - the source node of the edge
   *   target - the destination node of the edge
-  *   metadata(optional) - a key-value object of additional metadata 
+  *   data(optional) - a key-value object of additional metadata 
   *       to store as key-value pairs for the edge.
   *
   * @return {object} GraphEdge object 

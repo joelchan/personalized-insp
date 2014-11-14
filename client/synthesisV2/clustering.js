@@ -127,6 +127,11 @@ Template.MturkClustering.rendered = function(){
     },
   });
 
+  //Reset all the filters before initializing
+  FilterManager.reset(ideaFilterName,
+      Session.get("currentUser"),
+      "nodes");
+
   //Create base filters for ideas
   FilterManager.create(ideaFilterName,
       Session.get("currentUser"),
@@ -379,6 +384,9 @@ Template.MturkClusterList.rendered = function() {
 Template.MturkClustering.helpers({
 
   clustername : function(){
+    logger.trace("**************************************************");
+    logger.trace(this);
+    return this.name;
     var clu = Clusters.findOne({_id: this.toString()});
     if(clu === undefined) return false
     return clu.name;
@@ -389,12 +397,19 @@ Template.MturkClustering.helpers({
   },
 
   numClusters : function(){
-    return Clusters.find({isRoot: {$ne: true}}).count();
+	  return FilterManager.performQuery(
+      clusterFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes"
+    ).count();
   },
 
   numUnnamed : function(){
     var nullNames = ["Not named yet", "", " ", "  ", "   ", undefined];
-    return Clusters.find({isRoot: {$ne: true}, name: {$in: nullNames}}).count();
+    return Nodes.find({type: 'theme',
+      'graphID': Session.get("currentGraph")._id,
+      'name': {$in: nullNames}
+    }).count();
   }
 });
 
@@ -411,7 +426,7 @@ Template.MturkClustering.events({
     // console.log(this);
     // var id = trimFromString($(this).parent().attr("id"), "cluster-");
     // logger.debug("collapsed" + id)
-    Clusters.update({_id: this._id}, 
+    Nodes.update({_id: this._id}, 
     // Clusters.update({_id: id}, 
       {$set: {isCollapsed: !this.isCollapsed}}
     );
@@ -445,11 +460,14 @@ Template.MturkClusterarea.helpers({
 Template.MturkCluster.events({
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
-    logger.debug(this);
-    var clusterName = $(event.target).val();
-    logger.debug("new cluster name: " + clusterName);
-    var cluster =  ClusterFactory.setName(this, clusterName);
-    EventLogger.logChangeClusterName(this, clusterName);
+    if(event.keyCode===13) {
+      logger.debug(this);
+      var clusterName = $(event.target).val();
+      logger.debug("new cluster name: " + clusterName);
+      var cluster =  Meteor.call("graphUpdateField", this, 
+        {'name': clusterName});
+      EventLogger.logChangeClusterName(this, clusterName);
+    }
   },
 });
 
@@ -501,7 +519,8 @@ Template.MturkCluster.helpers({
   numclusterideas : function() {
     var ideaIDs = $(this)[0].ideaIDs;
     var cursor = Ideas.find({_id: {$in: ideaIDs}}).fetch();
-    // logger.debug("found cluster with ideas: ")
+    logger.debug("found cluster with ideas: ")
+    //var edges = Edges.find({type: 'parent_child',
     return cursor.length;
   },
 

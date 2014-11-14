@@ -43,8 +43,12 @@ Meteor.methods({
       var fields = removeMember(Object.keys(node), '_id');
       fields = removeMember(fields, 'graphID');
       fields = removeMember(fields, 'type');
+      var data = {};
+      for (var i=0; i<fields.length; i++) {
+        data[fields[i]] = node[fields[i]];
+      }
       //Create copy of node in target graph
-      var copy = createGraphNode(targetGraph, node.type, fields);
+      var copy = createGraphNode(targetGraph, node.type, data);
       //Create copy edge
       if (!Edges.findOne({$and: [{nodeIDs: node._id},
           {nodeIDs: copy._id}]})) {
@@ -91,7 +95,7 @@ Meteor.methods({
       metadata = {}
     }
     logger.debug("Creating a theme node");
-    metadata['name'] = "";
+    metadata['name'] = "Not named yet";
     metadata['time'] = new Date().getTime();
     metadata['isTrash'] = false;
     metadata['isMerged'] = false;
@@ -110,7 +114,16 @@ Meteor.methods({
     edge._id = Edges.insert(edge);
     return edge;
     
-  }
+  },
+  graphUpdateField: function(node, data) {
+    logger.debug("Updated fields for a node");
+    var fields = Object.keys(data);
+    for (var i=0; i<fields.length; i++) {
+      node[field[i]] = data[field[i]];
+    }
+    Nodes.update({_id: node._id}, {$set: data});
+    return node;
+  },
     
 });
 
