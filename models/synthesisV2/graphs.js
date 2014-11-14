@@ -95,12 +95,15 @@ GraphEdge = function(type, source, target, data) {
 
 
 getNodeChildren = function (parent) {
+  logger.debug("getting children of node: ");
+  logger.trace(parent);
   var edges = Edges.find({type: 'parent_child',
-    nodeIDs: parent._id
+    parentID: parent._id
   });
   var childIDs = [];
   edges.forEach(function(edge) {
     childIDs.push(edge.childID);
   });
+  logger.trace(childIDs);
   return Nodes.find({_id: {$in: childIDs}});
 };

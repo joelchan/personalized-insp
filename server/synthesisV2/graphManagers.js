@@ -107,15 +107,26 @@ Meteor.methods({
     return createGraphNode(graph, 'theme', metadata);
   },
   graphLinkChild: function(parent, child, metadata) {
+    logger.debug("Creating a new parent-child graph edge");
     if (!metadata) {
       metadata = {}
     }
+    logger.trace(parent);
+    logger.trace(child);
     metadata['parentID'] = parent._id;
     metadata['childID'] = child._id;
+    logger.trace(metadata);
     var edge = new GraphEdge('parent_child', parent, child, metadata);
     edge._id = Edges.insert(edge);
     return edge;
     
+  },
+  graphUnLinkChild: function(parent, child) {
+    logger.debug("Deleting parent-child graph edge");
+    Edges.remove({type: 'parent_child', 
+      'parentID': parent._id,
+      'childID': child._id,
+    });
   },
   graphUpdateNodeField: function(node, data) {
     logger.debug("Updated fields for a node");

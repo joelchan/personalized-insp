@@ -515,11 +515,10 @@ Template.MturkCluster.rendered = function(){
 
 Template.MturkCluster.helpers({
   clusterideas : function(){
-    // logger.trace("Getting Cluster Ideas");
+    logger.debug("Getting Cluster Ideas");
+    logger.trace("**************** cluster data ***************");
+    logger.trace(this);
     return getNodeChildren(this);
-    //var ideaIDs = $(this)[0].ideaIDs;
-    //var cursor = Ideas.find({_id: {$in: ideaIDs}});
-    //return cursor
   },
 
   numclusterideas : function() {
@@ -602,8 +601,8 @@ receiveDroppable = function(event, ui, context) {
   if (target.hasClass("ideadeck")) {
     logger.info("Removing idea from cluster and unsorting idea");
     if (source) {
+      Meteor.call("graphUnlinkChild", source, idea);
       EventLogger.logIdeaUnclustered(idea, source);
-      ClusterFactory.removeIdeaFromCluster(idea, source);
     }
     target = null;
     //ui.item.remove();
@@ -612,17 +611,17 @@ receiveDroppable = function(event, ui, context) {
     var targetID = trimFromString(target.attr('id'), 
         "cluster-");
     logger.debug("Adding to cluster with ID: " + targetID);
-    target = ClusterFactory.getWithIDs(targetID);
+    target = Nodes.findOne({_id: targetID});
     logger.debug("Cluster: " + JSON.stringify(target));
-    EventLogger.logIdeaClustered(idea, source, target);
+    //EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("clusterul")) {
     logger.info("Moving idea to a cluster");
     var targetID = trimFromString(target.attr('id'), 
         "cluster-list-");
     logger.debug("Adding to cluster with ID: " + targetID);
-    target = ClusterFactory.getWithIDs(targetID);
+    target = Nodes.findOne({_id: targetID});
     logger.debug("Cluster: " + JSON.stringify(target));
-    EventLogger.logIdeaClustered(idea, source, target);
+    //EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("newcluster")) {
     logger.info("Creating a new cluster for idea");
     Meteor.call("graphCreateThemeNode", sharedGraph, null, 
@@ -638,8 +637,8 @@ receiveDroppable = function(event, ui, context) {
   } else if (target.hasClass("cluster-item")) {
     logger.info("Inserting idea into cluster using cluster list");
     var clusterID = trimFromString(context.id, 'ci-');
-    target = ClusterFactory.getWithIDs(clusterID);
-    EventLogger.logIdeaClustered(idea, source, target);
+    target = Nodes.findOne({_id: clusterID});
+    //EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass('cluster-trash-can')) {
     logger.info("Deleting cluster using droppable trash can");
     logger.trace(target);
@@ -647,7 +646,7 @@ receiveDroppable = function(event, ui, context) {
     var targetID = trimFromString(target.attr('id'), 
         "cluster-");
     logger.debug("Adding to cluster with ID: " + targetID);
-    target = ClusterFactory.getWithIDs(targetID);
+    target = Nodes.findOne({_id: targetID});
     logger.debug("Cluster: " + JSON.stringify(target));
   }
   if (target !== null) {
@@ -655,13 +654,28 @@ receiveDroppable = function(event, ui, context) {
       if (source._id !== target._id) {
         logger.trace("Removing idea from source cluster: " +
           JSON.stringify(source));
-        EventLogger.logIdeaRemovedFromCluster(idea, source, target);
+        //EventLogger.logIdeaRemovedFromCluster(idea, source, target);
         //ClusterFactory.removeIdeaFromCluster(idea, source);
+        Meteor.call("graphUnLinkChild", source, idea,
+          function(error, newLink) {
+            logger.debug("Removed parent/child link");
+          }
+        );
         //ClusterFactory.insertIdeaToCluster(idea, target);
+        Meteor.call("graphLinkChild", target, idea, null,
+          function(error, newLink) {
+            logger.debug("Created new Parent/child link");
+          }
+        );
         //ui.item.remove();
       }
     } else {
       //ClusterFactory.insertIdeaToCluster(idea, target);
+      Meteor.call("graphLinkChild", target, idea, null,
+        function(error, newLink) {
+          logger.debug("Created new Parent/child link");
+        }
+      );
       //ui.item.remove();
     }
   }
