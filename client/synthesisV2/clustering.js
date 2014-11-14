@@ -460,11 +460,12 @@ Template.MturkClusterarea.helpers({
 Template.MturkCluster.events({
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
-    if(event.keyCode===13) {
+    if(event.keyCode === 13) {
+      logger.debug("Updating name of cluster");
       logger.debug(this);
       var clusterName = $(event.target).val();
       logger.debug("new cluster name: " + clusterName);
-      var cluster =  Meteor.call("graphUpdateField", this, 
+      var cluster =  Meteor.call("graphUpdateNodeField", this, 
         {'name': clusterName});
       EventLogger.logChangeClusterName(this, clusterName);
     }
@@ -474,14 +475,17 @@ Template.MturkCluster.events({
 Template.MturkCluster.rendered = function(){
   $('.cluster').draggable({
     stop: function() {
-      logger.debug("dragged object");
+      logger.debug("dragged object data");
+      logger.trace(this);
       var id = trimFromString($(this).attr("id"), "cluster-");
-      var cluster = ClusterFactory.getWithIDs(id);
+      var theme = Nodes.findOne({_id: id});
       var pos = {'top': parseFloat(trimFromString($(this).css('top'),'px')),
         'left': parseFloat(trimFromString($(this).css('left'),'px'))
       };
-      ClusterFactory.updatePosition(cluster, pos);
-      EventLogger.logMovedCluster(cluster, pos);
+      Meteor.call("graphUpdateNodeField", theme,
+        {'position': pos}
+      );
+      EventLogger.logMovedCluster(theme, pos);
     },
     grid: [5, 5]
   });
@@ -508,20 +512,23 @@ Template.MturkCluster.rendered = function(){
   });
 }
 
+
 Template.MturkCluster.helpers({
   clusterideas : function(){
     // logger.trace("Getting Cluster Ideas");
-    var ideaIDs = $(this)[0].ideaIDs;
-    var cursor = Ideas.find({_id: {$in: ideaIDs}});
-    return cursor
+    return getNodeChildren(this);
+    //var ideaIDs = $(this)[0].ideaIDs;
+    //var cursor = Ideas.find({_id: {$in: ideaIDs}});
+    //return cursor
   },
 
   numclusterideas : function() {
-    var ideaIDs = $(this)[0].ideaIDs;
-    var cursor = Ideas.find({_id: {$in: ideaIDs}}).fetch();
-    logger.debug("found cluster with ideas: ")
-    //var edges = Edges.find({type: 'parent_child',
-    return cursor.length;
+    return getNodeChildren(this).count();
+    //var ideaIDs = $(this)[0].ideaIDs;
+    //var cursor = Ideas.find({_id: {$in: ideaIDs}}).fetch();
+    //logger.debug("found cluster with ideas: ")
+    ////var edges = Edges.find({type: 'parent_child',
+    //return cursor.length;
   },
 
   named : function(){
@@ -529,7 +536,6 @@ Template.MturkCluster.helpers({
       return 'text-danger';
     else return false
   },
-
 
   isCollapsed : function(){
     return $(this)[0].isCollapsed;

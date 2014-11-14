@@ -110,16 +110,18 @@ Meteor.methods({
     if (!metadata) {
       metadata = {}
     }
+    metadata['parentID'] = parent._id;
+    metadata['childID'] = child._id;
     var edge = new GraphEdge('parent_child', parent, child, metadata);
     edge._id = Edges.insert(edge);
     return edge;
     
   },
-  graphUpdateField: function(node, data) {
+  graphUpdateNodeField: function(node, data) {
     logger.debug("Updated fields for a node");
     var fields = Object.keys(data);
     for (var i=0; i<fields.length; i++) {
-      node[field[i]] = data[field[i]];
+      node[fields[i]] = data[fields[i]];
     }
     Nodes.update({_id: node._id}, {$set: data});
     return node;

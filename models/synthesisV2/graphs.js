@@ -91,4 +91,16 @@ GraphEdge = function(type, source, target, data) {
     }
   }
 
-}
+};
+
+
+getNodeChildren = function (parent) {
+  var edges = Edges.find({type: 'parent_child',
+    nodeIDs: parent._id
+  });
+  var childIDs = [];
+  edges.forEach(function(edge) {
+    childIDs.push(edge.childID);
+  });
+  return Nodes.find({_id: {$in: childIDs}});
+};
