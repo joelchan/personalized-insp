@@ -158,6 +158,12 @@ Template.MturkClustering.rendered = function(){
       "graphID",
       Session.get("currentGraph")._id
   );
+  FilterManager.create(clusterFilterName,
+      Session.get("currentUser"),
+      "nodes",
+      "isTrash",
+      false 
+  );
 };
 
 var setSharedGraphListener = function(graph) {
@@ -688,6 +694,9 @@ function trashCluster (e, obj) {
   var clusterDiv = obj.draggable[0];
   var clusterID = trimFromString($(clusterDiv).attr('id'), 'cluster-');
   logger.debug("Trashing cluster with ID: " + clusterID);
-  ClusterFactory.trash(Clusters.findOne({_id: clusterID}));
+  var cluster = Nodes.findOne({_id: clusterID});
+  Meteor.call("graphUpdateNodeField", cluster, 
+    {'isTrash': true}
+  );
 };
 
