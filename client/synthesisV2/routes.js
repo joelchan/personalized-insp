@@ -73,10 +73,11 @@ Router.map(function () {
             logger.trace(userGraph);
             if (!userGraph) {
               logger.info("No user graph found.  Initializing new graph");
-              Meteor.call("graphCreate", prompt, group, user,
+              Meteor.call("graphCreate", prompt._id, group._id, user._id,
                 function (error, result) {
                   logger.debug("Setting User graph");
-                  Session.set("currentGraph", result);
+                  var g = Graphs.findOne({_id: result});
+                  Session.set("currentGraph", g);
                 }
               );
             } else {
@@ -93,10 +94,11 @@ Router.map(function () {
             logger.trace(sharedGraph);
             if (!sharedGraph) {
               logger.info("No shared graph found.  Initializing new graph");
-              Meteor.call("graphCreate", prompt, group, null,
+              Meteor.call("graphCreate", prompt._id, group._id, null,
                 function (error, result) {
                   logger.debug("Setting shared graph");
-                  Session.set("sharedGraph", result);
+                  var g = Graphs.findOne({_id: result});
+                  Session.set("sharedGraph", g);
                 }
               );
             } else {
