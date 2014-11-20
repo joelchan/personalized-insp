@@ -25,16 +25,16 @@ EDGE_TYPES = {
   'graph_link': ['sharedNodeID', 'userNodeID'],
 };
 
-Graph = function(prompt, group, user) {
+Graph = function(promptID, groupID, userID) {
   /********************************************************************
   * Graph constructor
   *
   * @return {object} Graph object 
   ********************************************************************/
-  this.promptID = prompt._id;
-  this.groupID = group._id;
-  if (user) {
-    this.userID = user._id;
+  this.promptID = promptID;
+  this.groupID = groupID;
+  if (userID) {
+    this.userID = userID;
   } else {
     this.userID = null;
   }
@@ -43,7 +43,7 @@ Graph = function(prompt, group, user) {
 
 };
 
-GraphNode = function(graph, type, data) {
+GraphNode = function(graphID, type, data) {
   /********************************************************************
   * GraphNode constructor
   *
@@ -55,7 +55,7 @@ GraphNode = function(graph, type, data) {
   *
   * @return {object} GraphNode object 
   ********************************************************************/
-  this.graphID = graph._id;
+  this.graphID = graphID;
   this.type = type;
   if (data) {
     // Add metadata fields if any are given
@@ -66,7 +66,7 @@ GraphNode = function(graph, type, data) {
   }
 };
 
-GraphEdge = function(type, source, target, data) {
+GraphEdge = function(type, sourceID, targetID, data) {
   /********************************************************************
   * GraphEdge constructor
   *
@@ -81,9 +81,9 @@ GraphEdge = function(type, source, target, data) {
   ********************************************************************/
 //  this.graphID = graph._id;
   this.type = type;
-  this.sourceID = source._id;
-  this.targetID = target._id;
-  this.nodeIDs = [source._id, target._id];
+  this.sourceID = sourceID;
+  this.targetID = targetID;
+  this.nodeIDs = [sourceID, targetID];
   if (data) {
     var fields = Object.keys(data);
     for (var i=0; i<fields.length; i++) {

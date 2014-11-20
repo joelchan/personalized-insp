@@ -81,10 +81,11 @@ Template.MturkClustering.rendered = function(){
   logger.trace(userGraph);
   if (!userGraph) {
     logger.info("No user graph found.  Initializing new graph");
-    Meteor.call("graphCreate", prompt, group, user,
+    Meteor.call("graphCreate", prompt._id, group._id, user._id,
       function (error, result) {
         logger.debug("Setting User graph");
-        Session.set("currentGraph", result);
+        var g = Graphs.findOne({_id: result});
+        Session.set("currentGraph", g);
       }
     );
   } else {
@@ -101,11 +102,12 @@ Template.MturkClustering.rendered = function(){
   logger.trace(sharedGraph);
   if (!sharedGraph) {
     logger.info("No shared graph found.  Initializing new graph");
-    Meteor.call("graphCreate", prompt, group, null,
+    Meteor.call("graphCreate", prompt._id, group._id, null,
       function (error, result) {
         logger.debug("Setting shared graph");
-        Session.set("sharedGraph", result);
-        setSharedGraphListener(result);
+        var g = Graphs.findOne({_id: result});
+        Session.set("sharedGraph", g);
+        setSharedGraphListener(g);
       }
     );
   } else {
@@ -116,14 +118,15 @@ Template.MturkClustering.rendered = function(){
 
   //Setup Idea listener for node creation
   logger.debug("initializing idea nodes");
-  setIdeaListener(Session.get("currentGroup").users);
+  setIdeaListener(Session.get("currentGroup").users,
+    Session.get("currentPrompt"));
 
   //Update Idea Listener when new members join group
   logger.debug("creating group listener for new users");
   Groups.find({_id: group._id}).observe({
     changed: function(newDoc, oldDoc) {
       var users = newDoc.users;
-      setIdeaListener(users);
+      setIdeaListener(users, Session.get("currentPrompt"));
     },
   });
 
@@ -177,7 +180,7 @@ var setSharedGraphListener = function(graph) {
         logger.debug("Shared node is already in user graph");
       } else {
         logger.debug("creating duplicate shared node");
-        Meteor.call("graphDuplicateShared", node, Session.get("currentGraph"),
+        Meteor.call("graphDuplicateShared", node._id, Session.get("currentGraph")._id,
           function(error, result) {
             logger.debug("finished creating duplicate shared node");
           }
@@ -187,10 +190,11 @@ var setSharedGraphListener = function(graph) {
   });
 };
 
-var setIdeaListener = function(users) {
+var setIdeaListener = function(users, prompt) {
   var currentListener = Session.get("ideaObserver");
   var userIDs = getIDs(users);
-  var observer = Ideas.find({userID: {$in: userIDs}}).observe({
+  var observer = Ideas.find({userID: {$in: userIDs}, 
+      promptID: prompt._id}).observe({
     added: function(idea) {
       createIdeaNode(idea);
     },
@@ -200,7 +204,7 @@ var setIdeaListener = function(users) {
 var createIdeaNode = function(idea) {
   logger.debug("creating node for idea");
   Meteor.call("graphCreateIdeaNode", 
-    Session.get("currentGraph"), idea, null
+    Session.get("currentGraph")._id, idea._id, null
   );
 },
 
@@ -214,7 +218,7 @@ createTheme = function(theme) {
       isTrash: false,
       isMerged: false
   };
-  Meteor.call("graphCreateNode", graph, type, data);
+  Meteor.call("graphCreateNode", graphID, type, data);
 };
    
 
@@ -471,7 +475,7 @@ Template.MturkCluster.events({
       logger.debug(this);
       var clusterName = $(event.target).val();
       logger.debug("new cluster name: " + clusterName);
-      var cluster =  Meteor.call("graphUpdateNodeField", this, 
+      var clusterID =  Meteor.call("graphUpdateNodeField", this._id, 
         {'name': clusterName});
       EventLogger.logChangeClusterName(this, clusterName);
     }
@@ -488,7 +492,7 @@ Template.MturkCluster.rendered = function(){
       var pos = {'top': parseFloat(trimFromString($(this).css('top'),'px')),
         'left': parseFloat(trimFromString($(this).css('left'),'px'))
       };
-      Meteor.call("graphUpdateNodeField", theme,
+      Meteor.call("graphUpdateNodeField", theme._id,
         {'position': pos}
       );
       EventLogger.logMovedCluster(theme, pos);
@@ -607,7 +611,7 @@ receiveDroppable = function(event, ui, context) {
   if (target.hasClass("ideadeck")) {
     logger.info("Removing idea from cluster and unsorting idea");
     if (source) {
-      Meteor.call("graphUnlinkChild", source, idea);
+      Meteor.call("graphUnlinkChild", source._id, idea._id);
       EventLogger.logIdeaUnclustered(idea, source);
     }
     target = null;
@@ -630,11 +634,11 @@ receiveDroppable = function(event, ui, context) {
     //EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("newcluster")) {
     logger.info("Creating a new cluster for idea");
-    Meteor.call("graphCreateThemeNode", sharedGraph, null, 
-      function(error, newTheme) {
+    Meteor.call("graphCreateThemeNode", sharedGraph._id, null, 
+      function(error, newThemeID) {
         logger.debug("Connecting Theme with idea nodes with new edge");
-        Meteor.call("graphLinkChild", newTheme, idea, null,
-          function(error, newLink) {
+        Meteor.call("graphLinkChild", newThemeID, idea._id, null,
+          function(error, newLinkID) {
             logger.debug("Created new Parent/child link");
           }
         );
@@ -662,14 +666,14 @@ receiveDroppable = function(event, ui, context) {
           JSON.stringify(source));
         //EventLogger.logIdeaRemovedFromCluster(idea, source, target);
         //ClusterFactory.removeIdeaFromCluster(idea, source);
-        Meteor.call("graphUnLinkChild", source, idea,
-          function(error, newLink) {
+        Meteor.call("graphUnLinkChild", source._id, idea._id,
+          function(error, newLinkID) {
             logger.debug("Removed parent/child link");
           }
         );
         //ClusterFactory.insertIdeaToCluster(idea, target);
-        Meteor.call("graphLinkChild", target, idea, null,
-          function(error, newLink) {
+        Meteor.call("graphLinkChild", target._id, idea._id, null,
+          function(error, newLinkID) {
             logger.debug("Created new Parent/child link");
           }
         );
@@ -677,8 +681,8 @@ receiveDroppable = function(event, ui, context) {
       }
     } else {
       //ClusterFactory.insertIdeaToCluster(idea, target);
-      Meteor.call("graphLinkChild", target, idea, null,
-        function(error, newLink) {
+      Meteor.call("graphLinkChild", target._id, idea._id, null,
+        function(error, newLinkID) {
           logger.debug("Created new Parent/child link");
         }
       );
@@ -694,8 +698,8 @@ function trashCluster (e, obj) {
   var clusterDiv = obj.draggable[0];
   var clusterID = trimFromString($(clusterDiv).attr('id'), 'cluster-');
   logger.debug("Trashing cluster with ID: " + clusterID);
-  var cluster = Nodes.findOne({_id: clusterID});
-  Meteor.call("graphUpdateNodeField", cluster, 
+  //var cluster = Nodes.findOne({_id: clusterID});
+  Meteor.call("graphUpdateNodeField", clusterID, 
     {'isTrash': true}
   );
 };
