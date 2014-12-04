@@ -1,4 +1,9 @@
+import pymongo, json
 from os import mkdir, listdir, path
+
+
+def date_handler(obj):
+        return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
 
 def write_json_to_file(data='', dir_name='data', file_name='default'):
