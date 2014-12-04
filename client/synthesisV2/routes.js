@@ -13,10 +13,13 @@ Router.map(function () {
    * Define custom routes for SynthesisV2 pages
    * *************************************************************/
   this.route('MturkSynthesis', {
-    path: 'crowd/Categorize/:promptID/:userID/',
+    path: 'crowd/Categorize/:promptID/:userID',
   	template: 'MturkClustering',
     waitOn: function() {
       logger.debug("Waiting on...");
+      var pID = this.params.promptID;
+      Meteor.subscribe('nodes');
+      Meteor.subscribe('edges');
       if (Session.get("currentUser")) {
         // return Meteor.subscribe('ideas');
         logger.debug("has current user...");
@@ -24,11 +27,9 @@ Router.map(function () {
           Meteor.subscribe('groups'),
           Meteor.subscribe('prompts'),
           Meteor.subscribe('myUsers'),
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('clusters'),
-          Meteor.subscribe('graphs'),
-          Meteor.subscribe('nodes'),
-          Meteor.subscribe('edges'),
+          Meteor.subscribe('ideas', {promptID: pID}),
+          //Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('graphs', {promptID: pID}),
           ];
       } else {
         logger.debug("NO current user...");
@@ -36,11 +37,9 @@ Router.map(function () {
           Meteor.subscribe('groups'),
           Meteor.subscribe('prompts'),
           Meteor.subscribe('myUsers'),
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('clusters'),
-          Meteor.subscribe('graphs'),
-          Meteor.subscribe('nodes'),
-          Meteor.subscribe('edges'),
+          Meteor.subscribe('ideas', {promptID: pID}),
+          //Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('graphs', {promptID: pID}),
         ];
       }
     },
