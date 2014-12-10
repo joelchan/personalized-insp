@@ -12,6 +12,38 @@ Router.map(function () {
   /***************************************************************
    * Define custom routes for SynthesisV2 pages
    * *************************************************************/
+  this.route('MturkSynthLoginPage', {
+    path: '/crowd/Categorize/Login/:promptID',
+    template: 'MturkLoginPage',
+    waitOn: function() {
+      return Meteor.subscribe('prompts', this.params.promptID);
+    },
+    onBeforeAction: function() {
+      console.log("before action");
+      Session.set("currentUser", null);
+      if (this.ready()) {
+        logger.debug("Data ready");
+        var prompt = Prompts.findOne({_id: this.params.promptID});
+        if (prompt) {
+          logger.debug("setting current prompt");
+          Session.set("currentPrompt", prompt);
+        } else {
+          logger.warn("no prompt found with id: " + this.params.promptID);
+        }
+        this.next();
+      }
+    },
+    action: function() {
+      if (this.ready()) {
+        this.render();
+      } else {
+        this.render('loading');
+      }
+    },
+    onAfterAction: function() {
+      Session.set("nextPage", "MturkSynthesis");
+    },
+  });
   this.route('MturkSynthesis', {
     path: 'crowd/Categorize/:promptID/:userID',
   	template: 'MturkClustering',

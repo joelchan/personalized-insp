@@ -48,7 +48,7 @@ Template.MturkLoginPage.events({
           Session.set("currentRole", role);
           Session.set("currentGroup", group);
           Session.set("currentPrompt", prompt);
-          Router.go("HcompConsentPage", 
+          Router.go(Session.get("nextPage"), 
             {promptID: prompt._id, userID: user._id});
         }
 

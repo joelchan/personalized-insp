@@ -62,7 +62,10 @@ Router.map(function () {
   this.route('CustomConsentPage', {
       //path: 'ConsentPage/:_id',
       path: 'consent/:_id',
-      template: 'ConsentPage'
+      template: 'ConsentPage',
+      waitOn: function() {
+        return Meteor.subscribe('prompts');
+      }
   });
   this.route('MTurkConsentPage', {
       path: 'ConsentPage/:_id',

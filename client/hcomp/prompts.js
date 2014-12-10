@@ -33,6 +33,13 @@ Template.CrowdBrainstorm.helpers({
   question: function() {
     return this.question;
   },
+  getData: function() {
+    logger.debug("Data context: " + JSON.stringify(this._id));
+    logger.debug("current user: " + JSON.stringify(Session.get("currentUser")));
+    var result = {'promptID': this._id, 'userID': Session.get("currentUser")._id};
+    logger.debug("Data object: " + JSON.stringify(result));
+    return result;
+  },
   participants: function() {
     logger.debug("current prompt: " + JSON.stringify(this));
     var groups = Groups.find({_id: {$in: this.groupIDs}});
@@ -94,17 +101,17 @@ Template.CrowdBrainstorm.helpers({
 });
 
 Template.CrowdBrainstorm.events({
-  'click .dash-button': function() {
-    console.log("go to dash");
-    Router.go("HcompDashboard", 
-      {promptID: this._id,
-        userID: Session.get('currentUser')});
-  },
-  'click .review-button': function() {
-    console.log("go to reviewpage");
-    Router.go("HcompResultsPage", 
-      {promptID: this._id, userID: Session.get("currentUser")});
-  },
+  //'click .dash-button': function() {
+    //console.log("go to dash");
+    //Router.go("HcompDashboard", 
+      //{promptID: this._id,
+        //userID: Session.get('currentUser')});
+  //},
+  //'click .review-button': function() {
+    //console.log("go to reviewpage");
+    //Router.go("HcompResultsPage", 
+      //{promptID: this._id, userID: Session.get("currentUser")});
+  //},
 });
 
 

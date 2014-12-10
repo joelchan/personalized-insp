@@ -13,18 +13,26 @@
           <!--<strong>URL: </strong> {{urlFor route='HcompDashboard' data=_id}} <h3>id: {{_id}}</h3> -->
           {{#with promptID}}
             <strong>Crowd Ideator URL: </strong> 
-              <a href="{{formUrl}}{{pathFor "MturkLoginPage"}}">
-                {{formUrl}}{{pathFor "MturkLoginPage"}}
-              </a>
+            <a href="{{formUrl}}{{pathFor route="MturkLoginPage"}}">
+              {{formUrl}}{{pathFor "MturkLoginPage"}}
+            </a><br/>
+            <strong>Crowd Clustering URL: </strong> 
+            <a href="{{formUrl}}{{pathFor route="MturkSynthLoginPage"}}">
+              {{formUrl}}{{pathFor "MturkSynthLoginPage"}}
+            </a>
           {{/with}}
         </div>
       </div>
-      <div class="col-sm-2 dash-button clickable">
-        <h3 class="center-vertical">View Brainstorm Progress</h3>
-      </div>
-      <div class="col-sm-2 review-button clickable">
-          <h3 class="center-vertical">Review Ideas</h3>
-      </div>
+      <a href="{{formUrl}}{{pathFor route="HcompDashboard" data=getData}}">
+        <div class="col-sm-2 dash-button clickable">
+          <h3 class="center-vertical">View Brainstorm Progress</h3>
+        </div>
+      </a>
+      <a href="{{formUrl}}{{pathFor route="HcompResultsPage" data=getData}}">
+        <div class="col-sm-2 review-button clickable">
+            <h3 class="center-vertical">Review Ideas</h3>
+        </div>
+      </a>
     </div>
   </div>
 </template>

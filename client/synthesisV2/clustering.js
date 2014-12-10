@@ -112,13 +112,13 @@ Template.MturkClustering.rendered = function(){
         logger.debug("Setting shared graph");
         var g = Graphs.findOne({_id: result});
         Session.set("sharedGraph", g);
-        //setSharedGraphListener(g);
+        setSharedGraphListener(g);
       }
     );
   } else {
     logger.debug("Found and Setting shared graph");
     Session.set("sharedGraph", sharedGraph);
-    //setSharedGraphListener(sharedGraph);
+    setSharedGraphListener(sharedGraph);
   }
 
   //Setup Idea listener for node creation
@@ -161,7 +161,7 @@ Template.MturkClustering.rendered = function(){
       false 
   );
   if (Session.get("currentGraph")) {
-    setGraphFilters(Session.get("currentGraph"));
+    setFilters(Session.get("currentGraph"));
   } else {
     FilterManager.create(ideaFilterName,
         Session.get("currentUser"),
@@ -437,12 +437,11 @@ Template.MturkClusteringIdeaListIdeaItem.events({
 ********************************************************************/
 Template.MturkClusterList.helpers({
   clusters : function(){
-	  return null/*FilterManager.performQuery(
+	  return FilterManager.performQuery(
       clusterFilterName, 
 		  Session.get("currentUser"), 	
 		  "nodes"
     );
-    */
   },
 });
 
@@ -522,12 +521,11 @@ Template.MturkClusterarea.rendered = function(){
 
 Template.MturkClusterarea.helpers({
   clusters : function(){
-	  return null/*FilterManager.performQuery(
+	  return FilterManager.performQuery(
       clusterFilterName, 
 		  Session.get("currentUser"), 	
 		  "nodes"
     );
-    */
   },
 });
 
