@@ -63,20 +63,20 @@
 </template>
 
 <template name="MturkClusterIdeaItem">
-<li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
+<li id=idea-{{_id}} class="idea-item"> <!--{{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}-->
     <div class="row">
       <div class="col-xs-9 filterbox-idea-content">
           {{content}} 
         </div>
         <div class="col-xs-3 vote-box">
           <!-- <span class='vote-box'>  -->
-          {{#if hasVotes }}
-            <span class="up-vote vote fa fa-thumbs-up"></span>
-            {{ voteNum }}
-        {{else}}
-          <span class="up-vote vote fa fa-thumbs-o-up"></span>
-          {{ voteNum }}
-        {{/if}}
+        <!-- {{#if hasVotes }} -->
+          <!-- <span class="up-vote vote fa fa-thumbs-up"></span> -->
+          <!-- {{ voteNum }} -->
+        <!-- {{else}} -->
+          <!-- <span class="up-vote vote fa fa-thumbs-o-up"></span> -->
+          <!-- {{ voteNum }} -->
+        <!-- {{/if}} -->
         <!-- </span> -->
       </div>
     </div>
@@ -89,20 +89,19 @@
 </template>
 
 <template name="MturkClusteringIdeaListIdeaItem">
-<li id=idea-{{_id}} class="idea-item {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}">
+<li id=idea-{{_id}} class="idea-item"><!-- {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}"-->
     <div class="row">
       <div class="col-xs-9 filterbox-idea-content">
           {{content}} 
         </div>
         <div class="col-xs-3 vote-box">
           <!-- <span class='vote-box'>  -->
-          {{#if hasVotes }}
-            <span class="up-vote vote fa fa-thumbs-up"></span>
-            {{ voteNum }}
-          {{else}}
-            <span class="up-vote vote fa fa-thumbs-o-up"></span>
-            {{ voteNum }}
-          {{/if}}
+          <!-- {{#if hasVotes }} -->
+            <!-- <span class="up-vote vote fa fa-thumbs-up"></span> -->
+            <!-- {{ voteNum }} -->
+          <!-- {{else}} -->
+            <!-- <span class="up-vote vote fa fa-thumbs-o-up"></span> -->
+          <!-- {{/if}}  -->
         <!-- </span> -->
       </div>
     </div>

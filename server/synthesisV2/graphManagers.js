@@ -15,7 +15,7 @@ Meteor.methods({
     /*************************************************************
      * Create a graph
      * **********************************************************/
-    logger.debug("Creating new Graph");
+    console.log("Creating new Graph");
     var graph = new Graph(promptID, groupID, userID);
     graph._id = Graphs.insert(graph);
     return graph._id;
@@ -30,7 +30,8 @@ Meteor.methods({
   },
   graphCreateEdge: function(type, sourceID, targetID, metadata) {
     logger.debug("Creating new Graph edge");
-    var edge = new GraphEdge(type, sourceID, targetID, metadata);
+    var g = Graphs.findOne({_id: graphID});
+    var edge = new GraphEdge(type, g.promptID, sourceID, targetID, metadata);
     edge._id = Edges.insert(edge);
     return edge._id;
   },
@@ -55,7 +56,8 @@ Meteor.methods({
       if (!Edges.findOne({$and: [{nodeIDs: node._id},
           {nodeIDs: copy._id}]})) {
         logger.debug("graph_link edge did not exist");
-        var edge = new GraphEdge('graph_link', node, copy);
+        var g = Graphs.findOne({_id: graphID});
+        var edge = new GraphEdge('graph_link', g.promptID, node._id, copy._id, null);
         edge._id = Edges.insert(edge);
       } else {
         logger.debug("graph_link edge exists already");
@@ -122,7 +124,8 @@ Meteor.methods({
     metadata['parentID'] = parentID;
     metadata['childID'] = childID;
     logger.trace(metadata);
-    var edge = new GraphEdge('parent_child', parentID, childID, metadata);
+    var g = Graphs.findOne({_id: graphID});
+    var edge = new GraphEdge('parent_child', g.promptID, parentID, childID, metadata);
     edge._id = Edges.insert(edge);
     return edge._id;
     
@@ -143,6 +146,27 @@ Meteor.methods({
     }
     Nodes.update({_id: nodeID}, {$set: data});
   },
+
+  graphIdeaListener: function(graphID, userIDs, promptID) {
+    //Get user graph
+    var userGraph = Graphs.findOne({_id: graphID});
+    var nodes = Nodes.find({'graphID': graphID});
+    var ideaIDs = getValsFromField(nodes, 'ideaID');
+    logger.trace("IdeaIDs already in graph at load time");
+    logger.trace(ideaIDs);
+    //var currentListener = Session.get("ideaObserver");
+    logger.debug("Setting Idea Observer");
+    var observer = Ideas.find({$and: [
+        {userID: {$in: userIDs}},
+        {'promptID': promptID},
+        {_id: {$nin: ideaIDs}} ]}).observe({
+      added: function(idea) {
+        logger.debug("Creating Node for new idea");
+        logger.trace("Current graph for node: " + graphID);
+        createIdeaNode(idea, userGraph);
+      },
+    });
+  }
     
 });
 
@@ -152,11 +176,48 @@ Meteor.methods({
  * ***************************************************************/
 
 createGraphNode = function(graphID, type, metadata) {
-  var node = new GraphNode(graphID, type, metadata);
+  var g = Graphs.findOne({_id: graphID});
+  var node = new GraphNode(graphID, g.promptID, type, metadata);
   node._id = Nodes.insert(node);
   Graphs.update({_id: graphID}, {$push: {nodeIDs: node._id}});
   return node;
 };
 
 
+var createIdeaNode = function(idea, graph) {
+  logger.debug("creating node for idea");
+  //Only create node if a node for this idea doesn't exist in this graph
+  var result = Nodes.findOne({'graphID': graph._id,'ideaID': idea._id})
+  if (!result) {
+    logger.debug("Creating a new node with an idea");
+    metadata = {};
+    metadata['ideaID'] = idea._id;
+    metadata['content'] = idea.content;
+    metadata['time'] = idea.time;
+    metadata['vote'] = false;
+    return createGraphNode(graph._id, 'idea', metadata);
+  } else {
+    logger.debug("Node already exists for this idea and graph");
+    return result._id;
+  }
+};
+
+var setIdeaListener = function(users, prompt) {
+  //Get user graph
+  var userGraph = Session.get("currentGraph");
+  var nodes = Nodes.find({graphID: userGraph._id});
+  var ideaIDs = getValsFromField(nodes, 'ideaID');
+  logger.trace("IdeaIDs already in graph at load time");
+  logger.trace(ideaIDs);
+  var currentListener = Session.get("ideaObserver");
+  var userIDs = getIDs(users);
+  var observer = Ideas.find({$and: [
+      {userID: {$in: userIDs}},
+      {promptID: prompt._id},
+      {_id: {$nin: ideaIDs}} ]}).observe({
+    added: function(idea) {
+      createIdeaNode(idea);
+    },
+  });
+};
 

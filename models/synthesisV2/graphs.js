@@ -43,7 +43,7 @@ Graph = function(promptID, groupID, userID) {
 
 };
 
-GraphNode = function(graphID, type, data) {
+GraphNode = function(graphID, promptID, type, data) {
   /********************************************************************
   * GraphNode constructor
   *
@@ -56,6 +56,7 @@ GraphNode = function(graphID, type, data) {
   * @return {object} GraphNode object 
   ********************************************************************/
   this.graphID = graphID;
+  this.promptID = promptID;
   this.type = type;
   if (data) {
     // Add metadata fields if any are given
@@ -66,7 +67,7 @@ GraphNode = function(graphID, type, data) {
   }
 };
 
-GraphEdge = function(type, sourceID, targetID, data) {
+GraphEdge = function(type, promptID, sourceID, targetID, data) {
   /********************************************************************
   * GraphEdge constructor
   *
@@ -81,6 +82,7 @@ GraphEdge = function(type, sourceID, targetID, data) {
   ********************************************************************/
 //  this.graphID = graph._id;
   this.type = type;
+  this.promptID = promptID;
   this.sourceID = sourceID;
   this.targetID = targetID;
   this.nodeIDs = [sourceID, targetID];
