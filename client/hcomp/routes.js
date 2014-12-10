@@ -383,6 +383,56 @@ Router.map(function () {
     },
   });
 
+  this.route("Visualization", {
+    path: "/vizualization/:promptID/:userID", 
+    template: "Visualization",
+    waitOn: function() {
+      if (Session.get("currentUser")) {
+        return [ 
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
+          Meteor.subscribe('prompts'),
+          ]
+      } else {
+        return [
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('clusters'),
+          Meteor.subscribe('prompts'),
+        ]
+      }
+    },
+    onBeforeAction: function() {
+        console.log("before action");
+        // if (!Session.get("currentUser")) {
+        //   //if there is no user currently logged in, then render the login page
+        //   this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+        //   //Pause rendering the given page until the user is set
+        //   pause();
+        // }
+        if (this.ready()) {
+          logger.debug("Data ready");
+          if (Session.get("currentUser")) {
+            var user = MyUsers.findOne({_id: this.params.userID});
+            LoginManager.loginUser(user.name);
+            Session.set("currentUser", user);
+          }
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
+          }
+          this.next();
+        }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    },
+  });
+
 
 });
 

@@ -1,0 +1,563 @@
+Template.BakedData.rendered = function()
+{
+	// Dataset from Owen and IxDF Group
+	var IxDFData =  
+	[
+		{    "id":1,    "idea":"sleep schedule",    "categories":["Health and Wellbeing"],    "quality":2  },
+		{    "id":2,    "idea":"health-centered app",    "categories":["Health and Wellbeing"],    "quality":2  },
+		{    "id":3,    "idea":"something to track strength over time",    "categories":["Health and Wellbeing"],    "quality":4  },
+		{    "id":4,    "idea":"workout routines for EMTs",    "categories":["Health and Wellbeing"],    "quality":5  },
+		{    "id":5,    "idea":"game to test finger dexterity",    "categories":["Skillbuilding"],    "quality":5  },
+		{    "id":6,    "idea":"well-being monitor",    "categories":["Health and Wellbeing"],    "quality":4  },
+		{    "id":7,    "idea":"an app to share funny stories about the things they see",    "categories":["Emotional support"],    "quality":6  },
+		{    "id":8,    "idea":"critical incident support guide",    "categories":["Health and Wellbeing"],    "quality":6  },
+		{    "id":9,    "idea":"EMT task checklist",    "categories":["Workflow Improvement"],    "quality":5  },
+		{    "id":10,    "idea":"group journalling app",    "categories":["Emotional support"],    "quality":6  },
+		{    "id":11,    "idea":"messenger app for work ",    "categories":["Workflow Improvement"],    "quality":3  },
+		{    "id":12,    "idea":"health resource app",    "categories":["Emotional support"],    "quality":4  },
+		{    "id":13,    "idea":"Quick access to first aid instructions",    "categories":["Workflow Improvement"],    "quality":6  },
+		{    "id":14,    "idea":"app to tell family/friends when they'll get off work",    "categories":["Family/friends support"],    "quality":5  },
+		{    "id":15,    "idea":"game where person drives around a map as quickly as possible",    "categories":["Gamification"],    "quality":6  },
+		{    "id":16,    "idea":"app to log best practices for specific situations for other EMTs",    "categories":["Skillbuilding"],    "quality":6  },
+		{    "id":17,    "idea":"app that tracks career skillbuilding",    "categories":["Skillbuilding"],    "quality":5  },
+		{    "id":18,    "idea":"EMT social network",    "categories":["Emotional support"],    "quality":6  },
+		{    "id":19,    "idea":"upload health information using mobile data",    "categories":["Workflow Improvement"],    "quality":6  },
+		{    "id":20,    "idea":"Family activity planner",    "categories":["Family/friends support"],    "quality":2  },
+		{    "id":21,    "idea":"using cameras to recognize injuries",    "categories":["Workflow Improvement"],    "quality":6  },
+		{    "id":22,    "idea":"app for building strength at the gym (can be a game)",    "categories":["Health and Wellbeing"],    "quality":4  },
+		{    "id":23,    "idea":"use fingerprint technology to identify individual",    "categories":["Workflow Improvement"],    "quality":2  },
+		{    "id":24,    "idea":"app to track driving record",    "categories":["Logging and Performance"],    "quality":4  },
+		{    "id":25,    "idea":"Job skill assessment",    "categories":["Skillbuilding"],    "quality":2  },
+		{    "id":26,    "idea":"using vibrations/sound to identify proximity to patient",    "categories":["Workflow Improvement"],    "quality":6  },
+		{    "id":27,    "idea":"Cheerleader/coach app for emotional support at end of day",    "categories":["Emotional support"],    "quality":5  },
+		{    "id":28,    "idea":"app for quick tutorials about career-advancing skills (e.g., how to use excel)",    "categories":["Skillbuilding"],    "quality":4  },
+		{    "id":29,    "idea":"Communication systems game",    "categories":["Communication", "Gamification"],    "quality":2  },
+		{    "id":30,    "idea":"Medical codes/procedures game",    "categories":["Gamification"],    "quality":2  },
+		{    "id":31,    "idea":"\"Work mode\" for the phone",    "categories":["Workflow Improvement"],    "quality":5  },
+		{    "id":32,   "idea":"upload patient data using voice recording to cross reference what they said at time of accident versus post accident",    "categories":["Workflow Improvement"],    "quality":6  },
+		{    "id":33,    "idea":"use app to visualize health status of patient - connected to devices that measure it such as heart rate monitor,blood pressure etc",   "categories":["Workflow Improvement"],   "quality":7  },
+		{    "id":34,    "idea":"Aggregate communications log",   "categories":["Communication", "Logging and Performance"],    "quality":4  },
+		{    "id":35,    "idea":"Patient info/status",    "categories":["Logging and Performance"],    "quality":1  },
+		{    "id":36,    "idea":"Password protected files",    "categories":["Data/Job tasks"],   "quality":1  },  
+		{    "id":37,    "idea":"walkie talkie app",    "categories":["Communication", "hospital, dispatch, cops"],    "quality":2  },
+		{    "id":38,    "idea":"Frequent injuries based on area",   "categories":["Workflow Improvement"],    "quality":7  },
+		{    "id":39,    "idea":"App that records things done well - offers a reward system for successes - based on roland's need to reassurance while on the job that he is meeting expectations",    "categories":["Logging and Performance"],    "quality":6  },
+		{    "id":40,    "idea":"Newsfeed of all EMTs",    "categories":["Community/ Support"],    "quality":6  },
+		{    "id":41,    "idea":"gamification of good performance - inspires them to do certain procedure properly",    "categories":["Logging and Performance", "Gamification"],    "quality":5  },
+		{    "id":42,    "idea":"Shift/driver/assignment",   "categories":["Logging and Performance"],    "quality":7  },
+		{    "id":43,    "idea":"post-critical incident assessment",    "categories":["Communication", "hospital, dispatch, cops"],    "quality":6  },
+		{    "id":44,    "idea":"Unrelated stress relief game (angry birds) that passively builds skills",    "categories":["Apps for after work hours", "Skillbuilding"],    "quality":5  },
+		{    "id":45,    "idea":"\"Rookie\" app - Learn the basics",    "categories":["Gamification"],    "quality":2  },
+		{    "id":46,    "idea":"app that shows the most dangerous areas of the city based on EMT-generated logs (e.g., intersection of X and Y is known to be bad)",    "categories":["Data/Job tasks"],   "quality":7  },
+		{    "id":47,    "idea":"Dictated status logging for events and comms",    "categories":["Communication","Logging and Performance"],    "quality":5  },
+		{    "id":48,    "idea":"app that sends notifications to EMT's family in the case that somehting happens to the EMT",    "categories":["Family/friends support"],    "quality":5  },
+		{    "id":49,    "idea":"driving game where person learns how to get around traffic/streets better",    "categories":["Gamification"],    "quality":6  },
+		{    "id":50,    "idea":"app that chronicles positive on the job stories",    "categories":["Emotional support"],    "quality":5  },
+		{    "id":51,    "idea":"app that sends bits of inspiration (quotes, pictures, etc) for EMTs when they're burnt out/tired",    "categories":["Emotional support"],    "quality":7  },
+		{    "id":52,    "idea":"Send pics to other parties (hospital or cops)",    "categories":["Communication", "hospital, dispatch, cops"],    "quality":5  }
+	];
+
+	
+	
+	
+	// Get Category Affinity Matrix
+	var categoryAffinity = getCategoryAffinity(IxDFData);
+	//console.log(categoryAffinity);
+
+	// Get Term Affinity Matrix
+	var termAffinity = getTermAffinity(IxDFData);
+	//console.log(termAffinity);
+
+	var graphData = createGraphData(termAffinity, IxDFData);
+	console.log(graphData);
+}
+
+function getCategoryAffinity(ideaData)
+{
+	//Find all categories and ideaKeys present in data
+	var metaData = getMetaData(ideaData)
+	var ideaKeys = metaData.ideaKeys;
+	var categories = metaData.categories;
+
+	//Create raw empty matrix
+	var rawEmptyMatrix = createEmptyMatrix(ideaKeys.length, categories.length);
+
+	// Create Category Weight Matrix
+	var categoryWeightMatrix = createCategoryMatrix(ideaKeys, categories, rawEmptyMatrix);
+
+	// Populate Category Weight Matrix
+	categoryWeightMatrix = populateCategoryMatrix(ideaData, categoryWeightMatrix);
+	
+	//Normalize Category Weight Matrix
+	var normalizedCategoryWeightMatrix = normalizeMatrix(categoryWeightMatrix, categoryWeightMatrix.categories.length);
+
+	//Create pair-wise afinity matrix for category membership
+	var rawAffinityMatrix = populatePairwiseAffinityMatrix(categoryWeightMatrix, normalizedCategoryWeightMatrix);
+
+	var categoryAffinityMatrix = createCategoryAffinityMatrix(ideaKeys, rawAffinityMatrix);
+	return categoryAffinityMatrix;
+}
+
+function getMetaData(ideaData)
+{
+	//Find all categories and ideaKeys present in data
+	var ideaKeys = [];
+	var categories = [];
+	for(var i = 0; i < ideaData.length; i++)
+	{
+		var ideaKey = ideaData[i].id;
+		ideaKeys[ideaKeys.length] = ideaKey;
+		var ideaCategories = ideaData[i].categories;
+		for(var j = 0; j < ideaCategories.length; j++)
+		{
+			var category = ideaCategories[j];
+			if(categories.indexOf(category) == -1)
+			{
+				categories[categories.length] = category;
+			}
+		}
+		
+
+	}
+	categories.sort();
+	var metaData = {"ideaKeys": ideaKeys, "categories": categories};
+	
+	return metaData;
+}
+
+function createEmptyMatrix(rowCount, columnCount)
+{
+	//Create raw empty matrix
+	var rawEmptyMatrix = new Array(rowCount);
+	for(var i = 0; i < rowCount; i++)
+	{
+		rawEmptyMatrix[i] = new Array(columnCount);
+		for(var j = 0; j < columnCount; j++)
+		{
+			rawEmptyMatrix[i][j] = 0;
+		}
+	}
+	return rawEmptyMatrix;
+}
+
+function createCategoryMatrix(ideaKeys, categories, rawEmptyMatrix)
+{
+	// Create Category Weight Matrix
+	var categoryWeightMatrix = 
+	{
+		"type": "Category_Weighting",
+		"ideaKeys": ideaKeys,
+		"categories": categories,
+		"matrix": rawEmptyMatrix
+	}
+	return categoryWeightMatrix;
+}
+
+function createCategoryAffinityMatrix(ideaKeys, rawAffinityMatrix)
+{
+	// Create Category Affinity Matrix
+	var categoryAffinityMatrix = 
+	{
+		"type": "Category_Similarity",
+		"ideaKeys": ideaKeys,
+		"matrix": rawAffinityMatrix
+	}
+	return categoryAffinityMatrix;
+}
+
+function populateCategoryMatrix(ideaData, categoryWeightMatrix)
+{
+	// Populate Category Weight Matrix
+	for(var i = 0; i < ideaData.length; i++)
+	{
+		var ideaCategories = ideaData[i].categories;
+		for(var j = 0; j < ideaCategories.length; j++)
+		{
+			var category = ideaCategories[j];
+			var categoryIndex = categoryWeightMatrix.categories.indexOf(category);
+			categoryWeightMatrix.matrix[i][categoryIndex] = 1;
+		}
+	}
+	return categoryWeightMatrix;
+
+}
+
+function normalizeMatrix(weightMatrix, columnCount)
+{
+	//Normalize Weight Matrix
+	var ideaCount = weightMatrix.ideaKeys.length;
+	var normalizedweightMatrix = createEmptyMatrix(ideaCount, columnCount);
+
+	for(var i = 0; i < ideaCount; i++)
+	{
+		//Get Normalization Factor (Square Root of Sum of Squares)
+		var normalizationFactor = 0;
+		var sumOfSquares = 0; 
+		for(var j = 0; j < columnCount; j++)
+		{
+			var rawWeight = weightMatrix.matrix[i][j];
+			sumOfSquares += (rawWeight * rawWeight);
+		}
+		normalizationFactor = Math.sqrt(sumOfSquares);
+
+		//Normalize Weight Matrix
+		for(var j = 0; j < columnCount; j++)
+		{
+			var rawWeight = weightMatrix.matrix[i][j];
+			var normalizedWeight = rawWeight/normalizationFactor;
+			normalizedweightMatrix[i][j] = normalizedWeight;
+		}
+	}
+	return normalizedweightMatrix;
+}
+
+function populatePairwiseAffinityMatrix(weightMatrix, normalizedWeightMatrix)
+{
+	var ideaCount = weightMatrix.ideaKeys.length;
+	//Create pair-wise afinity matrix
+	var pairwiseAffinityMatrix = createEmptyMatrix(ideaCount, ideaCount);
+
+	//Populate pair-wise afinity matrix
+	for(var i = 0; i < ideaCount; i++)
+	{
+		var currentIdeaId = weightMatrix.ideaKeys[i];
+		var currentIdeaVector = normalizedWeightMatrix[i];
+		for(var j = 0; j < ideaCount; j++)
+		{
+			var targetIdeaId = weightMatrix.ideaKeys[j];
+			var targetIdeaVector = normalizedWeightMatrix[j];
+			if(currentIdeaId == targetIdeaId)
+			{
+				pairwiseAffinityMatrix[i][j] = 1;
+				continue;
+			}
+			
+			var cosineSimilarity = 0;
+			//Get cosine similarity (Normalized Dot Product)
+			for(var k = 0; k < currentIdeaVector.length; k++)
+			{
+				cosineSimilarity += currentIdeaVector[k] * targetIdeaVector[k];
+			}
+			pairwiseAffinityMatrix[i][j] = cosineSimilarity;
+		
+		}
+	}
+	return pairwiseAffinityMatrix;
+}
+
+function getTermAffinity(ideaData)
+{
+	//Find all ideaKeys present in data
+	var metaData = getMetaData(ideaData)
+	var ideaKeys = metaData.ideaKeys;
+
+	// Corpus = Collection of all documents
+	// Document = One unit of textual data (for example, webpages, ideas, or blog posts)
+	// Term = One word from a document that is not a stop word
+	var corpus = {"terms":[], "documents": []};
+	corpus = populateCorpus(corpus, ideaData)
+
+	//Create raw empty matrix
+	var rawEmptyMatrix = createEmptyMatrix(ideaKeys.length, corpus.terms.length);
+
+
+	// Create Term Weight Matrix
+	var termWeightMatrix = createTermMatrix(ideaKeys, corpus.terms, rawEmptyMatrix);
+
+	// Populate Term Weight Matrix
+	termWeightMatrix = populateTermMatrix(corpus, termWeightMatrix);
+	//console.log(termWeightMatrix);
+	//Normalize Term Weight Matrix
+	var normalizedTermWeightMatrix = normalizeMatrix(termWeightMatrix, termWeightMatrix.terms.length);
+//	console.log(normalizedTermWeightMatrix);
+	//Create pair-wise afinity matrix for Term weights
+	var rawAffinityMatrix = populatePairwiseAffinityMatrix(termWeightMatrix, normalizedTermWeightMatrix);
+	//console.log(rawAffinityMatrix);
+	var termAffinityMatrix = createTermAffinityMatrix(ideaKeys, rawAffinityMatrix);
+	return termAffinityMatrix;
+}
+
+function createTermMatrix(ideaKeys, terms, rawEmptyMatrix)
+{
+	// Create Term Weight Matrix
+	var termWeightMatrix = 
+	{
+		"type": "Term_Weighting",
+		"ideaKeys": ideaKeys,
+		"terms": terms,
+		"matrix": rawEmptyMatrix
+	}
+	return termWeightMatrix;
+}
+
+function populateTermMatrix(corpus, termWeightMatrix)
+{
+	var corpusInverseDocumentFrequencies = getCorpusInverseDocumentFrequencies(corpus);
+	
+	var documentTermFrequencies = getDocumentTermFrequencies(corpus);
+
+	var tfIdfWeighting = getTermFrequencyInverseDocumentFrequencies(corpusInverseDocumentFrequencies, documentTermFrequencies);
+	//console.log(tfIdfWeighting);
+	
+	// Populate Term Weight Matrix
+	for(var i = 0; i < termWeightMatrix.ideaKeys.length; i++)
+	{
+		var ideaKey = termWeightMatrix.ideaKeys[i];
+		var tfIdfDocument = getTfIdfDocument(ideaKey, tfIdfWeighting);
+		for(var j = 0; j < termWeightMatrix.terms.length; j++)
+		{
+			var term = termWeightMatrix.terms[j].term;
+			var termWeight = getTermWeight(term, tfIdfDocument);
+			termWeightMatrix.matrix[i][j] = termWeight;
+		}
+	}
+	return termWeightMatrix;
+}
+
+function getTermWeight(term, tfIdfDocument)
+{
+	for(var i = 0; i < tfIdfDocument.terms.length; i++)
+	{
+		var tfIdfTerm = tfIdfDocument.terms[i];
+		if(tfIdfTerm.term == term)
+		{
+			return tfIdfTerm.tfIdf;
+		}
+		else
+		{
+			continue;
+		}
+	}
+	return 0.0;
+}
+
+function getTfIdfDocument(ideaKey, tfIdfWeighting)
+{
+	for(var i = 0; i < tfIdfWeighting.length; i++)
+	{
+		var tfIdfDocument = tfIdfWeighting[i];
+		if(tfIdfDocument.id == ideaKey)
+		{
+			return tfIdfDocument;
+		}
+		else
+		{
+			continue;
+		}
+	}
+}
+
+function createTermAffinityMatrix(ideaKeys, rawAffinityMatrix)
+{
+	// Create Term Affinity Matrix
+	var termAffinityMatrix = 
+	{
+		"type": "Term_Similarity",
+		"ideaKeys": ideaKeys,
+		"matrix": rawAffinityMatrix
+	}
+	return termAffinityMatrix;
+}
+
+function getDocumentTerms(ideaText)
+{
+	var terms = [];
+	var words = ideaText.split(" ");
+	for (var j = 0; j < words.length; j++) 
+	{
+		// Get Word
+		var word = words[j]
+			.trim()
+			.toLowerCase()
+			.replace(/[^\w\s]|_/g, "")
+        		.replace(/\s{2,}/g," ");
+		
+		var containsWord = Boolean(false);
+		
+		// Increase term count for terms in list of document terms
+		for (var k = 0; k < terms.length; k++) 
+		{
+			if (terms[k].term == word) 
+			{
+				terms[k].count = terms[k].count + 1;
+				containsWord = Boolean(true);
+			}
+		}
+
+		// Add words that are not in terms or in stopwords to document
+		if(containsWord == false && stopWords.words.indexOf(word) == -1) 
+		{
+			var term = {'term': word, 'count': 1};
+			terms.push(term);
+		}
+	}	
+	return terms;
+}
+
+function getCorpusTerms(corpus)
+{
+	for(var i = 0; i < corpus.documents.length; i++)
+	{
+		var document = corpus.documents[i];
+		for(var j = 0; j < document.terms.length; j++)
+		{
+			var term = document.terms[j].term;
+			
+			var containsTerm = Boolean(false);
+		
+			// Increase term count for terms in list of corpus terms
+			for (var k = 0; k < corpus.terms.length; k++) 
+			{
+				if (corpus.terms[k].term == term) 
+				{
+					corpus.terms[k].count = corpus.terms[k].count + 1;
+					containsTerm = Boolean(true);
+				}
+			}
+
+			// Add words that are not in terms or in stopwords to document
+			if(containsTerm == false) 
+			{
+				var corpusTerm = {'term': term, 'count': 1};
+				corpus.terms.push(corpusTerm);
+			}
+		}
+	}
+	return corpus;
+}
+
+function populateCorpus(corpus, ideaData)
+{
+	for (var i = 0; i < ideaData.length; i++) 
+	{
+		var ideaText = ideaData[i].idea;
+		var document = {"id": ideaData[i].id, "terms": []};
+		document.terms = getDocumentTerms(ideaText);
+		corpus.documents.push(document);
+	}
+	corpus = getCorpusTerms(corpus);
+	return corpus;
+}
+
+function getCorpusInverseDocumentFrequencies(corpus)
+{
+	var idfTerms = [];
+	for(var i = 0; i < corpus.terms.length; i++)
+	{
+		
+		var numberOfDocuments = corpus.documents.length;
+		// Document frequency = Number of documents that contain the term
+		var documentFrequency = corpus.terms[i].count;
+		// Inverse Document Frequency = Number of Documents / Document Frequency
+		var inverseDocumentFrequency = numberOfDocuments / documentFrequency;
+		// Dampened Inverse Document Frequency = Log 10(Inverse Document Frequency)
+		var dampenedInverseDocumentFrequency = Math.log10(inverseDocumentFrequency);
+		var idfTerm = {'term': corpus.terms[i].term, 'idf': dampenedInverseDocumentFrequency};
+
+		idfTerms.push(idfTerm);
+	}
+	return idfTerms;
+}
+
+function getDocumentTermFrequencies(corpus)
+{
+	var tfDocuments = [];
+	for(var i = 0; i < corpus.documents.length; i++)
+	{
+		var document = corpus.documents[i];
+		var tfDocument = {"id": document.id, "terms": []};
+		for(var j = 0; j < document.terms.length; j++)
+		{
+			var term = document.terms[j];
+			// Term frequency = Number of times the term appears in this document
+			var termFrequency = term.count;
+			// Scaled Term Frequency = 1 + Log 10(Term Frequency)
+			var scaledTermFrequency = 1 + Math.log10(termFrequency);
+			var tfTerm ={'term': term.term, 'tf': scaledTermFrequency};
+			tfDocument.terms.push(tfTerm);
+		}
+		tfDocuments.push(tfDocument)
+		
+	}
+	return tfDocuments;
+}
+
+function getTermFrequencyInverseDocumentFrequencies(idfTerms, tfDocuments)
+{
+	var tfIdfDocuments = [];
+
+	for(var i = 0; i < tfDocuments.length; i++)
+	{
+		var tfDocument = tfDocuments[i];
+		var tfIdfDocument = {"id": tfDocument.id, "terms": []};
+		for(var j = 0; j < tfDocument.terms.length; j++)
+		{
+			var tfTerm = tfDocument.terms[j];
+			// Scaled Term Frequency = 1 + Log 10(Term Frequency)
+			var scaledTermFrequency = tfTerm.tf;
+			// Dampened Inverse Document Frequency = Log 10(Inverse Document Frequency)
+			var dampenedInverseDocumentFrequency = getInverseDocumentFrequency(tfTerm.term, idfTerms)
+			// Term Frequency - Inverse Document Frequency = (Term Frequency * Inverse Document Frequency)
+			var termFrequencyInverseDocumentFrequency = (scaledTermFrequency * dampenedInverseDocumentFrequency);
+			var tfIdfTerm ={'term': tfTerm.term, 'tfIdf': termFrequencyInverseDocumentFrequency};
+			tfIdfDocument.terms.push(tfIdfTerm);
+		}
+		tfIdfDocuments.push(tfIdfDocument)
+	}
+
+	return tfIdfDocuments;
+}
+
+function getInverseDocumentFrequency(term, idfTerms)
+{
+	var inverseDocumentFrequency = 0;
+	for(var i = 0; i < idfTerms.length; i++)
+	{
+		var idfTerm = idfTerms[i].term;
+		var idfWeight = idfTerms[i].idf;
+		if(term == idfTerm)
+		{
+			inverseDocumentFrequency = idfWeight;
+			break;
+		}
+	}
+	return inverseDocumentFrequency;
+}
+
+function createGraphDataItem(sourceLabel, sourceID, targetID, linkStrength, nodeSize)
+{
+	var graphDataItem = 
+	{    
+		"source_idea_label": sourceLabel,    
+		"source_idea_id": sourceID,    
+		"target_idea_id": targetID,    
+		"size": nodeSize,    
+		"strength": linkStrength  
+	};
+	return graphDataItem;
+}
+
+function createGraphData(affinityMatrix, ideaData)
+{
+	var graphData = [];
+	for(var i = 0; i < ideaData.length; i++)
+	{
+		var sourceLabel = ideaData[i].idea;
+		var sourceId = ideaData[i].id;
+		var nodeSize = ideaData[i].quality;
+		var affinityVector = affinityMatrix.matrix[i];
+		for(var j = 0; j < affinityVector.length; j++)
+		{
+			var targetId = affinityMatrix.ideaKeys[j];
+			var linkStrength = affinityVector[j];
+			var graphDataItem = createGraphDataItem(sourceLabel, sourceId, targetId, linkStrength, nodeSize);
+			graphData.push(graphDataItem);
+		}
+	}
+	
+	return graphData;
+}
+
+/*
+
+*/
