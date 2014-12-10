@@ -109,7 +109,7 @@ Router.map(function () {
         logger.debug("Data ready");
         var prompt = Prompts.findOne({_id: this.params.promptID});
         if (prompt) {
-          console.log("setting current prompt");
+          logger.debug("setting current prompt");
           Session.set("currentPrompt", prompt);
         } else {
           logger.warn("no prompt found with id: " + this.params.promptID);
@@ -180,62 +180,62 @@ Router.map(function () {
     }
 
   });
-  this.route('MturkSynthesis', {
-    path: 'crowd/Categorize/:promptID/:userID/',
-  	template: 'MturkClustering',
-    waitOn: function() {
-      logger.debug("Waiting on...");
-      if (Session.get("currentUser")) {
-        // return Meteor.subscribe('ideas');
-        logger.debug("has current user...");
-        return [
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('clusters'),
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers')
-          ];
-      } else {
-        logger.debug("NO current user...");
-        return [
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('clusters'),
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers')
-        ];
-      }
-    },
-    onBeforeAction: function(pause) {
-        logger.debug("before action");
-        if (this.ready()) {
-          var user = MyUsers.findOne({_id: this.params.userID});
-          LoginManager.loginUser(user.name);
-          Session.set("currentUser", user);
-          MyUsers.update({_id: user._id}, {$set: {route: 'MturkSynthesis'}});
-          console.log("Data ready");
-          var prompt = Prompts.findOne({_id: this.params.promptID});
-          if (prompt) {
-            Session.set("currentPrompt", prompt);
-          } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
-          }
-          this.next();
-        } else {
-          console.log("Not ready");
-        }
-    },
-    action: function(){
-      if(this.ready())
-        this.render();
-      else
-        this.render('loading');
-    },
-    onAfterAction: function() {
-      if (this.ready()) {
-        initRolePage();
-      }
-    }
-
-  });
+  //this.route('MturkSynthesis', {
+    //path: 'crowd/Categorize/:promptID/:userID/',
+  	//template: 'MturkClustering',
+    //waitOn: function() {
+      //logger.debug("Waiting on...");
+      //if (Session.get("currentUser")) {
+        //// return Meteor.subscribe('ideas');
+        //logger.debug("has current user...");
+        //return [
+          //Meteor.subscribe('ideas'),
+          //Meteor.subscribe('clusters'),
+          //Meteor.subscribe('prompts'),
+          //Meteor.subscribe('myUsers')
+          //];
+      //} else {
+        //logger.debug("NO current user...");
+        //return [
+          //Meteor.subscribe('ideas'),
+          //Meteor.subscribe('clusters'),
+          //Meteor.subscribe('prompts'),
+          //Meteor.subscribe('myUsers')
+        //];
+      //}
+    //},
+    //onBeforeAction: function(pause) {
+        //logger.debug("before action");
+        //if (this.ready()) {
+          //var user = MyUsers.findOne({_id: this.params.userID});
+          //LoginManager.loginUser(user.name);
+          //Session.set("currentUser", user);
+          //MyUsers.update({_id: user._id}, {$set: {route: 'MturkSynthesis'}});
+          //console.log("Data ready");
+          //var prompt = Prompts.findOne({_id: this.params.promptID});
+          //if (prompt) {
+            //Session.set("currentPrompt", prompt);
+          //} else {
+            //logger.warn("no prompt found with id: " + this.params.promptID);
+          //}
+          //this.next();
+        //} else {
+          //console.log("Not ready");
+        //}
+    //},
+    //action: function(){
+      //if(this.ready())
+        //this.render();
+      //else
+        //this.render('loading');
+    //},
+    //onAfterAction: function() {
+      //if (this.ready()) {
+        //initRolePage();
+      //}
+    //}
+//
+  //});
   this.route('LegionFinalPage', {
     path: 'crowd/finished/:promptID/:userID/',
   	template: 'LegionFinalPage',

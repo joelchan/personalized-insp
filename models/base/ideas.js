@@ -26,7 +26,7 @@ Idea = function (content, user, prompt, participant) {
   /********************************************************************
   * Encapsulation of ideas recorded by the system
   *
-  * @return {object} GroupTemplate object 
+  * @return {object} Idea object 
   ********************************************************************/
   this.time = new Date().getTime();
   this.content = content;

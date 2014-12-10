@@ -36,7 +36,8 @@ Template.MturkClustering.rendered = function(){
     $("#new-cluster").height() + 80;
   $("#clusterlist").height(height-themeHeaderHeight);
   $("#right-clustering").height(height);
-  
+ 
+  // Set draggable and droppable properties of appropriate components 
   $('.cluster-idea-list').droppable({accept: ".idea-item",
     tolerance: "pointer",
     drop: function(event, ui) {
@@ -67,102 +68,177 @@ Template.MturkClustering.rendered = function(){
     }
   });
 
-  //Create isInCluster filter
+  //Get Data and setup listeners
+  var prompt = Session.get("currentPrompt");
+  var group = Session.get("currentGroup");
+  var user = Session.get("currentUser");
+  //Get user graph
+  var userGraph = Graphs.findOne({
+    'promptID': prompt._id,
+    'groupID': group._id,
+    'userID': user._id
+  });
+  logger.trace(userGraph);
+  if (!userGraph) {
+    logger.info("No user graph found.  Initializing new graph");
+    Meteor.call("graphCreate", prompt._id, group._id, user._id,
+      function (error, result) {
+        logger.debug("Setting User graph");
+        var g = Graphs.findOne({_id: result});
+        Session.set("currentGraph", g);
+      }
+    );
+  } else {
+    logger.debug("Setting User graph");
+    Session.set("currentGraph", userGraph);
+  }
+  
+  //Get shared graph
+  var sharedGraph = Graphs.findOne({
+    'promptID': prompt._id,
+    'groupID': group._id,
+    'userID': null,
+  });
+  logger.trace(sharedGraph);
+  if (!sharedGraph) {
+    logger.info("No shared graph found.  Initializing new graph");
+    Meteor.call("graphCreate", prompt._id, group._id, null,
+      function (error, result) {
+        logger.debug("Setting shared graph");
+        var g = Graphs.findOne({_id: result});
+        Session.set("sharedGraph", g);
+        setSharedGraphListener(g);
+      }
+    );
+  } else {
+    logger.debug("Setting shared graph");
+    Session.set("sharedGraph", sharedGraph);
+    setSharedGraphListener(sharedGraph);
+  }
+
+  //Setup Idea listener for node creation
+  logger.debug("initializing idea nodes");
+  setIdeaListener(Session.get("currentGroup").users,
+    Session.get("currentPrompt"));
+
+  //Update Idea Listener when new members join group
+  logger.debug("creating group listener for new users");
+  Groups.find({_id: group._id}).observe({
+    changed: function(newDoc, oldDoc) {
+      var users = newDoc.users;
+      setIdeaListener(users, Session.get("currentPrompt"));
+    },
+  });
+
+  //Reset all the filters before initializing
+  FilterManager.reset(ideaFilterName,
+      Session.get("currentUser"),
+      "nodes");
+
+  //Create base filters for ideas
   FilterManager.create(ideaFilterName,
       Session.get("currentUser"),
-      "ideas",
-      "clusterIDs",
-      []
+      "nodes",
+      "type",
+      'idea'
   );
-  Session.set("currentIdeators", []);
-  Session.set("currentSynthesizers", []);
-
-  FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
-  FilterManager.reset("Cluster Filter", Session.get("currentUser"), "clusters");
-
-  FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
-  FilterManager.create(clusterFilterName, Session.get("currentUser"), "clusters", "promptID", Session.get("currentPrompt")._id);
-  FilterManager.create(clusterFilterName, Session.get("currentUser"), "clusters", "isTrash", false);
-
-  //Setup filters for users and filter update listener
-  //updateFilters();
-  //Update filters when current group changes
-  //Groups.find({_id: Session.get("currentGroup")._id}).observe({
-    //changed: function(newDoc, oldDoc) {
-      //logger.trace("Current Group has changed");
-      ////Setup filters for users and filter update listener
-      ////updateFilters();
-    //} 
-  //});
+  FilterManager.create(ideaFilterName,
+      Session.get("currentUser"),
+      "nodes",
+      "graphID",
+      Session.get("currentGraph")._id
+  );
+  //Create base filters for themes
+  FilterManager.create(clusterFilterName,
+      Session.get("currentUser"),
+      "nodes",
+      "type",
+      'theme'
+  );
+  FilterManager.create(clusterFilterName,
+      Session.get("currentUser"),
+      "nodes",
+      "graphID",
+      Session.get("currentGraph")._id
+  );
+  FilterManager.create(clusterFilterName,
+      Session.get("currentUser"),
+      "nodes",
+      "isTrash",
+      false 
+  );
 };
+
+var setSharedGraphListener = function(graph) {
+  logger.debug("Setting up shared graph listener");
+  Nodes.find({graphID: graph._id}).observe({
+    added: function(node) {
+      logger.debug("new node added for this shared graph");
+      var myNodeIDs = Session.get("currentGraph").nodeIDs;
+      if (Edges.find({$and: [{nodeIDs: node._id}, 
+          {nodeIDs: {$in: myNodeIDs}}]}).count() > 0) {
+        logger.debug("Shared node is already in user graph");
+      } else {
+        logger.debug("creating duplicate shared node");
+        Meteor.call("graphDuplicateShared", node._id, Session.get("currentGraph")._id,
+          function(error, result) {
+            logger.debug("finished creating duplicate shared node");
+          }
+        );
+      }
+    },
+  });
+};
+
+var setIdeaListener = function(users, prompt) {
+  var currentListener = Session.get("ideaObserver");
+  var userIDs = getIDs(users);
+  var observer = Ideas.find({userID: {$in: userIDs}, 
+      promptID: prompt._id}).observe({
+    added: function(idea) {
+      createIdeaNode(idea);
+    },
+  });
+};
+
+var createIdeaNode = function(idea) {
+  logger.debug("creating node for idea");
+  Meteor.call("graphCreateIdeaNode", 
+    Session.get("currentGraph")._id, idea._id, null
+  );
+},
+
+
+createTheme = function(theme) {
+  //Test function for creating a theme
+  var graph = Session.get("sharedGraph");
+  var type = theme;
+  var data = {name: "Test Theme1",
+      time:  new Date().getTime(),
+      isTrash: false,
+      isMerged: false
+  };
+  Meteor.call("graphCreateNode", graphID, type, data);
+};
+   
 
 /********************************************************************
 * IdeaList template Helpers
 ********************************************************************/
 Template.MturkClusteringIdeaList.helpers({
   ideas : function(){
+	 return FilterManager.performQuery(
+      ideaFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes");
     
-    return getFilteredIdeas("Ideas Filter");
-    // var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-    //   Session.get("currentUser"),   
-    //   "ideas").fetch();
-
-    // // apply search query, if it exists
-    // var query = Session.get("searchQuery");
-    // var queriedIdeas = [];
-    // if (query != "") {
-    //   queryArr = stringToWords(query);
-    //   filteredIdeas.forEach(function(idea){
-    //     // console.log(idea);
-    //     if (searchQueryMatch(idea,queryArr)) {
-    //       // console.log("Matched query");
-    //       queriedIdeas.push(idea);
-    //     } else {
-    //       // console.log("Not matching");
-    //       // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-    //     }
-    //   });
-    //   // create an array from the query
-      
-    // } else {
-    //   queriedIdeas = filteredIdeas.slice();
-    // }
-
-    // var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-    // // console.log(sortedIdeas);
-    // return sortedIdeas;
   },
 
   numIdeas : function(){
-    // var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-    //   Session.get("currentUser"),   
-    //   "ideas").fetch();
-
-    // // apply search query, if it exists
-    // var query = Session.get("searchQuery");
-    // var queriedIdeas = [];
-    // if (query != "") {
-    //   queryArr = stringToWords(query);
-    //   filteredIdeas.forEach(function(idea){
-    //     // console.log(idea);
-    //     if (searchQueryMatch(idea,queryArr)) {
-    //       // console.log("Matched query");
-    //       queriedIdeas.push(idea);
-    //     } else {
-    //       // console.log("Not matching");
-    //       // filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-    //     }
-    //   });
-    //   // create an array from the query
-      
-    // } else {
-    //   queriedIdeas = filteredIdeas.slice();
-    // }
-
-    // var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-    // // console.log(sortedIdeas);
-    // return sortedIdeas.length;
-    return getFilteredIdeas("Ideas Filter").length;
+	 return FilterManager.performQuery(
+      ideaFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes").count();
   },
 });
 
@@ -190,26 +266,21 @@ Template.MturkClusterIdeaItem.rendered = function() {
 };
 
 Template.MturkClusterIdeaItem.helpers({
-  gameChangerStatus : function(){
-    return this.isGamechanger;
-  },
   isNotInCluster: function() {
-    return (this.clusterIDs.length === 0) ? true : false;
+    var num = Edges.find({nodeIDs: this._id}).count();
+    return (num === 0) ? true : false;
   },
   hasNotVoted: function() {
-    if (isInList(Session.get("currentUser")._id, this.votes)) {
-      logger.debug("User has already voted");
-      return false;
-    } else {
-      logger.debug("User has not voted");
-      return true;
-    }
+    return this.vote;
   },
   voteNum: function() {
-    return this.votes.length;
+    return Nodes.find({ideaID: this.ideaID, 
+      vote: true}).count();
   },
   hasVotes: function() {
-    if (this.votes.length > 0) {
+    var num =  Nodes.find({ideaID: this.ideaID, 
+      vote: true}).count();
+    if (num > 0) {
       return true
     } else {
       return false
@@ -219,12 +290,10 @@ Template.MturkClusterIdeaItem.helpers({
 
 Template.MturkClusterIdeaItem.events({
   'click .up-vote': function(e, elm) {
-    if (!isInList(Session.get("currentUser")._id, this.votes)) {
-      logger.debug("voting for idea");
-      IdeaFactory.upVote(this, Session.get("currentUser"));
+    if (this.vote) {
+      Nodes.update({_id: this._id}, {$set: {vote: !this.vote}});
     } else {
-      logger.debug("undo voting for idea");
-      IdeaFactory.downVote(this, Session.get("currentUser"));
+      Nodes.update({_id: this._id}, {$set: {vote: true}});
     }
   },
 
@@ -258,22 +327,20 @@ Template.MturkClusteringIdeaListIdeaItem.helpers({
     return this.isGamechanger;
   },
   isNotInCluster: function() {
-    return (this.clusterIDs.length === 0) ? true : false;
+    var num = Edges.find({nodeIDs: this._id}).count();
+    return (num === 0) ? true : false;
   },
   hasNotVoted: function() {
-    if (isInList(Session.get("currentUser")._id, this.votes)) {
-      logger.debug("User has already voted");
-      return false;
-    } else {
-      logger.debug("User has not voted");
-      return true;
-    }
+    return this.vote;
   },
   voteNum: function() {
-    return this.votes.length;
+    return Nodes.find({ideaID: this.ideaID, 
+      vote: true}).count();
   },
   hasVotes: function() {
-    if (this.votes.length > 0) {
+    var num =  Nodes.find({ideaID: this.ideaID, 
+      vote: true}).count();
+    if (num > 0) {
       return true
     } else {
       return false
@@ -283,13 +350,18 @@ Template.MturkClusteringIdeaListIdeaItem.helpers({
 
 Template.MturkClusteringIdeaListIdeaItem.events({
   'click .up-vote': function(e, elm) {
-    if (!isInList(Session.get("currentUser")._id, this.votes)) {
-      logger.debug("voting for idea");
-      IdeaFactory.upVote(this, Session.get("currentUser"));
+    if (this.vote) {
+      Nodes.update({_id: this._id}, {$set: {vote: !this.vote}});
     } else {
-      logger.debug("undo voting for idea");
-      IdeaFactory.downVote(this, Session.get("currentUser"));
+      Nodes.update({_id: this._id}, {$set: {vote: true}});
     }
+    //if (!isInList(Session.get("currentUser")._id, this.votes)) {
+      //logger.debug("voting for idea");
+      //IdeaFactory.upVote(this, Session.get("currentUser"));
+    //} else {
+      //logger.debug("undo voting for idea");
+      //IdeaFactory.downVote(this, Session.get("currentUser"));
+    //}
   },
 
 });
@@ -299,9 +371,11 @@ Template.MturkClusteringIdeaListIdeaItem.events({
 ********************************************************************/
 Template.MturkClusterList.helpers({
   clusters : function(){
-    // return getFilteredClusters(clusterFilterName);
-    var sessionPromptID = Session.get("currentPrompt")
-    return Clusters.find({promptID: sessionPromptID._id, isTrash: {$ne: true}}).fetch();
+	  return FilterManager.performQuery(
+      clusterFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes"
+    );
   },
 });
 
@@ -320,6 +394,9 @@ Template.MturkClusterList.rendered = function() {
 Template.MturkClustering.helpers({
 
   clustername : function(){
+    logger.trace("**************************************************");
+    logger.trace(this);
+    return this.name;
     var clu = Clusters.findOne({_id: this.toString()});
     if(clu === undefined) return false
     return clu.name;
@@ -330,12 +407,19 @@ Template.MturkClustering.helpers({
   },
 
   numClusters : function(){
-    return Clusters.find({isRoot: {$ne: true}}).count();
+	  return FilterManager.performQuery(
+      clusterFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes"
+    ).count();
   },
 
   numUnnamed : function(){
     var nullNames = ["Not named yet", "", " ", "  ", "   ", undefined];
-    return Clusters.find({isRoot: {$ne: true}, name: {$in: nullNames}}).count();
+    return Nodes.find({type: 'theme',
+      'graphID': Session.get("currentGraph")._id,
+      'name': {$in: nullNames}
+    }).count();
   }
 });
 
@@ -352,16 +436,12 @@ Template.MturkClustering.events({
     // console.log(this);
     // var id = trimFromString($(this).parent().attr("id"), "cluster-");
     // logger.debug("collapsed" + id)
-    Clusters.update({_id: this._id}, 
+    Nodes.update({_id: this._id}, 
     // Clusters.update({_id: id}, 
       {$set: {isCollapsed: !this.isCollapsed}}
     );
   },
 
-	'click .gamechangestar' : function(){
-    EventLogger.logToggleGC(this);
-		IdeaFactory.toggleGameChanger(this);
-	},
 });
 
 
@@ -374,10 +454,11 @@ Template.MturkClusterarea.rendered = function(){
 
 Template.MturkClusterarea.helpers({
   clusters : function(){
-    // return getFilteredClusters(clusterFilterName);
-    var sessionPromptID = Session.get("currentPrompt")
-    return Clusters.find({promptID: sessionPromptID._id, isTrash: {$ne: true}}).fetch();
-    // return Clusters.find({isTrash: {$ne: true}});
+	  return FilterManager.performQuery(
+      clusterFilterName, 
+		  Session.get("currentUser"), 	
+		  "nodes"
+    );
   },
 });
 
@@ -389,25 +470,32 @@ Template.MturkClusterarea.helpers({
 Template.MturkCluster.events({
   //updates name field in cluster as user types
   'keyup .namecluster' : function(event, template){
-    logger.debug(this);
-    var clusterName = $(event.target).val();
-    logger.debug("new cluster name: " + clusterName);
-    var cluster =  ClusterFactory.setName(this, clusterName);
-    EventLogger.logChangeClusterName(this, clusterName);
+    if(event.keyCode === 13) {
+      logger.debug("Updating name of cluster");
+      logger.debug(this);
+      var clusterName = $(event.target).val();
+      logger.debug("new cluster name: " + clusterName);
+      var clusterID =  Meteor.call("graphUpdateNodeField", this._id, 
+        {'name': clusterName});
+      EventLogger.logChangeClusterName(this, clusterName);
+    }
   },
 });
 
 Template.MturkCluster.rendered = function(){
   $('.cluster').draggable({
     stop: function() {
-      logger.debug("dragged object");
+      logger.debug("dragged object data");
+      logger.trace(this);
       var id = trimFromString($(this).attr("id"), "cluster-");
-      var cluster = ClusterFactory.getWithIDs(id);
+      var theme = Nodes.findOne({_id: id});
       var pos = {'top': parseFloat(trimFromString($(this).css('top'),'px')),
         'left': parseFloat(trimFromString($(this).css('left'),'px'))
       };
-      ClusterFactory.updatePosition(cluster, pos);
-      EventLogger.logMovedCluster(cluster, pos);
+      Meteor.call("graphUpdateNodeField", theme._id,
+        {'position': pos}
+      );
+      EventLogger.logMovedCluster(theme, pos);
     },
     grid: [5, 5]
   });
@@ -434,19 +522,22 @@ Template.MturkCluster.rendered = function(){
   });
 }
 
+
 Template.MturkCluster.helpers({
   clusterideas : function(){
-    // logger.trace("Getting Cluster Ideas");
-    var ideaIDs = $(this)[0].ideaIDs;
-    var cursor = Ideas.find({_id: {$in: ideaIDs}});
-    return cursor
+    logger.debug("Getting Cluster Ideas");
+    logger.trace("**************** cluster data ***************");
+    logger.trace(this);
+    return getNodeChildren(this);
   },
 
   numclusterideas : function() {
-    var ideaIDs = $(this)[0].ideaIDs;
-    var cursor = Ideas.find({_id: {$in: ideaIDs}}).fetch();
-    // logger.debug("found cluster with ideas: ")
-    return cursor.length;
+    return getNodeChildren(this).count();
+    //var ideaIDs = $(this)[0].ideaIDs;
+    //var cursor = Ideas.find({_id: {$in: ideaIDs}}).fetch();
+    //logger.debug("found cluster with ideas: ")
+    ////var edges = Edges.find({type: 'parent_child',
+    //return cursor.length;
   },
 
   named : function(){
@@ -454,7 +545,6 @@ Template.MturkCluster.helpers({
       return 'text-danger';
     else return false
   },
-
 
   isCollapsed : function(){
     return $(this)[0].isCollapsed;
@@ -480,7 +570,7 @@ var getDroppableSource = function(item) {
     // var clusterID = trimFromString(itemSource.attr('id'),
     //     "cluster-list-");
     logger.trace("found cluster with ID: " + clusterID);
-    var cluster = ClusterFactory.getWithIDs(clusterID);
+    var cluster = Nodes.findOne({_id: clusterID});
     logger.trace(cluster);
     return cluster
   } else {
@@ -495,7 +585,7 @@ getDraggableIdea = function(item) {
   var ideaID = trimFromString(item.draggable[0].id,
     "idea-");
   logger.debug("Creating cluster with idea ID: " + ideaID);
-  var idea = IdeaFactory.getWithIDs(ideaID);
+  var idea = Nodes.findOne({_id: ideaID});
   logger.debug("Creating cluster with idea: " + 
     JSON.stringify(idea));
   return idea;
@@ -505,6 +595,8 @@ getDraggableIdea = function(item) {
 receiveDroppable = function(event, ui, context) {
   logger.trace("idealist received idea**********************");
   logger.trace(context);
+  logger.trace("********* data of ui object ***************");
+  logger.trace($(ui).data());
   var idea = getDraggableIdea(ui)
   logger.debug("************* idea *************");
   logger.debug(idea);
@@ -514,11 +606,13 @@ receiveDroppable = function(event, ui, context) {
   var target = $(context)
   logger.debug("************* target *************");
   logger.debug(target);
+  var userGraph = Session.get("currentGraph");
+  var sharedGraph = Session.get("sharedGraph");
   if (target.hasClass("ideadeck")) {
     logger.info("Removing idea from cluster and unsorting idea");
     if (source) {
+      Meteor.call("graphUnlinkChild", source._id, idea._id);
       EventLogger.logIdeaUnclustered(idea, source);
-      ClusterFactory.removeIdeaFromCluster(idea, source);
     }
     target = null;
     //ui.item.remove();
@@ -527,29 +621,34 @@ receiveDroppable = function(event, ui, context) {
     var targetID = trimFromString(target.attr('id'), 
         "cluster-");
     logger.debug("Adding to cluster with ID: " + targetID);
-    target = ClusterFactory.getWithIDs(targetID);
+    target = Nodes.findOne({_id: targetID});
     logger.debug("Cluster: " + JSON.stringify(target));
-    EventLogger.logIdeaClustered(idea, source, target);
+    //EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("clusterul")) {
     logger.info("Moving idea to a cluster");
     var targetID = trimFromString(target.attr('id'), 
         "cluster-list-");
     logger.debug("Adding to cluster with ID: " + targetID);
-    target = ClusterFactory.getWithIDs(targetID);
+    target = Nodes.findOne({_id: targetID});
     logger.debug("Cluster: " + JSON.stringify(target));
-    EventLogger.logIdeaClustered(idea, source, target);
+    //EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("newcluster")) {
     logger.info("Creating a new cluster for idea");
-    target = ClusterFactory.create(null,
-      Session.get("currentUser"),
-      Session.get("currentPrompt")
+    Meteor.call("graphCreateThemeNode", sharedGraph._id, null, 
+      function(error, newThemeID) {
+        logger.debug("Connecting Theme with idea nodes with new edge");
+        Meteor.call("graphLinkChild", newThemeID, idea._id, null,
+          function(error, newLinkID) {
+            logger.debug("Created new Parent/child link");
+          }
+        );
+      }
     );
-    EventLogger.logCreateCluster(idea, source, target);
   } else if (target.hasClass("cluster-item")) {
     logger.info("Inserting idea into cluster using cluster list");
     var clusterID = trimFromString(context.id, 'ci-');
-    target = ClusterFactory.getWithIDs(clusterID);
-    EventLogger.logIdeaClustered(idea, source, target);
+    target = Nodes.findOne({_id: clusterID});
+    //EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass('cluster-trash-can')) {
     logger.info("Deleting cluster using droppable trash can");
     logger.trace(target);
@@ -557,7 +656,7 @@ receiveDroppable = function(event, ui, context) {
     var targetID = trimFromString(target.attr('id'), 
         "cluster-");
     logger.debug("Adding to cluster with ID: " + targetID);
-    target = ClusterFactory.getWithIDs(targetID);
+    target = Nodes.findOne({_id: targetID});
     logger.debug("Cluster: " + JSON.stringify(target));
   }
   if (target !== null) {
@@ -565,84 +664,31 @@ receiveDroppable = function(event, ui, context) {
       if (source._id !== target._id) {
         logger.trace("Removing idea from source cluster: " +
           JSON.stringify(source));
-        EventLogger.logIdeaRemovedFromCluster(idea, source, target);
-        ClusterFactory.removeIdeaFromCluster(idea, source);
-        ClusterFactory.insertIdeaToCluster(idea, target);
+        //EventLogger.logIdeaRemovedFromCluster(idea, source, target);
+        //ClusterFactory.removeIdeaFromCluster(idea, source);
+        Meteor.call("graphUnLinkChild", source._id, idea._id,
+          function(error, newLinkID) {
+            logger.debug("Removed parent/child link");
+          }
+        );
+        //ClusterFactory.insertIdeaToCluster(idea, target);
+        Meteor.call("graphLinkChild", target._id, idea._id, null,
+          function(error, newLinkID) {
+            logger.debug("Created new Parent/child link");
+          }
+        );
         //ui.item.remove();
       }
     } else {
-      ClusterFactory.insertIdeaToCluster(idea, target);
+      //ClusterFactory.insertIdeaToCluster(idea, target);
+      Meteor.call("graphLinkChild", target._id, idea._id, null,
+        function(error, newLinkID) {
+          logger.debug("Created new Parent/child link");
+        }
+      );
       //ui.item.remove();
     }
   }
-};
-
-updateFilters = function() {
-  /***************************************************************
-    * Check group ideators and update user filters
-    **************************************************************/
-  var group = Groups.findOne({_id: Session.get("currentGroup")._id});
-  logger.trace("Updating filters for group: " + group);
-  var ideators = GroupManager.getUsersInRole(group, 'HcompIdeator');
-  logger.trace("current group has ideators: " + 
-      JSON.stringify(ideators));
-  var prev = Session.get("currentIdeators");
-  logger.trace("current ideators stored in session are: " + 
-      JSON.stringify(prev));
-  var newUsers = [];
-  var update = false;
-  ideators.forEach(function(user) {
-    if (!isInList(user, prev, '_id')) {
-      logger.trace("Found new ideator: " + 
-        JSON.stringify(user));
-      newUsers.push(user);
-      update = true;
-    }
-  });
-  var prevCluster = Session.get("currentSynthesizers");
-  logger.trace("current synthesizers stored in session are: " + 
-      JSON.stringify(prevCluster));
-  var newClusterers = [];
-  var clusterers = GroupManager.getUsersInRole(group, 'Synthesizer'); 
-  clusterers.forEach(function(user) {
-    if (!isInList(user, prevCluster, '_id')) {
-      logger.trace("Found new clusterer: " + 
-        JSON.stringify(user));
-      newClusterers.push(user);
-      update = true;
-    }
-  });
-
-  if (update) {
-    logger.trace("Updating session variable and filter");
-    //Create filter for user
-    newUsers.forEach(function(user) {
-      logger.debug("Creating new filter for ideator user: " + user.name);
-      var newFilter = FilterManager.create(ideaFilterName,
-          Session.get("currentUser"),
-          "ideas",
-          "userID",
-          user._id
-      );
-      prev.push(user);
-    });
-    newClusterers.forEach(function(user) {
-      logger.debug("Creating new filter for cluster user: " + user.name);
-      var newFilter = FilterManager.create(clusterFilterName,
-          Session.get("currentUser"),
-          "clusters",
-          "userID",
-          user._id
-      );
-      prevCluster.push(user);
-    });
-    logger.debug("Setting list of ideators: " + 
-        JSON.stringify(prev));
-    Session.set("currentIdeators", prev);
-    logger.debug("Setting list of synthesizers: " + 
-        JSON.stringify(prevCluster));
-    Session.set("currentSynthesizers", prevCluster);
- }
 };
 
 function trashCluster (e, obj) {
@@ -652,17 +698,9 @@ function trashCluster (e, obj) {
   var clusterDiv = obj.draggable[0];
   var clusterID = trimFromString($(clusterDiv).attr('id'), 'cluster-');
   logger.debug("Trashing cluster with ID: " + clusterID);
-  ClusterFactory.trash(Clusters.findOne({_id: clusterID}));
+  //var cluster = Nodes.findOne({_id: clusterID});
+  Meteor.call("graphUpdateNodeField", clusterID, 
+    {'isTrash': true}
+  );
 };
 
-getFilteredClusters = function(clusterFilterName){
-/***************************************************************
-* Get filtered clusters for cluster list and cluster area
-**************************************************************/  
-
-  var filteredClusters = FilterManager.performQuery(
-    clusterFilterName, 
-    Session.get("currentUser"), 
-    "clusters");
-  return filteredClusters;
-}
