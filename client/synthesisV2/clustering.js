@@ -53,13 +53,13 @@ Template.MturkClustering.rendered = function(){
     }
   });
 
-  //$('.cluster-item').droppable({accept: ".idea-item",
-    //tolerance: "pointer",
-    //hoverClass: "ui-state-hover",
-    //drop: function(event, ui) {
-      //receiveDroppable(event, ui, this);
-    //}
-  //});
+  $('.cluster-item').droppable({accept: ".idea-item",
+    tolerance: "pointer",
+    hoverClass: "ui-state-hover",
+    drop: function(event, ui) {
+      receiveDroppable(event, ui, this);
+    }
+  });
 
   $('.cluster-trash-can').droppable({accept: ".cluster",
     tolerance: "pointer",
@@ -198,7 +198,6 @@ var setSharedGraphListener = function(sharedGraph, userGraph) {
           userNodeID: {$in: userNodeIDs}
       });
       var syncedIDs = getValsFromField(syncedThemes, 'sharedNodeID');
-      //var userNodeIDs = getValsFromField(syncedThemes, 'userNodeID');
       var unsyncedIDs = _.difference(sharedIDs, syncedIDs);
       logger.trace("All Theme IDs: " + JSON.stringify(sharedIDs));
       logger.trace("User Node IDs: " + JSON.stringify(userNodeIDs));
@@ -643,12 +642,12 @@ Template.MturkCluster.rendered = function(){
       receiveDroppable(event, ui, this);
     }
   });
-  // $('.cluster-item').droppable({accept: ".idea-item",
-  //   tolerance: "pointer",
-  //   drop: function(event, ui) {
-  //     receiveDroppable(event, ui, this);
-  //   }
-  // });
+  $('.cluster-item').droppable({accept: ".idea-item",
+    tolerance: "pointer",
+    drop: function(event, ui) {
+      receiveDroppable(event, ui, this);
+    }
+  });
   $('.cluster').droppable({accept: ".idea-item",
     tolerance: "pointer",
     hoverClass: 'ui-state-hover',
@@ -664,11 +663,11 @@ Template.MturkCluster.helpers({
     logger.debug("Getting Cluster Ideas");
     logger.trace("**************** cluster data ***************\n" + 
       JSON.stringify(this));
-    return []//getNodeChildren(this);
+    return getNodeChildren(this);
   },
 
   numclusterideas : function() {
-    return 0//getNodeChildren(this).count();
+    return getNodeChildren(this).count();
     //var ideaIDs = $(this)[0].ideaIDs;
     //var cursor = Ideas.find({_id: {$in: ideaIDs}}).fetch();
     //logger.debug("found cluster with ideas: ")
@@ -699,14 +698,36 @@ Template.MturkClusterModal.events({
     var idea = Session.get("insertionIdea");
     Meteor.call("graphCreateThemeNode", sharedGraph._id, 
       {'name': name},
-      function(error, newThemeID) {
-        logger.debug("Connecting Theme with idea nodes with new edge");
-        Meteor.call("graphLinkChild", 
-          sharedGraph._id, newThemeID, idea._id, null,
-          function(error, newLinkID) {
-            logger.debug("Created new Parent/child link");
+      function(error, newTheme) {
+        logger.debug("Shared NodeID: " + JSON.stringify(newTheme._id));
+        Tracker.autorun(function (c) {
+          logger.trace("***********************************************");
+          logger.debug("Connecting Theme with idea nodes with new edge");
+          logger.trace("***********************************************");
+          var linked = Edges.find({type: 'graph_link',
+            sharedNodeID: newTheme._id});
+          var linkedIDs = getValsFromField(linked, 'userNodeID');
+          var userTheme = Nodes.findOne({type: 'theme',
+              graphID: Session.get("currentGraph")._id,
+              _id: {$in: linkedIDs}
+          });
+          logger.trace("Linked node IDs for shared theme: " + 
+            JSON.stringify(linkedIDs));
+          logger.trace("Matching linked node: " + 
+            JSON.stringify(userTheme));
+          if (userTheme) {
+            logger.debug("Found Theme copy, creating link to idea");
+            Meteor.call("graphLinkChild", 
+              Session.get("currentGraph")._id, 
+              userTheme._id, idea._id, null,
+              function(error, newLinkID) {
+                logger.debug("Created new Parent/child link");
+              }
+            );
+
+            c.stop();
           }
-        );
+        });
       }
     );
     //Clear input field
@@ -838,7 +859,7 @@ receiveDroppable = function(event, ui, context) {
           JSON.stringify(source));
         //EventLogger.logIdeaRemovedFromCluster(idea, source, target);
         //ClusterFactory.removeIdeaFromCluster(idea, source);
-        Meteor.call("graphUnLinkChild", source._id, idea._id,
+        Meteor.call("graphUnlinkChild", source._id, idea._id,
           function(error, newLinkID) {
             logger.debug("Removed parent/child link");
           }

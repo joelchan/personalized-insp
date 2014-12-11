@@ -133,7 +133,7 @@ Meteor.methods({
     return edge._id;
     
   },
-  graphUnLinkChild: function(parentID, childID) {
+  graphUnlinkChild: function(parentID, childID) {
     logger.debug("Deleting parent-child graph edge");
     Edges.remove({type: 'parent_child', 
       'parentID': parentID,
