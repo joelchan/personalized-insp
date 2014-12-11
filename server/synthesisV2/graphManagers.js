@@ -99,7 +99,9 @@ Meteor.methods({
       metadata = {}
     }
     logger.debug("Creating a theme node");
-    metadata['name'] = "Not named yet";
+    if (!metadata['name']) {
+      metadata['name'] = "Not named yet";
+    }
     metadata['time'] = new Date().getTime();
     metadata['isTrash'] = false;
     metadata['isMerged'] = false;

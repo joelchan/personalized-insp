@@ -154,7 +154,7 @@ Template.MturkIdeaEntryBox.events({
     logger.debug(target);
     console.log("key pressed")
     if(e.keyCode===13) {
-      console.log("enter pressed")
+      logger.debug("enter pressed")
       var btn = $(target.firstNode).children('.submit-idea')
       btn.click();
     }

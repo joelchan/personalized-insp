@@ -126,11 +126,11 @@ Template.MturkClustering.rendered = function(){
   Groups.find({_id: group._id}).observe({
     changed: function(newDoc, oldDoc) {
       var users = newDoc.users;
-      setIdeaListener(users, Session.get("currentPrompt"));
+      //setIdeaListener(users, Session.get("currentPrompt"));
     },
   });
 
-  //Reset all the filters before initializing
+  ////Reset all the filters before initializing
   FilterManager.reset(ideaFilterName,
       Session.get("currentUser"),
       "nodes");
@@ -171,7 +171,9 @@ Template.MturkClustering.rendered = function(){
 
 var setSharedGraphListener = function(graph) {
   logger.debug("Setting up shared graph listener");
-  Nodes.find({graphID: graph._id}).observe({
+  Nodes.find({$and: [
+      {graphID: graph._id}, 
+      {_id: {$nin: graph.nodeIDs}}]}).observe({
     added: function(node) {
       logger.debug("new node added for this shared graph");
       var myNodeIDs = Session.get("currentGraph").nodeIDs;
@@ -191,10 +193,18 @@ var setSharedGraphListener = function(graph) {
 };
 
 var setIdeaListener = function(users, prompt) {
+  //Get user graph
+  var userGraph = Session.get("currentGraph");
+  var nodes = Nodes.find({graphID: userGraph._id});
+  var ideaIDs = getValsFromField(nodes, 'ideaID');
+  logger.trace("IdeaIDs already in graph");
+  logger.trace(ideaIDs);
   var currentListener = Session.get("ideaObserver");
   var userIDs = getIDs(users);
-  var observer = Ideas.find({userID: {$in: userIDs}, 
-      promptID: prompt._id}).observe({
+  var observer = Ideas.find({$and: [
+      {userID: {$in: userIDs}},
+      {promptID: prompt._id},
+      {_id: {$nin: ideaIDs}} ]}).observe({
     added: function(idea) {
       createIdeaNode(idea);
     },
@@ -204,7 +214,10 @@ var setIdeaListener = function(users, prompt) {
 var createIdeaNode = function(idea) {
   logger.debug("creating node for idea");
   Meteor.call("graphCreateIdeaNode", 
-    Session.get("currentGraph")._id, idea._id, null
+    Session.get("currentGraph")._id, idea._id, null,
+    function(error, result) {
+      logger.trace("Created Graph Idea Node");
+    }
   );
 },
 
@@ -553,6 +566,39 @@ Template.MturkCluster.helpers({
 });
 
 
+Template.MturkClusterModal.events({
+  'click #cluster-name-modal .finish': function(e, elm) {
+    logger.debug("Clicked finish in new cluster name modal");
+    //Get Name from Field
+    var name = $("#cluster-name-modal .name-cluster").val();
+    //Create new cluster in shared graph
+    var sharedGraph = Session.get("sharedGraph");
+    var idea = Session.get("insertionIdea");
+    Meteor.call("graphCreateThemeNode", sharedGraph._id, 
+      {'name': name},
+      function(error, newThemeID) {
+        logger.debug("Connecting Theme with idea nodes with new edge");
+        Meteor.call("graphLinkChild", newThemeID, idea._id, null,
+          function(error, newLinkID) {
+            logger.debug("Created new Parent/child link");
+          }
+        );
+      }
+    );
+    //Clear input field
+    $("#cluster-name-modal .name-cluster").val('');
+    $("#cluster-name-modal").modal('hide');
+  },
+
+  'keyup #cluster-name-modal .name-cluster' : function(e, target){
+    if(e.keyCode===13) {
+      logger.debug("enter pressed")
+      $("#cluster-name-modal .finish").click();
+    }
+  },
+    
+});
+
 var getDroppableSource = function(item) {
   /*****************************************************************
    * Return the Cluster associated with origin of item. Return null 
@@ -634,16 +680,18 @@ receiveDroppable = function(event, ui, context) {
     //EventLogger.logIdeaClustered(idea, source, target);
   } else if (target.hasClass("newcluster")) {
     logger.info("Creating a new cluster for idea");
-    Meteor.call("graphCreateThemeNode", sharedGraph._id, null, 
-      function(error, newThemeID) {
-        logger.debug("Connecting Theme with idea nodes with new edge");
-        Meteor.call("graphLinkChild", newThemeID, idea._id, null,
-          function(error, newLinkID) {
-            logger.debug("Created new Parent/child link");
-          }
-        );
-      }
-    );
+    Session.set("insertionIdea", idea);
+    $("#cluster-name-modal").modal('show');
+    //Meteor.call("graphCreateThemeNode", sharedGraph._id, null, 
+      //function(error, newThemeID) {
+        //logger.debug("Connecting Theme with idea nodes with new edge");
+        //Meteor.call("graphLinkChild", newThemeID, idea._id, null,
+          //function(error, newLinkID) {
+            //logger.debug("Created new Parent/child link");
+          //}
+        //);
+      //}
+    //);
   } else if (target.hasClass("cluster-item")) {
     logger.info("Inserting idea into cluster using cluster list");
     var clusterID = trimFromString(context.id, 'ci-');
