@@ -19,18 +19,29 @@ Template.IdeaGen.helpers({
 /********************************************************************
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
-    return Session.get("currentUser").name;
+    if (Session.get("currentUser")) {
+      return Session.get("currentUser").name;
+    } else {
+      return "Anonymous";
+    }
   },
   hasAlias: function() {
     logger.debug("Checking if user has alias");
     logger.trace(this);
-    if (Session.get("currentUser").alias == null) {
-      logger.debug("User has no alias");
-      return false;
+    var hasAlias = false;
+    if (Session.get("currentUser")) {
+      if (Session.get("currentUser").alias == null) {
+        logger.debug("User has no alias");
+        return false;
+      } else {
+        logger.debug("User has an alias");
+        return true;
+      }
     } else {
-      logger.debug("User has an alias");
-      return true;
+      logger.debug("No User set when checking alias");
+      return false;
     }
+
   },
 
   alias: function() {

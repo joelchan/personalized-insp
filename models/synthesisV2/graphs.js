@@ -20,7 +20,7 @@ NODE_TYPES = {
 
 /* list of minimum required fields for a given edge type */
 EDGE_TYPES = {
-  'parent_child': ['sourceID', 'targetID'],
+  'parent_child': ['parentID', 'childID'],
   'merged': ['sourceID', 'targetID'],
   'graph_link': ['sharedNodeID', 'userNodeID'],
 };
@@ -43,7 +43,7 @@ Graph = function(promptID, groupID, userID) {
 
 };
 
-GraphNode = function(graphID, type, data) {
+GraphNode = function(graphID, promptID, type, data) {
   /********************************************************************
   * GraphNode constructor
   *
@@ -56,6 +56,7 @@ GraphNode = function(graphID, type, data) {
   * @return {object} GraphNode object 
   ********************************************************************/
   this.graphID = graphID;
+  this.promptID = promptID;
   this.type = type;
   if (data) {
     // Add metadata fields if any are given
@@ -66,12 +67,12 @@ GraphNode = function(graphID, type, data) {
   }
 };
 
-GraphEdge = function(type, sourceID, targetID, data) {
+GraphEdge = function(type, promptID, sourceID, targetID, data) {
   /********************************************************************
   * GraphEdge constructor
   *
   * @params
-  *   graph - the parent graph of this edge
+  *   type - string used to classify the function of the edge
   *   source - the source node of the edge
   *   target - the destination node of the edge
   *   data(optional) - a key-value object of additional metadata 
@@ -79,8 +80,9 @@ GraphEdge = function(type, sourceID, targetID, data) {
   *
   * @return {object} GraphEdge object 
   ********************************************************************/
-//  this.graphID = graph._id;
+  //this.graphID = graph._id;
   this.type = type;
+  this.promptID = promptID;
   this.sourceID = sourceID;
   this.targetID = targetID;
   this.nodeIDs = [sourceID, targetID];
@@ -95,8 +97,7 @@ GraphEdge = function(type, sourceID, targetID, data) {
 
 
 getNodeChildren = function (parent) {
-  logger.debug("getting children of node: ");
-  logger.trace(parent);
+  logger.debug("getting children of node: " + JSON.stringify(parent));
   var edges = Edges.find({type: 'parent_child',
     parentID: parent._id
   });

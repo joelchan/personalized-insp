@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Managers:Filter');
 // Comment out to use global logging level
-// Logger.setLevel('Managers:Filter', 'trace');
-// Logger.setLevel('Managers:Filter', 'debug');
- Logger.setLevel('Managers:Filter', 'info');
+//Logger.setLevel('Managers:Filter', 'trace');
+//Logger.setLevel('Managers:Filter', 'debug');
+Logger.setLevel('Managers:Filter', 'info');
 //Logger.setLevel('Managers:Filter', 'warn');
 
 FilterManager = (function () {
@@ -308,13 +308,13 @@ FilterManager = (function () {
       /*****************   End Stub code ***************************/
       /*****************   Actual Implementation code **************/
       logger.trace("Beginning remove matching filters");
-      //var results = Filters.find({name: name, 
-          //user: user, 
-          //collection: col,
-          //field: field,
-          //val: val
-      //});
-      //logger.debug("Found " + results.count() + " filters to remove");
+      var results = Filters.find({name: name, 
+          user: user, 
+          collection: col,
+          field: field,
+          val: val
+      });
+      logger.debug("Found " + results.count() + " filters to remove");
       if (Meteor.isServer) {
         if(val){
           Filters.remove({name: name, 
