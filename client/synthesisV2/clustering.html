@@ -70,13 +70,13 @@
         </div>
         <div class="col-xs-3 vote-box">
           <!-- <span class='vote-box'>  -->
-        <!-- {{#if hasVotes }} -->
-          <!-- <span class="up-vote vote fa fa-thumbs-up"></span> -->
-          <!-- {{ voteNum }} -->
-        <!-- {{else}} -->
-          <!-- <span class="up-vote vote fa fa-thumbs-o-up"></span> -->
-          <!-- {{ voteNum }} -->
-        <!-- {{/if}} -->
+        {{#if vote }}
+           <span class="up-vote vote fa fa-thumbs-up"></span> 
+          {{ numVotes }} 
+        {{else}} 
+          <span class="up-vote vote fa fa-thumbs-o-up"></span> 
+          {{ numVotes }} 
+        {{/if}} 
         <!-- </span> -->
       </div>
     </div>
@@ -96,12 +96,13 @@
         </div>
         <div class="col-xs-3 vote-box">
           <!-- <span class='vote-box'>  -->
-          <!-- {{#if hasVotes }} -->
-            <!-- <span class="up-vote vote fa fa-thumbs-up"></span> -->
-            <!-- {{ voteNum }} -->
-          <!-- {{else}} -->
-            <!-- <span class="up-vote vote fa fa-thumbs-o-up"></span> -->
-          <!-- {{/if}}  -->
+          {{#if vote }} 
+            <span class="up-vote vote fa fa-thumbs-up"></span> 
+            {{ numVotes }} 
+          {{else}} 
+            <span class="up-vote vote fa fa-thumbs-o-up"></span> 
+            {{ numVotes }} 
+          {{/if}}  
         <!-- </span> -->
       </div>
     </div>

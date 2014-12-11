@@ -93,6 +93,7 @@ Meteor.methods({
       metadata['content'] = idea.content;
       metadata['time'] = idea.time;
       metadata['vote'] = false;
+      metadata['numVotes'] = 0;
       return createGraphNode(graphID, 'idea', metadata);
     } else {
       logger.debug("Node already exists for this idea and graph");
@@ -174,6 +175,9 @@ Meteor.methods({
     logger.debug("Naive Union");
     graphUnion(graphID, userID, groupID);
   },
+  graphUpdateIdeaVotes: function(nodeID) {
+    return updateVotes(nodeID);
+  }
 
     
 });
@@ -191,6 +195,47 @@ createGraphNode = function(graphID, type, metadata) {
   return node;
 };
 
+var updateVotes = function (nodeID) {
+  logger.debug("Updating votes for node: " + nodeID);
+  var ideaNode = Nodes.findOne({_id: nodeID});
+  //Quick Hack, needs to eventually match user group
+  var count = Nodes.find({type: 'idea', 
+    ideaID: ideaNode.ideaID,
+    vote: true
+  }).count();
+  logger.debug("Updating votes on nodes to: " + count);
+  var ideaNodes = Nodes.find({type: 'idea', 
+    ideaID: ideaNode.ideaID
+  });
+  var ideaNodeIDs = getIDs(ideaNodes);
+  logger.debug("Updating nodes with IDs: " + JSON.stringify(ideaNodeIDs));
+  ideaNodeIDs.forEach(function(id) {
+    Nodes.update({_id: id}, 
+      {$set: {'numVotes': count}}
+    );
+  });
+  return count;
+}
+
+var getLinkedNodes = function (nodeID) {
+  logger.debug("Retrieving list of linked Node IDs");
+  //Get shared node
+  var shared = Edges.findOne({type: 'graph_link', userNodeID: nodeID});
+  if (!shared) {
+    logger.debug("Given node is not a user node, looking for shared node");
+    shared = Edges.findOne({type: 'graph_link', sharedNodeID: nodeID});
+  }
+  var links = Edges.find({$and: [{type: 'graph_link'},
+      {sharedNodeID: shared.sharedNodeID}
+  ]});
+  // Filtering edges for nodeIDs
+  logger.trace("Num of relevant edges found: " + links.count());
+  var linkIDs = getValsFromField(links, 'userNodeID');
+  //linkIDs = _.difference(_.uniq(linkIDs), [nodeID]);
+  logger.trace("List of linked nodes: " + JSON.stringify(linkIDs));
+  return linkIDs;
+}
+
 
 var createIdeaNode = function(idea, graph) {
   logger.debug("creating node for idea");
@@ -203,6 +248,7 @@ var createIdeaNode = function(idea, graph) {
     metadata['content'] = idea.content;
     metadata['time'] = idea.time;
     metadata['vote'] = false;
+    metadata['numVotes'] = 0;
     return createGraphNode(graph._id, 'idea', metadata);
   } else {
     logger.debug("Node already exists for this idea and graph");
