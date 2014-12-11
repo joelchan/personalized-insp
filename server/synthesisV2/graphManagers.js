@@ -56,8 +56,11 @@ Meteor.methods({
       if (!Edges.findOne({$and: [{nodeIDs: node._id},
           {nodeIDs: copy._id}]})) {
         logger.debug("graph_link edge did not exist");
-        var g = Graphs.findOne({_id: graphID});
-        var edge = new GraphEdge('graph_link', g.promptID, node._id, copy._id, null);
+        var g = Graphs.findOne({_id: targetGraphID});
+        var metadata = {};
+        metadata['sharedNodeID'] = node._id;
+        metadata['userNodeID'] = copy._id; 
+        var edge = new GraphEdge('graph_link', g.promptID, node._id, copy._id, metadata);
         edge._id = Edges.insert(edge);
       } else {
         logger.debug("graph_link edge exists already");

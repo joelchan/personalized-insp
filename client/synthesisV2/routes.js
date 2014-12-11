@@ -75,53 +75,7 @@ Router.map(function () {
             var group = Groups.findOne({_id: prompt.groupIDs[0]});
             logger.trace(group);
             Session.set("currentGroup", group);
-
-            //Get Data and setup listeners
-            //Get user graph
-            //var userGraph = Graphs.findOne({
-              //'promptID': prompt._id,
-              //'groupID': group._id,
-              //'userID': user._id
-            //});
-            //logger.trace(userGraph);
-            //if (!userGraph) {
-              //logger.info("No user graph found.  Initializing new graph");
-              //Session.set("currentGraph", false);
-              //Meteor.call("graphCreate", prompt._id, group._id, user._id,
-                //function (error, result) {
-                  //logger.debug("Setting User graph");
-                  //var g = Graphs.findOne({_id: result});
-                  //Session.set("currentGraph", g);
-                //}
-              //);
-            //} else {
-              //logger.debug("Found and Setting User graph");
-              //Session.set("currentGraph", userGraph);
-            //}
-          // 
-            ////Get shared graph
-            //var sharedGraph = Graphs.findOne({
-              //'promptID': prompt._id,
-              //'groupID': group._id,
-              //'userID': null,
-            //});
-            //logger.trace(sharedGraph);
-            //if (!sharedGraph) {
-              //logger.info("No shared graph found.  Initializing new graph");
-              //Session.set("sharedGraph", false);
-              //Meteor.call("graphCreate", prompt._id, group._id, null,
-                //function (error, result) {
-                  //logger.debug("Setting shared graph");
-                  //var g = Graphs.findOne({_id: result});
-                  //Session.set("sharedGraph", g);
-                //}
-              //);
-            //} else {
-              //logger.debug("Found and Setting shared graph");
-              //Session.set("sharedGraph", sharedGraph);
-            //}
-         
-       
+            Session.set("filtersSet", false);
           } else {
             logger.warn("no prompt found with id: " + this.params.promptID);
           }
