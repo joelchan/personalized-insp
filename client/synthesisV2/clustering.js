@@ -408,11 +408,12 @@ Template.MturkClusterIdeaItem.helpers({
 
 Template.MturkClusterIdeaItem.events({
   'click .up-vote': function(e, elm) {
-    if (this.vote) {
-      Nodes.update({_id: this._id}, {$set: {vote: !this.vote}});
-    } else {
-      Nodes.update({_id: this._id}, {$set: {vote: true}});
-    }
+    logger.debug("updating vote for node with ID: " + this._id);
+    Nodes.update({_id: this._id}, {$set: {vote: !this.vote}});
+    Meteor.call('graphUpdateIdeaVotes', this._id, 
+      function(error, result) {
+        logger.debug("Finished updating all votes to: " + result);
+    });
   },
 
 });
@@ -467,18 +468,13 @@ Template.MturkClusteringIdeaListIdeaItem.helpers({
 
 Template.MturkClusteringIdeaListIdeaItem.events({
   'click .up-vote': function(e, elm) {
-    if (this.vote) {
-      Nodes.update({_id: this._id}, {$set: {vote: !this.vote}});
-    } else {
-      Nodes.update({_id: this._id}, {$set: {vote: true}});
-    }
-    //if (!isInList(Session.get("currentUser")._id, this.votes)) {
-      //logger.debug("voting for idea");
-      //IdeaFactory.upVote(this, Session.get("currentUser"));
-    //} else {
-      //logger.debug("undo voting for idea");
-      //IdeaFactory.downVote(this, Session.get("currentUser"));
-    //}
+    logger.debug("updating vote for node with ID: " + this._id);
+    Nodes.update({_id: this._id}, {$set: {vote: !this.vote}});
+    Meteor.call('graphUpdateIdeaVotes', this._id, 
+      function(error, result) {
+        logger.debug("Finished updating all votes to: " + result);
+        logger.trace(result);
+    });
   },
 
 });

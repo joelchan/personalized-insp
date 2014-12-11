@@ -13,7 +13,7 @@ Edges = new Mongo.Collection("edges");
 
 /* list of minimum required fields for a given node type */
 NODE_TYPES = {
-  'ideas': ['ideaID', 'content', 'time', 'vote'],
+  'ideas': ['ideaID', 'content', 'time', 'vote', 'numVotes'],
   'theme': ['name', 'time', 'isTrash', 'isMerged', 
       'position', 'isCollapsed'],
 };
