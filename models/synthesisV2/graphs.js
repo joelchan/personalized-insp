@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Models:Graphs');
 // Comment out to use global logging level
-Logger.setLevel('Models:Graphs', 'trace');
+//Logger.setLevel('Models:Graphs', 'trace');
 //Logger.setLevel('Models:Graphs', 'debug');
-//Logger.setLevel('Models:Graphs', 'info');
+Logger.setLevel('Models:Graphs', 'info');
 //Logger.setLevel('Models:Graphs', 'warn');
 
 Graphs = new Mongo.Collection("graphs");

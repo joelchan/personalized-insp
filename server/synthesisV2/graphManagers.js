@@ -169,7 +169,12 @@ Meteor.methods({
         createIdeaNode(idea, userGraph);
       },
     });
-  }
+  },
+  graphNaiveUnion: function(graphID, userID, groupID) {
+    logger.debug("Naive Union");
+    graphUnion(graphID, userID, groupID);
+  },
+
     
 });
 
@@ -205,22 +210,75 @@ var createIdeaNode = function(idea, graph) {
   }
 };
 
-var setIdeaListener = function(users, prompt) {
-  //Get user graph
-  var userGraph = Session.get("currentGraph");
-  var nodes = Nodes.find({graphID: userGraph._id});
-  var ideaIDs = getValsFromField(nodes, 'ideaID');
-  logger.trace("IdeaIDs already in graph at load time");
-  logger.trace(ideaIDs);
-  var currentListener = Session.get("ideaObserver");
-  var userIDs = getIDs(users);
-  var observer = Ideas.find({$and: [
-      {userID: {$in: userIDs}},
-      {promptID: prompt._id},
-      {_id: {$nin: ideaIDs}} ]}).observe({
-    added: function(idea) {
-      createIdeaNode(idea);
-    },
+var graphUnion = function (graphID, userID, groupID) {
+  /******************************************************************
+   * Creates a naive union of a given graph using its linked shared 
+   * graphs.
+   *
+   * @params
+   *    graphID - The ID of the shared graph
+   *    userID - The userID of the user generating the union
+   *    groupID - The groupID of the group working on the prompt
+   * @return
+   *    null
+   *****************************************************************/
+  var graph = Graphs.findOne({_id: graphID});
+  var group = Groups.findOne({_id: groupID});
+  var groupUserIDs = getIDs(group.users);
+  //Generate Idea Nodes
+  logger.debug("Generating Idea Nodes for given graph");
+  logger.trace("userIDs: " + JSON.stringify(groupUserIDs));
+  var ideaNodes = Nodes.find({type: "idea", 
+    promptID: graph.promptID,
+    graphID: graphID});
+  logger.trace("Num Idea Nodes: " + ideaNodes.count());
+  var ideas = Ideas.find({promptID: graph.promptID,
+    userID: {$in: groupUserIDs},
+    _id: {$nin: getValsFromField(ideaNodes, 'ideaID')}
+  });
+  logger.trace("Num matching Ideas: " + ideas.count());
+  if (ideas) {
+    ideas.forEach(function(idea) {
+      createIdeaNode(idea, graph);
+    });
+  }
+  //Go through each theme node and attach ideas
+  logger.debug("Connect ideas to each node");
+  var themeNodes = Nodes.find({type: "theme",
+    promptID: graph.promptID,
+    graphID: graph._id
+  });
+  logger.debug("Num of theme nodes graph: " + themeNodes.count());
+  themeNodes.forEach(function(theme) {
+    logger.debug("Appending linked ideas to theme node id: " + theme._id);
+    //Get all linked nodes
+    var linkedEdges = Edges.find({type: 'graph_link',
+      sharedNodeID: theme._id
+    });
+    var linkedNodeIDs = getValsFromField(linkedEdges, 'userNodeID');
+    //Get all ideas for all linked nodes
+    var childEdges = Edges.find({type: 'parent_child',
+      parentID: {$in: linkedNodeIDs}
+    });
+    var ideaNodeIDs = _.uniq(getValsFromField(childEdges, 'childID'));
+    var ideaNodes = Nodes.find({_id: {$in: ideaNodeIDs}});
+    var ideaIDs = getValsFromField(ideaNodes, 'ideaID');
+    //Get matching nodes within current graph for each idea
+    var sharedIdeaNodes = Nodes.find({type: "idea",
+      graphID: graphID,
+      ideaID: {$in: ideaIDs}
+    });
+    sharedIdeaNodes.forEach(function(ideaNode) {
+      logger.debug("Linking ideanode to current theme");
+      Meteor.call("graphLinkChild", 
+          graphID, theme._id, ideaNode._id, null,
+        function(error, newLinkID) {
+          logger.debug("Created new Parent/child link");
+        }
+      );
+
+    });
+    
   });
 };
 
