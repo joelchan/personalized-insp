@@ -51,15 +51,16 @@ Router.map(function () {
       //console.log("************************************************");
       //var ideatorIDs = getIDs(group['assignments']['Ideator'])
       //var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      var pID = this.params.promptID;
       return [
           Meteor.subscribe('prompts'),
           Meteor.subscribe('groups'),
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('clusters'),
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
           Meteor.subscribe('myUsers'),
-          Meteor.subscribe('tasks'),
+          Meteor.subscribe('tasks', {promptID: pID}),
           Meteor.subscribe('questions'),
-          Meteor.subscribe('assignments'),
+          Meteor.subscribe('assignments', {promptID: pID}),
       ];
     }, 
     onBeforeAction: function() {
@@ -130,13 +131,14 @@ Router.map(function () {
   	template: 'MturkIdeationPage',
     waitOn: function() {
       logger.debug("Waiting on...");
+      var pID = this.params.promptID;
       return [
-        Meteor.subscribe('ideas'),
+        Meteor.subscribe('ideas', {promptID: pID}),
         Meteor.subscribe('prompts'),
         Meteor.subscribe('myUsers'),
-        Meteor.subscribe('tasks'),
+        Meteor.subscribe('tasks', {promptID: pID}),
         Meteor.subscribe('questions'),
-        Meteor.subscribe('assignments'),
+        Meteor.subscribe('assignments', {promptID: pID}),
       ];
     },
     onBeforeAction: function(pause) {
@@ -180,62 +182,6 @@ Router.map(function () {
     }
 
   });
-  //this.route('MturkSynthesis', {
-    //path: 'crowd/Categorize/:promptID/:userID/',
-  	//template: 'MturkClustering',
-    //waitOn: function() {
-      //logger.debug("Waiting on...");
-      //if (Session.get("currentUser")) {
-        //// return Meteor.subscribe('ideas');
-        //logger.debug("has current user...");
-        //return [
-          //Meteor.subscribe('ideas'),
-          //Meteor.subscribe('clusters'),
-          //Meteor.subscribe('prompts'),
-          //Meteor.subscribe('myUsers')
-          //];
-      //} else {
-        //logger.debug("NO current user...");
-        //return [
-          //Meteor.subscribe('ideas'),
-          //Meteor.subscribe('clusters'),
-          //Meteor.subscribe('prompts'),
-          //Meteor.subscribe('myUsers')
-        //];
-      //}
-    //},
-    //onBeforeAction: function(pause) {
-        //logger.debug("before action");
-        //if (this.ready()) {
-          //var user = MyUsers.findOne({_id: this.params.userID});
-          //LoginManager.loginUser(user.name);
-          //Session.set("currentUser", user);
-          //MyUsers.update({_id: user._id}, {$set: {route: 'MturkSynthesis'}});
-          //console.log("Data ready");
-          //var prompt = Prompts.findOne({_id: this.params.promptID});
-          //if (prompt) {
-            //Session.set("currentPrompt", prompt);
-          //} else {
-            //logger.warn("no prompt found with id: " + this.params.promptID);
-          //}
-          //this.next();
-        //} else {
-          //console.log("Not ready");
-        //}
-    //},
-    //action: function(){
-      //if(this.ready())
-        //this.render();
-      //else
-        //this.render('loading');
-    //},
-    //onAfterAction: function() {
-      //if (this.ready()) {
-        //initRolePage();
-      //}
-    //}
-//
-  //});
   this.route('LegionFinalPage', {
     path: 'crowd/finished/:promptID/:userID/',
   	template: 'LegionFinalPage',
@@ -284,16 +230,17 @@ Router.map(function () {
       path: 'consent/:promptID/:userID',
       template: 'HcompConsentPage',
     waitOn: function() {
+      var pID = this.params.promptID;
       if (Session.get("currentUser")) {
         return [ 
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('clusters'),
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
           Meteor.subscribe('prompts'),
           ]
       } else {
         return [
-          Meteor.subscribe('ideas'),
-          Meteor.subscribe('clusters'),
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
           Meteor.subscribe('prompts'),
         ]
       }
@@ -336,6 +283,57 @@ Router.map(function () {
   this.route("HcompResultsPage", {
     path: "/results/:promptID/:userID", 
     template: "HcompResultsPage",
+    waitOn: function() {
+      var pID = this.params.promptID;
+      if (Session.get("currentUser")) {
+        return [ 
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('prompts'),
+          ]
+      } else {
+        return [
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('prompts'),
+        ]
+      }
+    },
+    onBeforeAction: function() {
+        console.log("before action");
+        // if (!Session.get("currentUser")) {
+        //   //if there is no user currently logged in, then render the login page
+        //   this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+        //   //Pause rendering the given page until the user is set
+        //   pause();
+        // }
+        if (this.ready()) {
+          logger.debug("Data ready");
+          if (Session.get("currentUser")) {
+            var user = MyUsers.findOne({_id: this.params.userID});
+            LoginManager.loginUser(user.name);
+            Session.set("currentUser", user);
+          }
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
+          }
+          this.next();
+        }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    },
+  });
+
+  this.route("Visualization", {
+    path: "/vizualization/:promptID/:userID", 
+    template: "Visualization",
     waitOn: function() {
       if (Session.get("currentUser")) {
         return [ 

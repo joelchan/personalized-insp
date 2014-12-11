@@ -102,7 +102,7 @@ Template.CrowdBrainstorm.events({
   },
   'click .review-button': function() {
     console.log("go to reviewpage");
-    Router.go("HcompResultsPage", 
+    Router.go("Results", 
       {promptID: this._id, userID: Session.get("currentUser")});
   },
 });
@@ -171,7 +171,7 @@ Template.CrowdPromptPage.events({
         logger.trace("found current prompt with id: " + prompt._id);
         Session.set("currentPrompt", prompt);
         logger.debug("Prompt selected");
-        Router.go('HcompResultsPage', {promptID: prompt._id, userID: user._id});
+        Router.go('Visualization', {promptID: prompt._id, userID: user._id});
       } else {
         logger.error("couldn't find current prompt with id: " + 
             prompt._id);

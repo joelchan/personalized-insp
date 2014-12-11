@@ -35,6 +35,15 @@ local_meteor = {'url': "localhost",
                 'pswd': 'meteor',
 }
 
+
+local_meteor = {'url': "localhost",
+                'port': 3001,
+                'dbName': 'meteor',
+                'user': '',
+                'pswd': '',
+}
+
+
 def get_db (db=None):
   """
   Returns a handle to an open connection to the mongo db
@@ -94,6 +103,9 @@ def get_mongodb(dbUrl, dbPort, dbName, dbUser=None, dbPswd=None):
 
   """
   if ((dbUser == None) and (dbPswd == None)):
+    dbURI = "mongodb://" + dbUrl + ":" + \
+        str(dbPort) + "/" + dbName
+  elif ((dbUser == "") and (dbPswd == "")):
     dbURI = "mongodb://" + dbUrl + ":" + \
         str(dbPort) + "/" + dbName
   else:

@@ -258,7 +258,7 @@ Template.TaskCard.helpers(
                 message = "";
                 break;
         }
-        console.log("Priority is " + message);
+        logger.debug("Priority is " + message);
         return message;
     },
 
@@ -354,7 +354,10 @@ Template.HcompDashboard.events({
     //   MyUsers.update({_id: id}, {$set: {'route': "MturkSynthesis"}});
     // });
     logger.debug("Sending self to synthesis");
-    Router.go('MturkSynthesis', {'promptID': Session.get("currentPrompt")._id, 'userID': Session.get("currentUser")._id});
+    Router.go('MturkSynthesis', 
+        {'promptID': Session.get("currentPrompt")._id, 
+        'userID': Session.get("currentUser")._id}
+    );
     // MyUsers.update({_id: Session.get("currentUser")._id}, {$set: {'route': "MturkSynthesis"}});
   },
 
