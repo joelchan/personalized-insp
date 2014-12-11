@@ -701,7 +701,8 @@ Template.MturkClusterModal.events({
       {'name': name},
       function(error, newThemeID) {
         logger.debug("Connecting Theme with idea nodes with new edge");
-        Meteor.call("graphLinkChild", newThemeID, idea._id, null,
+        Meteor.call("graphLinkChild", 
+          sharedGraph._id, newThemeID, idea._id, null,
           function(error, newLinkID) {
             logger.debug("Created new Parent/child link");
           }
@@ -843,7 +844,8 @@ receiveDroppable = function(event, ui, context) {
           }
         );
         //ClusterFactory.insertIdeaToCluster(idea, target);
-        Meteor.call("graphLinkChild", target._id, idea._id, null,
+        Meteor.call("graphLinkChild", 
+            sharedGraph._id, target._id, idea._id, null,
           function(error, newLinkID) {
             logger.debug("Created new Parent/child link");
           }
@@ -852,7 +854,8 @@ receiveDroppable = function(event, ui, context) {
       }
     } else {
       //ClusterFactory.insertIdeaToCluster(idea, target);
-      Meteor.call("graphLinkChild", target._id, idea._id, null,
+      Meteor.call("graphLinkChild", 
+          sharedGraph._id, target._id, idea._id, null,
         function(error, newLinkID) {
           logger.debug("Created new Parent/child link");
         }

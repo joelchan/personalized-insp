@@ -117,7 +117,7 @@ Meteor.methods({
     logger.trace(metadata);
     return createGraphNode(graphID, 'theme', metadata);
   },
-  graphLinkChild: function(parentID, childID, metadata) {
+  graphLinkChild: function(parentGraphID, parentID, childID, metadata) {
     logger.debug("Creating a new parent-child graph edge");
     if (!metadata) {
       metadata = {}
@@ -127,7 +127,7 @@ Meteor.methods({
     metadata['parentID'] = parentID;
     metadata['childID'] = childID;
     logger.trace(metadata);
-    var g = Graphs.findOne({_id: graphID});
+    var g = Graphs.findOne({_id: parentGraphID});
     var edge = new GraphEdge('parent_child', g.promptID, parentID, childID, metadata);
     edge._id = Edges.insert(edge);
     return edge._id;
