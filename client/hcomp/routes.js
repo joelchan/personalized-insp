@@ -98,7 +98,7 @@ Router.map(function () {
     }
   });
   this.route('MturkLoginPage', {
-    path: '/crowd/Login/:promptID',
+    path: '/crowd/Ideate/Login/:promptID',
     template: 'MturkLoginPage',
     waitOn: function() {
       return Meteor.subscribe('prompts', this.params.promptID);
@@ -124,6 +124,9 @@ Router.map(function () {
       } else {
         this.render('loading');
       }
+    },
+    onAfterAction: function() {
+      Session.set("nextPage", "MturkIdeation");
     },
   });
   this.route('MturkIdeation', {
