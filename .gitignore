@@ -25,3 +25,7 @@ node_modules
 # release directory #
 #####################
 release
+
+# Windows text files #
+####################
+*.*~
