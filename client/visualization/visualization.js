@@ -98,6 +98,7 @@ Template.Visualization.helpers({
 
 Template.ForceDiagram.rendered = function()
 {
+/*
 	incomingIdeaData =  
 	[
 		{    "id":1,    "idea":"sleep schedule",    "categories":["Health and Wellbeing"],    "quality":0  },
@@ -153,6 +154,12 @@ Template.ForceDiagram.rendered = function()
 		{    "id":51,    "idea":"app that sends bits of inspiration (quotes, pictures, etc) for EMTs when they're burnt out/tired",    "categories":["Emotional support"],    "quality":7  },
 		{    "id":52,    "idea":"Send pics to other parties (hospital or cops)",    "categories":["Communication", "hospital, dispatch, cops"],    "quality":5  }
 	];
+*/
+
+	//generateIdeaData();	
+
+	incomingIdeaData = parseGraph("bb5MupdMxKKk6qgkN");
+
 	CreateForceDiagram(GetForceData(incomingIdeaData));
 }
 
@@ -173,6 +180,145 @@ function GetForceData(ideaData)
 
 	return forceData;
 }
+
+/********************************************************************
+* Visualization - Create Graph Data Logic
+********************************************************************/
+
+
+function generateIdeaData()
+{
+	createGraph();
+	
+}
+
+function createGraph()
+{
+	var promptID = 0;
+	var groupID = 0;
+	var userID = 0;
+	Meteor.call('graphCreate', promptID, groupID, userID, function (error, result) 	
+	{
+		var graphId = result;
+		//var graph = Graphs.findOne({'_id': graphId});
+		populateGraph(graphId);
+	});
+}
+
+function populateGraph(graphId)
+{
+	var metadata = {};
+	metadata['name'] = "Action"
+	Meteor.call('graphCreateThemeNode', graphId, metadata, function (error, result) 	
+	{
+		var themeNodeId = result._id;
+		createAndLinkChild(graphId, themeNodeId);
+	});
+
+}
+
+function createAndLinkChild(graphId, themeNodeId)
+{
+	var idea = Ideas.findOne();
+	var ideaId = idea._id;
+	var metaData = {'themeId': themeNodeId};
+	Meteor.call('graphCreateIdeaNode', graphId, ideaId, metaData, function (error, result) 	
+	{
+		var ideaNodeID = result._id;
+		var ideaNode = Nodes.findOne({'graphID': graphId,'_id': ideaNodeID});
+		var themeNodeId = ideaNode.themeId;
+		Meteor.call('graphLinkChild', themeNodeId, ideaNodeID, {});
+	});
+}
+
+
+/********************************************************************
+* Visualization - Parse Graph Logic
+********************************************************************/
+
+
+function parseGraph(graphId)
+{
+	var ideaData = [];
+	// Get Graph
+	var graph = Graphs.findOne({'_id': graphId});
+	// Get Idea Nodes
+	var ideaNodes = getIdeaNodes(graph);
+	for(var i = 0; i < ideaNodes.length; i++)
+	{ 
+		var ideaNode = ideaNodes[i];
+		var ideaNodeID = ideaNode._id;
+		var ideaNodeContent = ideaNode.content;
+		var ideaNodeVote = ideaNode.vote;
+		if(ideaNodeVote == false)
+		{
+			ideaNodeVote = 1;
+		}
+		var ideaNodeThemes = getIdeaNodeThemes(ideaNodeID, graphId);
+		var ideaDataItem = createIdeaDataItem(ideaNodeID, ideaNodeContent, ideaNodeThemes, ideaNodeVote);
+		
+		ideaData.push(ideaDataItem);
+	}	
+
+	return ideaData;
+}
+
+function getIdeaNodes(graph)
+{
+	var ideaNodes = [];
+	for(var i = 0; i < graph.nodeIDs.length; i++)
+	{
+		var nodeId = graph.nodeIDs[i];
+		var node = Nodes.findOne({'graphID': graph._id,'_id': nodeId});
+		
+		if(node.type == 'idea')
+		{
+			ideaNodes.push(node);
+		}
+
+	}
+
+	//Nodes.find({'graphID': graphId,'type': 'idea'});
+	
+	return ideaNodes;
+}
+
+function getIdeaNodeThemes(ideaNodeID, graphId)
+{
+	var ideaNodeThemes = [];
+	// Get parent-child edges with this node as a child
+	var parentChildEdges = Edges.find({'type': 'parent_child', 'childID': ideaNodeID}).fetch();
+	// Get parent nodes (themes)
+	for(var i = 0; i < parentChildEdges.length; i++)
+	{
+		var themeId = parentChildEdges[i].parentID;
+		var themeNode = Nodes.findOne({'graphID': graphId,'_id': themeId});
+
+		// Used for category membership, we could also use the id to allow duplicate names for different themes
+		var themeName = themeNode.name;
+		ideaNodeThemes.push(themeName);
+	}
+	return ideaNodeThemes;
+}
+
+function createIdeaDataItem(id, idea, categories, quality)
+{
+	var ideaDataItem = {'id': id, 'idea': idea, 'categories': categories, 'quality': quality};
+	return ideaDataItem;
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+//  this.nodeIDs = [];
+//  this.edgeIDs = [];
+// Meteor.call('graphCreate', prompt, group, user);
+// Meteor.call('graphCreateNode', graph, metadata);
+// graphCreateThemeNode: function(graphID, metadata)
+// graphCreateIdeaNode: function(graphID, ideaID, metadata)
+// graphCreateEdge: function(type, sourceID, targetID, metadata)
+// graphCreateNode: function(graphID, type, metadata)
+//  graphCreate: function(promptID, groupID, userID)
+//   graphLinkChild: function(parentID, childID, metadata)
 
 /********************************************************************
 * Visualization - Helper Function Logic
