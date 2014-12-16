@@ -96,7 +96,7 @@ Template.MturkClustering.rendered = function(){
             //c.stop();
           } 
         });
-        startServerListener();
+        //startServerListener();
       }
     );
   } else {
@@ -109,7 +109,7 @@ Template.MturkClustering.rendered = function(){
         //c.stop();
       } 
     });
-    startServerListener();
+    //startServerListener();
   }
   
   //Get shared graph
