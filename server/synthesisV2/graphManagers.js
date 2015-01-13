@@ -6,6 +6,25 @@ Logger.setLevel('Server:SynthesisV2:GraphManagers', 'trace');
 //Logger.setLevel('Server:SynthesisV2:GraphManagers', 'info');
 //Logger.setLevel('Server:SynthesisV2:GraphManagers', 'warn');
 
+Meteor.startup(function() {
+  /****************************************************************
+   * Setup idea listener to create idea nodes in the shared graph
+   * for all ideas in a prompt
+   * ************************************************************/
+  var ideaNodes = Nodes.find({type: 'idea'});
+  var ideaNodeIDs = getValsFromField(ideaNodes, 'ideaID');
+  var promptIDs = Pronpts.find({}, {fields: {_id: 1}});
+  promptIDs.forEach(function(promptID) {
+    var sharedGraph = Graphs.find({'promptID': promptID, userID: ''});
+    
+    Ideas.find({_id: {$nin: ideaNodeIDs}, 'promptID': promptID}).observe({
+      added: function(idea) {
+        logger.debug("New Idea added. Adding matching node to graph");
+      }
+    });
+  });
+
+});
 
 Meteor.methods({
   /****************************************************************
