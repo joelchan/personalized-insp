@@ -98,7 +98,7 @@ Template.Visualization.helpers({
 
 Template.ForceDiagram.rendered = function()
 {
-/*
+
 	incomingIdeaData =  
 	[
 		{    "id":1,    "idea":"sleep schedule",    "categories":["Health and Wellbeing"],    "quality":0  },
@@ -154,11 +154,11 @@ Template.ForceDiagram.rendered = function()
 		{    "id":51,    "idea":"app that sends bits of inspiration (quotes, pictures, etc) for EMTs when they're burnt out/tired",    "categories":["Emotional support"],    "quality":7  },
 		{    "id":52,    "idea":"Send pics to other parties (hospital or cops)",    "categories":["Communication", "hospital, dispatch, cops"],    "quality":5  }
 	];
-*/
+
 
 	//generateIdeaData();	
 
-	incomingIdeaData = parseGraph("bb5MupdMxKKk6qgkN");
+	// incomingIdeaData = parseGraph("bb5MupdMxKKk6qgkN");
 
 	CreateForceDiagram(GetForceData(incomingIdeaData));
 }
