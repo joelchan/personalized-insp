@@ -143,6 +143,7 @@ Router.map(function () {
         Meteor.subscribe('questions'),
         Meteor.subscribe('assignments', {promptID: pID}),
       ];
+      Session.set("useTimer", true);
     },
     onBeforeAction: function(pause) {
         logger.debug("before action");
