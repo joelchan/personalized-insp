@@ -1,9 +1,9 @@
 // Configure logger for ExperimentManager
 var logger = new Logger('Managers:Experiment');
 // Comment out to use global logging level
-//Logger.setLevel('Managers:Experiment', 'trace');
+Logger.setLevel('Managers:Experiment', 'trace');
 //Logger.setLevel('Managers:Experiment', 'debug');
-Logger.setLevel('Managers:Experiment', 'info');
+// Logger.setLevel('Managers:Experiment', 'info');
 //Logger.setLevel('Managers:Experiment', 'warn');
 
 ExperimentManager = (function () {
@@ -26,8 +26,13 @@ ExperimentManager = (function () {
        logger.trace("Creating new experiment object");
        var exp = new Experiment(promptID);
        expID = Experiments.insert(exp);
-       logger.trace("Successfully created new experiment with id " + expID);
-       logger.trace("Crowd can login at " + exp.url);
+       if (expID) {
+        logger.trace("Successfully created new experiment with id " + expID);
+        logger.trace("Crowd can login at " + exp.url);
+        return true;
+       } else {
+        return false
+       }
       /*****************   End Stub code ***************************/
     },
 
