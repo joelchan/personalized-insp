@@ -1,0 +1,71 @@
+<template name="MturkIdeationPageControl">
+  <div class="hcomp-ideation-pane-control">
+    <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
+    <div class="main-prompt">
+      {{> MturkMainPromptControl}}
+    </div>
+  </div>
+</template>
+
+<template name="MturkMainPromptControl">
+  <div class = "ideator-directions-control">
+    <label class="directions-header-control"> Directions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(More/Less)</a>
+    <!-- <div class="row"> -->
+      <div id="directions-container-control">
+        <div id="directions-content" class="collapse in">
+          <ol>
+            <li>Begin entering ideas for the main prompt here.</li>
+            <li>Continue to ideate until you reach 10 total ideas. If you reach 10 ideas before the time is up, you can either click on the "Exit early" button to complete the HIT or continue generating ideas until the time is up.</li>
+          </ol>
+          <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
+              2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
+              3) Continue to ideate until the time is up.
+          </p> -->
+        </div>
+      </div>
+    <!-- </div> -->
+  </div>
+  <div class = "general-idea-entry">
+    {{> MturkIdeaEntryBox }}
+    {{> MturkIdeaList }}
+  </div>
+</template>
+
+<template name="MturkIdeaEntryBox">
+  <div class="idea-input-box">
+    <textArea class="idea-input" placeholder="Enter your ideas here"></textArea>
+    <div class="btn btn-primary btn-large submit-idea">
+      Submit Idea
+    </div>
+  </div>
+</template>
+
+<template name="MturkIdeaList">
+  <div class="idea-list-box">
+  <div class="idea-count">
+    <span class="idea-count-label">
+      <!-- <h4>You have</h4> -->
+      <h3>{{ ideaCount }} </h3>
+      <h4>total ideas! </h4>
+    </span>
+  </div>
+    {{#each ideas }}
+      {{> MturkIdeabox}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="MturkIdeabox">
+  <div class="idea-box">
+    <span>{{ content }}</span>
+    <!--
+    <span class='vote-box'> 
+      <span class="up-vote vote glyphicon glyphicon-thumbs-up"></span>
+      {{ voteNum }}
+    </span>
+    -->
+  </div>
+</template>
+
+
+<!--TOOK OUT ALL TASK RELATED TEMPLATES-->
