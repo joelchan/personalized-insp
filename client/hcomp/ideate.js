@@ -31,6 +31,13 @@ Template.MturkIdeationPage.rendered = function(){
   
 };
 
+Template.MturkIdeationPageControl.helpers({
+    prompt: function() {
+    var prompt = Session.get("currentPrompt");
+    return prompt.question;
+  },
+});
+
 Template.MturkMainPrompt.rendered = function(){
   //Setup filters for users and filter update listener
   //updateFilters();
@@ -50,10 +57,10 @@ Template.MturkMainPrompt.rendered = function(){
 };
 
 Template.MturkMainPrompt.helpers({
-  // prompt: function() {
-  //   var prompt = Session.get("currentPrompt");
-  //   return prompt.question;
-  // },
+//    prompt: function() {
+//    var prompt = Session.get("currentPrompt");
+//    return prompt.question;
+//  },
 });
 
 Template.MturkIdeaList.helpers({
@@ -112,7 +119,7 @@ Template.MturkIdeaEntryBox.rendered = function(){
     // console.log(ideaEntryField);
     if (parentContainer.hasClass('general-idea-entry')) {
       // console.log("Parent is general idea entry");
-      ideaEntryField.attr("placeholder", "Enter ideas for the general prompt here")
+      ideaEntryField.attr("placeholder", "Enter ideas for the main prompt here")
     } else {
       ideaEntryField.attr("placeholder", "Enter ideas related to this inspiration here")
     };

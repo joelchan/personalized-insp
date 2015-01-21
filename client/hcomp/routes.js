@@ -126,12 +126,15 @@ Router.map(function () {
       }
     },
     onAfterAction: function() {
-      Session.set("nextPage", "MturkIdeation");
+      Session.set("nextPage", "HcompConsentPage");
     },
   });
   this.route('MturkIdeation', {
-    path: 'crowd/Ideation/:promptID/:userID/',
-  	template: 'MturkIdeationPage',
+      path: 'crowd/Ideation/:promptID/:userID/',
+      template: 'MturkIdeationPageControl',
+
+//    path: 'crowd/Ideation/:promptID/:userID/',
+//  	template: 'MturkIdeationPage',
     waitOn: function() {
       logger.debug("Waiting on...");
       var pID = this.params.promptID;
@@ -281,6 +284,9 @@ Router.map(function () {
         this.render();
       } else
         this.render('loading');
+    },
+    onAfterAction: function() {
+      Session.set("nextPage", "MturkIdeation");
     },
   });
 
