@@ -29,7 +29,7 @@ ExperimentManager = (function () {
        logger.trace("Successfully created new experiment with id " + expID);
        logger.trace("Crowd can login at " + exp.url);
       /*****************   End Stub code ***************************/
-    }
+    },
 
     initGroupRefs: function(exp) {
       /***********************************************************

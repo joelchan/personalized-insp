@@ -185,4 +185,12 @@ Template.CrowdPromptPage.events({
       }
     },
 
+    'click .create-exp-button': function () {
+      logger.trace("clicked create exp button");
+      var prompt = Prompts.findOne({'_id': this._id});
+      if (prompt) {
+        logger.trace("found current prompt with id: " + prompt._id);  
+      }
+    },
+
 });
