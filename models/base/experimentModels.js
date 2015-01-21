@@ -28,6 +28,10 @@ Experiment = function (promptID) {
   this.url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + promptID;
   //List of all experimental conditions
   this.conditions = [];
+  //How many groups per condition
+  this.groupN = 1;
+  //How many participants per condition
+  this.partN = 1;
   //Tracks group references: key: condition.id, value: array of groupIDs
   this.groups = {};
   //Tracks all participant IDs assigned to the experiment

@@ -22,18 +22,28 @@ ExperimentManager = (function () {
        *    boolean - true if successful creation of experiment
        * ***********************************************************/
        logger.trace("Beginning ExperimentManager.create");
-       /*****************   Stub code *******************************/
        logger.trace("Creating new experiment object");
-       var exp = new Experiment(promptID);
-       expID = Experiments.insert(exp);
-       if (expID) {
-        logger.trace("Successfully created new experiment with id " + expID);
-        logger.trace("Crowd can login at " + exp.url);
-        return true;
+       if (promptID) {
+         var exp = new Experiment(promptID);
+         expID = Experiments.insert(exp);
+         if (expID) {
+           logger.trace("Successfully created new experiment with id " + expID);
+           logger.trace("Crowd can login at " + exp.url);
+
+           // hard-code parameters for the experiment
+           // i want to create n "slots" into which we can assign participants
+           // when they are created and randomly assigned
+           exp.conditions = ["Control","Treatment"]
+           exp.groupN = 25;
+           exp.partN = 25;
+
+         return true;
+        } else {
+         return false
+        } 
        } else {
-        return false
+        logger.debug("No promptID provided, can't create experiment");
        }
-      /*****************   End Stub code ***************************/
     },
 
     initGroupRefs: function(exp) {
