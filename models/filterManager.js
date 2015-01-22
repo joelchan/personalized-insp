@@ -34,7 +34,7 @@ FilterManager = (function () {
         op = "eq";
       } 
       var otherOps = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col, 
           field: field,
           op: {'$ne': op}});
@@ -109,7 +109,7 @@ FilterManager = (function () {
       
       if (op) {
         var filter = Filters.findOne({name: name, 
-              user: user, 
+              user: user._id, 
               collection: col,
               field: field,
               val: val,
@@ -124,7 +124,7 @@ FilterManager = (function () {
         }
       } else {
         var filter = Filters.findOne({name: name, 
-              user: user, 
+              user: user._id, 
               collection: col,
               field: field,
               val: val
@@ -154,7 +154,7 @@ FilterManager = (function () {
       /*****************   Actual Implementation code **************/
       logger.trace("Beginning getFilterList");
       var results = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
       });
       logger.debug("Found " + results.count() + " filters matching");
@@ -191,7 +191,7 @@ FilterManager = (function () {
       //var rawFilters = this.getFilterList(name, user, col);
       //Get user filters
       var userFilters = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
           field: 'userID'
       });
@@ -204,7 +204,7 @@ FilterManager = (function () {
       }
       //Get inCluster Filters
       var inClusterFilters = Filters.findOne({name: name,
-          user: user,
+          user: user._id,
           collection: col,
           field: 'inCluster'
         });
@@ -220,7 +220,7 @@ FilterManager = (function () {
 
       //Get cluster filters
       var clusterFilters = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
           field: 'clusterIDs'
       });
@@ -235,7 +235,7 @@ FilterManager = (function () {
       }
       //Get time filters
       var timeFilters = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
           field: 'time'
       });
@@ -257,7 +257,7 @@ FilterManager = (function () {
       }
       //Get EventType Filters
       var typeFilters = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
           field: 'type._id'
       });
@@ -273,7 +273,7 @@ FilterManager = (function () {
       }
       //Return nonmatching filters as raw filters
       var filts = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
           field: {$nin: ['userID', 'clusters', 'time', 'type._id']}
       });
@@ -289,6 +289,23 @@ FilterManager = (function () {
       return result;
       /*****************   End Actual Implementation code **********/
 
+    },
+    removeFilters: function(filters) {
+      if (hasForEach(filters)) {
+        ids = getIDs(filters);
+        //for (var i=0; i<ideas.length; i++) {
+          //ids.push(ideas._id);
+        //} 
+        if (Meteor.isServer) {
+          Filters.remove({_id: {$in: ids}});
+        } else {
+          ids.forEach(function(id) {
+            Filters.remove({_id: id});
+          });
+        }
+      } else {
+        Filters.remove({_id: ideas._id});
+      }
     },
     remove: function(name, user, col, field, val) {
       /**************************************************************
@@ -309,7 +326,7 @@ FilterManager = (function () {
       /*****************   Actual Implementation code **************/
       logger.trace("Beginning remove matching filters");
       var results = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
           field: field,
           val: val
@@ -318,14 +335,14 @@ FilterManager = (function () {
       if (Meteor.isServer) {
         if(val){
           Filters.remove({name: name, 
-              user: user, 
+              user: user._id, 
               collection: col,
               field: field,
               val: val
           });
         } else {
           Filters.remove({name: name, 
-              user: user, 
+              user: user._id, 
               collection: col,
               field: field
           });
@@ -334,7 +351,7 @@ FilterManager = (function () {
         //Can't delete data except by using individual IDs on client
         if(val){ 
           var filts = Filters.find({name: name, 
-            user: user, 
+            user: user._id, 
             collection: col,
             field: field,
             val: val
@@ -344,7 +361,7 @@ FilterManager = (function () {
           });
         } else {
           var filts = Filters.find({name: name, 
-            user: user, 
+            user: user._id, 
             collection: col,
             field: field
           });
@@ -356,14 +373,14 @@ FilterManager = (function () {
       }
       if(val){
         var results = Filters.find({name: name, 
-            user: user, 
+            user: user._id, 
             collection: col,
             field: field,
             val: val
         });
       } else {
         var results = Filters.find({name: name, 
-              user: user, 
+              user: user._id, 
               collection: col,
               field: field
           });
@@ -394,19 +411,19 @@ FilterManager = (function () {
       /*****************   Actual Implementation code **************/
       logger.trace("Beginning reset all matching filters");
       var results = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
       });
       logger.debug("Found " + results.count() + " filters to remove");
       if (Meteor.isServer) {
         Filters.remove({name: name, 
-            user: user, 
+            user: user._id, 
             collection: col,
         });
       } else {
         //Can't delete data except by using individual IDs on client
         var filts = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col
         });
         if (exceptionFilters) {
@@ -422,7 +439,7 @@ FilterManager = (function () {
         }
       }
       results = Filters.find({name: name, 
-          user: user, 
+          user: user._id, 
           collection: col,
       });
       logger.debug("Found " + results.count() + " filters after remove");

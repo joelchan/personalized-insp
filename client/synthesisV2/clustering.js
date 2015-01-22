@@ -88,7 +88,9 @@ Template.MturkClustering.rendered = function(){
         logger.debug("Setting User graph");
         var g = Graphs.findOne({_id: result});
         Session.set("currentGraph", g);
-        setFilters(g);
+        if (Session.get("sharedGraph")) {
+          setFilters(g, Session.get("sharedGraph"));
+        }
         Tracker.autorun(function(c) {
           logger.debug("Attempting to set shared graph listener");
           if (Session.get("sharedGraph")) {
@@ -127,6 +129,10 @@ Template.MturkClustering.rendered = function(){
         logger.debug("Setting shared graph");
         var g = Graphs.findOne({_id: result});
         Session.set("sharedGraph", g);
+        if (Session.get("currentGraph")) {
+          setFilters(Session.get("currentGraph"), g);
+        }
+
       }
     );
   } else {
@@ -138,42 +144,47 @@ Template.MturkClustering.rendered = function(){
   logger.debug("Setting base idea and theme filters");
   ////Reset all the filters before initializing
   FilterManager.reset(ideaFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes"); 
   FilterManager.reset(clusterFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes"); 
+  Session.set("filtersSet", false);
   //Create base filters for ideas
   FilterManager.create(ideaFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes",
       "type",
       'idea'
   );
   //Create base filters for themes
   FilterManager.create(clusterFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes",
       "type",
       'theme'
   );
   FilterManager.create(clusterFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes",
       "isTrash",
       false 
   );
-  if (Session.get("currentGraph")) {
-    setFilters(Session.get("currentGraph"));
+  if (Session.get("currentGraph") && Session.get("sharedGraph")) {
+    setFilters(
+        Session.get("currentGraph"), 
+        Session.get("sharedGraph")
+    );
   } else {
-    FilterManager.create(ideaFilterName,
-        Session.get("currentUser"),
+    FilterManager.create(
+        ideaFilterName,
+        Session.get("currentUser")._id,
         "nodes",
         "graphID",
         ""
     ); 
     FilterManager.create(clusterFilterName,
-        Session.get("currentUser"),
+        Session.get("currentUser")._id,
         "nodes",
         "graphID",
         ""
@@ -233,29 +244,29 @@ var setSharedGraphListener = function(sharedGraph, userGraph) {
   });
 };
 
-var setFilters = function(userGraph) {
+var setFilters = function(userGraph, sharedGraph) {
   logger.debug("Removing old filters with null graphID");
   FilterManager.remove(ideaFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes",
       "graphID",
       ""
   ); 
   FilterManager.remove(clusterFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes",
       "graphID",
       ""
   );
   logger.debug("Updating filters with graphID");
   FilterManager.create(ideaFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes",
       "graphID",
-      userGraph._id
+      sharedGraph._id
   );
   FilterManager.create(clusterFilterName,
-      Session.get("currentUser"),
+      Session.get("currentUser")._id,
       "nodes",
       "graphID",
       userGraph._id
@@ -336,12 +347,13 @@ Template.MturkClusteringIdeaList.helpers({
     if (Session.get("filtersSet")) {
 	    var result = FilterManager.performQuery(
         ideaFilterName, 
-		    Session.get("currentUser"), 	
+		    Session.get("currentUser")._id, 	
 		    "nodes"
       );
       logger.trace("total number of ideas: " + result.count());
       return result;
     } else {
+      logger.debug("Filters are not set");
       return null;
     }
   },
@@ -350,7 +362,7 @@ Template.MturkClusteringIdeaList.helpers({
     if (Session.get("filtersSet")) {
 	    return FilterManager.performQuery(
         ideaFilterName, 
-		    Session.get("currentUser"), 	
+		    Session.get("currentUser")._id,
 		    "nodes").count();
     } else {
       return 0;
@@ -488,7 +500,7 @@ Template.MturkClusterList.helpers({
     if (Session.get("filtersSet")) {
 	    var result = FilterManager.performQuery(
         clusterFilterName, 
-		    Session.get("currentUser"), 	
+		    Session.get("currentUser")._id, 	
 		    "nodes"
       );
       logger.debug("******** number of clusters: " + 
@@ -531,7 +543,7 @@ Template.MturkClustering.helpers({
   numClusters : function(){
 	  return FilterManager.performQuery(
       clusterFilterName, 
-		  Session.get("currentUser"), 	
+		  Session.get("currentUser")._id, 	
 		  "nodes"
     ).count();
   },
@@ -580,7 +592,7 @@ Template.MturkClusterarea.helpers({
     if (Session.get("filtersSet")) {
 	    var result =  FilterManager.performQuery(
         clusterFilterName, 
-		    Session.get("currentUser"), 	
+		    Session.get("currentUser")._id, 	
 		    "nodes"
       );
       logger.debug("******** number of clusters: " + 

@@ -40,7 +40,7 @@ Template.HcompFilterbox.helpers({
 		// console.log(filteredIdeas);
 		return filteredIdeas;
 		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-		//   Session.get("currentUser"), 	
+		//   Session.get("currentUser")._id, 	
 		//   "ideas").fetch();
 
 		// // apply search query, if it exists
@@ -75,7 +75,7 @@ Template.HcompFilterbox.helpers({
 
 	numIdeas : function() {
 		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-		//   Session.get("currentUser"), 	
+		//   Session.get("currentUser")._id, 	
 		//   "ideas").fetch();
 
 		// // apply search query, if it exists
