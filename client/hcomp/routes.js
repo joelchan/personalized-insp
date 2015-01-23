@@ -129,8 +129,9 @@ Router.map(function () {
       Session.set("nextPage", "HcompConsentPage");
     },
   });
-  this.route('MturkIdeation', {
-      path: 'crowd/Ideation/:promptID/:userID/',
+  
+  this.route('MturkIdeationControl', {
+      path: 'crowd/IdeationC/:promptID/:userID/',
       template: 'MturkIdeationPageControl',
 
 //    path: 'crowd/Ideation/:promptID/:userID/',
@@ -189,6 +190,66 @@ Router.map(function () {
     }
 
   });
+  
+  this.route('MturkIdeation', {
+      path: 'crowd/IdeationT/:promptID/:userID/',
+      template: 'MturkIdeationPage',
+
+    waitOn: function() {
+      logger.debug("Waiting on...");
+      var pID = this.params.promptID;
+      return [
+        Meteor.subscribe('ideas', {promptID: pID}),
+        Meteor.subscribe('prompts'),
+        Meteor.subscribe('myUsers'),
+        Meteor.subscribe('tasks', {promptID: pID}),
+        Meteor.subscribe('questions'),
+        Meteor.subscribe('assignments', {promptID: pID}),
+      ];
+      Session.set("useTimer", true);
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready()) {
+        Session.set("useTimer", true);
+        this.render();
+      } else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      if (this.ready()) {
+        initRolePage();
+        insertExitStudy();
+      }
+    }
+
+  });
+
   this.route('LegionFinalPage', {
     path: 'crowd/finished/:promptID/:userID/',
   	template: 'LegionFinalPage',
@@ -264,7 +325,7 @@ Router.map(function () {
           logger.debug("Data ready");
           var user = MyUsers.findOne({_id: this.params.userID});
           logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
+          MyUsers.update({_id: user._id}, {$set: {route: 'HcompConsentPage'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
           var prompt = Prompts.findOne({_id: this.params.promptID});
@@ -286,7 +347,20 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
-      Session.set("nextPage", "MturkIdeation");
+      logger.trace("Checking if participant has participated before");
+      if (ExperimentManager.canParticipate(exp, user.name)) {
+        logger.trace("Participant is ok, randomly assigning to condition in experiment");
+        part = ExperimentManager.addExperimentParticipant(exp, user);
+        if (part.cond == "treatment") {
+          logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
+          Session.set("nextPage", "TutorialTreatment");
+        } else {
+          logger.trace("Assigned to control condition, sending to control tutorial page");
+          Session.set("nextPage", "TutorialControl");
+        }
+      } else {
+        logger.trace("Participant has participated before; rejecting participant");
+      }
     },
   });
 
@@ -342,7 +416,7 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
-      Session.set("nextPage", "MturkIdeationPageControl");
+      Session.set("nextPage", "MturkIdeationControl");
     },
   });
 
