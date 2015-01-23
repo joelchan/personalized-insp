@@ -25,13 +25,18 @@ Experiment = function (promptID) {
   this.promptID = promptID;
   //Url to pass to participants 
   // **** Need to update *****
-  this.url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + promptID;
+  // this.url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + promptID;
+  this.url = null;
+  // this.setURL = function(id) {
+  //   this.url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + id;
+  //   console.log(this.url);
+  // }
   //List of all experimental conditions
   this.conditions = [];
   //How many groups per condition
-  this.groupN = 1;
+  // this.groupN = 1;
   //How many participants per condition
-  this.partN = 1;
+  // this.partN = 1;
   //Tracks group references: key: condition.id, value: array of groupIDs
   this.groups = {};
   //Tracks all participant IDs assigned to the experiment
@@ -41,13 +46,15 @@ Experiment = function (promptID) {
 
 };
 
-ExpCondition = function(id, expID, prompt, desc, groupNum) {
+// ExpCondition = function(id, expID, prompt, desc, groupNum) {
+ExpCondition = function(expID, promptID, desc, groupNum) {
   //Unique ID (with respect to the experiment)
-  this.id = id;
+  this.id = null;
   this.expID = expID;
   //Question(s) to answer in the brainstorm
-  this.prompt = new Prompt(prompt);
-  this.prompt._id = Prompts.insert(this.prompt);
+  this.promptID = promptID
+  // this.prompt = new Prompt(prompt);
+  // this.prompt._id = Prompts.insert(this.prompt);
   //Description of the experiment
   this.description = desc;
   //Number of groups in the experiment condition
@@ -71,7 +78,7 @@ Participant = function(exp, user, cond, group, role) {
     this.userID = user._id;
     this.userName = user.name;
     // Assign Participant to condition
-    this.conditionID = cond._id;
+    this.condition = cond;
     this.groupID = group._id;
     this.role = Roles.findOne(role.roleID);
     this.verifyCode = this.userID.hashCode();

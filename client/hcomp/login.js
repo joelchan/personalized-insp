@@ -49,7 +49,7 @@ Template.MturkLoginPage.events({
           Session.set("currentGroup", group);
           Session.set("currentPrompt", prompt);
           Router.go(Session.get("nextPage"), 
-            {promptID: prompt._id, userID: user._id});
+            {expID: Session.get("currentExp")._id, userID: user._id});
         }
 
     /********************* Disable experiment logic ************/

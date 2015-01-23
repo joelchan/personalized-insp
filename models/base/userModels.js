@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Models:User');
 // Comment out to use global logging level
-//Logger.setLevel('Models:User', 'trace');
+Logger.setLevel('Models:User', 'trace');
 //Logger.setLevel('Models:User', 'debug');
-Logger.setLevel('Models:User', 'info');
+// Logger.setLevel('Models:User', 'info');
 //Logger.setLevel('Models:User', 'warn');
 
 // All system users
@@ -34,6 +34,7 @@ Group = function(template) {
     // flag for whether the group is accepting new members
     this.isOpen = true;
     if (template) {
+      logger.trace("Has template");
       for (var i=0; i<this.template.roles.length; i++) {
         //Use roleID as the key toe the object containing assignments
         var role = this.template.roles[i];
@@ -47,6 +48,8 @@ Group = function(template) {
         //Add groupAssignment to group
         //this.assignments.push(newRoleAssign);
       } 
+    } else {
+      logger.trace("no template");
     }
 }
 GroupTemplate = function () {

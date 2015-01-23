@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Routes');
 // Comment out to use global logging level
-//Logger.setLevel('Client:Hcomp:Routes', 'trace');
+Logger.setLevel('Client:Hcomp:Routes', 'trace');
 //Logger.setLevel('Client:Hcomp:Routes', 'debug');
-Logger.setLevel('Client:Hcomp:Routes', 'info');
+// Logger.setLevel('Client:Hcomp:Routes', 'info');
 //Logger.setLevel('Client:Hcomp:Routes', 'warn');
 
 //Maps routes to templates
@@ -98,24 +98,34 @@ Router.map(function () {
     }
   });
   this.route('MturkLoginPage', {
-    path: '/crowd/Ideate/Login/:promptID',
+    // path: '/crowd/Ideate/Login/:promptID',
+    path: '/crowd/Ideate/Login/:expID',
     template: 'MturkLoginPage',
     waitOn: function() {
-      return Meteor.subscribe('prompts', this.params.promptID);
+      // Meteor.subscribe('prompts', this.params.promptID);
+      return Meteor.subscribe('experiments', this.params.expID);
     },
     onBeforeAction: function() {
       console.log("before action");
       Session.set("currentUser", null);
       if (this.ready()) {
         logger.debug("Data ready");
-        var prompt = Prompts.findOne({_id: this.params.promptID});
-        if (prompt) {
+        var exp = Experiments.findOne({_id: this.params.expID})
+
+        if (exp) {
+          logger.debug("setting current experiment");
+          Session.set("currentExp", exp);
+          var pID = exp.promptID
+          var prompt = Prompts.findOne({_id: pID});
           logger.debug("setting current prompt");
           Session.set("currentPrompt", prompt);
         } else {
-          logger.warn("no prompt found with id: " + this.params.promptID);
+          // logger.warn("no prompt found with id: " + this.params.promptID);
+          logger.warn("no experiment found with id: " + this.params.expID);
         }
         this.next();
+      } else {
+        logger.warn("Not ready");
       }
     },
     action: function() {
@@ -127,6 +137,204 @@ Router.map(function () {
     },
     onAfterAction: function() {
       Session.set("nextPage", "HcompConsentPage");
+    },
+  });
+
+  this.route('HcompConsentPage', {
+      path: 'consent/:expID/:userID',
+      template: 'HcompConsentPage',
+    waitOn: function() {
+      return Meteor.subscribe('experiments', this.params.expID);
+      // var exp = Experiments.findOne({_id: this.params.expID});
+      // if (exp) {
+      //   logger.trace("found experiment with id: " + this.params.expID);
+      //   var pID = exp.promptID;
+      // } else {
+      //   logger.warn("no experiment found with id: " + this.params.expID);
+      // }
+      // // var expID = this.params.promptID;
+      // if (Session.get("currentUser")) {
+      //   return [ 
+      //     Meteor.subscribe('ideas', {promptID: pID}),
+      //     Meteor.subscribe('clusters', {promptID: pID}),
+      //     Meteor.subscribe('prompts'),
+      //     ]
+      // } else {
+      //   return [
+      //     Meteor.subscribe('ideas', {promptID: pID}),
+      //     Meteor.subscribe('clusters', {promptID: pID}),
+      //     Meteor.subscribe('prompts'),
+      //   ]
+      // }
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'HcompConsentPage'}});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+          var exp = Experiments.findOne({_id: this.params.expID});
+          if (exp) {
+            logger.trace("found experiment with id: " + this.params.expID);
+            var pID = exp.promptID;
+            var prompt = Prompts.findOne({_id: pID});
+            if (prompt) {
+              Session.set("currentPrompt", prompt);
+            } else {
+              logger.warn("no prompt found with id: " + this.params.pID);
+            }
+          } else {
+            logger.warn("no experiment found with id: " + this.params.expID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready()) {
+        Session.set("useTimer", true);
+        this.render();
+      } else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      // logger.trace("Checking if participant has participated before");
+      // if (ExperimentManager.canParticipate(exp, user.name)) {
+      //   logger.trace("Participant is ok, randomly assigning to condition in experiment");
+      //   part = ExperimentManager.addExperimentParticipant(exp, user);
+      //   if (part.cond == "treatment") {
+      //     logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
+      //     Session.set("nextPage", "TutorialTreatment");
+      //   } else {
+      //     logger.trace("Assigned to control condition, sending to control tutorial page");
+      //     Session.set("nextPage", "TutorialControl");
+      //   }
+      // } else {
+      //   logger.trace("Participant has participated before; rejecting participant");
+      // }
+    },
+  });
+
+  this.route('TutorialControl', {
+      path: 'tutorialc/:promptID/:userID',
+      template: 'TutorialControl',
+    waitOn: function() {
+      var pID = this.params.promptID;
+      if (Session.get("currentUser")) {
+        return [ 
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('prompts'),
+          ]
+      } else {
+        return [
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('prompts'),
+        ]
+      }
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready()) {
+        this.render();
+      } else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      Session.set("nextPage", "MturkIdeationControl");
+    },
+  });
+
+  this.route('TutorialTreatment', {
+      path: 'tutorialt/:promptID/:userID',
+      template: 'TutorialTreatment',
+    waitOn: function() {
+      var pID = this.params.promptID;
+      if (Session.get("currentUser")) {
+        return [ 
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('prompts'),
+          ]
+      } else {
+        return [
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('prompts'),
+        ]
+      }
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + this.params.promptID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready()) {
+        Session.set("useTimer", true);
+        this.render();
+      } else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      Session.set("nextPage", "MturkIdeation");
     },
   });
   
@@ -293,188 +501,6 @@ Router.map(function () {
         this.render('loading');
     },
 
-  });
-  this.route('HcompConsentPage', {
-      path: 'consent/:promptID/:userID',
-      template: 'HcompConsentPage',
-    waitOn: function() {
-      var pID = this.params.promptID;
-      if (Session.get("currentUser")) {
-        return [ 
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-          ]
-      } else {
-        return [
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-        ]
-      }
-    },
-    onBeforeAction: function(pause) {
-        logger.debug("before action");
-        //if (!Session.get("currentUser")) {
-          ////if there is no user currently logged in, then render the login page
-          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
-          ////Pause rendering the given page until the user is set
-          //pause();
-        //}
-        if (this.ready()) {
-          logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
-          logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'HcompConsentPage'}});
-          LoginManager.loginUser(user.name);
-          Session.set("currentUser", user);
-          var prompt = Prompts.findOne({_id: this.params.promptID});
-          if (prompt) {
-            Session.set("currentPrompt", prompt);
-          } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
-          }
-          this.next();
-        } else {
-          logger.debug("Not ready");
-        }
-    },
-    action: function(){
-      if(this.ready()) {
-        Session.set("useTimer", true);
-        this.render();
-      } else
-        this.render('loading');
-    },
-    onAfterAction: function() {
-      logger.trace("Checking if participant has participated before");
-      if (ExperimentManager.canParticipate(exp, user.name)) {
-        logger.trace("Participant is ok, randomly assigning to condition in experiment");
-        part = ExperimentManager.addExperimentParticipant(exp, user);
-        if (part.cond == "treatment") {
-          logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
-          Session.set("nextPage", "TutorialTreatment");
-        } else {
-          logger.trace("Assigned to control condition, sending to control tutorial page");
-          Session.set("nextPage", "TutorialControl");
-        }
-      } else {
-        logger.trace("Participant has participated before; rejecting participant");
-      }
-    },
-  });
-
-  this.route('TutorialControl', {
-      path: 'tutorialc/:promptID/:userID',
-      template: 'TutorialControl',
-    waitOn: function() {
-      var pID = this.params.promptID;
-      if (Session.get("currentUser")) {
-        return [ 
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-          ]
-      } else {
-        return [
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-        ]
-      }
-    },
-    onBeforeAction: function(pause) {
-        logger.debug("before action");
-        //if (!Session.get("currentUser")) {
-          ////if there is no user currently logged in, then render the login page
-          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
-          ////Pause rendering the given page until the user is set
-          //pause();
-        //}
-        if (this.ready()) {
-          logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
-          logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
-          LoginManager.loginUser(user.name);
-          Session.set("currentUser", user);
-          var prompt = Prompts.findOne({_id: this.params.promptID});
-          if (prompt) {
-            Session.set("currentPrompt", prompt);
-          } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
-          }
-          this.next();
-        } else {
-          logger.debug("Not ready");
-        }
-    },
-    action: function(){
-      if(this.ready()) {
-        this.render();
-      } else
-        this.render('loading');
-    },
-    onAfterAction: function() {
-      Session.set("nextPage", "MturkIdeationControl");
-    },
-  });
-
-  this.route('TutorialTreatment', {
-      path: 'tutorialt/:promptID/:userID',
-      template: 'TutorialTreatment',
-    waitOn: function() {
-      var pID = this.params.promptID;
-      if (Session.get("currentUser")) {
-        return [ 
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-          ]
-      } else {
-        return [
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-        ]
-      }
-    },
-    onBeforeAction: function(pause) {
-        logger.debug("before action");
-        //if (!Session.get("currentUser")) {
-          ////if there is no user currently logged in, then render the login page
-          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
-          ////Pause rendering the given page until the user is set
-          //pause();
-        //}
-        if (this.ready()) {
-          logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
-          logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
-          LoginManager.loginUser(user.name);
-          Session.set("currentUser", user);
-          var prompt = Prompts.findOne({_id: this.params.promptID});
-          if (prompt) {
-            Session.set("currentPrompt", prompt);
-          } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
-          }
-          this.next();
-        } else {
-          logger.debug("Not ready");
-        }
-    },
-    action: function(){
-      if(this.ready()) {
-        Session.set("useTimer", true);
-        this.render();
-      } else
-        this.render('loading');
-    },
-    onAfterAction: function() {
-      Session.set("nextPage", "MturkIdeation");
-    },
   });
 
   this.route("HcompResultsPage", {

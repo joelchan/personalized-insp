@@ -318,16 +318,23 @@ GroupManager = (function () {
           //group.assignments[role].length);
       //logger.debug("number of possible to role, " + role + " " + 
           //this.getSize(group, role));
+      if (!role) {
+        //Get role if not already given
+        role = this.getRandomRole(group);
+      } else {
+        //Get role based on role title given
+        role = RoleManager.defaults[role];
+      }
       if (group.isOpen && 
           ((this.getSize(group, role) > group.assignments[role].length) ||
            (this.getSize(group) < 0))) {
-        if (!role) {
-          //Get role if not already given
-          role = this.getRandomRole(group);
-        } else {
-          //Get role based on role title given
-          role = RoleManager.defaults[role];
-        }
+        // if (!role) {
+        //   //Get role if not already given
+        //   role = this.getRandomRole(group);
+        // } else {
+        //   //Get role based on role title given
+        //   role = RoleManager.defaults[role];
+        // }
         if (!isInList(user, group.users, '_id')) {
           logger.debug("adding new user to group with id: " + user._id);
           group.users.push(user);

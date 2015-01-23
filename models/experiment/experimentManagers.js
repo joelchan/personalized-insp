@@ -26,16 +26,33 @@ ExperimentManager = (function () {
        if (promptID) {
          var exp = new Experiment(promptID);
          expID = Experiments.insert(exp);
+         url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + expID;
          if (expID) {
            logger.trace("Successfully created new experiment with id " + expID);
-           logger.trace("Crowd can login at " + exp.url);
+           Experiments.update({_id: expID},
+            {$set: {url: url}});
+           // exp.setURL(expID);
+           logger.trace("Crowd can login at " + url);
 
            // hard-code parameters for the experiment
            // i want to create n "slots" into which we can assign participants
            // when they are created and randomly assigned
-           exp.conditions = ["Control","Treatment"]
-           exp.groupN = 25;
-           exp.partN = 25;
+           var control = new ExpCondition(expID, promptID, "Control", 25)
+           controlID = Conditions.insert(control);
+           control.id = controlID
+           Conditions.update({_id: controlID},
+            {$set: {id: controlID}});
+           var treatment = new ExpCondition(expID, promptID, "Treatment", 25)
+           treatmentID = Conditions.insert(treatment);
+           treatment.id = treatmentID
+           Conditions.update({_id: treatmentID},
+            {$set: {id: treatmentID}});
+           Experiments.update({_id: expID},
+            {$set: {conditions: [control,treatment]}});
+           this.initGroupRefs(Experiments.findOne({_id: expID}));
+           // exp.conditions = ["Control","Treatment"]
+           // exp.groupN = 25;
+           // exp.partN = 25;
 
          return true;
         } else {
@@ -51,9 +68,12 @@ ExperimentManager = (function () {
       * Initialize object fields for each condition with empty 
       * arrays to contain the groupIDs assigned to that condition
       ***********************************************************/
+      logger.trace("Initializing group references");
       for (var i=0; i<exp.conditions.length; i++) {
+        logger.trace("For " + exp.conditions[i].description + " condition");
         exp.groups[exp.conditions[i].id] = [];
       }
+      logger.trace(exp.groups);
       //Update initialized groups to db
       Experiments.update({_id: exp._id},
           {$set: {groups: exp.groups}});
@@ -104,6 +124,7 @@ ExperimentManager = (function () {
             return getRandomElement(exp.conditions);
         }
         var condIndex = getRandomElement(slots);
+        logger.trace("Randomly assigned to " + exp.conditions[condIndex].description + " condition");
         return exp.conditions[condIndex];
     },
 
@@ -122,12 +143,13 @@ ExperimentManager = (function () {
         }
         if (openGroups.length == 0) {
           //If no open groups, then create a group
-          var newGroup = GroupManager.createGroup(condition.groupTemplate);
+          var newGroup = GroupManager.create(condition.groupTemplate);
           //Register groupID with experiment condition
           exp.groups[condition.id].push(newGroup._id);
           Experiments.update({_id: exp._id},
               {$set: {groups: exp.groups}});
-          console.log("created new group");
+          logger.trace("created new group");
+          logger.trace(newGroup);
           return newGroup;
         } else {
           //Otherwise select a random group
