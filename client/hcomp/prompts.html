@@ -1,7 +1,7 @@
 <template name="CrowdBrainstorm">
   <div id="prompt-{{_id}}" class="menu-box prompt-panel">
     <div class="row">
-      <div class="col-sm-8 prompt-data">
+      <div class="col-sm-6 prompt-data">
         <div class="center-block">
           <strong>Title:  </strong>
           {{ title }}<br/>
@@ -21,11 +21,6 @@
               {{formUrl}}{{pathFor "MturkSynthLoginPage"}}
             </a>
           {{/with}}
-          <a href="">
-            <div class="col-sm-2 create-exp-button clickable">
-                <h3 class="center-vertical">Create Experiment</h3>
-            </div>
-          </a>
         </div>
       </div>
       <a href="{{formUrl}}{{pathFor route="HcompDashboard" data=getData}}">
@@ -36,6 +31,11 @@
       <a href="{{formUrl}}{{pathFor route="Visualization" data=getData}}">
         <div class="col-sm-2 review-button clickable">
             <h3 class="center-vertical">Review Ideas</h3>
+        </div>
+      </a>
+      <a href="">
+        <div class="col-sm-2 create-exp-button clickable">
+            <h3 class="center-vertical">Create Experiment</h3>
         </div>
       </a>
     </div>
