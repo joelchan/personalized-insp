@@ -146,27 +146,6 @@ Router.map(function () {
       template: 'HcompConsentPage',
     waitOn: function() {
       return Meteor.subscribe('experiments', this.params.expID);
-      // var exp = Experiments.findOne({_id: this.params.expID});
-      // if (exp) {
-      //   logger.trace("found experiment with id: " + this.params.expID);
-      //   var pID = exp.promptID;
-      // } else {
-      //   logger.warn("no experiment found with id: " + this.params.expID);
-      // }
-      // // var expID = this.params.promptID;
-      // if (Session.get("currentUser")) {
-      //   return [ 
-      //     Meteor.subscribe('ideas', {promptID: pID}),
-      //     Meteor.subscribe('clusters', {promptID: pID}),
-      //     Meteor.subscribe('prompts'),
-      //     ]
-      // } else {
-      //   return [
-      //     Meteor.subscribe('ideas', {promptID: pID}),
-      //     Meteor.subscribe('clusters', {promptID: pID}),
-      //     Meteor.subscribe('prompts'),
-      //   ]
-      // }
     },
     onBeforeAction: function(pause) {
         logger.debug("before action");
@@ -209,25 +188,12 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
-      // logger.trace("Checking if participant has participated before");
-      // if (ExperimentManager.canParticipate(exp, user.name)) {
-      //   logger.trace("Participant is ok, randomly assigning to condition in experiment");
-      //   part = ExperimentManager.addExperimentParticipant(exp, user);
-      //   if (part.cond == "treatment") {
-      //     logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
-      //     Session.set("nextPage", "TutorialTreatment");
-      //   } else {
-      //     logger.trace("Assigned to control condition, sending to control tutorial page");
-      //     Session.set("nextPage", "TutorialControl");
-      //   }
-      // } else {
-      //   logger.trace("Participant has participated before; rejecting participant");
-      // }
+      
     },
   });
 
   this.route('TutorialControl', {
-      path: 'tutorialc/:expID/:userID',
+      path: 'tutorialc/:partID',
       template: 'TutorialControl',
     waitOn: function() {
       
@@ -236,17 +202,20 @@ Router.map(function () {
         logger.debug("before action");
         if (this.ready()) {
           logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
+          var part = Participants.findOne({_id: this.params.partID});
+          logger.trace("participant: " + part.userName);
+          Session.set("currentParticipant", part);
+          var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
           MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
-          var exp = Experiments.findOne({_id: this.params.expID});
+          var exp = Experiments.findOne({_id: part.experimentID});
           if (exp) {
-            logger.trace("Found exp with id: " + this.params.expID)
+            logger.trace("Found exp with id: " + part.experimentID)
             Session.set("currentExp", exp);
           } else {
-            logger.warn("no experiment found with id: " + this.params.expID);
+            logger.warn("no experiment found with id: " + part.experimentID);
           }
           var prompt = Prompts.findOne({_id: exp.promptID});
           if (prompt) {
@@ -272,7 +241,7 @@ Router.map(function () {
   });
 
   this.route('TutorialTreatment', {
-      path: 'tutorialt/:expID/:userID',
+      path: 'tutorialt/:partID',
       template: 'TutorialTreatment',
     waitOn: function() {
       
@@ -281,17 +250,20 @@ Router.map(function () {
         logger.debug("before action");
         if (this.ready()) {
           logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
+          var part = Participants.findOne({_id: this.params.partID});
+          logger.trace("participant: " + part.userName);
+          Session.set("currentParticipant", part);
+          var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
           MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
-          var exp = Experiments.findOne({_id: this.params.expID});
+          var exp = Experiments.findOne({_id: part.experimentID});
           if (exp) {
-            logger.trace("Found exp with id: " + this.params.expID)
+            logger.trace("Found exp with id: " + part.experimentID)
             Session.set("currentExp", exp);
           } else {
-            logger.warn("no experiment found with id: " + this.params.expID);
+            logger.warn("no experiment found with id: " + part.experimentID);
           }
           var prompt = Prompts.findOne({_id: exp.promptID});
           if (prompt) {
@@ -317,14 +289,17 @@ Router.map(function () {
   });
   
   this.route('MturkIdeationControl', {
-      path: 'crowd/IdeationC/:promptID/:userID/',
+      path: 'crowd/IdeationC/:partID',
       template: 'MturkIdeationPageControl',
 
 //    path: 'crowd/Ideation/:promptID/:userID/',
 //  	template: 'MturkIdeationPage',
     waitOn: function() {
       logger.debug("Waiting on...");
-      var pID = this.params.promptID;
+      var part = Participants.findOne({_id: this.params.partID});
+      Session.set("currentParticipant", part);
+      var exp = Experiments.findOne({_id: part.experimentID})
+      var pID = exp.promptID;
       return [
         Meteor.subscribe('ideas', {promptID: pID}),
         Meteor.subscribe('prompts'),
@@ -345,16 +320,20 @@ Router.map(function () {
         //}
         if (this.ready()) {
           logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
+          var part = Participants.findOne({_id: this.params.partID});
+          Session.set("currentParticipant", part);
+          var exp = Experiments.findOne({_id: part.experimentID})
+          var pID = exp.promptID;
+          var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
           MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
-          var prompt = Prompts.findOne({_id: this.params.promptID});
+          var prompt = Prompts.findOne({_id: pID});
           if (prompt) {
             Session.set("currentPrompt", prompt);
           } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
+            logger.warn("no prompt found with id: " + pID);
           }
           this.next();
         } else {
@@ -378,12 +357,15 @@ Router.map(function () {
   });
   
   this.route('MturkIdeation', {
-      path: 'crowd/IdeationT/:promptID/:userID/',
+      path: 'crowd/IdeationT/:partID',
       template: 'MturkIdeationPage',
 
     waitOn: function() {
       logger.debug("Waiting on...");
-      var pID = this.params.promptID;
+      var part = Participants.findOne({_id: this.params.partID});
+      Session.set("currentParticipant", part);
+      var exp = Experiments.findOne({_id: part.experimentID})
+      var pID = exp.promptID;
       return [
         Meteor.subscribe('ideas', {promptID: pID}),
         Meteor.subscribe('prompts'),
@@ -404,16 +386,20 @@ Router.map(function () {
         //}
         if (this.ready()) {
           logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
+          var part = Participants.findOne({_id: this.params.partID});
+          Session.set("currentParticipant", part);
+          var exp = Experiments.findOne({_id: part.experimentID})
+          var pID = exp.promptID;
+          var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
           MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
-          var prompt = Prompts.findOne({_id: this.params.promptID});
+          var prompt = Prompts.findOne({_id: pID});
           if (prompt) {
             Session.set("currentPrompt", prompt);
           } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
+            logger.warn("no prompt found with id: " + pID);
           }
           this.next();
         } else {
@@ -437,7 +423,7 @@ Router.map(function () {
   });
 
   this.route('LegionFinalPage', {
-    path: 'crowd/finished/:promptID/:userID/',
+    path: 'crowd/finished/:partID/',
   	template: 'LegionFinalPage',
     waitOn: function() {
       logger.debug("Waiting on...");
@@ -456,17 +442,8 @@ Router.map(function () {
         //}
         if (this.ready()) {
           logger.debug("Data ready");
-          var user = MyUsers.findOne({_id: this.params.userID});
-          logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
-          LoginManager.loginUser(user.name);
-          Session.set("currentUser", user);
-          var prompt = Prompts.findOne({_id: this.params.promptID});
-          if (prompt) {
-            Session.set("currentPrompt", prompt);
-          } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
-          }
+          var part = Participants.findOne({_id: this.params.partID});
+          Session.set("currentParticipant", part);
           this.next();
         } else {
           logger.debug("Not ready");
@@ -595,9 +572,9 @@ var insertExitStudy = function() {
     logger.info("exiting study early");
     EventLogger.logExitStudy();
     EventLogger.logEndRole();
+    ExperimentManager.logParticipantCompletion(Session.get("currentParticipant"));
     Router.go("LegionFinalPage", {
-      'promptID': Session.get("currentPrompt")._id,
-      'userID': Session.get("currentUser")._id
+      'partID': Session.get("currentParticipant")._id
     });
   });
 };

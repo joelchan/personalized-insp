@@ -237,6 +237,14 @@ ExperimentManager = (function () {
         return part;
       }
     },
+
+    logParticipantCompletion: function(participant){
+      Participants.update({_id: participant._id}, {$set: {hasFinished: true}});
+      if (!isInList(participant._id, Conditions.findOne({_id: participant.conditionID}).completedParts)) {
+        Conditions.update({_id: participant.conditionID}, {$push: {completedParts: participant._id}})
+      }
+      logger.trace("Logged experiment completion for participant");
+    },
    
     canParticipate: function (exp, userName) {
       if (exp.excludeUsers === undefined) {

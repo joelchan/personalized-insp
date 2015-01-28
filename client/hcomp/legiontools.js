@@ -78,3 +78,9 @@ Template.LegionFinalPage.rendered = function() {
    
 };
 
+Template.LegionFinalPage.events({
+  'click .btn': function() {
+    alert("Clicked submit button");
+    ExperimentManager.logParticipantCompletion(Session.get("currentParticipant"));
+  }
+});

@@ -37,10 +37,7 @@ Template.HcompConsentPage.events({
         //loginUser(myUser);
 
         //Go to next page
-        Router.go(Session.get("nextPage"), 
-          {expID: exp._id,
-            userID: user._id}
-        );
+        Router.go(Session.get("nextPage"), {partID: part._id});
     }
 });
 
