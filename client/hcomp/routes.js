@@ -25,6 +25,7 @@ Router.map(function () {
           Meteor.subscribe('prompts'),
           Meteor.subscribe('myUsers'),
           Meteor.subscribe('groups'),
+          Meteor.subscribe('experiments')
       ];
     }, 
     onBeforeAction: function() {

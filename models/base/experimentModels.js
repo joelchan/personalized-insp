@@ -12,25 +12,30 @@ Participants = new Meteor.Collection("participants");
 // Holds response to a experiment surveys
 SurveyResponses = new Meteor.Collection("surveyResponses");
 
-Experiment = function (promptID) {
+Experiment = function (promptID, desc) {
    /****************************************************************
     * Experiment object definition
     * @Params
     *   promptID (string) - id of prompt for the experimental condition
+    *   desc (string, optional) - label for experiment
     ****************************************************************/
   
   this.creationTime = new Date();
   
   //Description of the experiment
-  this.description = null;
-  
+  if (desc) {
+    this.description = desc;
+  } else {
+    this.description = "unnamed experiment";
+  }
+
   this.promptID = promptID;
   
   //Url to pass to participants
   this.url = null;
   
   //List of all experimental conditions
-  //Each element will be a condition id
+  //Each element is a copy of the condition object when first created
   this.conditions = [];
 
   this.participantIDs = [];

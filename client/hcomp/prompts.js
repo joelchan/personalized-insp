@@ -13,6 +13,10 @@ Template.CrowdPromptPage.helpers({
   prompts: function() {
     return Prompts.find({userIDs: Session.get("currentUser")._id});
   },
+
+  experiments: function() {
+    return Experiments.find().fetch(); //TODO: make experiments owned by a user
+  }
 });
 
   Template.CrowdPromptPage.rendered = function() {
@@ -28,6 +32,34 @@ Template.CrowdBrainstorm.rendered = function() {
     $(elm).css('margin-top', mh);
   });
 };
+
+Template.CrowdExperiment.helpers({
+  desc: function() {
+    return this.description;
+  },
+  question: function() {
+    var prompt = Prompts.findOne({_id: this.promptID});
+    return prompt.question;
+  },
+  expURL: function() {
+    return this.url;
+  },
+  conditions: function() {
+    return Conditions.find({expID: this._id});
+  }
+});
+
+Template.CrowdExperimentCondition.helpers({
+  desc: function() {
+    return this.description;
+  },
+  numAssigned: function() {
+    return this.assignedParts.length;
+  },
+  numCompleted: function() {
+    return this.completedParts.length;
+  },
+});
 
 Template.CrowdBrainstorm.helpers({
   question: function() {
