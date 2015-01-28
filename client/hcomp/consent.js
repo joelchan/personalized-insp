@@ -18,7 +18,8 @@ Template.HcompConsentPage.events({
           part = ExperimentManager.addExperimentParticipant(exp, user);
           if (part) {
             logger.trace("Successfully created participant with id " + part._id);
-            if (part.cond.description == "Treatment") {
+            condDesc = Conditions.findOne({_id: part.conditionID}).description;
+            if (condDesc == "Treatment") {
                 logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
                 Session.set("nextPage", "TutorialTreatment");
             } else {

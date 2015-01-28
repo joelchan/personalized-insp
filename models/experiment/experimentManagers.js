@@ -13,7 +13,7 @@ ExperimentManager = (function () {
   ****************************************************************/
   return {
 
-    create: function(promptID) {
+    createExp: function(promptID) {
       /**************************************************************
        * Create a new experiment
        * @Params
@@ -21,27 +21,26 @@ ExperimentManager = (function () {
        * @Return
        *    boolean - true if successful creation of experiment
        * ***********************************************************/
-       logger.trace("Beginning ExperimentManager.create");
-       logger.trace("Creating new experiment object");
+       logger.trace("Beginning ExperimentManager.createExp");
        if (promptID) {
+         logger.trace("Creating new experiment object for prompt: " + promptID);
          var exp = new Experiment(promptID);
          expID = Experiments.insert(exp);
-         url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + expID;
          if (expID) {
            logger.trace("Successfully created new experiment with id " + expID);
-           Experiments.update({_id: expID},
-            {$set: {url: url}});
-           // exp.setURL(expID);
+           
+           // create URL for participants to login
+           url = this.setExpURL(expID);
            logger.trace("Crowd can login at " + url);
-
-           // hard-code parameters for the experiment
-           // i want to create n "slots" into which we can assign participants
-           // when they are created and randomly assigned
+           
+           // create experimental conditions
+           // parameters are currently hard-coded
            var control = this.createExpCond(expID, promptID, "Control", 25);
            var treatment = this.createExpCond(expID, promptID, "Treatment", 25);
-           
            Experiments.update({_id: expID},
             {$set: {conditions: [control,treatment]}});
+           
+           // initialize group references
            this.initGroupRefs(Experiments.findOne({_id: expID}));
 
          return true;
@@ -53,21 +52,32 @@ ExperimentManager = (function () {
        }
     },
 
-    createExpCond: function(expID, promptID, desc, numSlots) {
+    setExpURL: function(expID) {
+        /**************************************************************
+       * Generate and set a URL for participants to login to the experiment
+       * ***********************************************************/
+       url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + expID;
+       Experiments.update({_id: expID},
+            {$set: {url: url}});
+       return url
+    },
+
+    createExpCond: function(expID, promptID, desc, partNum) {
         /**************************************************************
        * Create a new experimental condition
        * @Params
-       *    expID - id of the experiment
-       *    promptID - id of the prompt for the experiment
-       *    desc - string name of hte condition
-       *    numSlots - int number of group slots in the condition
+       *    expID (string) - id of the experiment
+       *    promptID (string) - id of the prompt for the experiment
+       *    desc (string) - name of hte condition
+       *    partNum (int) - number of participant slots in the condition
        * @Return
        *    boolean - true if successful creation of experiment
        * ***********************************************************/
-        var newCond = new ExpCondition(expID, promptID, desc, numSlots);
-        var groupTemplate = GroupManager.defaultTemplate();
-        logger.trace("Created group template: " + JSON.stringify(groupTemplate));
-        newCond.groupTemplate = groupTemplate;
+        var newCond = new ExpCondition(expID, promptID, desc, partNum);
+        newCond.assignedParts = [];
+        newCond.completedParts = [];
+        // logger.trace("Created group template: " + JSON.stringify(groupTemplate));
+        // newCond.groupTemplate = groupTemplate;
         var newCondID = Conditions.insert(newCond);
         newCond._id = newCondID;
         return newCond;
@@ -78,12 +88,11 @@ ExperimentManager = (function () {
       * Initialize object fields for each condition with empty 
       * arrays to contain the groupIDs assigned to that condition
       ***********************************************************/
-      logger.trace("Initializing group references");
       for (var i=0; i<exp.conditions.length; i++) {
-        logger.trace("For " + exp.conditions[i].description + " condition");
-        exp.groups[exp.conditions[i].id] = [];
+        logger.trace("Initializing group refs for " + exp.conditions[i].description + " condition");
+        exp.groups[exp.conditions[i].description] = []; //we will trace assignment by the condition's name
       }
-      logger.trace(exp.groups);
+      logger.trace("Experiment groups: " + JSON.stringify(exp.groups));
       //Update initialized groups to db
       Experiments.update({_id: exp._id},
           {$set: {groups: exp.groups}});
@@ -110,32 +119,48 @@ ExperimentManager = (function () {
 
     getRandomCondition: function(exp) {
         /****************************************************************
-        * Create an array with length queal to number of slots reamining
-        * in the experiment and the value of the slot equal to the 
-        * index of its associated condition
+        * Get a random condition from the experiment
+        * Probably of sampling a condition should be inversely proportional
+        * to the number of completed participants
+        * should return cond id
         ****************************************************************/
         //Create an array with length = number of slot
         var slots = [];
-        for (var i=0; i<exp.conditions.length; i++) {
-          //Determin number of participants expected - number already 
-          //  assigned and completed
-          var numPart = exp.conditions[i].groupNum -
-              Participants.find({experimentID: exp._id, 
-                  conditionID: exp.conditions[i]._id,
-                  hasFinished: true}).count();
-          //numPart may be negative if overrecruiting for experiment
-          console.log("number of particiapants finished in cond: " + numPart);
-          for (var j=0; j<numPart; j++) {
-              slots.push(i);
-          }
+        var unlimitedRecruitment;
+        var randCond;
+
+        if (exp.conditions[0].partNum == -1) {
+            unlimitedRecruitment = true;
+            logger.debug("Experiment has no recruitment limit");
+            randCond = getRandomElement(exp.conditions);
+            logger.trace("Randomly drew " + randCond.description + " condition");
+            return randCond._id;
+        } else {
+            for (var i=0; i<exp.conditions.length; i++) {
+              
+              //Determin number of participants expected - number already 
+              //  assigned and completed
+              var numPartWanted = exp.conditions[i].partNum;
+              var numPartCompleted = Conditions.findOne({_id: exp.conditions[i]._id}).completedParts.length;
+              logger.debug(numPartWanted + " participants wanted for this condition, " + numPartCompleted + " completed the experiment");
+              var numPart = numPartWanted - numPartCompleted;
+              for (var j=0; j<numPart; j++) {
+                slots.push(i);
+              }  
+            }
         }
+        
         //Randomly assign to any condition if experiment is full
         if (slots.length == 0) {
-            return getRandomElement(exp.conditions);
+            randCond = getRandomElement(exp.conditions);
+            logger.trace("Randomly drew " + randCond.description + " condition");
+            return randCond._id;
+        } else {
+            var condIndex = getRandomElement(slots);
+            randCond = exp.conditions[condIndex];
+            logger.trace("Randomly drew " + randCond.description + " condition");
+            return randCond._id;    
         }
-        var condIndex = getRandomElement(slots);
-        logger.trace("Randomly drew " + exp.conditions[condIndex].description + " condition");
-        return exp.conditions[condIndex];
     },
 
     getExpGroup: function(exp, condition) {
@@ -172,21 +197,42 @@ ExperimentManager = (function () {
 
     addExperimentParticipant: function (exp, user) {
       //Look for duplicate participant with same userID and expID
+      logger.trace("Adding user with id " + user._id + " as a participant");
       var part = Participants.findOne({userID: user._id, experimentID: exp._id});
       if (part) {
         console.log("repeat participant");
         return part;
       } else {
         //Create new participant if no duplicates found
-        var cond = this.getRandomCondition(exp);
-        var group = this.getExpGroup(exp, cond);
-        var role = group.template.roles[0]; // grabbing the HCOMPIdeator role, which happens to be the first element
-        var role = GroupManager.addUser(group, user, role);
-        var part = new Participant(exp, user, cond, group, role);
+        
+        // assign to a condition
+        var condID = this.getRandomCondition(exp);
+        var groupID = Session.get("currentGroup")._id;
+        var part = new Participant(exp._id, user._id, condID, groupID)
         part._id = Participants.insert(part);
-        exp.participantIDs.push(part._id);
+
+        // log assignment to the experiment
         Experiments.update({_id: exp._id}, {$push: {participantIDs: part._id}});
-        console.log("Added new participant, total: " + exp.participantIDs.length)
+
+        // log assignment to the condition in Conditions collection
+        Conditions.update({_id: condID}, {$push: {assignedParts: part._id}});
+
+        // log assignment to the group in the Experiments collection
+        var groupAssignField = "groups." + groupID;
+        Experiments.update({_id: exp._id}, {$set: {groupAssignField: condID}});
+
+        logger.trace("Added new participant with id " + part._id);
+        logger.trace("Experiment now has " + exp.participantIDs.length + " participants");
+        
+        // var group = this.getExpGroup(exp, cond);
+        
+        // var role = group.template.roles[0]; // grabbing the HCOMPIdeator role, which happens to be the first element
+        // var role = GroupManager.addUser(group, user, role);
+        // var part = new Participant(exp, user, cond, group, role);
+        // part._id = Participants.insert(part);
+        // exp.participantIDs.push(part._id);
+        // Experiments.update({_id: exp._id}, {$push: {participantIDs: part._id}});
+        // console.log("Added new participant, total: " + exp.participantIDs.length)
         return part;
       }
     },

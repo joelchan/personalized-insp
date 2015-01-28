@@ -331,7 +331,7 @@ GroupManager = (function () {
       logger.trace("role: " + JSON.stringify(role));
       logger.trace("group: " + JSON.stringify(group));
       if (group.isOpen && 
-          ((this.getSize(group, role) > group.assignments[role.title].length) ||
+          ((this.getSize(group, role.title) > group.assignments[role.title].length) ||
            (this.getSize(group) < 0))) {
         // if (!role) {
         //   //Get role if not already given
@@ -443,6 +443,7 @@ GroupManager = (function () {
         logger.debug(group.template.roles);
         var result = 0;
         group.template.roles.forEach(function(role) {
+          logger.trace("Getting size of " + role.title + " role");
           if (role.title.trim() == title.trim()) {
             logger.debug("size of role is: " + role.num);
             result =  role.num;

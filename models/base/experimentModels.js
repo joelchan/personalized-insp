@@ -13,76 +13,93 @@ Participants = new Meteor.Collection("participants");
 SurveyResponses = new Meteor.Collection("surveyResponses");
 
 Experiment = function (promptID) {
-   /********************************************************************
-   * Defines a brainstorming experiment
-   *
-   * @return {object} GroupTemplate object 
-    ********************************************************************/
+   /****************************************************************
+    * Experiment object definition
+    * @Params
+    *   promptID (string) - id of prompt for the experimental condition
+    ****************************************************************/
   
   this.creationTime = new Date();
+  
   //Description of the experiment
   this.description = null;
+  
   this.promptID = promptID;
-  //Url to pass to participants 
-  // **** Need to update *****
-  // this.url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + promptID;
+  
+  //Url to pass to participants
   this.url = null;
-  // this.setURL = function(id) {
-  //   this.url = Meteor.absoluteUrl() + 'crowd/Ideate/Login/' + id;
-  //   console.log(this.url);
-  // }
+  
   //List of all experimental conditions
+  //Each element will be a condition id
   this.conditions = [];
-  //How many groups per condition
-  // this.groupN = 1;
-  //How many participants per condition
-  // this.partN = 1;
+
+  this.participantIDs = [];
+  
   //Tracks group references: key: condition.id, value: array of groupIDs
   this.groups = {};
-  //Tracks all participant IDs assigned to the experiment
-  this.participantIDs = [];
+
   //Optional set of users not allowed to participate
   this.excludeUsers = [];
 
 };
 
-// ExpCondition = function(id, expID, prompt, desc, groupNum) {
-ExpCondition = function(expID, promptID, desc, groupNum) {
+ExpCondition = function(expID, promptID, desc, partNum) {
+  /****************************************************************
+    * Experimental condition object definition
+    * @Params
+    *   expID (string) - id of experiment the participant is a part of
+    *   promptID (string) - id of prompt for the experimental condition
+    *   desc (string) - natural language label for the expeirmental condition
+    *   partNum (int, optional) - desired number of participants in the condition
+    ****************************************************************/
+// ExpCondition = function(expID, promptID, desc, groupNum) {
   //Unique ID (with respect to the experiment)
   // this.id = null;
   this.expID = expID;
+  
   //Question(s) to answer in the brainstorm
-  this.promptID = promptID
+  this.prompt = prompt
   // this.prompt = new Prompt(prompt);
   // this.prompt._id = Prompts.insert(this.prompt);
+  
   //Description of the experiment
   this.description = desc;
-  //Number of groups in the experiment condition
-  if (groupNum) {
-      this.groupNum = groupNum;
+  
+  //Desired number of participants in the experiment condition
+  if (partNum) {
+      this.partNum = partNum;
   } else {
       //If no number is given, then -1 marks recruitment based size
-      this.groupNum = -1;
+      this.partNum = -1;
   }
-  //Define the make-up of each group
-  // this.groupTemplate = new GroupTemplate();
+  
+  //List of participantIDs assigned to this condition
+  assignedParts = []
+
+  //List of participantIDs for who has completed the experiment in this condition
+  completedParts = []
   //Miscellaneous data associated with assignmnt
   this.misc;
 };
 
-Participant = function(exp, user, cond, group, role) {
+Participant = function(expID, userID, condID, groupID) {
     /****************************************************************
-    * Initialize participant and perform complete random assignment
+    * Participant object definition
+    * @Params
+    *   expID (string) - id of experiment the participant is a part of
+    *   userID (string) - id of user the participant is associated with
+    *   condID (string) - id of condition the participant is assigned to
+    *   condID (string) - id of condition the participant is assigned to
     ****************************************************************/
-    this.experimentID = exp._id;
-    this.userID = user._id;
-    this.userName = user.name;
+    this.experimentID = expID;
+    this.userID = userID;
+    this.userName = MyUsers.findOne({_id: userID}).name;
     // Assign Participant to condition
-    this.condition = cond;
-    this.groupID = group._id;
-    this.role = Roles.findOne(role.roleID);
-    this.verifyCode = this.userID.hashCode();
-    //console.log("Participant verify code is: " + this.verifyCode);
+    this.conditionID = condID;
+    this.groupID = groupID;
+    // this.verifyCode = this.userID.hashCode();
+    // don't need verify code anymore because we are using legiontools
+    
     //Participants have not finished by default
     this.hasFinished = false;
 };

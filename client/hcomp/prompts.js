@@ -191,7 +191,7 @@ Template.CrowdPromptPage.events({
       if (prompt) {
         logger.trace("found current prompt with id: " + prompt._id);  
       }
-      ExperimentManager.create(prompt._id);
+      ExperimentManager.createExp(prompt._id);
     },
 
 });
