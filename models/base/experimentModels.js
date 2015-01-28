@@ -58,7 +58,7 @@ ExpCondition = function(expID, promptID, desc, partNum) {
   this.expID = expID;
   
   //Question(s) to answer in the brainstorm
-  this.prompt = prompt
+  this.promptID = promptID
   // this.prompt = new Prompt(prompt);
   // this.prompt._id = Prompts.insert(this.prompt);
   

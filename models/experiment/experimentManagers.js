@@ -163,6 +163,7 @@ ExperimentManager = (function () {
         }
     },
 
+    // not used at the moment
     getExpGroup: function(exp, condition) {
         var openGroups = [];
         var numSlots = 0;

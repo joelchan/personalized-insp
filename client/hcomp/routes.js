@@ -226,32 +226,13 @@ Router.map(function () {
   });
 
   this.route('TutorialControl', {
-      path: 'tutorialc/:promptID/:userID',
+      path: 'tutorialc/:expID/:userID',
       template: 'TutorialControl',
     waitOn: function() {
-      var pID = this.params.promptID;
-      if (Session.get("currentUser")) {
-        return [ 
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-          ]
-      } else {
-        return [
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-        ]
-      }
+      
     },
     onBeforeAction: function(pause) {
         logger.debug("before action");
-        //if (!Session.get("currentUser")) {
-          ////if there is no user currently logged in, then render the login page
-          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
-          ////Pause rendering the given page until the user is set
-          //pause();
-        //}
         if (this.ready()) {
           logger.debug("Data ready");
           var user = MyUsers.findOne({_id: this.params.userID});
@@ -259,11 +240,19 @@ Router.map(function () {
           MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
-          var prompt = Prompts.findOne({_id: this.params.promptID});
+          var exp = Experiments.findOne({_id: this.params.expID});
+          if (exp) {
+            logger.trace("Found exp with id: " + this.params.expID)
+            Session.set("currentExp", exp);
+          } else {
+            logger.warn("no experiment found with id: " + this.params.expID);
+          }
+          var prompt = Prompts.findOne({_id: exp.promptID});
           if (prompt) {
+            logger.trace("Found prompt with id: " + exp.promptID);
             Session.set("currentPrompt", prompt);
           } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
+            logger.warn("no prompt found with id: " + exp.promptID);
           }
           this.next();
         } else {
@@ -282,44 +271,33 @@ Router.map(function () {
   });
 
   this.route('TutorialTreatment', {
-      path: 'tutorialt/:promptID/:userID',
+      path: 'tutorialt/:expID/:userID',
       template: 'TutorialTreatment',
     waitOn: function() {
-      var pID = this.params.promptID;
-      if (Session.get("currentUser")) {
-        return [ 
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-          ]
-      } else {
-        return [
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
-          Meteor.subscribe('prompts'),
-        ]
-      }
+      
     },
     onBeforeAction: function(pause) {
         logger.debug("before action");
-        //if (!Session.get("currentUser")) {
-          ////if there is no user currently logged in, then render the login page
-          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
-          ////Pause rendering the given page until the user is set
-          //pause();
-        //}
         if (this.ready()) {
           logger.debug("Data ready");
           var user = MyUsers.findOne({_id: this.params.userID});
           logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
+          MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
-          var prompt = Prompts.findOne({_id: this.params.promptID});
+          var exp = Experiments.findOne({_id: this.params.expID});
+          if (exp) {
+            logger.trace("Found exp with id: " + this.params.expID)
+            Session.set("currentExp", exp);
+          } else {
+            logger.warn("no experiment found with id: " + this.params.expID);
+          }
+          var prompt = Prompts.findOne({_id: exp.promptID});
           if (prompt) {
+            logger.trace("Found prompt with id: " + exp.promptID);
             Session.set("currentPrompt", prompt);
           } else {
-            logger.warn("no prompt found with id: " + this.params.promptID);
+            logger.warn("no prompt found with id: " + exp.promptID);
           }
           this.next();
         } else {
@@ -328,7 +306,6 @@ Router.map(function () {
     },
     action: function(){
       if(this.ready()) {
-        Session.set("useTimer", true);
         this.render();
       } else
         this.render('loading');
