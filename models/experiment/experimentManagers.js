@@ -37,22 +37,12 @@ ExperimentManager = (function () {
            // hard-code parameters for the experiment
            // i want to create n "slots" into which we can assign participants
            // when they are created and randomly assigned
-           var control = new ExpCondition(expID, promptID, "Control", 25)
-           controlID = Conditions.insert(control);
-           control.id = controlID
-           Conditions.update({_id: controlID},
-            {$set: {id: controlID}});
-           var treatment = new ExpCondition(expID, promptID, "Treatment", 25)
-           treatmentID = Conditions.insert(treatment);
-           treatment.id = treatmentID
-           Conditions.update({_id: treatmentID},
-            {$set: {id: treatmentID}});
+           var control = this.createExpCond(expID, promptID, "Control", 25);
+           var treatment = this.createExpCond(expID, promptID, "Treatment", 25);
+           
            Experiments.update({_id: expID},
             {$set: {conditions: [control,treatment]}});
            this.initGroupRefs(Experiments.findOne({_id: expID}));
-           // exp.conditions = ["Control","Treatment"]
-           // exp.groupN = 25;
-           // exp.partN = 25;
 
          return true;
         } else {
@@ -61,6 +51,26 @@ ExperimentManager = (function () {
        } else {
         logger.debug("No promptID provided, can't create experiment");
        }
+    },
+
+    createExpCond: function(expID, promptID, desc, numSlots) {
+        /**************************************************************
+       * Create a new experimental condition
+       * @Params
+       *    expID - id of the experiment
+       *    promptID - id of the prompt for the experiment
+       *    desc - string name of hte condition
+       *    numSlots - int number of group slots in the condition
+       * @Return
+       *    boolean - true if successful creation of experiment
+       * ***********************************************************/
+        var newCond = new ExpCondition(expID, promptID, desc, numSlots);
+        var groupTemplate = GroupManager.defaultTemplate();
+        logger.trace("Created group template: " + JSON.stringify(groupTemplate));
+        newCond.groupTemplate = groupTemplate;
+        var newCondID = Conditions.insert(newCond);
+        newCond._id = newCondID;
+        return newCond;
     },
 
     initGroupRefs: function(exp) {
@@ -124,7 +134,7 @@ ExperimentManager = (function () {
             return getRandomElement(exp.conditions);
         }
         var condIndex = getRandomElement(slots);
-        logger.trace("Randomly assigned to " + exp.conditions[condIndex].description + " condition");
+        logger.trace("Randomly drew " + exp.conditions[condIndex].description + " condition");
         return exp.conditions[condIndex];
     },
 
@@ -155,6 +165,7 @@ ExperimentManager = (function () {
           //Otherwise select a random group
           //Ignore open slots for now
           console.log("retrieved existing group");
+          logger.trace(newGroup);
           return getRandomElement(openGroups);
         }
     },
@@ -169,7 +180,8 @@ ExperimentManager = (function () {
         //Create new participant if no duplicates found
         var cond = this.getRandomCondition(exp);
         var group = this.getExpGroup(exp, cond);
-        var role = GroupManager.addUser(group, user);
+        var role = group.template.roles[0]; // grabbing the HCOMPIdeator role, which happens to be the first element
+        var role = GroupManager.addUser(group, user, role);
         var part = new Participant(exp, user, cond, group, role);
         part._id = Participants.insert(part);
         exp.participantIDs.push(part._id);

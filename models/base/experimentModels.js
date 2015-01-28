@@ -49,7 +49,7 @@ Experiment = function (promptID) {
 // ExpCondition = function(id, expID, prompt, desc, groupNum) {
 ExpCondition = function(expID, promptID, desc, groupNum) {
   //Unique ID (with respect to the experiment)
-  this.id = null;
+  // this.id = null;
   this.expID = expID;
   //Question(s) to answer in the brainstorm
   this.promptID = promptID
@@ -65,7 +65,7 @@ ExpCondition = function(expID, promptID, desc, groupNum) {
       this.groupNum = -1;
   }
   //Define the make-up of each group
-  this.groupTemplate = new GroupTemplate();
+  // this.groupTemplate = new GroupTemplate();
   //Miscellaneous data associated with assignmnt
   this.misc;
 };
