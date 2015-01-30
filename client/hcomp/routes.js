@@ -98,6 +98,71 @@ Router.map(function () {
       }
     }
   });
+  this.route('ExpDashboard', {
+    path: 'crowd/DashboardExp/:promptID/:userID/:expID',
+    template: 'HcompDashboard',
+    onRun: function() {
+      //Session.set("currentUser", MyUsers.findOne({_id: "db"}));
+    },
+    waitOn: function() {
+      //var group = Session.get("currentGroup");
+      //console.log(group['assignments']['Ideator']);
+      //console.log("************************************************");
+      //var ideatorIDs = getIDs(group['assignments']['Ideator'])
+      //var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      var pID = this.params.promptID;
+      return [
+          Meteor.subscribe('prompts'),
+          Meteor.subscribe('groups'),
+          Meteor.subscribe('ideas', {promptID: pID}),
+          Meteor.subscribe('clusters', {promptID: pID}),
+          Meteor.subscribe('myUsers'),
+          Meteor.subscribe('tasks', {promptID: pID}),
+          Meteor.subscribe('questions'),
+          Meteor.subscribe('assignments', {promptID: pID}),
+      ];
+    }, 
+    onBeforeAction: function() {
+      if (this.ready()) {
+        logger.debug("Data ready");
+        if (!Session.get("currentUser")) {
+          var user = MyUsers.findOne({_id: this.params.userID});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+        }
+        var prompt = Prompts.findOne({_id: this.params.promptID});
+        if (prompt) {
+          var group = Groups.findOne({_id: prompt.groupIDs[0]})
+          logger.debug("setting current prompt");
+          Session.set("currentPrompt", prompt);
+          Session.set("currentGroup", group);
+          // FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+          // FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+          // FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
+          if (prompt.length > 0) {
+            Session.set("sessionLength", prompt.length);  
+          } else {
+            Session.set("sessionLength", 10);
+          }
+        } else {
+          logger.warn("no prompt found with id: " + this.params.promptID);
+        }
+        var exp = Experiments.findOne({_id: this.params.expID});
+        if (exp) {
+          logger.debug("setting current exp");
+          Session.set("currentExp",exp);
+        } else {
+          logger.warn("no exp found with id: " + this.params.expID);
+        }
+        this.next();
+      }
+    },
+    onAfterAction: function() {
+      if (this.ready()) {
+        initRolePage();
+      }
+    }
+  });
   this.route('MturkLoginPage', {
     // path: '/crowd/Ideate/Login/:promptID',
     path: '/crowd/Ideate/Login/:expID',

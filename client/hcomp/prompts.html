@@ -58,10 +58,14 @@
           {{#each conditions}}
             {{> CrowdExperimentCondition }}
           {{/each}}
-          <!--<strong>URL: </strong> {{urlFor route='HcompDashboard' data=_id}} <h3>id: {{_id}}</h3> -->
         </div>
       </div>
     </div>
+    <a href="{{formUrl}}{{pathFor route="ExpDashboard" data=getData}}">
+      <div class="col-sm-2 exp-dash-button clickable">
+        <h3 class="center-vertical">Facilitate Brainstorm</h3>
+      </div>
+    </a>
   </div>
 </template>
 

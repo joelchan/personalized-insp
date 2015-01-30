@@ -199,6 +199,27 @@ Template.CrowdPromptPage.events({
       }
     },
 
+    'click .exp-dash-button': function () {
+      var exp = Experiments.findOne({_id: this._id});
+      Session.set("currentExp", exp);
+      var user = Session.get("currentUser");
+      if (exp) {
+        logger.trace("found current exp with id: " + this._id);
+        var prompt = Prompts.findOne({'_id': exp.promptID});
+        Session.set("currentPrompt", prompt);
+        var group = Groups.findOne({'_id': prompt.groupIDs[0]});
+        Session.set("currentGroup", group);
+        logger.debug("Prompt selected");
+        Router.go('ExpDashboard', 
+            {promptID: prompt._id, 
+              userID: user._id,
+              expID: exp._id});
+      } else {
+        logger.warn("couldn't find current exp with id: " + 
+            this._id);
+      }
+    },
+
     'click .review-button': function () {
       // Set the current prompt
       var prompt = Prompts.findOne({'_id': this._id});
