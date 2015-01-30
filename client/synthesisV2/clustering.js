@@ -71,7 +71,7 @@ Template.MturkClustering.rendered = function(){
 
   //Get Data and setup listeners
   var prompt = Session.get("currentPrompt");
-  var group = Session.get("currentGroup");
+  var group = Groups.findOne({_id: Session.get("currentGroupID")});
   var user = Session.get("currentUser");
   //Get user graph
   var userGraph = Graphs.findOne({
@@ -96,7 +96,7 @@ Template.MturkClustering.rendered = function(){
           logger.debug("Attempting to set shared graph listener.");
           if (Session.get("sharedGraph")) {
             setSharedGraphListener(Session.get("sharedGraph"), cg);
-            c.stop();
+            //c.stop();
           } 
         });
         //startServerListener();
@@ -109,7 +109,7 @@ Template.MturkClustering.rendered = function(){
       logger.debug("Attempting to set shared graph listener");
       if (Session.get("sharedGraph")) {
         setSharedGraphListener(Session.get("sharedGraph"), userGraph);
-        c.stop();
+        //c.stop();
       } 
     });
     //startServerListener();
@@ -191,8 +191,7 @@ Template.MturkClustering.rendered = function(){
         "nodes",
         "graphID",
         ""
-    );
-
+    ); 
   }
   
 };
@@ -290,9 +289,10 @@ startServerListener = function() {
       //setIdeaListener(users, Session.get("currentPrompt"));
     //},
   //});
+  var group = Groups.findOne({_id: Session.get("currentGroupID")});
   Meteor.call("graphIdeaListener",
     Session.get("currentGraph")._id, 
-    getIDs(Session.get("currentGroup").users),
+    getIDs(group.users),
     Session.get("currentPrompt")._id,
     function(error, result) {
       logger.debug("Idea Listener started");
