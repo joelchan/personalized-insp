@@ -96,7 +96,7 @@ Template.MturkClustering.rendered = function(){
           logger.debug("Attempting to set shared graph listener.");
           if (Session.get("sharedGraph")) {
             setSharedGraphListener(Session.get("sharedGraph"), cg);
-            //c.stop();
+            c.stop();
           } 
         });
         //startServerListener();
@@ -109,7 +109,7 @@ Template.MturkClustering.rendered = function(){
       logger.debug("Attempting to set shared graph listener");
       if (Session.get("sharedGraph")) {
         setSharedGraphListener(Session.get("sharedGraph"), userGraph);
-        //c.stop();
+        c.stop();
       } 
     });
     //startServerListener();
@@ -200,6 +200,7 @@ Template.MturkClustering.rendered = function(){
 var setSharedGraphListener = function(sharedGraph, userGraph) {
   logger.debug("Setting up shared graph listener");
   Tracker.autorun(function() {
+    logger.debug("*********Setting up shared graph listener *************");
     if (!Session.get("duplicatingNode")) {
       var sharedThemes = Nodes.find({graphID: sharedGraph._id, 
           type: 'theme'});
