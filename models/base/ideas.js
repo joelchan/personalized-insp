@@ -11,6 +11,7 @@ Brainstorming prompts data models
 ********************************************************************/
 // Setup a collection to contain all ideas
 Ideas = new Meteor.Collection("ideas");
+DummyIdeas = new Meteor.Collection("dummyIdeas");
 ReplayIdeas = new Meteor.Collection("replayIdeas");
 IdeasToProcess = new Meteor.Collection("ideasToProcess");
 Clusters = new Meteor.Collection("clusters");

@@ -1,9 +1,82 @@
 <template name="TutorialControl">
   <div class="tutorial-page-control">
-    <h1>Tutorial page for the control condition</h1>
+<!--    <h1>Tutorial page for the control condition</h1>-->
+      {{> MturkIdeationPageControlTutorial}}
+      {{>ControlTutorialFlow}}
+<!--
     <button class='btn btn-xlarge2 btn-default btn-primary nextPage'>
       Continue
     </button>
+-->
+  </div>
+</template>
+
+<template name="MturkIdeationPageControlTutorial">
+  <div class="hcomp-ideation-pane-control">
+    <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
+    <div class="main-prompt">
+      {{> MturkMainPromptControlTutorial}}
+    </div>
+  </div>
+</template>
+
+<template name="MturkMainPromptControlTutorial">
+  <div class = "ideator-directions-control">
+    <label class="directions-header-control"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
+    <!-- <div class="row"> -->
+      <div id="directions-container-control">
+        <div id="directions-content" class="collapse in">
+          <ol>
+            <li>Begin entering ideas for the main prompt here.</li>
+            <li>Continue to ideate until you reach 10 total ideas. If you reach 10 ideas before the time is up, you can either click on the "Exit early" button to complete the HIT or continue generating ideas until the time is up.</li>
+          </ol>
+          <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
+              2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
+              3) Continue to ideate until the time is up.
+          </p> -->
+        </div>
+      </div>
+    <!-- </div> -->
+  </div>
+  <div class = "general-idea-entry">
+    {{> MturkIdeaEntryBoxTutorial }}
+    {{> MturkIdeaListTutorial }}
+  </div>
+</template>
+
+<template name="MturkIdeaEntryBoxTutorial">
+  <div class="idea-input-box">
+    <textArea class="idea-input" placeholder="Enter your ideas here"></textArea>
+    <div class="btn btn-primary btn-large submit-idea">
+      Submit Idea
+    </div>
+  </div>
+</template>
+
+<template name="MturkIdeaListTutorial">
+  <div class="idea-list-box">
+  <div class="idea-count">
+    <span class="idea-count-label">
+      <!-- <h4>You have</h4> -->
+      <h3>{{ ideaCount }} </h3>
+      <h4>total ideas! </h4>
+    </span>
+  </div>
+    {{#each ideas }}
+      {{> MturkIdeaboxTutorial}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="MturkIdeaboxTutorial">
+  <div class="idea-box">
+    <span>{{ content }}</span>
+    <!--
+    <span class='vote-box'> 
+      <span class="up-vote vote glyphicon glyphicon-thumbs-up"></span>
+      {{ voteNum }}
+    </span>
+    -->
   </div>
 </template>
 
@@ -14,4 +87,138 @@
       Continue
     </button>
   </div>
+</template>
+
+
+<!--TEMPLATES FOR OVERLAYS-->
+<template name = "ControlTutorialFlow">
+    <div id = "control-tutorial-welcome" class = "control-tutorial-background visible-tutorial">
+        <div class = "control-tutorial-highlight"></div>
+        <div class = "control-tutorial-welcome-text control-tutorial-description">
+            <p>
+                Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface.
+            </p>
+            <div class = "control-tutorial-button">
+                <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-welcome-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "control-tutorial-timer" class = "control-tutorial-background">
+        <div class = "control-tutorial-highlight"></div>
+        <div class = "control-tutorial-timer-text control-tutorial-description">
+            <p>
+                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. Once the time is up, you will be taken to a final screen where you can submit the HIT.
+            </p>
+            <div class = "control-tutorial-button">
+                <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-timer-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-timer-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "control-tutorial-exit" class =  "control-tutorial-background">
+        <div class = "control-tutorial-highlight"></div>
+        <div class = "control-tutorial-exit-text control-tutorial-description">
+            <p>
+                If at any time you do not wish to continue, you may exit the study by clicking on this button. Your compensation will be pro-rated based on how long you participated. 
+            </p>
+            <div class = "control-tutorial-button">
+                <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-exit-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-exit-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "control-tutorial-prompt" class = "control-tutorial-background">
+        <div class = "control-tutorial-highlight-container">
+            <div class = "control-tutorial-highlight">
+            </div>
+        </div>
+        <div class = "control-tutorial-prompt-text control-tutorial-description">
+            <p>
+                This is where you will see the brainstorming problem you will be working on.  
+            </p>
+            <div class = "control-tutorial-button">
+                <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-prompt-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-prompt-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "control-tutorial-ideaEntry" class = "control-tutorial-background">
+        <div class = "control-tutorial-highlight"></div>
+        <div class = "control-tutorial-ideaEntry-text control-tutorial-description">
+            <p>
+                This is where you will be entering your ideas.  
+            </p>
+            <div class = "control-tutorial-button">
+                <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-ideaEntry-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-ideaEntry-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "control-tutorial-ideaEntryTry" class = "control-tutorial-background">
+        <div class = "control-tutorial-ideaEntryTry-text control-tutorial-description">
+            <p>
+                Let’s give it a try! Enter something into the text field and either press enter or the “Submit Idea” button.   
+            </p>
+            <div class = "control-tutorial-button">
+                <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-ideaEntryTry-goback'>
+          Go Back!
+                </button>
+                <input type="button" id = "control-tutorial-ideaEntryTry-gotit" class ="control-tutorial-gotit btn btn-default btn-primary" disabled=true value="Got it!">
+<!--
+                <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-ideaEntryTry-gotit' disabled="true">
+          Got it!
+                </button>
+-->
+            </div>
+        </div>
+    </div>
+    <div id = "control-tutorial-directions" class = "control-tutorial-background">
+        <div class = "control-tutorial-highlight"></div>
+        <div class = "control-tutorial-directions-text control-tutorial-description">
+            <p>
+                All of the instructions from this tutorial will be summarized in this section. It will be available throughout the task: click "show/hide" to show or hide the instructions.  
+            </p>
+            <div class = "control-tutorial-button">
+                <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-directions-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-directions-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "control-tutorial-pleaseWait" class = "control-tutorial-background">
+        <div class = "control-tutorial-pleaseWait-text control-tutorial-description">
+            <p>
+                This concludes the tutorial. Your brainstorm will begin momentarily. In the meantime, feel free to play around with the interface! 
+            </p>
+            <div class = "control-tutorial-button">
+                <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-pleaseWait-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-pleaseWait-gotit'>
+          Hide Message
+                </button>
+            </div>
+        </div>
+    </div>
 </template>

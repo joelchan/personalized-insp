@@ -17,4 +17,7 @@ Meteor.startup(function(){
   Meteor.publish("assignments", function(){
 	  return Assignments.find();
   });
+  Meteor.publish("dummyIdeas", function(){
+	  return DummyIdeas.find();
+  });
 });
