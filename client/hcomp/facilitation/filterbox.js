@@ -12,6 +12,14 @@ Template.HcompFilterbox.rendered = function(){
 	// console.log("rendering");
 	Session.set("searchQuery","");
 	FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+	// add different default filter if we are on an experiment dashboard
+	var exp = Session.get("currentExp");
+	if (exp) {
+		// get treatment participant userIDs
+		var treatmentIDs;
+		// create filter based on those IDs
+		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", treatmentIDs);
+	}
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 
@@ -135,8 +143,19 @@ Template.HcompFilterBoxHeader.events({
 	},
 
 	'click .all-ideas-filter-btn' : function() {
+		// clear all filters
 		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+		
+		// reinstate default filters
 		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+		// add different default filter if we are on an experiment dashboard
+		var exp = Session.get("currentExp");
+		if (exp) {
+			// get treatment participant userIDs
+			var treatmentIDs;
+			// create filter based on those IDs
+			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", treatmentIDs);
+		}
 		$('.misc-ideas-filter-btn').removeClass('btn-success');
 		$('.starred-ideas-filter-btn').removeClass('btn-success');
 		$('.all-ideas-filter-btn').addClass('btn-success');
