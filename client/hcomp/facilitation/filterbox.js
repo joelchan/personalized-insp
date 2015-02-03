@@ -11,15 +11,13 @@ Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
 	Session.set("searchQuery","");
-	FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
-	// add different default filter if we are on an experiment dashboard
-	var exp = Session.get("currentExp");
-	if (exp) {
-		// get treatment participant userIDs
-		var treatmentIDs;
-		// create filter based on those IDs
-		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", treatmentIDs);
-	}
+	// FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+	// logger.trace("Creating default ideas filter upon render");
+	// createDefaultIdeasFilter("Ideas Filter");
+
+	// FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
+ //    logger.trace("Creating default filter for ideawordcloud filter");
+ //    createDefaultIdeasFilter("IdeaWordCloud Filter");
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 
@@ -147,15 +145,8 @@ Template.HcompFilterBoxHeader.events({
 		FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
 		
 		// reinstate default filters
-		FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
-		// add different default filter if we are on an experiment dashboard
-		var exp = Session.get("currentExp");
-		if (exp) {
-			// get treatment participant userIDs
-			var treatmentIDs;
-			// create filter based on those IDs
-			FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", treatmentIDs);
-		}
+		createDefaultIdeasFilter("Ideas Filter");
+
 		$('.misc-ideas-filter-btn').removeClass('btn-success');
 		$('.starred-ideas-filter-btn').removeClass('btn-success');
 		$('.all-ideas-filter-btn').addClass('btn-success');
@@ -227,10 +218,28 @@ stringToWords = function stringToWords(str) {
   };
 }
 
+createDefaultIdeasFilter = function createDefaultIdeasFilter(ideasFilterName) {
+	FilterManager.create(ideasFilterName, Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+	// add different default filter if we are on an experiment dashboard
+	var exp = Session.get("currentExp");
+	if (exp) {
+		// get treatment participant userIDs
+		logger.trace("On exp dashboard, filtering for treatment participants only");
+		treatmentIDs = ExperimentManager.getUsersInCond(exp, "Treatment");
+		logger.trace("Found userIDs for the treatment condition: " + JSON.stringify(treatmentIDs));
+		// create filter based on those IDs
+		treatmentIDs.forEach(function(tID) {
+			FilterManager.create(ideasFilterName, Session.get("currentUser"), "ideas", "userID", tID);
+		});
+	}
+}
+
 getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
+	logger.trace("Getting filtered ideas");
 	var filteredIdeas = FilterManager.performQuery(ideasFilterName, 
 		  Session.get("currentUser"), 	
 		  "ideas").fetch();
+	logger.trace("Unsorted ideas: " + JSON.stringify(filteredIdeas));
 
 	// apply search query, if it exists
 	var query = Session.get("searchQuery");

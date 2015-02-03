@@ -83,6 +83,36 @@ ExperimentManager = (function () {
         return newCond;
     },
 
+    getUsersInCond: function(exp, condName) {
+       /**************************************************************
+       * Convenience function to get all userIDs assigned to a
+       * given condition
+       * @Params
+       *    expID (object) - experiment object
+       *    condName (string) - natural-language label of the exp condition
+       * @Return
+       *    userIDs - list of userIDs assigned to the condition
+       * ***********************************************************/
+       var cond = Conditions.findOne({expID: exp._id, description: condName});
+       logger.trace("Found cond: " + JSON.stringify(cond));
+       // exp.conditions.forEach(function(c) {
+       //  if (c.description == "Treatment") {
+       //    condID = c._id;
+       //    break;
+       //  }
+       // });
+       // var cond = Conditions.findOne({_id: condID});
+       var partIDs = cond.assignedParts;
+       var participants = Participants.find({_id: {$in: partIDs}}).fetch();
+       var userIDs = []
+       participants.forEach(function(p) {
+        logger.trace("Participant " + JSON.stringify(p));
+        logger.trace("PartID " + p._id + ": UserID " + p.userID);
+        userIDs.push(p.userID);
+       });
+       return userIDs;
+    },
+
     initGroupRefs: function(exp) {
       /***********************************************************
       * Initialize object fields for each condition with empty 

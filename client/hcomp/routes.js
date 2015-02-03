@@ -151,6 +151,8 @@ Router.map(function () {
         if (exp) {
           logger.debug("setting current exp");
           Session.set("currentExp",exp);
+          // createDefaultIdeasFilter("Ideas Filter");
+          // createDefaultIdeasFilter("IdeaWordCloud Filter");
         } else {
           logger.warn("no exp found with id: " + this.params.expID);
         }

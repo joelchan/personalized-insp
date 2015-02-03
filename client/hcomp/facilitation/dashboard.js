@@ -56,22 +56,16 @@ Template.HcompDashboard.rendered = function(){
   Session.set("selectedIdeas", []);
   
   // make sure we start with a clean slate on render
-  FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
   FilterManager.reset("Tasks Filter", Session.get("currentUser"), "tasks");
-  
-  // FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
-  FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
-  // add different default filter if we are on an experiment dashboard
-  var exp = Session.get("currentExp");
-  if (exp) {
-    // get treatment participant userIDs
-    var treatmentIDs;
-    // create filter based on those IDs
-    FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "userID", treatmentIDs);
-  }
   FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
   
-  };
+};
+
+Template.HcompIdeaWordCloud.rendered = function() {
+    FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
+    logger.trace("Creating default filter for ideawordcloud filter");
+    createDefaultIdeasFilter("IdeaWordCloud Filter");
+};
 //
 Template.HcompBeginSynthesis.events({
   // 'click .begin-synthesis': function() {
@@ -116,6 +110,7 @@ Template.HcompOverallStats.helpers({
     var exp = Session.get("currentExp");
     if (exp) {
       // get treatment userIDs
+      userIDs = ExperimentManager.getUsersInCond(exp, "Treatment");
     } else {
       var groupID = Session.get("currentPrompt").groupIDs[0];
       var group = Groups.findOne({_id: groupID});
@@ -442,8 +437,7 @@ Template.HcompIdeaWordCloud.events({
   },
 })
 
-function getCloudFromIdeas()
-{
+function getCloudFromIdeas() {
 	// var ideas = Ideas.find({ content: { $exists: true}}).fetch();
   // var ideas = Ideas.find({ prompt._id : Session.get("currentPrompt")._id}).fetch();
   
@@ -457,10 +451,10 @@ function getCloudFromIdeas()
                                        .replace(/\s{2,}/g," ");
   }
   logger.debug("Prompt stop words: " + promptStopWords.toString());
-
   var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
+  logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
   // console.log(ideas);
 	var cloud = [];
 	for (var i = 0; i < ideas.length; i++) {
