@@ -54,7 +54,7 @@
             <a href="{{ expURL }}">
               {{ expURL }}
             </a><br/>
-          <strong>Conditions: </strong><br/>
+          <!-- <strong>Conditions: </strong><br/> -->
           {{#each conditions}}
             {{> CrowdExperimentCondition }}
           {{/each}}
@@ -70,7 +70,19 @@
 </template>
 
 <template name="CrowdExperimentCondition">
-  <em>{{ desc }}:</em> {{ numAssigned }} assigned participants, {{ numCompleted }} completed.<br/>
+  <div id="cond-{{_id}}" class="menu-box prompt-panel">
+    <div class="row">
+      <div class="col-sm-6 prompt-data">
+        <div class="center-block">
+          <strong>{{ desc }}:</strong><br/> 
+          {{ numAssigned }} assigned participants, {{ numCompleted }} completed.<br/>
+          <button class="btn btn-default btn-primary begin-bs">
+            Begin experiment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <template name="CrowdPromptPage">

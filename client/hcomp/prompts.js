@@ -220,6 +220,19 @@ Template.CrowdPromptPage.events({
       }
     },
 
+    'click .begin-bs': function () {
+      var condName = this.description;
+      logger.trace("Begin brainstorm for " + condName + " condition");
+      var exp = Experiments.findOne({_id: this.expID});
+      var userIDs = ExperimentManager.getUsersInCond(exp, condName);
+      userIDs.forEach(function (id) {
+        logger.debug("Updating route for user with id: " + id);
+        var routeName = "MturkIdeation" + condName;
+        logger.debug("Sending to route: " + routeName)
+        MyUsers.update({_id: id}, {$set: {'route': routeName}});
+      });
+    },
+
     'click .review-button': function () {
       // Set the current prompt
       var prompt = Prompts.findOne({'_id': this._id});

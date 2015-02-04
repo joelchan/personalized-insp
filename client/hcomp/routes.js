@@ -303,7 +303,7 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
-      Session.set("nextPage", "MturkIdeationControl");
+      // Session.set("nextPage", "MturkIdeationControl");
     },
   });
 
@@ -322,7 +322,7 @@ Router.map(function () {
           Session.set("currentParticipant", part);
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
+          MyUsers.update({_id: user._id}, {$set: {route: 'TutorialTreatment'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
           var exp = Experiments.findOne({_id: part.experimentID});
@@ -351,7 +351,7 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
-      Session.set("nextPage", "MturkIdeation");
+      // Session.set("nextPage", "MturkIdeationTreatment");
     },
   });
   
@@ -393,8 +393,9 @@ Router.map(function () {
           var pID = exp.promptID;
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
+          // MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeationControl'}});
           LoginManager.loginUser(user.name);
+          logger.trace("Logging in the user");
           Session.set("currentUser", user);
           var prompt = Prompts.findOne({_id: pID});
           if (prompt) {
@@ -423,7 +424,7 @@ Router.map(function () {
 
   });
   
-  this.route('MturkIdeation', {
+  this.route('MturkIdeationTreatment', {
       path: 'crowd/IdeationT/:partID',
       template: 'MturkIdeationPage',
 
@@ -459,7 +460,7 @@ Router.map(function () {
           var pID = exp.promptID;
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeation'}});
+          // MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeationTreatment'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
           var prompt = Prompts.findOne({_id: pID});
