@@ -266,7 +266,7 @@ Router.map(function () {
       
     },
     onBeforeAction: function(pause) {
-        logger.debug("before action");
+        logger.debug("before action for tutorial control");
         if (this.ready()) {
           logger.debug("Data ready");
           var part = Participants.findOne({_id: this.params.partID});
@@ -274,8 +274,7 @@ Router.map(function () {
           Session.set("currentParticipant", part);
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
-          LoginManager.loginUser(user.name);
+          // MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
           Session.set("currentUser", user);
           var exp = Experiments.findOne({_id: part.experimentID});
           if (exp) {
@@ -322,7 +321,7 @@ Router.map(function () {
           Session.set("currentParticipant", part);
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'TutorialTreatment'}});
+          // MyUsers.update({_id: user._id}, {$set: {route: 'TutorialTreatment'}});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
           var exp = Experiments.findOne({_id: part.experimentID});

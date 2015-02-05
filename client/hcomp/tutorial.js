@@ -8,6 +8,7 @@ Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 
 Template.TutorialControl.rendered = function() {
     // Setup Facilitation push to synthesis listener
+    logger.trace("Rendering tutorial control page");
     MyUsers.find({_id: Session.get("currentUser")._id}).observe({
     changed: function(newDoc, oldDoc) {
         logger.info("change to current user detected");
@@ -28,7 +29,8 @@ Template.TutorialTreatment.rendered = function() {
     MyUsers.find({_id: Session.get("currentUser")._id}).observe({
     changed: function(newDoc, oldDoc) {
         logger.info("change to current user detected");
-        logger.trace(newDoc.route);
+        logger.trace("oldDoc: " + JSON.stringify(oldDoc));
+        logger.trace("newDoc: " + JSON.stringify(newDoc));
         var route = newDoc.route;
         logger.debug("Going to page with route: " + route);
         var partID = Session.get("currentParticipant")._id;
