@@ -6,7 +6,15 @@ Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 //Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
-
+Template.ControlTutorialFlow.rendered = function(){
+    //SET THE OVERLAY ABSOLUTE POSITIONS
+    var offset = $(".ideation-prompt-control").position();
+    var width = $(".ideation-prompt-control").width();
+    var height = $(".ideation-prompt-control").height();
+    $(".control-tutorial-highlight-container").css({top:offset.top, left:offset.left, width:width, height:height});
+};
+    
+    
 
 Template.TutorialControl.events({
     'click button.nextPage': function () {
@@ -140,6 +148,8 @@ Template.MturkIdeaEntryBoxTutorial.events({
   }
 });
 
+
+
 Template.ControlTutorialFlow.events({
     //Welcome
     'click .control-tutorial-welcome-gotit': function() {
@@ -215,8 +225,6 @@ Template.ControlTutorialFlow.events({
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
     },
 });
-
-
 
 
 
