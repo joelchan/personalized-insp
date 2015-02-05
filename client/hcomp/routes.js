@@ -278,7 +278,12 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
+        if (this.ready()) {
+        initRolePage();
+        insertExitStudy();
+      }
       Session.set("nextPage", "MturkIdeationControl");
+        
     },
   });
 

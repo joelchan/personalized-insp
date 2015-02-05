@@ -25,10 +25,10 @@ h3 {
 }
 
 .navbar {
-  background: #464646; /* dark gray */
-  color: #eee; /* light gray */
-  margin-bottom: 0px;
-  border-color: #464646;
+    background: #464646; /* dark gray */
+    color: #eee; /* light gray */
+    margin-bottom: 0px;
+    border-color: #464646;
 }
 
 .navbar .navbar-brand {

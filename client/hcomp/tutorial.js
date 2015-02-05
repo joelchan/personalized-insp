@@ -6,16 +6,6 @@ Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 //Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
-Template.ControlTutorialFlow.rendered = function(){
-    //SET THE OVERLAY ABSOLUTE POSITIONS
-    var offset = $(".ideation-prompt-control").position();
-    var width = $(".ideation-prompt-control").width();
-    var height = $(".ideation-prompt-control").height();
-    var textTop = (offset.top + height + 100);
-    $("#control-tutorial-highlight-prompt").css({top:offset.top, left:offset.left, width:width, height:height + 50});
-    $(".control-tutorial-prompt-text").css({top:textTop, left:offset.left, width:width});
-};
-    
     
 
 Template.TutorialControl.events({
@@ -150,71 +140,114 @@ Template.MturkIdeaEntryBoxTutorial.events({
   }
 });
 
-
+Template.ControlTutorialFlow.rendered = function(){
+    //SET THE OVERLAY ABSOLUTE POSITIONS
+    
+    //PROMPT
+    var offsetPrompt = $(".ideation-prompt-control").position();
+    var widthPrompt = $(".ideation-prompt-control").width();
+    var heightPrompt = $(".ideation-prompt-control").height();
+    var textTopPrompt = (offsetPrompt.top + heightPrompt + 100);
+    $(".control-tutorial-prompt-text").css({top:textTopPrompt, left:offsetPrompt.left, width:widthPrompt});
+    
+    //IDEAENTRY
+    var offsetIdeaEntry = $(".idea-input-box").position();
+    var widthIdeaEntry = $(".idea-input-box").width();
+    var heightIdeaEntry = $(".idea-input-box").height();
+    var textTopIdeaEntry = (offsetIdeaEntry.top + heightIdeaEntry + 200);
+    $(".control-tutorial-ideaEntry-text").css({top:textTopIdeaEntry, width:widthIdeaEntry});
+    
+    //DIRECTIONS
+    var offsetDirections = $("#directions-container-control").position();
+    var widthDirections = $("#directions-container-control").width();
+    var heightDirections = $("#directions-container-control").height();
+    var textTopDirections = (offsetDirections.top + heightDirections + 200);
+    $(".control-tutorial-directions-text").css({top:textTopDirections, width:widthDirections});
+     
+}; 
 
 Template.ControlTutorialFlow.events({
     //Welcome
     'click .control-tutorial-welcome-gotit': function() {
         $("#control-tutorial-welcome").removeClass("visible-tutorial");
         $("#control-tutorial-timer").addClass("visible-tutorial");
+        $(".timer").css({border: "10px solid red"});
     },
     //Timer
     'click .control-tutorial-timer-gotit': function() {
         $("#control-tutorial-timer").removeClass("visible-tutorial");
         $("#control-tutorial-exit").addClass("visible-tutorial");
+        $(".timer").css({border: "none"});
+        $(".exitStudy").css({border: "10px solid red"});
     },
     'click .control-tutorial-timer-goback': function() {
         $("#control-tutorial-timer").removeClass("visible-tutorial");
         $("#control-tutorial-welcome").addClass("visible-tutorial");
+        $(".timer").css({border: "none"});
     },
     //Exit Early
     'click .control-tutorial-exit-gotit': function() {
         $("#control-tutorial-exit").removeClass("visible-tutorial");
         $("#control-tutorial-prompt").addClass("visible-tutorial");
+        $(".ideation-prompt-control").css({border: "10px solid red"});
+        $(".exitStudy").css({border: "none"});
     },
     'click .control-tutorial-exit-goback': function() {
         $("#control-tutorial-exit").removeClass("visible-tutorial");
         $("#control-tutorial-timer").addClass("visible-tutorial");
+        $(".timer").css({border: "10px solid red"});
+        $(".exitStudy").css({border: "none"});
     },
     //Prompt
     'click .control-tutorial-prompt-gotit': function() {
         $("#control-tutorial-prompt").removeClass("visible-tutorial");
         $("#control-tutorial-ideaEntry").addClass("visible-tutorial");
+        $(".ideation-prompt-control").css({border:"none"});
+        $(".idea-input-box").css({border: "10px solid red"});
     },
     'click .control-tutorial-prompt-goback': function() {
         $("#control-tutorial-prompt").removeClass("visible-tutorial");
         $("#control-tutorial-exit").addClass("visible-tutorial");
+        $(".ideation-prompt-control").css({border:"none"});
+        $(".exitStudy").css({border: "10px solid red"});
     },
     //ideaEntry
     'click .control-tutorial-ideaEntry-gotit': function() {
         $("#control-tutorial-ideaEntry").removeClass("visible-tutorial");
         $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial");
         $("#control-tutorial-ideaEntryTry").removeClass("control-tutorial-background");
+        $(".idea-input-box").css({border: "none"});
     },
     'click .control-tutorial-ideaEntry-goback': function() {
         $("#control-tutorial-ideaEntry").removeClass("visible-tutorial");
         $("#control-tutorial-prompt").addClass("visible-tutorial");
+        $(".ideation-prompt-control").css({border: "10px solid red"});
+        $(".idea-input-box").css({border: "none"});
     },
     //ideaEntryTry
     'click #control-tutorial-ideaEntryTry-gotit': function() {
         $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial");
         $("#control-tutorial-directions").addClass("visible-tutorial");
         $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
+        $("#directions-container-control").css({border: "10px solid red"});
     },
     'click .control-tutorial-ideaEntryTry-goback': function() {
         $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial");
         $("#control-tutorial-ideaEntry").addClass("visible-tutorial");
         $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
+        $(".idea-input-box").css({border: "10px solid red"});
     },
     //Directions
     'click .control-tutorial-directions-gotit': function() {
         $("#control-tutorial-directions").removeClass("visible-tutorial");
         $("#control-tutorial-pleaseWait").addClass("visible-tutorial");
         $("#control-tutorial-pleaseWait").removeClass("control-tutorial-background");
+        $("#directions-container-control").css({border: "none"});
     },
     'click .control-tutorial-directions-goback': function() {
         $("#control-tutorial-directions").removeClass("visible-tutorial");
         $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial");
+        $("#directions-container-control").css({border: "none"});
     },
     //Please Wait
     'click .control-tutorial-pleaseWait-gotit': function() {
@@ -225,11 +258,10 @@ Template.ControlTutorialFlow.events({
         $("#control-tutorial-pleaseWait").removeClass("visible-tutorial");
         $("#control-tutorial-directions").addClass("visible-tutorial");
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
+        $("#directions-container-control").css({border: "10px solid red"});
     },
 });
-
-
-
+ 
 
 
 
