@@ -151,11 +151,13 @@
 
 <template name="MturkIdeationPageControl">
   <div class="hcomp-ideation-pane-control">
-    <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
-    <div class="main-prompt">
-      {{> MturkMainPromptControl}}
+        <div class = "ideation-prompt-control-container">
+            <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
+        </div>
+        <div class="main-prompt">
+            {{> MturkMainPromptControl}}
+        </div>
     </div>
-  </div>
 </template>
 
 <template name="MturkMainPromptControl">

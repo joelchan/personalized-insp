@@ -272,6 +272,7 @@ Router.map(function () {
     },
     action: function(){
       if(this.ready()) {
+        Session.set("useTimer", true);
         this.render();
       } else
         this.render('loading');

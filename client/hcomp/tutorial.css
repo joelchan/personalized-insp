@@ -2,6 +2,7 @@
     position: relative;
     top: 0;
     left: 0;
+    background: rgba(0,0,0,0.8);
 }
 .control-tutorial-background {
     width: 100%;
@@ -22,6 +23,8 @@
     height: auto;
     position: relative;
     z-index: 200;
+    background: rgba(0,0,0,0.9);
+    padding: 4em;
 }
 .control-tutorial-description p {
     font-family: 'Shadows Into Light', cursive;
@@ -35,9 +38,19 @@
     font-family: 'Shadows Into Light', cursive;
     font-size: 1.5em;
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 1em;
+    right: 1em;
 }
+.control-tutorial-description .control-tutorial-goback {
+    background-color: #979797;
+    color: white;
+    font-family: 'Shadows Into Light', cursive;
+    font-size: 1.5em;
+    position: absolute;
+    bottom: 1em;
+    left: 1em;
+}
+
 #control-tutorial-ideaEntryTry-gotit {
     background-color: #7ED321;
     color: white;
@@ -55,16 +68,6 @@
 #control-tutorial-ideaEntryTry-gotit:disabled {
     background-color: #979797;
 }
-
-.control-tutorial-description .control-tutorial-goback {
-    background-color: #979797;
-    color: white;
-    font-family: 'Shadows Into Light', cursive;
-    font-size: 1.5em;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
 .control-tutorial-description .turnGreen {
     background-color: #7ED321;
 }
@@ -74,32 +77,13 @@
     height: 100%;
     position: absolute;
 }
-#control-tutorial-welcome .control-tutorial-highlight {
-    position: absolute;
-    top: 0;
-    right: 0;
-    border: 1000px solid rgba(0,0,0,0.8);
-    z-index: 100;
-    overflow: hidden;
-}
 .control-tutorial-welcome-text {
     position: absolute;
     top: 50%;
-    left: 40%;
-    width: 30%;
-}
-#control-tutorial-timer .control-tutorial-highlight {
-    padding-right: 6.5em;
-    padding-left: 6.5em;
-    padding-top: 4em;
-    padding-bottom: 4em;
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-left: 10000px solid rgba(0,0,0,0.8);
-    border-bottom: 1000px solid rgba(0,0,0,0.8);
-    z-index: 100;
-    overflow: hidden;
+    left: 30%;
+    right: 30%;
+    width: 40%;
+    margin: 0 auto;
 }
 .control-tutorial-timer-text {
     width: 35%;
@@ -107,50 +91,19 @@
     top: 10%;
     right: 20%;
 }
-#control-tutorial-exit .control-tutorial-highlight {
-    padding-right: 4em;
-    padding-left: 4em;
-    padding-top: 2em;
-    padding-bottom: 2em;
-    position: absolute;
-    top: -2em;
-    right: 0;
-    border-left: 10000px solid rgba(0,0,0,0.8);
-    border-bottom: 1000px solid rgba(0,0,0,0.8);
-    z-index: 100;
-    overflow: hidden;
-}
 .control-tutorial-exit-text {
     width: 35%;
     position: absolute;
-    top: 10%;
-    right: 10%;
 }
 #control-tutorial-prompt .control-tutorial-highlight {
     border: 10px solid red;
     z-index: 100;
+    width: 100%;
+    height: 100%;
     
 }
 .control-tutorial-prompt-text {
-    width: 35%;
     position: absolute;
-    top: 50%;
-    right: 30%;
-}
-#control-tutorial-ideaEntry .control-tutorial-highlight {
-    padding-right: 22%;
-    padding-left: 25%;
-    padding-top: 5%;
-    padding-bottom: 4%;
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-top: 22em solid rgba(0,0,0,0.8);
-    border-bottom: 25em solid rgba(0,0,0,0.8);
-    border-right: 25em solid rgba(0,0,0,0.8);
-    border-left: 25em solid rgba(0,0,0,0.8);
-    z-index: 100;
-    overflow: hidden;
 }
 .control-tutorial-ideaEntry-text {
     width: 35%;
@@ -164,21 +117,6 @@
     position: absolute;
     top: 50%;
     right: 5%;
-}
-#control-tutorial-directions     .control-tutorial-highlight {
-    padding-right: 25em;
-    padding-left: 20em;
-    padding-top: 5em;
-    padding-bottom: 5em;
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-top: 11em solid rgba(0,0,0,0.8);
-    border-bottom: 1000px solid rgba(0,0,0,0.8);
-    border-right: 25em solid rgba(0,0,0,0.8);
-    border-left: 2000px solid rgba(0,0,0,0.8);
-    z-index: 100;
-    overflow: hidden;
 }
 .control-tutorial-directions-text {
     width: 35%;

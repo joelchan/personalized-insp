@@ -11,7 +11,9 @@ Template.ControlTutorialFlow.rendered = function(){
     var offset = $(".ideation-prompt-control").position();
     var width = $(".ideation-prompt-control").width();
     var height = $(".ideation-prompt-control").height();
-    $(".control-tutorial-highlight-container").css({top:offset.top, left:offset.left, width:width, height:height});
+    var textTop = (offset.top + height + 100);
+    $("#control-tutorial-highlight-prompt").css({top:offset.top, left:offset.left, width:width, height:height + 50});
+    $(".control-tutorial-prompt-text").css({top:textTop, left:offset.left, width:width});
 };
     
     
