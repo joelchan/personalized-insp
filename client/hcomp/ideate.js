@@ -28,15 +28,7 @@ Template.MturkIdeationPage.rendered = function(){
         Router.go(route, {'promptID': promptID, 'userID': userID}); 
     },
   });
-  
 };
-
-Template.MturkIdeationPageControl.helpers({
-    prompt: function() {
-    var prompt = Session.get("currentPrompt");
-    return prompt.question;
-  },
-});
 
 Template.MturkMainPrompt.rendered = function(){
   //Setup filters for users and filter update listener

@@ -340,7 +340,11 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
-      Session.set("nextPage", "MturkIdeation");
+        Session.set("nextPage", "MturkIdeation");
+        if (this.ready()) {
+            initRolePage();
+            insertExitStudy();
+        }
     },
   });
   
