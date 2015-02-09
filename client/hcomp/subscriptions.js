@@ -9,6 +9,6 @@ Meteor.startup(function(){
 		************************************************************/
 		//Meteor.subscribe("tasks");
     Meteor.subscribe("dummyIdeas");
-    Meteor.susbscribe("dummyTasks");
+    Meteor.subscribe("dummyTasks");
 });
 
