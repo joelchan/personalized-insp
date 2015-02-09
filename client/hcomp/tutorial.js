@@ -42,14 +42,12 @@ Template.TutorialTreatment.rendered = function() {
 
 Template.TutorialControl.events({
     'click button.nextPage': function () {
-        Router.go(Session.get("nextPage"), 
-            {partID: Session.get("currentParticipant")._id});
+        ExperimentManager.logParticipantReady(Session.get("currentParticipant"));
     },
 });
 
 Template.TutorialTreatment.events({
     'click button.nextPage': function () {
-        Router.go(Session.get("nextPage"), 
-            {partID: Session.get("currentParticipant")._id});
+        ExperimentManager.logParticipantReady(Session.get("currentParticipant"));  
     },
 });

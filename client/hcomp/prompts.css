@@ -83,3 +83,7 @@
   left: 65%;
   right: 0;
 }
+
+.hcomp-prompt-list .prompt-panel .prompt {
+  margin-top:0px;
+}

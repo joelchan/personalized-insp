@@ -59,6 +59,20 @@ Template.CrowdExperimentCondition.helpers({
   numCompleted: function() {
     return this.completedParts.length;
   },
+  readyProgress: function() {
+    var numReady = this.readyParts.length;
+    var numAssigned = this.assignedParts.length;
+    var progress;
+    if (numAssigned == 0) {
+      logger.trace("No assigned participants for " + this.description + " condition");
+      progress = 0;
+    } else {
+      logger.trace("Found " + numAssigned + " assigned participants for " + this.description + " condition");
+      progress = numReady/numAssigned*100  
+    }
+    logger.trace("Progress = " + progress);
+    return Math.round(progress);
+  },
 });
 
 Template.CrowdBrainstorm.helpers({

@@ -79,10 +79,12 @@ ExpCondition = function(expID, promptID, desc, partNum) {
   }
   
   //List of participantIDs assigned to this condition
-  assignedParts = []
+  assignedParts = [];
 
   //List of participantIDs for who has completed the experiment in this condition
-  completedParts = []
+  completedParts = [];
+
+  readyParts = [];
   //Miscellaneous data associated with assignmnt
   this.misc;
 };
@@ -105,6 +107,9 @@ Participant = function(expID, userID, condID, groupID) {
     // this.verifyCode = this.userID.hashCode();
     // don't need verify code anymore because we are using legiontools
     
+    //Participants are not ready to begin by default
+    this.isReady = false;
+
     //Participants have not finished by default
     this.hasFinished = false;
 };

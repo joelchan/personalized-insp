@@ -76,9 +76,14 @@
         <div class="center-block">
           <strong>{{ desc }}:</strong><br/> 
           {{ numAssigned }} assigned participants, {{ numCompleted }} completed.<br/>
-          <button class="btn btn-default btn-primary begin-bs">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{readyProgress}}" aria-valuemin="0" aria-valuemax="100" style="width:{{readyProgress}}%;">
+              {{readyProgress}}% ready
+            </div>
+          </div>
+          <div class="btn btn-default btn-primary begin-bs">
             Begin experiment
-          </button>
+          </div>
         </div>
       </div>
     </div>

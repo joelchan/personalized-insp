@@ -76,6 +76,7 @@ ExperimentManager = (function () {
         var newCond = new ExpCondition(expID, promptID, desc, partNum);
         newCond.assignedParts = [];
         newCond.completedParts = [];
+        newCond.readyParts = [];
         // logger.trace("Created group template: " + JSON.stringify(groupTemplate));
         // newCond.groupTemplate = groupTemplate;
         var newCondID = Conditions.insert(newCond);
@@ -274,6 +275,23 @@ ExperimentManager = (function () {
         Conditions.update({_id: participant.conditionID}, {$push: {completedParts: participant._id}})
       }
       logger.trace("Logged experiment completion for participant");
+    },
+
+    logParticipantReady: function(participant) {
+       /**************************************************************
+       * Mark a participant as ready to proceed from tutorial and
+       * begin experiment
+       * @Params
+       *    participant (object) - the participant
+       * @Return
+       *    boolean - true if successful
+       * ***********************************************************/
+       Participants.update({_id: participant._id}, {$set: {isReady: true}});
+       var cond = Conditions.findOne({_id: participant.conditionID});
+       if (!isInList(participant._id, cond.readyParts)) {
+        Conditions.update({_id: participant.conditionID}, {$push: {readyParts: participant._id}});
+       }
+       logger.trace("Logged participant ready for participant: " + participant._id);
     },
    
     canParticipate: function (exp, userName) {
