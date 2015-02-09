@@ -7,6 +7,7 @@ Logger.setLevel('Models:Tasks', 'trace');
 //Logger.setLevel('Models:Tasks', 'warn');
 
 Tasks = new Meteor.Collection("tasks");
+DummyTasks = new Meteor.Collection("dummyTasks");
 Questions = new Meteor.Collection("questions");
 Assignments = new Meteor.Collection("assignments");
 

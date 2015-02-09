@@ -25,7 +25,7 @@
     <label class="directions-header-control"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
     <!-- <div class="row"> -->
       <div id="directions-container-control">
-        <div id="directions-content" class="collapse in">
+        <div id="directions-content" class="collapse">
           <ol>
             <li>Begin entering ideas for the main prompt here.</li>
             <li>Continue to ideate until you reach 10 total ideas. If you reach 10 ideas before the time is up, you can either click on the "Exit early" button to complete the HIT or continue generating ideas until the time is up.</li>
@@ -104,11 +104,11 @@
 </template>
 
 <template name="MturkMainPromptTreatmentTutorial">
-  <div class = "ideator-directions">
+  <div class = "ideator-directions-treatment">
     <label class="directions-header"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
     <!-- <div class="row"> -->
       <div id="directions-container-treatment">
-        <div id="directions-content" class="collapse in">
+        <div id="directions-content" class="collapse">
           <ol>
             <li>Begin entering ideas for the main prompt here.</li>
             <li>If you run out of ideas or want some fresh inspiration, hit the <strong>"Inspire Me!"</strong> button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.</li>
@@ -204,7 +204,7 @@
 
 <!--TEMPLATES FOR CONTROL OVERLAYS-->
 <template name = "ControlTutorialFlow">
-    <div id = "control-tutorial-welcome" class = "control-tutorial-background visible-tutorial">
+    <div id = "control-tutorial-welcome" class = "control-tutorial-background visible-tutorial-control">
         <div class = "control-tutorial-welcome-text control-tutorial-description">
             <p>
                 Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface.
@@ -301,7 +301,7 @@
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-ideaEntryTry-goback'>
           Go Back!
                 </button>
-                <input type="button" id = "control-tutorial-ideaEntryTry-gotit" class ="control-tutorial-gotit btn btn-default btn-primary" disabled=true value="Got it!">
+                <input type="button" id = "control-tutorial-ideaEntryTry-gotit" class ="control-tutorial-gotit btn btn-default btn-primary" disabled=false value="Got it!">
 <!--
                 <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-ideaEntryTry-gotit' disabled="true">
           Got it!
@@ -350,7 +350,7 @@
 
 <!--TEMPLATES FOR TREATMENT TUTORIAL OVERLAYS-->
 <template name = "TreatmentTutorialFlow">
-    <div id = "treatment-tutorial-welcome" class = "treatment-tutorial-background visible-tutorial">
+    <div id = "treatment-tutorial-welcome" class = "treatment-tutorial-background visible-tutorial-treatment">
         <div class = "treatment-tutorial-welcome-text treatment-tutorial-description">
             <p>
                 Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface.
@@ -453,6 +453,97 @@
           Got it!
                 </button>
 -->
+            </div>
+        </div>
+    </div>
+    <div id = "treatment-tutorial-inspireMe" class = "treatment-tutorial-background">
+        <div id = "treatment-tutorial-highlight-inspireMe" class = "treatment-tutorial-highlight-container">
+            <div class = "treatment-tutorial-highlight">
+            </div>
+        </div>
+        <div class = "treatment-tutorial-inspireMe-text treatment-tutorial-description">
+            <p>
+                If you run out of ideas or want fresh inspiration, hit this button!
+            </p>
+            <div class = "treatment-tutorial-button">
+                <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspireMe-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary treatment-tutorial-gotit treatment-tutorial-inspireMe-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "treatment-tutorial-inspireMeTry" class = "treatment-tutorial-background">
+        <div class = "treatment-tutorial-inspireMeTry-text treatment-tutorial-description">
+            <p>
+                Give it a try! Hit the inspire me button and see what happens.  
+            </p>
+            <div class = "treatment-tutorial-button">
+                <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspireMeTry-goback'>
+          Go Back!
+                </button>
+                <input type="button" id = "treatment-tutorial-inspireMeTry-gotit" class ="treatment-tutorial-gotit btn btn-default btn-primary" disabled=true value="Got it!">
+<!--
+                <button class='btn btn-default btn-primary treatment-tutorial-gotit treatment-tutorial-ideaEntryTry-gotit' disabled="true">
+          Got it!
+                </button>
+-->
+            </div>
+        </div>
+    </div>
+    <div id = "treatment-tutorial-inspirationCard" class = "treatment-tutorial-background">
+        <div id = "treatment-tutorial-highlight-inspirationCard" class = "treatment-tutorial-highlight-container">
+            <div class = "treatment-tutorial-highlight">
+            </div>
+        </div>
+        <div class = "treatment-tutorial-inspirationCard-text treatment-tutorial-description">
+            <p>
+                An "inspiration card" will then appear here. The card will contain a question or idea that is meant to stimulate your thinking.  
+            </p>
+            <div class = "treatment-tutorial-button">
+                <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCard-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary treatment-tutorial-gotit treatment-tutorial-inspirationCard-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "treatment-tutorial-inspirationCardTry" class = "treatment-tutorial-background">
+        <div class = "treatment-tutorial-inspirationCardTry-text treatment-tutorial-description">
+            <p>
+                This is what an inspiration looks like! You can enter ideas for the inspiration directly into this box. Go ahead and give it a try!    
+            </p>
+            <div class = "treatment-tutorial-button">
+                <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCardTry-goback'>
+          Go Back!
+                </button>
+<!--                <input type="button" id = "treatment-tutorial-inspirationCardTry-gotit" class ="treatment-tutorial-gotit btn btn-default btn-primary" disabled=true value="Got it!">-->
+                <button class='btn btn-default btn-primary treatment-tutorial-gotit treatment-tutorial-inspirationCardTry-gotit'>
+          Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id = "treatment-tutorial-inspirationCardMany" class = "treatment-tutorial-background">
+        <div id = "treatment-tutorial-highlight-inspirationCardMany" class = "treatment-tutorial-highlight-container">
+            <div class = "treatment-tutorial-highlight">
+            </div>
+        </div>
+        <div class = "treatment-tutorial-inspirationCardMany-text treatment-tutorial-description">
+            <p>
+                You can ask for more inspirations at any time. New inspirations will show up here. You can review prior inspirations on the right. If you have many inspiration cards, you may have to scroll right to see older ones.
+            </p>
+            <div class = "treatment-tutorial-button">
+                <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCardMany-goback'>
+          Go Back!
+                </button>
+                <button class='btn btn-default btn-primary treatment-tutorial-gotit treatment-tutorial-inspirationCardMany-gotit'>
+          Got it!
+                </button>
             </div>
         </div>
     </div>

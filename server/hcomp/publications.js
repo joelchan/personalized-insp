@@ -20,4 +20,7 @@ Meteor.startup(function(){
   Meteor.publish("dummyIdeas", function(){
 	  return DummyIdeas.find();
   });
+    Meteor.publish("dummyTasks", function(){
+	  return DummyTasks.find();
+  });
 });

@@ -114,7 +114,13 @@ Template.MturkIdeaEntryBoxTutorial.rendered = function(){
 Template.MturkIdeaEntryBoxTutorial.events({
   'click .submit-idea': function (e, target) {
       
-    document.getElementById("control-tutorial-ideaEntryTry-gotit").disabled = false;
+      if ($("#control-tutorial-ideaEntryTry-gotit").length) {
+        document.getElementById("control-tutorial-ideaEntryTry-gotit").disabled = false;
+      }
+      
+      if ($("#treatment-tutorial-ideaEntryTry-gotit").length) {
+        document.getElementById("treatment-tutorial-ideaEntryTry-gotit").disabled = false;
+      }
       
     //console.log("event submitted");
     logger.trace("submitting a new idea");
@@ -175,9 +181,9 @@ Template.MturkIdeaEntryBoxTutorial.events({
 //    $(".control-tutorial-ideaEntry-text").css({top:textTopIdeaEntry, width:widthIdeaEntry});
 //    
 //    //DIRECTIONS
-//    var offsetDirections = $("#directions-container-control").position();
-//    var widthDirections = $("#directions-container-control").width();
-//    var heightDirections = $("#directions-container-control").height();
+//    var offsetDirections = $("#ideator-directions-control").position();
+//    var widthDirections = $("#ideator-directions-control").width();
+//    var heightDirections = $("#ideator-directions-control").height();
 //    var textTopDirections = (offsetDirections.top + heightDirections + 200);
 //    $(".control-tutorial-directions-text").css({top:textTopDirections, width:widthDirections});
 //     
@@ -186,97 +192,99 @@ Template.MturkIdeaEntryBoxTutorial.events({
 Template.ControlTutorialFlow.events({
     //Welcome
     'click .control-tutorial-welcome-gotit': function() {
-        $("#control-tutorial-welcome").removeClass("visible-tutorial");
-        $("#control-tutorial-timer").addClass("visible-tutorial");
+        $("#control-tutorial-welcome").removeClass("visible-tutorial-control");
+        $("#control-tutorial-timer").addClass("visible-tutorial-control");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
     },
     //Timer
     'click .control-tutorial-timer-gotit': function() {
-        $("#control-tutorial-timer").removeClass("visible-tutorial");
-        $("#control-tutorial-exit").addClass("visible-tutorial");
+        $("#control-tutorial-timer").removeClass("visible-tutorial-control");
+        $("#control-tutorial-exit").addClass("visible-tutorial-control");
         $(".timer").css({border: "none"});
         $(".exitStudy").css({border: "10px solid #F5A623"});
         $(".ideation-prompt-control").css({"z-index": 100});
     },
     'click .control-tutorial-timer-goback': function() {
-        $("#control-tutorial-timer").removeClass("visible-tutorial");
-        $("#control-tutorial-welcome").addClass("visible-tutorial");
+        $("#control-tutorial-timer").removeClass("visible-tutorial-control");
+        $("#control-tutorial-welcome").addClass("visible-tutorial-control");
         $(".timer").css({border: "none"});
     },
     //Exit Early
     'click .control-tutorial-exit-gotit': function() {
-        $("#control-tutorial-exit").removeClass("visible-tutorial");
-        $("#control-tutorial-prompt").addClass("visible-tutorial");
+        $("#control-tutorial-exit").removeClass("visible-tutorial-control");
+        $("#control-tutorial-prompt").addClass("visible-tutorial-control");
         $(".ideation-prompt-control").css({border: "10px solid #F5A623"});
         $(".exitStudy").css({border: "none"});
     },
     'click .control-tutorial-exit-goback': function() {
-        $("#control-tutorial-exit").removeClass("visible-tutorial");
-        $("#control-tutorial-timer").addClass("visible-tutorial");
+        $("#control-tutorial-exit").removeClass("visible-tutorial-control");
+        $("#control-tutorial-timer").addClass("visible-tutorial-control");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
         $(".exitStudy").css({border: "none"});
     },
     //Prompt
     'click .control-tutorial-prompt-gotit': function() {
-        $("#control-tutorial-prompt").removeClass("visible-tutorial");
-        $("#control-tutorial-ideaEntry").addClass("visible-tutorial");
+        $("#control-tutorial-prompt").removeClass("visible-tutorial-control");
+        $("#control-tutorial-ideaEntry").addClass("visible-tutorial-control");
         $(".ideation-prompt-control").css({border:"none"});
         $(".idea-input-box").css({border: "10px solid #F5A623"});
     },
     'click .control-tutorial-prompt-goback': function() {
-        $("#control-tutorial-prompt").removeClass("visible-tutorial");
-        $("#control-tutorial-exit").addClass("visible-tutorial");
+        $("#control-tutorial-prompt").removeClass("visible-tutorial-control");
+        $("#control-tutorial-exit").addClass("visible-tutorial-control");
         $(".ideation-prompt-control").css({border:"none"});
         $(".exitStudy").css({border: "10px solid #F5A623"});
     },
     //ideaEntry
     'click .control-tutorial-ideaEntry-gotit': function() {
-        $("#control-tutorial-ideaEntry").removeClass("visible-tutorial");
-        $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial");
+        $("#control-tutorial-ideaEntry").removeClass("visible-tutorial-control");
+        $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial-control");
         $("#control-tutorial-ideaEntryTry").removeClass("control-tutorial-background");
         $(".idea-input-box").css({border: "none"});
     },
     'click .control-tutorial-ideaEntry-goback': function() {
-        $("#control-tutorial-ideaEntry").removeClass("visible-tutorial");
-        $("#control-tutorial-prompt").addClass("visible-tutorial");
+        $("#control-tutorial-ideaEntry").removeClass("visible-tutorial-control");
+        $("#control-tutorial-prompt").addClass("visible-tutorial-control");
         $(".ideation-prompt-control").css({border: "10px solid #F5A623"});
         $(".idea-input-box").css({border: "none"});
     },
     //ideaEntryTry
     'click #control-tutorial-ideaEntryTry-gotit': function() {
-        $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial");
-        $("#control-tutorial-directions").addClass("visible-tutorial");
+        $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
+        $("#control-tutorial-directions").addClass("visible-tutorial-control");
         $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
-        $("#directions-container-control").css({border: "10px solid #F5A623"});
+        $("#ideator-directions-control").css({border: "10px solid #F5A623"});
+        $("#directions-content").removeClass("collapse");
+        $("#directions-content").addClass("collapse in");
     },
     'click .control-tutorial-ideaEntryTry-goback': function() {
-        $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial");
-        $("#control-tutorial-ideaEntry").addClass("visible-tutorial");
+        $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
+        $("#control-tutorial-ideaEntry").addClass("visible-tutorial-control");
         $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
         $(".idea-input-box").css({border: "10px solid #F5A623"});
     },
     //Directions
     'click .control-tutorial-directions-gotit': function() {
-        $("#control-tutorial-directions").removeClass("visible-tutorial");
-        $("#control-tutorial-pleaseWait").addClass("visible-tutorial");
+        $("#control-tutorial-directions").removeClass("visible-tutorial-control");
+        $("#control-tutorial-pleaseWait").addClass("visible-tutorial-control");
         $("#control-tutorial-pleaseWait").removeClass("control-tutorial-background");
-        $("#directions-container-control").css({border: "none"});
+        $("#ideator-directions-control").css({border: "none"});
     },
     'click .control-tutorial-directions-goback': function() {
-        $("#control-tutorial-directions").removeClass("visible-tutorial");
-        $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial");
-        $("#directions-container-control").css({border: "none"});
+        $("#control-tutorial-directions").removeClass("visible-tutorial-control");
+        $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial-control");
+        $("#ideator-directions-control").css({border: "none"});
     },
     //Please Wait
     'click .control-tutorial-pleaseWait-gotit': function() {
-        $("#control-tutorial-pleaseWait").removeClass("visible-tutorial");
+        $("#control-tutorial-pleaseWait").removeClass("visible-tutorial-control");
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
     },
     'click .control-tutorial-pleaseWait-goback': function() {
-        $("#control-tutorial-pleaseWait").removeClass("visible-tutorial");
-        $("#control-tutorial-directions").addClass("visible-tutorial");
+        $("#control-tutorial-pleaseWait").removeClass("visible-tutorial-control");
+        $("#control-tutorial-directions").addClass("visible-tutorial-control");
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
-        $("#directions-container-control").css({border: "10px solid #F5A623"});
+        $("#ideator-directions-control").css({border: "10px solid #F5A623"});
     },
 });
  
@@ -314,6 +322,8 @@ Template.MturkIdeationPageTreatmentTutorial.rendered = function(){
         Router.go(route, {'promptID': promptID, 'userID': userID}); 
     },
   });
+    var dummy = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), "This is an inspiration!", 'open', priority=priorityNum, num=ideatorsVal); 
+    dummy._id = DummyTasks.insert(dummy);
 };
 
 Template.MturkTaskListsTreatmentTutorial.helpers({
@@ -343,11 +353,11 @@ Template.MturkTaskListsTreatmentTutorial.helpers({
 
 Template.MturkTaskListsTreatmentTutorial.events({ 
   'click .get-task': function(e, t) {
+      
+      document.getElementById("treatment-tutorial-inspireMeTry-gotit").disabled = false;
+      
     logger.debug("Retrieving a new task"); 
-    var task = TaskManager.assignTask(
-      Session.get("currentPrompt"),
-      Session.get("currentUser")
-    );
+    var task = DummyTasks.findOne();
     if (task) {
       logger.info("Got a new task");
       logger.trace(task);
@@ -402,125 +412,205 @@ Template.TaskIdeaListTreatmentTutorial.helpers({
 });
 
 
-Template.TreatmentTutorialFlow.rendered = function(){
-    //SET THE OVERLAY ABSOLUTE POSITIONS
-    
-    //PROMPT
-    var offsetPromptT = $(".ideation-prompt-treatment").position();
-    var widthPromptT = $(".ideation-prompt-treatment").width();
-    var heightPromptT = $(".ideation-prompt-treatment").height();
-    var textTopPromptT = (offsetPromptT.top + heightPromptT + 100);
-    $(".treatment-tutorial-prompt-text").css({top:textTopPromptT, left:offsetPromptT.left, width:widthPromptT});
-    
-    //IDEAENTRY
-    var offsetIdeaEntryT = $(".idea-input-box").position();
-    var widthIdeaEntryT = $(".idea-input-box").width();
-    var heightIdeaEntryT = $(".idea-input-box").height();
-    var textTopIdeaEntryT = (offsetIdeaEntryT.top + heightIdeaEntryT + 200);
-    $(".treatment-tutorial-ideaEntry-text").css({top:textTopIdeaEntryT, width:widthIdeaEntryT});
-    
-    //DIRECTIONS
-    var offsetDirectionsT = $("#directions-container-treatment").position();
-    var widthDirectionsT = $("#directions-container-treatment").width();
-    var heightDirectionsT = $("#directions-container-treatment").height();
-    var textTopDirectionsT = (offsetDirectionsT.top + heightDirectionsT + 200);
-    $(".treatment-tutorial-directions-text").css({top:textTopDirectionsT, width:widthDirectionsT});
-     
-}; 
+//Template.TreatmentTutorialFlow.rendered = function(){
+//    //SET THE OVERLAY ABSOLUTE POSITIONS
+//    
+//    //PROMPT
+//    var offsetPromptT = $(".ideation-prompt-treatment").position();
+//    var widthPromptT = $(".ideation-prompt-treatment").width();
+//    var heightPromptT = $(".ideation-prompt-treatment").height();
+//    var textTopPromptT = (offsetPromptT.top + heightPromptT + 100);
+//    $(".treatment-tutorial-prompt-text").css({top:textTopPromptT, left:offsetPromptT.left, width:widthPromptT});
+//    
+//    //IDEAENTRY
+//    var offsetIdeaEntryT = $(".idea-input-box").position();
+//    var widthIdeaEntryT = $(".idea-input-box").width();
+//    var heightIdeaEntryT = $(".idea-input-box").height();
+//    var textTopIdeaEntryT = (offsetIdeaEntryT.top + heightIdeaEntryT + 200);
+//    $(".treatment-tutorial-ideaEntry-text").css({top:textTopIdeaEntryT, width:widthIdeaEntryT});
+//    
+//    //DIRECTIONS
+//    var offsetDirectionsT = $("#ideator-directions-treatment").position();
+//    var widthDirectionsT = $("#ideator-directions-treatment").width();
+//    var heightDirectionsT = $("#ideator-directions-treatment").height();
+//    var textTopDirectionsT = (offsetDirectionsT.top + heightDirectionsT + 200);
+//    $(".treatment-tutorial-directions-text").css({top:textTopDirectionsT, width:widthDirectionsT});
+//     
+//}; 
 
 
 Template.TreatmentTutorialFlow.events({
     //Welcome
     'click .treatment-tutorial-welcome-gotit': function() {
-        $("#treatment-tutorial-welcome").removeClass("visible-tutorial");
-        $("#treatment-tutorial-timer").addClass("visible-tutorial");
+        $("#treatment-tutorial-welcome").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-timer").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
     },
     //Timer
     'click .treatment-tutorial-timer-gotit': function() {
-        $("#treatment-tutorial-timer").removeClass("visible-tutorial");
-        $("#treatment-tutorial-exit").addClass("visible-tutorial");
+        $("#treatment-tutorial-timer").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-exit").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "none"});
         $(".exitStudy").css({border: "10px solid #F5A623"});
 //        $(".ideation-prompt-treatment").css({"z-index": 100});
     },
     'click .treatment-tutorial-timer-goback': function() {
-        $("#treatment-tutorial-timer").removeClass("visible-tutorial");
-        $("#treatment-tutorial-welcome").addClass("visible-tutorial");
+        $("#treatment-tutorial-timer").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-welcome").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "none"});
     },
     //Exit Early
     'click .treatment-tutorial-exit-gotit': function() {
-        $("#treatment-tutorial-exit").removeClass("visible-tutorial");
-        $("#treatment-tutorial-prompt").addClass("visible-tutorial");
+        $("#treatment-tutorial-exit").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-prompt").addClass("visible-tutorial-treatment");
         $(".ideation-prompt-treatment").css({border: "10px solid #F5A623"});
         $(".exitStudy").css({border: "none"});
     },
     'click .treatment-tutorial-exit-goback': function() {
-        $("#treatment-tutorial-exit").removeClass("visible-tutorial");
-        $("#treatment-tutorial-timer").addClass("visible-tutorial");
+        $("#treatment-tutorial-exit").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-timer").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
         $(".exitStudy").css({border: "none"});
     },
     //Prompt
     'click .treatment-tutorial-prompt-gotit': function() {
-        $("#treatment-tutorial-prompt").removeClass("visible-tutorial");
-        $("#treatment-tutorial-ideaEntry").addClass("visible-tutorial");
+        $("#treatment-tutorial-prompt").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-ideaEntry").addClass("visible-tutorial-treatment");
         $(".ideation-prompt-treatment").css({border:"none"});
         $(".idea-input-box").css({border: "10px solid #F5A623"});
     },
     'click .treatment-tutorial-prompt-goback': function() {
-        $("#treatment-tutorial-prompt").removeClass("visible-tutorial");
-        $("#treatment-tutorial-exit").addClass("visible-tutorial");
+        $("#treatment-tutorial-prompt").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-exit").addClass("visible-tutorial-treatment");
         $(".ideation-prompt-treatment").css({border:"none"});
         $(".exitStudy").css({border: "10px solid #F5A623"});
     },
     //ideaEntry
     'click .treatment-tutorial-ideaEntry-gotit': function() {
-        $("#treatment-tutorial-ideaEntry").removeClass("visible-tutorial");
-        $("#treatment-tutorial-ideaEntryTry").addClass("visible-tutorial");
-        $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
+        $("#treatment-tutorial-ideaEntry").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-ideaEntryTry").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
         $(".idea-input-box").css({border: "none"});
     },
     'click .treatment-tutorial-ideaEntry-goback': function() {
-        $("#treatment-tutorial-ideaEntry").removeClass("visible-tutorial");
-        $("#treatment-tutorial-prompt").addClass("visible-tutorial");
+        $("#treatment-tutorial-ideaEntry").removeClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-prompt").addClass("visible-tutorial-treatment");
         $(".ideation-prompt-treatment").css({border: "10px solid #F5A623"});
         $(".idea-input-box").css({border: "none"});
     },
+    
     //ideaEntryTry
     'click #treatment-tutorial-ideaEntryTry-gotit': function() {
-        $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial");
-        $("#treatment-tutorial-directions").addClass("visible-tutorial");
-        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
-        $("#directions-container-treatment").css({border: "10px solid #F5A623"});
+        $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
+//        $(".get-task").css({border: "10px solid #F5A623"});
     },
     'click .treatment-tutorial-ideaEntryTry-goback': function() {
-        $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial");
-        $("#treatment-tutorial-ideaEntry").addClass("visible-tutorial");
-        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
+        $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-ideaEntry").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
         $(".idea-input-box").css({border: "10px solid #F5A623"});
+        logger.trace("IDEA ENTRY TRY");
     },
+    
+    //Inspire Me 
+    'click .treatment-tutorial-inspireMe-gotit': function() {
+        logger.trace("GOT IT BUTTON HAS BEEN HIT");
+        $("#treatment-tutorial-inspireMe").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspireMeTry").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-inspireMeTry").removeClass("treatment-tutorial-background");
+//        $(".get-task").css({border: "none"});
+        
+    },
+    'click .treatment-tutorial-inspireMe-goback': function() {
+        $("#treatment-tutorial-inspireMe").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-ideaEntryTry").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
+//        $(".get-task").css({border: "none"});
+        logger.trace("GO BACK BUTTON HIT");
+    },
+    
+    //Inspire Me Try 
+    'click #treatment-tutorial-inspireMeTry-gotit': function() {
+        $("#treatment-tutorial-inspireMeTry").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspirationCard").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-inspirationCard").addClass("treatment-tutorial-background");
+        $("#directions-container-treatment").css({border: "10px solid #F5A623"});
+    },
+    'click .treatment-tutorial-inspireMeTry-goback': function() {
+        $("#treatment-tutorial-inspireMeTry").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-inspireMe").addClass("treatment-tutorial-background");
+        $(".get-task").css({border: "10px solid #F5A623"});
+    },
+    
+    //Inspiration Card
+    'click .treatment-tutorial-inspirationCard-gotit': function() {
+        $("#treatment-tutorial-inspirationCard").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspirationCardTry").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-inspirationCardTry").removeClass("treatment-tutorial-background");
+        $("#directions-container-treatment").css({border: "none"});
+    },
+    'click .treatment-tutorial-inspirationCard-goback': function() {
+        $("#treatment-tutorial-inspirationCard").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-inspireMeTry").removeClass("treatment-tutorial-background");
+//        $("#directions-container-treatment").css({border: "none"});
+    },
+    
+    //Inspiration Card Try
+    'click #treatment-tutorial-inspirationCardTry-gotit': function() {
+        $("#treatment-tutorial-inspirationCardTry").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspirationCardMany").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
+        $(".ideation-prompt-treatment").css({border: "10px solid #F5A623"});
+    },
+    'click .treatment-tutorial-inspirationCardTry-goback': function() {
+        $("#treatment-tutorial-inspirationCardTry").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspirationCard").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
+        $("#directions-container-treatment").css({border: "10px solid #F5A623"});
+    },
+    
+    //Inspiration Card Many 
+    'click .treatment-tutorial-inspirationCardMany-gotit': function() {
+        $("#treatment-tutorial-inspirationCardMany").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-directions").addClass("visible-tutorial-treatment");
+//        $("#treatment-tutorial-pleaseWait").removeClass("treatment-tutorial-background");
+        $(".ideation-prompt-treatment").css({border: "none"});
+        $("#directions-container-treatment").css({border: "none"});
+        $("#directions-content").removeClass("collapse");
+        $("#directions-content").addClass("collapse in");
+    },
+    'click .treatment-tutorial-inspirationCardMany-goback': function() {
+        $("#treatment-tutorial-inspirationCardMany").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspirationCardTry").addClass("visible-tutorial-treatment");
+        $(".ideation-prompt-treatment").css({border: "none"});
+        $("#directions-container-treatment").css({border: "10px solid #F5A623"});
+    },
+    
     //Directions
     'click .treatment-tutorial-directions-gotit': function() {
-        $("#treatment-tutorial-directions").removeClass("visible-tutorial");
-        $("#treatment-tutorial-pleaseWait").addClass("visible-tutorial");
+        $("#treatment-tutorial-directions").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-pleaseWait").addClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").removeClass("treatment-tutorial-background");
         $("#directions-container-treatment").css({border: "none"});
     },
     'click .treatment-tutorial-directions-goback': function() {
-        $("#treatment-tutorial-directions").removeClass("visible-tutorial");
-        $("#treatment-tutorial-ideaEntryTry").addClass("visible-tutorial");
+        $("#treatment-tutorial-directions").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-inspirationCardMany").addClass("visible-tutorial-treatment");
         $("#directions-container-treatment").css({border: "none"});
+        $(".ideation-prompt-treatment").css({border: "10px solid #F5A623"});
     },
     //Please Wait
     'click .treatment-tutorial-pleaseWait-gotit': function() {
-        $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial");
+        $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").addClass("treatment-tutorial-background");
     },
     'click .treatment-tutorial-pleaseWait-goback': function() {
-        $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial");
-        $("#treatment-tutorial-directions").addClass("visible-tutorial");
+        $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial-treatment");
+        $("#treatment-tutorial-directions").addClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").addClass("treatment-tutorial-background");
         $("#directions-container-treatment").css({border: "10px solid #F5A623"});
     },
