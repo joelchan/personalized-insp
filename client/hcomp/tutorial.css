@@ -23,9 +23,12 @@
     z-index: 50;
 }
 
-.control-tutorial {
+.tutorial-page-control .control-tutorial {
     z-index: 51;
-    opacity: 1;
+}
+
+.tutorial-page-control .tutorial-text {
+    padding-left: 15px;
 }
 
 .control-tutorial-background {
@@ -47,6 +50,7 @@
     top: 30%;
     right: 0;
     background: none;
+    margin: 0 15px;
     z-index: 51;
 }
 .control-tutorial-description p {
