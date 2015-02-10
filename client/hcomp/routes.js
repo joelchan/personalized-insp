@@ -226,7 +226,7 @@ Router.map(function () {
   });
 
   this.route('TutorialControl', {
-      path: 'tutorialc/:promptID/:userID',
+      path: 'tutorial1/:promptID/:userID',
       template: 'TutorialControl',
     waitOn: function() {
       var pID = this.params.promptID;
@@ -288,7 +288,7 @@ Router.map(function () {
   });
 
   this.route('TutorialTreatment', {
-      path: 'tutorialt/:promptID/:userID',
+      path: 'tutorial2/:promptID/:userID',
       template: 'TutorialTreatment',
     waitOn: function() {
       var pID = this.params.promptID;

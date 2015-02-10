@@ -171,27 +171,35 @@ Template.ControlTutorialFlow.events({
     'click .control-tutorial-welcome-gotit': function() {
         $("#control-tutorial-welcome").removeClass("visible-tutorial-control");
         $("#control-tutorial-timer").addClass("visible-tutorial-control");
-        $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
+        $(".timer").css({border: "10px solid #F5A623","min-width": 150,float: "right",clear: "right", padding: "3px"});
+        $(".timer").zIndex(100);
     },
     //Timer
     'click .control-tutorial-timer-gotit': function() {
         $("#control-tutorial-timer").removeClass("visible-tutorial-control");
         $("#control-tutorial-exit").addClass("visible-tutorial-control");
         $(".timer").css({border: "none"});
+        $(".timer").zIndex(0);
         $(".exitStudy").css({border: "10px solid #F5A623"});
-        $(".ideation-prompt-control").css({"z-index": 100});
+        $(".exitStudy").zIndex(51);
+        //$(".ideation-prompt-control").zIndex(100);
     },
     'click .control-tutorial-timer-goback': function() {
         $("#control-tutorial-timer").removeClass("visible-tutorial-control");
         $("#control-tutorial-welcome").addClass("visible-tutorial-control");
         $(".timer").css({border: "none"});
+        $(".timer").zIndex(0);
     },
     //Exit Early
     'click .control-tutorial-exit-gotit': function() {
         $("#control-tutorial-exit").removeClass("visible-tutorial-control");
         $("#control-tutorial-prompt").addClass("visible-tutorial-control");
-        $(".ideation-prompt-control").css({border: "10px solid #F5A623"});
+        $(".ideation-prompt-control").css({
+            border: "10px solid #F5A623",
+        });
+        $(".ideation-prompt-control").zIndex(51);
         $(".exitStudy").css({border: "none"});
+        $(".exitStudy").zIndex(1);
     },
     'click .control-tutorial-exit-goback': function() {
         $("#control-tutorial-exit").removeClass("visible-tutorial-control");

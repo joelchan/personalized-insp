@@ -1,8 +1,10 @@
 <template name="TutorialControl">
   <div class="tutorial-page-control">
 <!--    <h1>Tutorial page for the control condition</h1>-->
+    <div id="control-tutorial-backdrop">
       {{> MturkIdeationPageControlTutorial}}
       {{>ControlTutorialFlow}}
+    </div> 
 <!--
     <button class='btn btn-xlarge2 btn-default btn-primary nextPage'>
       Continue
@@ -201,10 +203,10 @@
 </template>
 
 
-
 <!--TEMPLATES FOR CONTROL OVERLAYS-->
 <template name = "ControlTutorialFlow">
-    <div id = "control-tutorial-welcome" class = "control-tutorial-background visible-tutorial-control">
+    <div id = "control-tutorial-welcome" 
+      class = "control-tutorial control-tutorial-background visible-tutorial-control">
         <div class = "control-tutorial-welcome-text control-tutorial-description">
             <p>
                 Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface.
@@ -216,7 +218,7 @@
             </div>
         </div>      
     </div>
-    <div id = "control-tutorial-timer" class = "control-tutorial-background">
+    <div id = "control-tutorial-timer" class = "control-tutorial control-tutorial-background">
         <div id = "control-tutorial-highlight-timer" class = "control-tutorial-highlight-container">
             <div class = "control-tutorial-highlight">
             </div>
@@ -235,7 +237,7 @@
             </div>
         </div>
     </div>
-    <div id = "control-tutorial-exit" class =  "control-tutorial-background">
+    <div id = "control-tutorial-exit" class =  "control-tutorial control-tutorial-background">
         <div id = "control-tutorial-highlight-exit" class = "control-tutorial-highlight-container">
             <div class = "control-tutorial-highlight">
             </div>
@@ -254,7 +256,7 @@
             </div>
         </div>
     </div>
-    <div id = "control-tutorial-prompt" class = "control-tutorial-background">
+    <div id = "control-tutorial-prompt" class = "control-tutorial control-tutorial-background">
         <div id = "control-tutorial-highlight-prompt" class = "control-tutorial-highlight-container">
             <div class = "control-tutorial-highlight">
             </div>
@@ -273,7 +275,7 @@
             </div>
         </div>
     </div>
-    <div id = "control-tutorial-ideaEntry" class = "control-tutorial-background">
+    <div id = "control-tutorial-ideaEntry" class = "control-tutorial control-tutorial-background">
         <div id = "control-tutorial-highlight-ideaEntry" class = "control-tutorial-highlight-container">
             <div class = "control-tutorial-highlight">
             </div>
@@ -292,7 +294,7 @@
             </div>
         </div>
     </div>
-    <div id = "control-tutorial-ideaEntryTry" class = "control-tutorial-background">
+    <div id = "control-tutorial-ideaEntryTry" class = "control-tutorial control-tutorial-background">
         <div class = "control-tutorial-ideaEntryTry-text control-tutorial-description">
             <p>
                 Let’s give it a try! Enter something into the text field and either press enter or the “Submit Idea” button.   
@@ -310,7 +312,7 @@
             </div>
         </div>
     </div>
-    <div id = "control-tutorial-directions" class = "control-tutorial-background">
+    <div id = "control-tutorial-directions" class = "control-tutorial control-tutorial-background">
         <div id = "control-tutorial-highlight-directions" class = "control-tutorial-highlight-container">
             <div class = "control-tutorial-highlight">
             </div>
@@ -329,7 +331,7 @@
             </div>
         </div>
     </div>
-    <div id = "control-tutorial-pleaseWait" class = "control-tutorial-background">
+    <div id = "control-tutorial-pleaseWait" class = "control-tutorial control-tutorial-background">
         <div class = "control-tutorial-pleaseWait-text control-tutorial-description">
             <p>
                 This concludes the tutorial. Your brainstorm will begin momentarily. In the meantime, feel free to play around with the interface! 
