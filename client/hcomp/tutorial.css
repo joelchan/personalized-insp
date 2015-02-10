@@ -7,9 +7,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #000;
-    z-index: 0;
+    z-index: 50;
 }
+
 #control-tutorial-backdrop {
     width: 100%;
     height: 100%;
@@ -18,13 +18,16 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #000;
+    background: #000;
     opacity: 0.5;
     z-index: 50;
 }
+
 .control-tutorial {
     z-index: 51;
+    opacity: 1;
 }
+
 .control-tutorial-background {
     width: 100%;
     height: 100%;
@@ -34,8 +37,6 @@
     right: 0;
     bottom: 0;
     display: none;
-    z-index: 51;
-    opacity: 1;
 }
 .visible-tutorial-control {
     display: inline;

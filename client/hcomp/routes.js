@@ -232,14 +232,10 @@ Router.map(function () {
       var pID = this.params.promptID;
       if (Session.get("currentUser")) {
         return [ 
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
           Meteor.subscribe('prompts'),
           ]
       } else {
         return [
-          Meteor.subscribe('ideas', {promptID: pID}),
-          Meteor.subscribe('clusters', {promptID: pID}),
           Meteor.subscribe('prompts'),
         ]
       }

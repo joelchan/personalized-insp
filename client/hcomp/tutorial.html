@@ -1,10 +1,8 @@
 <template name="TutorialControl">
   <div class="tutorial-page-control">
 <!--    <h1>Tutorial page for the control condition</h1>-->
-    <div id="control-tutorial-backdrop">
       {{> MturkIdeationPageControlTutorial}}
-      {{>ControlTutorialFlow}}
-    </div> 
+      {{> ControlTutorialFlow}}
 <!--
     <button class='btn btn-xlarge2 btn-default btn-primary nextPage'>
       Continue
@@ -205,6 +203,8 @@
 
 <!--TEMPLATES FOR CONTROL OVERLAYS-->
 <template name = "ControlTutorialFlow">
+    <div id="control-tutorial-backdrop">
+    </div> 
     <div id = "control-tutorial-welcome" 
       class = "control-tutorial control-tutorial-background visible-tutorial-control">
         <div class = "control-tutorial-welcome-text control-tutorial-description">
