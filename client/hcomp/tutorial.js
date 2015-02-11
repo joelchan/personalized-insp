@@ -522,6 +522,7 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-ideaEntryTry").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
         $(".idea-input-box").css({border: "none"});
+        $(".general-idea-entry .tutorial-backdrop").remove();
     },
     'click .treatment-tutorial-ideaEntry-goback': function() {
         $("#treatment-tutorial-ideaEntry").removeClass("visible-tutorial-treatment");
@@ -535,6 +536,9 @@ Template.TreatmentTutorialFlow.events({
             border: "10px solid #F5A623",
             "z-index": 60
         });
+        $(".general-idea-entry").append(
+            "<div class='tutorial-backdrop'></div>"
+        );
     },
     
     //ideaEntryTry
@@ -550,6 +554,9 @@ Template.TreatmentTutorialFlow.events({
             border: "none",
             "z-index": 20
         });
+        $(".general-idea-entry").append(
+            "<div class='tutorial-backdrop'></div>"
+        );
     },
     'click .treatment-tutorial-ideaEntryTry-goback': function() {
         $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
@@ -581,12 +588,16 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspireMeTry").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-inspireMeTry").removeClass("treatment-tutorial-background");
         $(".get-task").css({border: "none"});
+        $(".task-list-header .tutorial-backdrop").remove();
     },
     'click .treatment-tutorial-inspireMe-goback': function() {
         $("#treatment-tutorial-inspireMe").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-ideaEntryTry").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
         $(".get-task").css({border: "none"});
+        $(".task-list-header").append(
+            "<div class='tutorial-backdrop'></div>"
+        );
     },
     
     //Inspire Me Try 
@@ -603,6 +614,9 @@ Template.TreatmentTutorialFlow.events({
             border: "none",
             "z-index": 20 
         });
+        $(".task-list-header").append(
+            "<div class='tutorial-backdrop'></div>"
+        );
     },
     'click .treatment-tutorial-inspireMeTry-goback': function() {
         $("#treatment-tutorial-inspireMeTry").removeClass("visible-tutorial-treatment");
@@ -635,14 +649,20 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspirationCardTry").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspirationCardMany").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
+//      // Move backdrop to same hierachical level as the task-list-pane
+        $(".task-list-header .tutorial-backdrop").remove();
+        //$(".task-lists").append(
+            //"<div class='tutorial-backdrop'></div>"
+        //);
         //$(".task-list-pane").css({
             //border: "10px solid #F5A623", 
             //height: "auto",
             //"z-index": 60
         //});
+        $(".get-task").zIndex(60);
         $(".ideate-task").css({
             border: "none",
-            "z-index": 20
+            "z-index": 20 
         });
     },
     'click .treatment-tutorial-inspirationCardTry-goback': function() {
@@ -661,7 +681,23 @@ Template.TreatmentTutorialFlow.events({
             border: "none",
             "z-index": 20
         });
-        $("#directions-container-treatment").css({border: "10px solid #F5A623"});
+        $(".get-task").zIndex(20);
+        $(".task-list-header").append(
+            "<div class='tutorial-backdrop'></div>"
+        );
+        //$(".general-idea-entry .tutorial-backdrop").remove();
+        //$("#directions-container-treatment").css({
+            //position: "relative",
+            //background: "#F5F5F5",
+            //"z-index": 60
+        //});
+        $(".ideator-directions-treatment").css({
+            border: "10px solid #F5A623",
+            background: "#FFF",
+            position: "relative",
+            "z-index": 60
+        });
+        $(".hcomp-ideation-pane").zIndex(10);
         $("#directions-content").removeClass("collapse");
         $("#directions-content").addClass("collapse in");
     },
@@ -669,6 +705,9 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspirationCardMany").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspirationCardTry").addClass("visible-tutorial-treatment");
         $(".task-list-pane").css({border: "none"});
+        //$(".general-idea-entry").append(
+            //"<div class='tutorial-backdrop'></div>"
+        //);
     },
     
     //Directions
@@ -676,16 +715,30 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-directions").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").addClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").removeClass("treatment-tutorial-background");
-        $("#directions-container-treatment").css({border: "none"});
+        $("#directions-container-treatment").css({
+            border: "none",
+            "z-index": 20
+        });
+        $(".ideator-directions-treatment").css({
+            border: "none",
+            background: "#F5F5F5",
+            position: "relative",
+            "z-index": 20
+        });
     },
     'click .treatment-tutorial-directions-goback': function() {
         $("#treatment-tutorial-directions").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspirationCardMany").addClass("visible-tutorial-treatment");
         $("#directions-container-treatment").css({border: "none"});
         $(".task-list-pane").css({border: "10px solid #F5A623", height: "auto"});
+        $(".task-list-header").append(
+            "<div class='tutorial-backdrop'></div>"
+        );
+        $(".general-idea-entry .tutorial-backdrop").remove();
     },
     //Please Wait
     'click .treatment-tutorial-pleaseWait-gotit': function() {
+        $(".tutorial-backdrop").remove();
         $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").addClass("treatment-tutorial-background");
     },
