@@ -594,12 +594,13 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspireMeTry").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspirationCard").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-inspirationCard").addClass("treatment-tutorial-background");
+        logger.trace("*********************Inpire me Try");
         $(".ideate-task").css({
             border: "10px solid #F5A623",
             "z-index": 60
         });
         $(".get-task").css({
-            border: "10px solid #F5A623",
+            border: "none",
             "z-index": 20 
         });
     },
@@ -612,11 +613,15 @@ Template.TreatmentTutorialFlow.events({
     
     //Inspiration Card
     'click .treatment-tutorial-inspirationCard-gotit': function() {
+        logger.trace("Inspiration card*****************");
         $("#treatment-tutorial-inspirationCard").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspirationCardTry").addClass("visible-tutorial-treatment");
         document.getElementById("treatment-tutorial-inspirationCardTry-gotit").disabled = true;
 //        $("#treatment-tutorial-inspirationCardTry").removeClass("treatment-tutorial-background");
-        $(".ideate-task").css({border: "none"});
+        //$(".ideate-task").css({
+            //border: "none",
+            //"z-index": 20
+        //});
     },
     'click .treatment-tutorial-inspirationCard-goback': function() {
         $("#treatment-tutorial-inspirationCard").removeClass("visible-tutorial-treatment");
@@ -626,10 +631,19 @@ Template.TreatmentTutorialFlow.events({
     
     //Inspiration Card Try
     'click #treatment-tutorial-inspirationCardTry-gotit': function() {
+        logger.trace("Inspiration card try*****************");
         $("#treatment-tutorial-inspirationCardTry").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspirationCardMany").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
-        $(".task-list-pane").css({border: "10px solid #F5A623", height: "auto"});
+        //$(".task-list-pane").css({
+            //border: "10px solid #F5A623", 
+            //height: "auto",
+            //"z-index": 60
+        //});
+        $(".ideate-task").css({
+            border: "none",
+            "z-index": 20
+        });
     },
     'click .treatment-tutorial-inspirationCardTry-goback': function() {
         $("#treatment-tutorial-inspirationCardTry").removeClass("visible-tutorial-treatment");
@@ -643,7 +657,10 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspirationCardMany").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-directions").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-pleaseWait").removeClass("treatment-tutorial-background");
-        $(".task-list-pane").css({border: "none"});
+        $(".task-list-pane").css({
+            border: "none",
+            "z-index": 20
+        });
         $("#directions-container-treatment").css({border: "10px solid #F5A623"});
         $("#directions-content").removeClass("collapse");
         $("#directions-content").addClass("collapse in");
