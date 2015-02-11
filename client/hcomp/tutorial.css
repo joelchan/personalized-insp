@@ -10,11 +10,11 @@
     z-index: 50;
 }
 
-#control-tutorial-backdrop {
+.tutorial-backdrop {
     width: 100%;
     height: 100%;
     position: absolute;
-    top: 0;
+    top: 0px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -23,12 +23,16 @@
     z-index: 50;
 }
 
+.hcomp-ideation-pane-control #tutorial-backdrop{
+    top: -5px;
+}
 .tutorial-page-control .control-tutorial {
     z-index: 51;
 }
 
-.tutorial-page-control .tutorial-text {
+.tutorial-text {
     padding-left: 15px;
+    z-index: 60;
 }
 
 .control-tutorial-background {
@@ -115,6 +119,10 @@
 }
 
 /*TREATMENT TUTORIAL STYLING*/
+.hcomp-ideation-pand .idea-input-box {
+  position: relative;
+  background: #F5F5F5;
+}
 .treatment-tutorial-background {
     width: 100%;
     height: 100%;
@@ -124,9 +132,14 @@
     right: 0;
     bottom: 0;
     display: none;
+    /* z-index: 51; */
 }
 .visible-tutorial-treatment {
     display: block;
+}
+.ideation-prompt-treatment {
+    position: relative;
+    background: #FFF;
 }
 .treatment-tutorial-description {    
     width: 40%;
