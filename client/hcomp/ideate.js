@@ -7,6 +7,7 @@ Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
+  EventLogger.logBeginIdeation();
   //Hide logout
   $(".btn-login").toggleClass("hidden");
   //Set height of elements to viewport height

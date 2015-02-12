@@ -36,6 +36,9 @@ Template.TutorialControl.rendered = function() {
     //},
 //});
 
+Template.MturkIdeationPageControl.rendered = function(){
+  EventLogger.logBeginIdeation(); 
+};
 Template.MturkIdeationPageControlTutorial.rendered = function(){
   //Hide logout
   $(".btn-login").toggleClass("hidden");

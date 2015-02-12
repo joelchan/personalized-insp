@@ -375,7 +375,7 @@ Router.map(function () {
   });
   
   this.route('MturkIdeationControl', {
-      path: 'crowd/IdeationC/:partID',
+      path: 'crowd/Ideate/:partID',
       template: 'MturkIdeationPageControl',
 
 //    path: 'crowd/Ideation/:promptID/:userID/',
@@ -444,7 +444,7 @@ Router.map(function () {
   });
   
   this.route('MturkIdeationTreatment', {
-      path: 'crowd/IdeationT/:partID',
+      path: 'crowd/Ideation/:partID',
       template: 'MturkIdeationPage',
 
     waitOn: function() {
