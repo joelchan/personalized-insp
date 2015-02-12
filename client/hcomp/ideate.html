@@ -12,7 +12,7 @@
 
 <template name="MturkMainPrompt">
   <div class = "ideator-directions">
-    <label class="directions-header"> Directions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(show/hide)</a>
+    <label class="directions-header"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
     <!-- <div class="row"> -->
       <div id="directions-container">
         <div id="directions-content" class="collapse in">
@@ -71,7 +71,6 @@
   </div>
 </template>
 
-<!--Took out all task related templates -->
 <template name="MturkTaskLists">
   <div class='row task-list-header'>
     <h1 class="ideation-prompt">{{ prompt }}</h1> <br/>
@@ -151,16 +150,18 @@
 
 <template name="MturkIdeationPageControl">
   <div class="hcomp-ideation-pane-control">
-    <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
-    <div class="main-prompt">
-      {{> MturkMainPromptControl}}
+        <div class = "ideation-prompt-control-container">
+            <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
+        </div>
+        <div class="main-prompt">
+            {{> MturkMainPromptControl}}
+        </div>
     </div>
-  </div>
 </template>
 
 <template name="MturkMainPromptControl">
   <div class = "ideator-directions-control">
-    <label class="directions-header-control"> Directions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(More/Less)</a>
+    <label class="directions-header-control"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
     <!-- <div class="row"> -->
       <div id="directions-container-control">
         <div id="directions-content" class="collapse in">

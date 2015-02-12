@@ -260,10 +260,19 @@ Router.map(function () {
   });
 
   this.route('TutorialControl', {
-      path: 'tutorialc/:partID',
+      path: 'tutorial/ideate/:partID',
       template: 'TutorialControl',
     waitOn: function() {
-      
+      var pID = this.params.promptID;
+      if (Session.get("currentUser")) {
+        return [ 
+          Meteor.subscribe('prompts'),
+          ]
+      } else {
+        return [
+          Meteor.subscribe('prompts'),
+        ]
+      }
     },
     onBeforeAction: function(pause) {
         logger.debug("before action for tutorial control");
@@ -297,17 +306,22 @@ Router.map(function () {
     },
     action: function(){
       if(this.ready()) {
+        Session.set("useTimer", true);
         this.render();
       } else
         this.render('loading');
     },
     onAfterAction: function() {
-      // Session.set("nextPage", "MturkIdeationControl");
+        if (this.ready()) {
+        initRolePage();
+        insertExitStudy();
+      }
+      //Session.set("nextPage", "MturkIdeationControl");
     },
   });
 
   this.route('TutorialTreatment', {
-      path: 'tutorialt/:partID',
+      path: 'tutorial/ideation/:partID',
       template: 'TutorialTreatment',
     waitOn: function() {
       
@@ -350,7 +364,11 @@ Router.map(function () {
         this.render('loading');
     },
     onAfterAction: function() {
-      // Session.set("nextPage", "MturkIdeationTreatment");
+        //Session.set("nextPage", "MturkIdeation");
+        if (this.ready()) {
+            initRolePage();
+            insertExitStudy();
+        }
     },
   });
   
@@ -658,7 +676,7 @@ var initRolePage = function() {
       //Setup timer for decrementing onscreen timer with 17 minute timeout
       Session.set("timeLeft", prompt.length + 1);
       $('#time').text(prompt.length);
-      if (Session.get("useTimer")) {
+      if (Session.get("hasTimer")) {
         Meteor.setTimeout(decrementTimer, 60000);
       }
     }
