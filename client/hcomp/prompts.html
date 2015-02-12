@@ -33,11 +33,11 @@
             <h3 class="center-vertical">Review Ideas</h3>
         </div>
       </a>
-      <a href="">
+      <!-- <a href="">
         <div class="col-sm-2 create-exp-button clickable">
             <h3 class="center-vertical">Create Experiment</h3>
         </div>
-      </a>
+      </a> -->
     </div>
   </div>
 </template>
@@ -50,6 +50,7 @@
           <strong>Description:  </strong>
           {{ desc }}<br/>
           <strong>Prompt: </strong> {{ question }}<br/>
+          <strong>Time limit: </strong> {{ timeLimit }}<br/>
           <strong>Participant login URL: </strong> 
             <a href="{{ expURL }}">
               {{ expURL }}
@@ -139,6 +140,17 @@
       </div>
     </div>
     <div role="tabpanel" class="tab-pane" id="expList">
+      <div class="row hcomp-prompts-page">
+        <center>
+         <!--  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Large modal</button>   -->
+          <button id="new-exp" class="new-exp btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newExpModal">
+            New Experiment
+          </button> 
+        </center>
+      </div> <!-- End Row -->
+
+      {{> NewExperimentModal }}
+      
       <div class="row hcomp-prompt-list"> 
         {{#each experiments}}
           {{> CrowdExperiment }}
@@ -148,4 +160,44 @@
   </div>
 
   
+</template>
+
+<template name="NewExperimentModal">
+  <!-- Large modal -->
+  <div class="modal fade" id="newExpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="newExpLabel">Create New Experiment</h4>
+        </div>
+        <div class="modal-body">
+          
+          <h5>Experiment name:</h5>
+          <input type="text" id="exp-title" class="modal-box" placeholder="Experiment name">
+          
+          <h5>Choose brainstorming prompt:</h5>
+          {{#each prompts}}
+            {{> ExperimentPromptItem }}
+          {{/each}}
+
+          <h4>Target number of participants per condition</h4>
+          <input type="number" id="num-parts" class="modal-number-input" placeholder="participants">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button id="createExp" type="button" class="createExp btn btn-primary" data-toggle="modal" data-dismiss="modal">Save</button>
+        </div> <!-- End modal footer -->
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="ExperimentPromptItem">
+  <div id={{this._id}} class="radio exp-prompt-item">
+    <label><input type="radio" name="promptRadios" id="promptRadios-{{this._id}}" value="{{this._id}}">
+      {{ question }} ({{ timeLimit }})
+    </label>
+  </div>
 </template>

@@ -15,6 +15,9 @@ Template.MturkIdeationPage.rendered = function(){
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
+  if (!Session.get("currentParticipant").hasStarted) {
+    $("#exp-begin-modal").modal('show');  
+  }
   //Setup Facilitation push to synthesis listener
   //MyUsers.find({_id: Session.get("currentUser")._id}).observe({
     //changed: function(newDoc, oldDoc) {
@@ -29,6 +32,12 @@ Template.MturkIdeationPage.rendered = function(){
         //Router.go(route, {'promptID': promptID, 'userID': userID}); 
     //},
   //});
+};
+
+Template.MturkIdeationPageControl.rendered = function(){
+  if (!Session.get("currentParticipant").hasStarted) {
+    $("#exp-begin-modal").modal('show');  
+  }
 };
 
 Template.MturkMainPrompt.rendered = function(){
@@ -261,3 +270,9 @@ Template.TaskIdeaList.helpers({
   }, 
 });
 
+Template.ExperimentBeginModal.events({
+  'click .popup-continue' : function() {
+    Participants.update({_id: Session.get("currentParticipant")._id}, 
+      {$set: {hasStarted: true}});
+  },
+});

@@ -13,18 +13,23 @@ ExperimentManager = (function () {
   ****************************************************************/
   return {
 
-    createExp: function(promptID) {
+    createExp: function(promptID, desc, numParts) {
       /**************************************************************
        * Create a new experiment
        * @Params
        *    promptID - id of the prompt for the experiment
        * @Return
-       *    boolean - true if successful creation of experiment
+       *    expID - id of created experiment, false if unsuccessful
+       *    desc (string, optional) - name of experiment
+       *    numParts (int, optional) - desired number of participants per condition
        * ***********************************************************/
        logger.trace("Beginning ExperimentManager.createExp");
        if (promptID) {
          logger.trace("Creating new experiment object for prompt: " + promptID);
          var exp = new Experiment(promptID);
+         if (desc) {
+          exp.description = desc
+         }
          expID = Experiments.insert(exp);
          if (expID) {
            logger.trace("Successfully created new experiment with id " + expID);
@@ -35,15 +40,15 @@ ExperimentManager = (function () {
            
            // create experimental conditions
            // parameters are currently hard-coded
-           var control = this.createExpCond(expID, promptID, "Control", 25);
-           var treatment = this.createExpCond(expID, promptID, "Treatment", 25);
+           var control = this.createExpCond(expID, promptID, "Control", numParts);
+           var treatment = this.createExpCond(expID, promptID, "Treatment", numParts);
            Experiments.update({_id: expID},
             {$set: {conditions: [control,treatment]}});
            
            // initialize group references
            this.initGroupRefs(Experiments.findOne({_id: expID}));
 
-         return true;
+         return expID;
         } else {
          return false
         } 
@@ -151,14 +156,15 @@ ExperimentManager = (function () {
     getRandomCondition: function(exp) {
         /****************************************************************
         * Get a random condition from the experiment
-        * Probably of sampling a condition should be inversely proportional
-        * to the number of completed participants
+        * Probably of sampling a condition is inversely proportional
+        * to the number of assigned participants
         * should return cond id
         ****************************************************************/
         //Create an array with length = number of slot
-        var slots = [];
+        // var slots = [];
         var unlimitedRecruitment;
         var randCond;
+        var cutOffs = [];
 
         if (exp.conditions[0].partNum == -1) {
             unlimitedRecruitment = true;
@@ -167,27 +173,73 @@ ExperimentManager = (function () {
             logger.trace("Randomly drew " + randCond.description + " condition");
             return randCond._id;
         } else {
+
             for (var i=0; i<exp.conditions.length; i++) {
               
               //Determin number of participants expected - number already 
-              //  assigned and completed
+              //  assigned
               var numPartWanted = exp.conditions[i].partNum;
-              var numPartCompleted = Conditions.findOne({_id: exp.conditions[i]._id}).completedParts.length;
-              logger.debug(numPartWanted + " participants wanted for this condition, " + numPartCompleted + " completed the experiment");
-              var numPart = numPartWanted - numPartCompleted;
-              for (var j=0; j<numPart; j++) {
-                slots.push(i);
-              }  
+              var cond = Conditions.findOne({_id: exp.conditions[i]._id})
+              var numPartAssigned = cond.assignedParts.length;
+              logger.debug(numPartWanted + " participants wanted for " + cond.description + " condition, " + numPartAssigned + " assigned so far");
+              
+              // Square the number to heavily bias in favor conditions with fewer assigned participants
+              var numToRecruit = numPartWanted - numPartAssigned;
+              logger.debug("Need to recruit " + numToRecruit + " for " + cond.description);
+              var thisCutOff = Math.pow(numToRecruit,3);
+              // Construct the sampling space
+              // Each element in cutOffs is a condition
+              if (cutOffs.length == 0) {
+                logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
+                cutOffs.push(thisCutOff);  
+              } else {
+                var priorCutOff = cutOffs[0];
+                for (var j=1; j<cutOffs.length; j++) {
+                  // logger.trace("priorCutOff = " + priorCutOff);
+                  priorCutOff += cutOffs[j];
+                }
+                thisCutOff += priorCutOff
+                logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
+                cutOffs.push(thisCutOff);
+              }
+            }
+            logger.trace("Number line is :" + JSON.stringify(cutOffs));
+            var max = cutOffs[cutOffs.length-1]
+            for (var i=0; i<cutOffs.length; i++) {
+              if (i==0) {
+                var p = cutOffs[i]/max;
+              } else {
+                var p = (cutOffs[i]-cutOffs[i-1])/max;
+              }
+              var cName = exp.conditions[i].description;
+              logger.trace("Probability of sampling " + cName + ": " + p);
             }
         }
         
-        //Randomly assign to any condition if experiment is full
-        if (slots.length == 0) {
+        // Randomly assign to any condition if experiment is full
+        if (cutOffs.length == 0) {
             randCond = getRandomElement(exp.conditions);
             logger.trace("Randomly drew " + randCond.description + " condition");
             return randCond._id;
         } else {
-            var condIndex = getRandomElement(slots);
+
+            // Define the sample space to draw from
+            logger.trace("Max for sample is " + max);
+            
+            // Randomly sample a number
+            var sample = Math.random() * (max-1) + 1;
+            logger.trace("Drew random sample: " + sample);
+            
+            // Sample a condition
+            var condIndex;
+            for (var i=0; i<cutOffs.length; i++) {
+              logger.trace("Comparing sample to cutoff: " + cutOffs[i]);
+              if (sample < cutOffs[i]) {
+                logger.trace("Sample of " + sample + " is less than cutoff " + cutOffs[i]);
+                condIndex = i;
+                break;
+              } 
+            }
             randCond = exp.conditions[condIndex];
             logger.trace("Randomly drew " + randCond.description + " condition");
             return randCond._id;    

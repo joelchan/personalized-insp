@@ -87,3 +87,7 @@
 .hcomp-prompt-list .prompt-panel .prompt {
   margin-top:0px;
 }
+
+#newExpModal {
+  height: 100%;
+}

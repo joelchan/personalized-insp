@@ -13,7 +13,7 @@
 
 <template name="MturkIdeationPageControlTutorial">
   <div class="hcomp-ideation-pane-control">
-    <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
+    <h1 class="ideation-prompt-control">The Brainstorming Problem</h1> <br/>
     <div class="main-prompt">
       {{> MturkMainPromptControlTutorial}}
     </div>
@@ -27,8 +27,8 @@
       <div id="directions-container-control">
         <div id="directions-content" class="collapse">
           <ol>
-            <li>Begin entering ideas for the main prompt here.</li>
-            <li>Continue to ideate until you reach 10 total ideas. If you reach 10 ideas before the time is up, you can either click on the "Exit early" button to complete the HIT or continue generating ideas until the time is up.</li>
+            <li>Your task is to generate as many creative ideas as you can for the brainstorming problem for 10 minutes. When the time is up, you will complete a brief survey, and be taken to a page where you can submit the HIT.</li>
+            <li>If at any time you do not wish to continue, you may exit the study by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
           </ol>
           <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
               2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
@@ -110,9 +110,10 @@
       <div id="directions-container-treatment">
         <div id="directions-content" class="collapse">
           <ol>
-            <li>Begin entering ideas for the main prompt here.</li>
-            <li>If you run out of ideas or want some fresh inspiration, hit the <strong>"Inspire Me!"</strong> button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.</li>
-            <li>Continue to ideate until you reach 10 total ideas. If you reach 10 ideas before the time is up, you can either click on the "Exit early" button to complete the HIT or continue generating ideas until the time is up.</li>
+            <li>Your task is to generate as many creative ideas as you can for the brainstorming problem for 10 minutes. When the time is up, you will complete a brief survey, and be taken to a page where you can submit the HIT.</li>
+            <li>If you run out of ideas or want some fresh inspiration, hit the <strong>"Inspire Me!"</strong> button. You will receive an "inspiration card" that contains a question or idea meant to stimulate your thinking.</li>
+            <li>If the inspiration sparks any new ideas, we would like you to enter them directly into that card (ideas unrelated to any inspiration can go in the main idea entry box.</li>
+            <li>If at any time you do not wish to continue, you may exit the study by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
           </ol>
           <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
               2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
@@ -130,7 +131,7 @@
 
 <template name="MturkTaskListsTreatmentTutorial">
   <div class='row task-list-header'>
-    <h1 class="ideation-prompt-treatment">{{ prompt }}</h1> <br/>
+    <h1 class="ideation-prompt-treatment">The Brainstorming Problem</h1> <br/>
     <div class="header">
       <div class="btn btn-success btn-large get-task col-xs-3">
         <img src="/LightBulbOn-white2.png" class="get-task-icon"/>
@@ -263,7 +264,7 @@
         </div>
         <div class = "tutorial-text control-tutorial-prompt-text control-tutorial-description">
             <p>
-                This is where you will see the brainstorming problem you will be working on.  
+                The brainstorming problem will be shown here.  
             </p>
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-prompt-goback'>
@@ -282,7 +283,7 @@
         </div>
         <div class = "tutorial-text control-tutorial-ideaEntry-text control-tutorial-description">
             <p>
-                This is where you will be entering your ideas.  
+                You will enter your ideas here.  
             </p>
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-ideaEntry-goback'>
@@ -409,7 +410,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-prompt-text treatment-tutorial-description">
             <p>
-                This is where you will see the brainstorming problem you will be working on.  
+                The brainstorming problem will be shown here.  
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-prompt-goback'>
@@ -428,7 +429,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-ideaEntry-text treatment-tutorial-description">
             <p>
-                This is where you will be entering your ideas.  
+                You will enter your ideas here.  
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-ideaEntry-goback'>
@@ -465,7 +466,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-inspireMe-text treatment-tutorial-description">
             <p>
-                If you run out of ideas or want fresh inspiration, hit this button. 
+                If you run out of ideas or want some fresh inspiration, hit this button. 
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspireMe-goback'>
@@ -517,7 +518,7 @@
     <div id = "treatment-tutorial-inspirationCardTry" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-inspirationCardTry-text treatment-tutorial-description">
             <p>
-                You can enter ideas for the inspiration directly into this box. Go ahead and give it a try!    
+                If the inspiration sparks any new ideas, we would like you to enter them directly into this box (ideas unrelated to any inspiration can go in the main idea entry box. Go ahead and give it a try!    
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCardTry-goback'>

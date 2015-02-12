@@ -1,4 +1,4 @@
-// Configure logger for Tools
+
 var logger = new Logger('Client:Exp:MturkLogin');
 // Comment out to use global logging level
 //Logger.setLevel('Client:Exp:MturkLogin', 'trace');
@@ -49,8 +49,31 @@ Template.MturkLoginPage.events({
           Session.set("currentGroup", group);
           Session.set("currentPrompt", prompt);
           EventLogger.logUserLogin();
-          Router.go(Session.get("nextPage"), 
-            {expID: Session.get("currentExp")._id, userID: user._id});
+          var exp = Session.get("currentExp");
+          logger.trace("current experiment is: " + JSON.stringify(exp));
+          var part = Participants.findOne({userID: user._id, experimentID: exp._id});
+          if (part) {
+            logger.trace("already a participant");
+            if (!part.hasFinished) {
+              if (part.hasStarted) {
+                logger.trace("Participant has started but not yet finished");
+                var condName = Conditions.findOne({_id: part.conditionID}).description;
+                var routeName = "MturkIdeation" + condName;
+                logger.debug("Sending to " + routeName);
+                Router.go(routeName, {partID: part._id});  
+              } else {
+                logger.trace("Participant has been assigned but not yet completed tutorial");
+                var condName = Conditions.findOne({_id: part.conditionID}).description;
+                var routeName = "Tutorial" + condName;
+                logger.debug("Sending to " + routeName);
+                Router.go(routeName, {partID: part._id});  
+              }
+            }
+          } else {
+            logger.trace("not a participant yet");
+            Router.go(Session.get("nextPage"), 
+              {expID: Session.get("currentExp")._id, userID: user._id});  
+          }
         }
 
     /********************* Disable experiment logic ************/

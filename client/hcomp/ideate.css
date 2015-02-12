@@ -207,3 +207,19 @@
   float:left;
 }
 
+#exp-begin-modal .modal-footer {
+    height: 80px;
+    margin-top:0px;
+    padding: 10px;
+}
+
+#exp-begin-modal {
+    /*float:right;*/
+  text-align: center;
+  font-size:20px;
+}
+#exp-begin-modal .popup-continue {
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size:32px;
+}

@@ -14,7 +14,7 @@ Template.HcompConsentPage.events({
         var user = Session.get("currentUser");
         logger.trace("Checking if participant has participated before");
         if (ExperimentManager.canParticipate(exp, user.name)) {
-          logger.trace("Participant is ok, randomly assigning to condition in experiment");
+          logger.trace("New participant, randomly assigning to condition in experiment");
           part = ExperimentManager.addExperimentParticipant(exp, user);
           if (part) {
             logger.trace("Successfully created participant with id " + part._id);
