@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Ideate');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Ideate', 'trace');
+//Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 //Logger.setLevel('Client:Hcomp:Ideate', 'debug');
-//Logger.setLevel('Client:Hcomp:Ideate', 'info');
+Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
@@ -132,9 +132,9 @@ Template.MturkIdeaEntryBox.events({
         Session.get("currentUser"),
         Session.get("currentPrompt")
     );
-    if (idea) {
-      EventLogger.logIdeaSubmission(idea); 
-    }
+    //if (idea) {
+      //EventLogger.logIdeaSubmission(idea); 
+    //}
     // Clear the text field
     inputBox.val('');
     //Adding Idea to list of task ideas if this is a task
