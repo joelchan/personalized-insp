@@ -110,6 +110,8 @@ Participant = function(expID, userID, condID, groupID) {
     //Participants are not ready to begin by default
     this.isReady = false;
 
+    this.hasStarted = false;
+
     //Participants have not finished by default
     this.hasFinished = false;
 };

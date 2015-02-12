@@ -1,3 +1,21 @@
+<template name="ExperimentBeginModal">
+  <!--Change Prompt Modal-->
+  <div class="modal fade" id="exp-begin-modal" tabindex="-1" 
+    role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <h3 class="modal-title" id="myModalLabel">
+          The brainstorm has begun! Click "Begin" when you are ready to start.
+        </h3>
+        <div type="button" class="btn btn-success popup-continue" 
+          data-dismiss="modal">
+          Begin!
+        </div>
+      </div> <!-- close modal-content -->
+    </div> <!-- close modal-dialog -->
+  </div> <!-- close changeModal -->
+</template>
+
 <template name="MturkIdeationPage">
   <div class="row hcomp-ideation-pane">
     <div class="col-md-3 main-prompt">
@@ -7,6 +25,7 @@
       {{> MturkTaskLists}}
     </div>
   </div>
+  {{> ExperimentBeginModal }}
   {{> HcompNoNewTaskModal }}
 </template>
 
@@ -144,7 +163,6 @@
   </div> <!-- close changeModal -->
 </template>
 
-
 <!-- #################################### -->
 <!-- ## Template for control condition ##-->
 <!-- #################################### -->
@@ -157,6 +175,7 @@
         <div class="main-prompt">
             {{> MturkMainPromptControl}}
         </div>
+        {{> ExperimentBeginModal }}
     </div>
 </template>
 
