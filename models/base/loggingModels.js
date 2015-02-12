@@ -52,9 +52,9 @@ Meteor.startup(function() {
     EventTypeManager.get("User completed survey");
     EventTypeManager.get("User started a tutorial");
     EventTypeManager.get("User finished a tutorial");
-    fields = ['currentTaskStepNum', 'taskStepMax'];
-    EventTypeManager.get("User finished a tutorial step", fields);
     fields = ['taskStepNum', 'taskStepMax'];
+    EventTypeManager.get("User finished a tutorial step", fields);
+    fields = ['currentTaskStepNum', 'taskStepMax'];
     EventTypeManager.get("User rewound a tutorial step", fields);
     _.keys(RoleManager.defaults).forEach(function(title) {
       fields = ['role'];

@@ -307,6 +307,7 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
+        Session.set("tutorialTimer", true);
         this.render();
       } else
         this.render('loading');
@@ -359,6 +360,7 @@ Router.map(function () {
     },
     action: function(){
       if(this.ready()) {
+        Session.set("tutorialTimer", true);
         this.render();
       } else
         this.render('loading');
@@ -676,7 +678,7 @@ var initRolePage = function() {
       //Setup timer for decrementing onscreen timer with 17 minute timeout
       Session.set("timeLeft", prompt.length + 1);
       $('#time').text(prompt.length);
-      if (Session.get("hasTimer")) {
+      if (Session.get("hasTimer") && !Session.get("tutorialTimer")) {
         Meteor.setTimeout(decrementTimer, 60000);
       }
     }
