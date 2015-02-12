@@ -145,6 +145,9 @@ Template.MturkIdeaEntryBox.events({
       logger.debug("Adding a new idea to a task");
       logger.trace(this);
       TaskManager.addIdeaToTask(idea, this);
+      EventLogger.logIdeaSubmission(idea, this, true); 
+    } else {
+      EventLogger.logIdeaSubmission(idea, null, true); 
     }
   },
   //waits 3 seconds after user stops typing to change isTyping flag to false
@@ -192,15 +195,23 @@ Template.MturkTaskLists.helpers({
 Template.MturkTaskLists.events({ 
   'click .get-task': function(e, t) {
     logger.debug("Retrieving a new task"); 
+    EventLogger.logRequestInspiration(Session.get("currentPrompt"));
     var task = TaskManager.assignTask(
       Session.get("currentPrompt"),
       Session.get("currentUser")
     );
     if (task) {
       logger.info("Got a new task");
+      EventLogger.logInspirationRequestSuccess(
+        Session.get("currentPrompt"),
+        dummy1
+      );
       logger.trace(task);
     } else {
       logger.info("No new task was assigned");
+      EventLogger.logInspirationRequestFail(
+        Session.get("currentPrompt")
+      );
       //alert("Sorry, there are no new tasks. Just keep on trying");
       $("#hcomp-new-task-modal").modal('show');
     }

@@ -37,6 +37,7 @@ Template.HcompConsentPage.events({
         //loginUser(myUser);
 
         //Go to next page
+        EventLogger.logConsent();
         Router.go(Session.get("nextPage"), {partID: part._id});
     }
 });

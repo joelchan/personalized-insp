@@ -48,6 +48,7 @@ Template.MturkLoginPage.events({
           Session.set("currentRole", role);
           Session.set("currentGroup", group);
           Session.set("currentPrompt", prompt);
+          EventLogger.logUserLogin();
           Router.go(Session.get("nextPage"), 
             {expID: Session.get("currentExp")._id, userID: user._id});
         }
