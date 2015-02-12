@@ -39,6 +39,12 @@ Template.MturkIdeationPageControl.rendered = function(){
   }
 };
 
+Template.MturkIdeationPageControl.helpers({
+  prompt: function() {
+    return Session.get("currentPrompt").question;
+  }
+});
+
 Template.MturkMainPrompt.rendered = function(){
   //Setup filters for users and filter update listener
   //updateFilters();

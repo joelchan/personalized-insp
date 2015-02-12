@@ -170,8 +170,11 @@ Router.map(function () {
     path: '/crowd/Ideate/Login/:expID',
     template: 'MturkLoginPage',
     waitOn: function() {
-      // Meteor.subscribe('prompts', this.params.promptID);
-      return Meteor.subscribe('experiments', this.params.expID);
+      return [
+        Meteor.subscribe('experiments', this.params.expID),
+        Meteor.subscribe('prompts', this.params.promptID)
+      ];
+
     },
     onBeforeAction: function() {
       console.log("before action");
@@ -390,9 +393,6 @@ Router.map(function () {
         Meteor.subscribe('ideas', {promptID: pID}),
         Meteor.subscribe('prompts'),
         Meteor.subscribe('myUsers'),
-        Meteor.subscribe('tasks', {promptID: pID}),
-        Meteor.subscribe('questions'),
-        Meteor.subscribe('assignments', {promptID: pID}),
       ];
       Session.set("useTimer", true);
     },
