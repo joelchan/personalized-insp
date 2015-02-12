@@ -156,9 +156,10 @@ ExperimentManager = (function () {
         * should return cond id
         ****************************************************************/
         //Create an array with length = number of slot
-        var slots = [];
+        // var slots = [];
         var unlimitedRecruitment;
         var randCond;
+        var cutOffs = [];
 
         if (exp.conditions[0].partNum == -1) {
             unlimitedRecruitment = true;
@@ -167,27 +168,57 @@ ExperimentManager = (function () {
             logger.trace("Randomly drew " + randCond.description + " condition");
             return randCond._id;
         } else {
+
             for (var i=0; i<exp.conditions.length; i++) {
               
               //Determin number of participants expected - number already 
               //  assigned and completed
               var numPartWanted = exp.conditions[i].partNum;
-              var numPartCompleted = Conditions.findOne({_id: exp.conditions[i]._id}).completedParts.length;
-              logger.debug(numPartWanted + " participants wanted for this condition, " + numPartCompleted + " completed the experiment");
-              var numPart = numPartWanted - numPartCompleted;
-              for (var j=0; j<numPart; j++) {
-                slots.push(i);
-              }  
+              var cond = Conditions.findOne({_id: exp.conditions[i]._id})
+              var numPartAssigned = cond.assignedParts.length;
+              logger.debug(numPartWanted + " participants wanted for " + cond.description + " condition, " + numPartAssigned + " assigned so far");
+              var thisCutOff = Math.pow((numPartWanted - numPartAssigned),2);
+              if (cutOffs.length == 0) {
+                logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
+                cutOffs.push(thisCutOff);  
+              } else {
+                var priorCutOff = cutOffs[0];
+                for (var j=0; j<cutOffs.length; j++) {
+                  logger.trace("priorCutOff = " + priorCutOff);
+                  priorCutOff += cutOffs[j];
+                }
+                thisCutOff += priorCutOff
+                logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
+                cutOffs.push(thisCutOff);
+              }
+              
+              // for (var j=0; j<samplingWeight; j++) {
+              //   slots.push(i);
+              // }  
             }
+            logger.trace("Number line is :" + JSON.stringify(cutOffs));
         }
         
         //Randomly assign to any condition if experiment is full
-        if (slots.length == 0) {
+        if (cutOffs.length == 0) {
             randCond = getRandomElement(exp.conditions);
             logger.trace("Randomly drew " + randCond.description + " condition");
             return randCond._id;
         } else {
-            var condIndex = getRandomElement(slots);
+            // var condIndex = getRandomElement(slots);
+            var max = cutOffs[cutOffs.length-1];
+            logger.trace("Max for sample is " + max);
+            var sample = Math.random() * (max-1) + 1;
+            logger.trace("Drew random sample: " + sample);
+            var condIndex;
+            for (var i=0; i<cutOffs.length; i++) {
+              logger.trace("Comparing sample to cutoff: " + cutOffs[i]);
+              if (sample < cutOffs[i]) {
+                logger.trace("Sample of " + sample + " is less than cutoff " + cutOffs[i]);
+                condIndex = i;
+                break;
+              } 
+            }
             randCond = exp.conditions[condIndex];
             logger.trace("Randomly drew " + randCond.description + " condition");
             return randCond._id;    
