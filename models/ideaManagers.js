@@ -1,20 +1,27 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
-//Logger.setLevel('Model:Managers', 'trace');
+Logger.setLevel('Model:Managers', 'trace');
 //Logger.setLevel('Model:Managers', 'debug');
-Logger.setLevel('Model:Managers', 'info');
+//Logger.setLevel('Model:Managers', 'info');
 //Logger.setLevel('Model:Managers', 'warn');
 
 
 IdeaFactory = (function() {
   return {
-    create: function(content, user, prompt) {
+    create: function(content, user, prompt, isDummy) {
       logger.trace("Creating new Idea");
       var trimmed = removeCR(content);
       if (trimmed !== "") {
         var idea = new Idea(trimmed, user, prompt);
-        idea._id = Ideas.insert(idea);
+          if (isDummy) {
+              logger.trace("Creating new DUMMY Idea");
+              idea._id = DummyIdeas.insert(idea);
+          }
+          else {
+            logger.trace("Creating new Idea");
+            idea._id = Ideas.insert(idea);
+          }
         return idea;
       }
     },

@@ -1,6 +1,7 @@
 Template.SurveyPage.rendered = function() {
     $("#ss-submit").click(function() {
         console.log("form submitted");
+        EventLogger.logSurveyComplete();
     });
 
     $("input[name='lang1']").click(function() {
@@ -18,6 +19,7 @@ Template.SurveyPage.rendered = function() {
     });
     //Scroll to top
     window.scrollTo(0,0);
+    EventLogger.logSurveyBegan();
 };
 
 checkResponse = function(answer) {

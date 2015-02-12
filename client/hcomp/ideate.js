@@ -1,12 +1,13 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Ideate');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Ideate', 'trace');
+//Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 //Logger.setLevel('Client:Hcomp:Ideate', 'debug');
-//Logger.setLevel('Client:Hcomp:Ideate', 'info');
+Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
+  EventLogger.logBeginIdeation();
   //Hide logout
   $(".btn-login").toggleClass("hidden");
   //Set height of elements to viewport height
@@ -14,21 +15,29 @@ Template.MturkIdeationPage.rendered = function(){
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
+  if (!Session.get("currentParticipant").hasStarted) {
+    $("#exp-begin-modal").modal('show');  
+  }
   //Setup Facilitation push to synthesis listener
-  MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-        logger.info("change to current user detected");
-        logger.trace(newDoc.route);
-        var route = newDoc.route;
-        logger.debug("Going to page with route: " + route);
-        var promptID = Session.get("currentPrompt")._id;
-        logger.debug("promptID: " + promptID);
-        var userID = Session.get("currentUser")._id;
-        logger.debug("userID: " + userID);
-        Router.go(route, {'promptID': promptID, 'userID': userID}); 
-    },
-  });
-  
+  //MyUsers.find({_id: Session.get("currentUser")._id}).observe({
+    //changed: function(newDoc, oldDoc) {
+        //logger.info("change to current user detected");
+        //logger.trace(newDoc.route);
+        //var route = newDoc.route;
+        //logger.debug("Going to page with route: " + route);
+        //var promptID = Session.get("currentPrompt")._id;
+        //logger.debug("promptID: " + promptID);
+        //var userID = Session.get("currentUser")._id;
+        //logger.debug("userID: " + userID);
+        //Router.go(route, {'promptID': promptID, 'userID': userID}); 
+    //},
+  //});
+};
+
+Template.MturkIdeationPageControl.rendered = function(){
+  if (!Session.get("currentParticipant").hasStarted) {
+    $("#exp-begin-modal").modal('show');  
+  }
 };
 
 Template.MturkMainPrompt.rendered = function(){
@@ -50,10 +59,10 @@ Template.MturkMainPrompt.rendered = function(){
 };
 
 Template.MturkMainPrompt.helpers({
-  // prompt: function() {
-  //   var prompt = Session.get("currentPrompt");
-  //   return prompt.question;
-  // },
+//    prompt: function() {
+//    var prompt = Session.get("currentPrompt");
+//    return prompt.question;
+//  },
 });
 
 Template.MturkIdeaList.helpers({
@@ -112,7 +121,7 @@ Template.MturkIdeaEntryBox.rendered = function(){
     // console.log(ideaEntryField);
     if (parentContainer.hasClass('general-idea-entry')) {
       // console.log("Parent is general idea entry");
-      ideaEntryField.attr("placeholder", "Enter ideas for the general prompt here")
+      ideaEntryField.attr("placeholder", "Enter ideas for the main prompt here")
     } else {
       ideaEntryField.attr("placeholder", "Enter ideas related to this inspiration here")
     };
@@ -133,9 +142,9 @@ Template.MturkIdeaEntryBox.events({
         Session.get("currentUser"),
         Session.get("currentPrompt")
     );
-    if (idea) {
-      EventLogger.logIdeaSubmission(idea); 
-    }
+    //if (idea) {
+      //EventLogger.logIdeaSubmission(idea); 
+    //}
     // Clear the text field
     inputBox.val('');
     //Adding Idea to list of task ideas if this is a task
@@ -146,6 +155,9 @@ Template.MturkIdeaEntryBox.events({
       logger.debug("Adding a new idea to a task");
       logger.trace(this);
       TaskManager.addIdeaToTask(idea, this);
+      EventLogger.logIdeaSubmission(idea, this, true); 
+    } else {
+      EventLogger.logIdeaSubmission(idea, null, true); 
     }
   },
   //waits 3 seconds after user stops typing to change isTyping flag to false
@@ -193,15 +205,23 @@ Template.MturkTaskLists.helpers({
 Template.MturkTaskLists.events({ 
   'click .get-task': function(e, t) {
     logger.debug("Retrieving a new task"); 
+    EventLogger.logRequestInspiration(Session.get("currentPrompt"));
     var task = TaskManager.assignTask(
       Session.get("currentPrompt"),
       Session.get("currentUser")
     );
     if (task) {
       logger.info("Got a new task");
+      EventLogger.logInspirationRequestSuccess(
+        Session.get("currentPrompt"),
+        dummy1
+      );
       logger.trace(task);
     } else {
       logger.info("No new task was assigned");
+      EventLogger.logInspirationRequestFail(
+        Session.get("currentPrompt")
+      );
       //alert("Sorry, there are no new tasks. Just keep on trying");
       $("#hcomp-new-task-modal").modal('show');
     }
@@ -250,3 +270,9 @@ Template.TaskIdeaList.helpers({
   }, 
 });
 
+Template.ExperimentBeginModal.events({
+  'click .popup-continue' : function() {
+    Participants.update({_id: Session.get("currentParticipant")._id}, 
+      {$set: {hasStarted: true}});
+  },
+});

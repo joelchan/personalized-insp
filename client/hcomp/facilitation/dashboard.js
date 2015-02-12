@@ -1,8 +1,8 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Dashboard');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
-Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
+Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
+// Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
 // Logger.setLevel('Client:Hcomp:Dashboard', 'info');
 //Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
 
@@ -56,80 +56,16 @@ Template.HcompDashboard.rendered = function(){
   Session.set("selectedIdeas", []);
   
   // make sure we start with a clean slate on render
-  FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
   FilterManager.reset("Tasks Filter", Session.get("currentUser"), "tasks");
-  
-  // FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
-  FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
   FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
   
-  // window.scrollTo(0,0);
-  // $('.menu-link').bigSlide();
-  // Notifications.find({
-  //   recipientIDs: Session.get("currentUser")._id,
-  //   'type.val': NotificationTypes.REQUEST_HELP.val
-  //   }).observe({
-  //   added: function(newMsg) {
-  //     console.log("***********************************************");
-  //     console.log("***********************************************");
-  //     console.log(newMsg)
-  //     console.log("Alert generated handled");
-  //     console.log("***********************************************");
-  //     console.log("***********************************************");
-  //     var msgSenderDivID = '#uname-' + newMsg.sender;
-  //     var alertDivID = msgSenderDivID + " .alert-msg";
-  //     if (!newMsg.handled && ($(alertDivID).length == 0)) {
-  //       var msg = UI.render(Template.HelpMessage);
-  //       UI.insert(msg, $(msgSenderDivID)[0]);
-  //     }
-  //     if (!$(msgSenderDivID).hasClass("flashing")) {
-  //       $(msgSenderDivID).addClass("flashing");
-  //       var alertTimer = {'time': 10};
-  //       Session.set(msgSenderDivID, alertTimer);
-  // 		  alertTimer['interval'] = Meteor.setInterval(function(){
-  //         console.log("message alert interval");
-  //         var alertTime = Session.get(msgSenderDivID);
-  //         if (alertTime['time'] != 0) {
-  // 			    $(msgSenderDivID).toggleClass('flash-alert');
-  //           alertTime['time'] = alertTime['time'] - 1;
-  //           Session.set(msgSenderDivID, alertTime)
-  //         } else {
-  //           $(msgSenderDivID).removeClass("flashing");
-  //           Meteor.clearTimeout(alertTime['interval']);
-  //         }
+};
 
-  // 		  }, 500);
-  //       Session.set(msgSenderDivID, alertTimer);
-  //     }
-  //   },
-      
-  // 	changed: function(newMsg, oldMsg){
-  //     console.log("***********************************************");
-  //     console.log("***********************************************");
-  //     console.log(newMsg)
-  //     console.log("Msg handled");
-  //     console.log("***********************************************");
-  //     console.log("***********************************************");
-  //     var msgSenderDivID = '#uname-' + newMsg.sender;
-  //     var alertDivID = msgSenderDivID + " .alert-msg";
-  //     if (newMsg.handled) {
-  //       console.log("Msg handled");
-  //       $(alertDivID).remove();
-  //       if (!$(msgSenderDivID).hasClass("flash-alert")) {
-  //         $(msgSenderDivID).removeClass("flash-alert");
-  //       }
-  //       if (!$(msgSenderDivID).hasClass("flashing")) {
-  //         $(msgSenderDivID).removeClass("flashing");
-  //         Meteor.clearTimeout(
-  //           Session.get(msgSenderDivID)['interval']
-  //         );
-  //       }
-  //     } else {
-  //       console.log("Alert generated handled");
-  //       //$('#uname-' + newMsg.sender)
-  //     }
-  //   }
-  };
+Template.HcompIdeaWordCloud.rendered = function() {
+    FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
+    logger.trace("Creating default filter for ideawordcloud filter");
+    createDefaultIdeasFilter("IdeaWordCloud Filter");
+};
 //
 Template.HcompBeginSynthesis.events({
   // 'click .begin-synthesis': function() {
@@ -170,43 +106,41 @@ Template.HcompOverallStats.helpers({
   },
 
   numIdeatorsAll : function(){
-    var groupID = Session.get("currentPrompt").groupIDs[0];
-    var group = Groups.findOne({_id: groupID});
-    var userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
-    logger.trace(userIDs);
+    var userIDs;
+    var exp = Session.get("currentExp");
+    if (exp) {
+      // get treatment userIDs
+      userIDs = ExperimentManager.getUsersInCond(exp, "Treatment");
+    } else {
+      var groupID = Session.get("currentPrompt").groupIDs[0];
+      var group = Groups.findOne({_id: groupID});
+      userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+    }
     return userIDs.length;
   },
 });
 
-Template.HcompIdeaWordCloud.helpers(
-{
-    ideas : function()
-    {
+Template.HcompIdeaWordCloud.helpers({
+    ideas : function() {
         // console.log("calling ideas for HcompIdeaWordCloud");
         cursor = getCloudFromIdeas();
-            return cursor;
+        return cursor;
     },
-    getFontSize : function()
-    {
+    getFontSize : function() {
         var count = this.count;
-            return 10 +(count * 4);
+        return 10 +(count * 4);
     },
-    getWordCount : function()
-    {
+    getWordCount : function() {
         var count = this.count;
         return count;
     },
-    getWord : function()
-    {
+    getWord : function() {
         var word = this.word;
         return word;
     }
 });
 
-
-
-Template.TaskCards.helpers(
-{
+Template.TaskCards.helpers({
     tasks : function() {
         // taskList = Tasks.find({ desc: { $exists: true}}).fetch();
         taskList = FilterManager.performQuery("Tasks Filter", Session.get("currentUser"), "tasks").fetch();
@@ -222,29 +156,23 @@ Template.TaskCards.helpers(
 
 });
 
-Template.TaskCard.helpers(
-{
-    getDescription : function()
-    {
+Template.TaskCard.helpers({
+    getDescription : function() {
         var description = this.desc;
         return description;
     },
-    isNotEdit : function()
-    {
+    isNotEdit : function() {
         var edited = this.edited;
-        if((edited == true))
-        {
+        if((edited == true)) {
             return false;
         }
         return true;
     },
-    getPriority : function()
-    {
+    getPriority : function() {
         var priority = this.priority;
         // return priority;
         var message = "";
-        switch(priority)
-        {
+        switch(priority) {
             case 1:
                 message = "Lo";
                 break;
@@ -289,22 +217,19 @@ Template.TaskCard.helpers(
       }
     },
 
-    getIdeators : function()
-    {
+    getIdeators : function() {
         var numAssignedUsers = this.assignments.length;
         var availableUsers = this.num;
         var message = "";
         message = numAssignedUsers + "/" + availableUsers;
         return message;
     },
-    getIdeas : function()
-    {
+    getIdeas : function() {
         var ideaIDs = Clusters.findOne({_id : this.ideaNodeID}).ideaIDs;
         var ideas = Ideas.find({_id : {$in : ideaIDs}}).fetch();
         return ideas.length;
     },
-    ideaContents : function()
-    {
+    ideaContents : function() {
         var ideaIDs = Clusters.findOne({_id : this.ideaNodeID}).ideaIDs;
         var ideas = Ideas.find({_id : {$in : ideaIDs}}).fetch();
         return ideas;
@@ -315,8 +240,7 @@ Template.TaskCard.helpers(
     //     var count = questions.length;
     //     return count;
     // },
-    getIdeatorCount : function()
-    {
+    getIdeatorCount : function() {
         var count = this.num;
         return count;
     },
@@ -330,8 +254,7 @@ Template.TaskCard.helpers(
     //     var count = this.minutesRequested;
     //     return count;
     // },
-    getID : function()
-    {
+    getID : function() {
         var id = this._id;
         return id;
     }
@@ -381,8 +304,7 @@ Template.HcompDashboard.events({
 	},
 
 
-	'click #task-create' : function()
-	{
+	'click #task-create' : function(){
 		var message = $("#task-description").val();
 		// var priorityText = $("#task-priority").val();
     // console.log("Creating task with priority: " + priorityText);
@@ -448,8 +370,7 @@ Template.HcompDashboard.events({
     $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='3']").prop("checked",false);
   },
 
-	'click .card-edit' : function()
-	{
+	'click .card-edit' : function() {
 		var taskID = $(event.target).parent().parent().parent().attr('id');
 		console.log(taskID);
 		Tasks.update({ _id: taskID },{$set: { edited: true}});
@@ -459,8 +380,7 @@ Template.HcompDashboard.events({
 	},
 
 
-	'click .task-update' : function()
-	{
+	'click .task-update' : function() {
 		var taskID = $(event.target).parent().parent().parent().parent().attr('id');
 		var message = $("#"+taskID + " .task-description").val();
     var priorityNum = parseInt($("#"+taskID + " input[type='radio'][name='taskPriorityOptions']:checked").val());
@@ -488,7 +408,11 @@ Template.HcompDashboard.events({
 		// }
 
 		// Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal, ideasRequested: ideasVal, minutesRequested: minutesVal}});
-    Tasks.update({ _id: taskID },{$set: { edited: false, desc: message, priority: priorityNum, num: ideatorsVal}});
+    Tasks.update({ _id: taskID },
+                  {$set: {edited: false, 
+                          desc: message, 
+                          priority: priorityNum, 
+                          num: ideatorsVal}});
 	},
 
   'click .task-update-cancel' : function() {
@@ -513,8 +437,7 @@ Template.HcompIdeaWordCloud.events({
   },
 })
 
-function getCloudFromIdeas()
-{
+function getCloudFromIdeas() {
 	// var ideas = Ideas.find({ content: { $exists: true}}).fetch();
   // var ideas = Ideas.find({ prompt._id : Session.get("currentPrompt")._id}).fetch();
   
@@ -528,18 +451,16 @@ function getCloudFromIdeas()
                                        .replace(/\s{2,}/g," ");
   }
   logger.debug("Prompt stop words: " + promptStopWords.toString());
-
   var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
+  logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
   // console.log(ideas);
 	var cloud = [];
-	for (var i = 0; i < ideas.length; i++) 
-	{
+	for (var i = 0; i < ideas.length; i++) {
 		var idea = ideas[i].content;
 		var words = idea.split(" ");
-		for (var j = 0; j < words.length; j++) 
-		{
+		for (var j = 0; j < words.length; j++) {
 			var word = words[j]
                 .trim().toLowerCase()
                 .replace(/[^\w\s]|_/g, "")
@@ -548,10 +469,8 @@ function getCloudFromIdeas()
 			var cloudItem = {'word': '', 'count': 0};
 			
 			var containsWord = Boolean(false);
-			for (var k = 0; k < cloud.length; k++) 
-			{
-				if (cloud[k].word == word) 
-				{
+			for (var k = 0; k < cloud.length; k++) {
+				if (cloud[k].word == word) {
 					cloud[k].count = cloud[k].count + 1;
 					containsWord = Boolean(true);
 				}

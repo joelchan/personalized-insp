@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Models:UserManager');
 // Comment out to use global logging level
-//Logger.setLevel('Models:UserManager', 'trace');
+Logger.setLevel('Models:UserManager', 'trace');
 //Logger.setLevel('Models:UserManager', 'debug');
-Logger.setLevel('Models:UserManager', 'info');
+// Logger.setLevel('Models:UserManager', 'info');
 //Logger.setLevel('Models:UserManager', 'warn');
 
 UserFactory  = (function() {
@@ -318,16 +318,28 @@ GroupManager = (function () {
           //group.assignments[role].length);
       //logger.debug("number of possible to role, " + role + " " + 
           //this.getSize(group, role));
+      if (!role) {
+        //Get role if not already given
+        role = this.getRandomRole(group);
+        logger.trace("Assigning to random role: " + JSON.stringify(role));
+      } else {
+        //Get role based on role title given
+        role = RoleManager.defaults[role];
+        logger.trace("Found role:");
+        logger.trace(role);
+      }
+      logger.trace("role: " + JSON.stringify(role));
+      logger.trace("group: " + JSON.stringify(group));
       if (group.isOpen && 
-          ((this.getSize(group, role) > group.assignments[role].length) ||
+          ((this.getSize(group, role.title) > group.assignments[role.title].length) ||
            (this.getSize(group) < 0))) {
-        if (!role) {
-          //Get role if not already given
-          role = this.getRandomRole(group);
-        } else {
-          //Get role based on role title given
-          role = RoleManager.defaults[role];
-        }
+        // if (!role) {
+        //   //Get role if not already given
+        //   role = this.getRandomRole(group);
+        // } else {
+        //   //Get role based on role title given
+        //   role = RoleManager.defaults[role];
+        // }
         if (!isInList(user, group.users, '_id')) {
           logger.debug("adding new user to group with id: " + user._id);
           group.users.push(user);
@@ -431,6 +443,7 @@ GroupManager = (function () {
         logger.debug(group.template.roles);
         var result = 0;
         group.template.roles.forEach(function(role) {
+          logger.trace("Getting size of " + role.title + " role");
           if (role.title.trim() == title.trim()) {
             logger.debug("size of role is: " + role.num);
             result =  role.num;
@@ -475,13 +488,16 @@ GroupManager = (function () {
       var roleTemplates = group.template.roles;
       var openRoles = []
       for (var i=0; i<roleTemplates.length; i++) {
+        logger.trace("Counting open roles in group");
         var numSlots = roleTemplates[i].num;
         var numAssign = group.assignments[roleTemplates[i].roleID].length
+        // how to
         var diff = numSlots - numAssign;
         if (diff > 0) {
           openRoles.push(roleTemplates[i]);
         }
       };
+      logger.trace("Open roles: " + JSON.stringify(openRoles));
       return getRandomElement(openRoles);
     },
     remove: function(groups) {

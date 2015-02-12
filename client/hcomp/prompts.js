@@ -13,6 +13,10 @@ Template.CrowdPromptPage.helpers({
   prompts: function() {
     return Prompts.find({userIDs: Session.get("currentUser")._id});
   },
+
+  experiments: function() {
+    return Experiments.find().fetch(); //TODO: make experiments owned by a user
+  }
 });
 
   Template.CrowdPromptPage.rendered = function() {
@@ -28,6 +32,76 @@ Template.CrowdBrainstorm.rendered = function() {
     $(elm).css('margin-top', mh);
   });
 };
+
+Template.NewExperimentModal.helpers({
+  prompts: function() {
+    logger.trace("Getting prompts...");
+    return Prompts.find();
+  },
+});
+
+Template.ExperimentPromptItem.helpers({
+  question: function() {
+    return this.question;
+  },
+  timeLimit: function() {
+    if (this.length > 0) {
+      return this.length;
+    } else {
+      return "No time limit";
+    }
+  },
+});
+
+Template.CrowdExperiment.helpers({
+  desc: function() {
+    return this.description;
+  },
+  question: function() {
+    var prompt = Prompts.findOne({_id: this.promptID});
+    return prompt.question;
+  },
+  timeLimit: function() {
+    var prompt = Prompts.findOne({_id: this.promptID});
+    if (prompt.length = -1) {
+      return "Unlimited";
+    } else {
+      return prompt.length;  
+    }
+  },
+  expURL: function() {
+    return this.url;
+  },
+  conditions: function() {
+    return Conditions.find({expID: this._id});
+  }
+});
+
+Template.CrowdExperimentCondition.helpers({
+  desc: function() {
+    return this.description;
+  },
+  numAssigned: function() {
+    return this.assignedParts.length;
+  },
+  numCompleted: function() {
+    return this.completedParts.length;
+  },
+  readyProgress: function() {
+    var numReady = this.readyParts.length;
+    var numAssigned = this.assignedParts.length;
+    var progress;
+    if (numAssigned == 0) {
+      logger.trace("No assigned participants for " + this.description + " condition");
+      progress = 0;
+    } else {
+      logger.trace("Found " + numAssigned + " assigned participants for " + this.description + " condition");
+      progress = numReady/numAssigned*100  
+    }
+    logger.trace("Progress = " + progress);
+    return Math.round(progress);
+  },
+});
 
 Template.CrowdBrainstorm.helpers({
   question: function() {
@@ -114,8 +188,6 @@ Template.CrowdBrainstorm.events({
   //},
 });
 
-
-
 /********************************************************************
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
@@ -148,6 +220,28 @@ Template.CrowdPromptPage.events({
           RoleManager.defaults['HcompFacilitator'].title);
     },
 
+    'click button.createExp': function () {
+      logger.trace("clicked create exp button");
+      
+      // get the prompt selection
+      var promptID = $('input[name=promptRadios]:checked').attr('id');
+      promptID = promptID.split("-")[1];
+      var prompt = Prompts.findOne({'_id': promptID});
+
+      // get other data
+      var expTitle = $('input#exp-title').val();
+      var numParts = parseInt($("input#num-parts").val());
+
+      if (prompt) {
+        logger.trace("found current prompt with id: " + prompt._id);  
+      }
+      expID = ExperimentManager.createExp(prompt._id, expTitle, numParts);
+
+      logger.trace("Experiment title: " + expTitle);
+      logger.trace("Number of participants: " + numParts);
+
+    },
+
     'click .dash-button': function () {
       // Set the current prompt
       var prompt = Prompts.findOne({'_id': this._id});
@@ -165,6 +259,40 @@ Template.CrowdPromptPage.events({
         logger.error("couldn't find current prompt with id: " + 
             prompt._id);
       }
+    },
+
+    'click .exp-dash-button': function () {
+      var exp = Experiments.findOne({_id: this._id});
+      Session.set("currentExp", exp);
+      var user = Session.get("currentUser");
+      if (exp) {
+        logger.trace("found current exp with id: " + this._id);
+        var prompt = Prompts.findOne({'_id': exp.promptID});
+        Session.set("currentPrompt", prompt);
+        var group = Groups.findOne({'_id': prompt.groupIDs[0]});
+        Session.set("currentGroup", group);
+        logger.debug("Prompt selected");
+        Router.go('ExpDashboard', 
+            {promptID: prompt._id, 
+              userID: user._id,
+              expID: exp._id});
+      } else {
+        logger.warn("couldn't find current exp with id: " + 
+            this._id);
+      }
+    },
+
+    'click .begin-bs': function () {
+      var condName = this.description;
+      logger.trace("Begin brainstorm for " + condName + " condition");
+      var exp = Experiments.findOne({_id: this.expID});
+      var userIDs = ExperimentManager.getUsersInCond(exp, condName);
+      userIDs.forEach(function (id) {
+        logger.debug("Updating route for user with id: " + id);
+        var routeName = "MturkIdeation" + condName;
+        logger.debug("Sending to route: " + routeName)
+        MyUsers.update({_id: id}, {$set: {'route': routeName}});
+      });
     },
 
     'click .review-button': function () {

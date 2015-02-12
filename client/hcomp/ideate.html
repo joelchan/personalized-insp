@@ -1,3 +1,21 @@
+<template name="ExperimentBeginModal">
+  <!--Change Prompt Modal-->
+  <div class="modal fade" id="exp-begin-modal" tabindex="-1" 
+    role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <h3 class="modal-title" id="myModalLabel">
+          The brainstorm has begun! Click "Begin" when you are ready to start.
+        </h3>
+        <div type="button" class="btn btn-success popup-continue" 
+          data-dismiss="modal">
+          Begin!
+        </div>
+      </div> <!-- close modal-content -->
+    </div> <!-- close modal-dialog -->
+  </div> <!-- close changeModal -->
+</template>
+
 <template name="MturkIdeationPage">
   <div class="row hcomp-ideation-pane">
     <div class="col-md-3 main-prompt">
@@ -7,19 +25,21 @@
       {{> MturkTaskLists}}
     </div>
   </div>
+  {{> ExperimentBeginModal }}
   {{> HcompNoNewTaskModal }}
 </template>
 
 <template name="MturkMainPrompt">
   <div class = "ideator-directions">
-    <label class="directions-header"> Directions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(show/hide)</a>
+    <label class="directions-header"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
     <!-- <div class="row"> -->
       <div id="directions-container">
         <div id="directions-content" class="collapse in">
           <ol>
-            <li>Begin entering ideas for the main prompt here.</li>
-            <li>If you run out of ideas or want some fresh inspiration, hit the <strong>"Inspire Me!"</strong> button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.</li>
-            <li>Continue to ideate until you reach 10 total ideas. If you reach 10 ideas before the time is up, you can either click on the "Exit early" button to complete the HIT or continue generating ideas until the time is up.</li>
+            <li>Your task is to generate as many creative ideas as you can for the brainstorming problem for 10 minutes. When the time is up, you will complete a brief survey, and be taken to a page where you can submit the HIT.</li>
+            <li>If you run out of ideas or want some fresh inspiration, hit the <strong>"Inspire Me!"</strong> button. You will receive an "inspiration card" that contains a question or idea meant to stimulate your thinking.</li>
+            <li>If the inspiration sparks any new ideas, we would like you to enter them directly into that card (ideas unrelated to any inspiration can go in the main idea entry box.</li>
+            <li>If at any time you do not wish to continue, you may exit the study by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
           </ol>
           <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
               2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
@@ -141,5 +161,46 @@
       </div> <!-- close modal-content -->
     </div> <!-- close modal-dialog -->
   </div> <!-- close changeModal -->
+</template>
+
+<!-- #################################### -->
+<!-- ## Template for control condition ##-->
+<!-- #################################### -->
+
+<template name="MturkIdeationPageControl">
+  <div class="hcomp-ideation-pane-control">
+        <div class = "ideation-prompt-control-container">
+            <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
+        </div>
+        <div class="main-prompt">
+            {{> MturkMainPromptControl}}
+        </div>
+        
+    </div>
+    {{> ExperimentBeginModal }}
+</template>
+
+<template name="MturkMainPromptControl">
+  <div class = "ideator-directions-control">
+    <label class="directions-header-control"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
+    <!-- <div class="row"> -->
+      <div id="directions-container-control">
+        <div id="directions-content" class="collapse in">
+          <ol>
+            <li>Your task is to generate as many creative ideas as you can for the brainstorming problem for 10 minutes. When the time is up, you will complete a brief survey, and be taken to a page where you can submit the HIT.</li>
+            <li>If at any time you do not wish to continue, you may exit the study by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
+          </ol>
+          <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
+              2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
+              3) Continue to ideate until the time is up.
+          </p> -->
+        </div>
+      </div>
+    <!-- </div> -->
+  </div>
+  <div class = "general-idea-entry">
+    {{> MturkIdeaEntryBox }}
+    {{> MturkIdeaList }}
+  </div>
 </template>
 
