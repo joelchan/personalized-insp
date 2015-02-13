@@ -696,7 +696,7 @@ var insertExitStudy = function() {
     EventLogger.logExitStudy();
     EventLogger.logEndRole();
     ExperimentManager.logParticipantCompletion(Session.get("currentParticipant"));
-    Router.go("LegionFinalPage", {
+    Router.go("SurveyPage", {
       'partID': Session.get("currentParticipant")._id
     });
   });

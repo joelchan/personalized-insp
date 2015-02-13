@@ -7,7 +7,6 @@ Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
-  EventLogger.logBeginIdeation();
   //Hide logout
   $(".btn-login").toggleClass("hidden");
   //Set height of elements to viewport height
@@ -272,7 +271,8 @@ Template.TaskIdeaList.helpers({
 
 Template.ExperimentBeginModal.events({
   'click .popup-continue' : function() {
-    Participants.update({_id: Session.get("currentParticipant")._id}, 
-      {$set: {hasStarted: true}});
+    EventLogger.logBeginIdeation();
+    // Participants.update({_id: Session.get("currentParticipant")._id}, 
+    //   {$set: {hasStarted: true}});
   },
 });

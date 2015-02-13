@@ -25,6 +25,10 @@ Template.SurveyPage.rendered = function() {
         $("#lang2Text").toggleClass("hidden");
       } 
     });
+
+    var userID = Session.get("currentParticipant").userID;
+    Session.set("currentUser",MyUsers.findOne({_id: userID}));
+
     //Scroll to top
     window.scrollTo(0,0);
     EventLogger.logSurveyBegan();
@@ -64,10 +68,12 @@ Template.SurveyPage.events({
       resp._id = SurveyResponses.insert(resp);
       EventLogger.logSubmittedSurvey(part, resp);
       //Mark participant as finished
-      Participants.update({_id: part._id},
-          {$set: {hasFinished: true}});
+      ExperimentManager.logParticipantCompletion(part);
+      // Participants.update({_id: part._id},
+      //     {$set: {hasFinished: true}});
       //console.log("formsubmitted");
-      Router.goToNextPage("SurveyPage");
+      Router.go("LegionFinalPage", {'partID': part._id});
+      // Router.goToNextPage("SurveyPage");
     } catch (err) {
       console.log(err);
       alert("Please complete all questions in the survey before continuing");
