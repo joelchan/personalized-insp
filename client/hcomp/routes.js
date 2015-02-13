@@ -509,6 +509,42 @@ Router.map(function () {
 
   });
 
+  this.route('SurveyPage', {
+    path: 'crowd/survey/:partID/',
+    template: 'SurveyPage',
+    waitOn: function() {
+      logger.debug("Waiting on...");
+      return [
+        Meteor.subscribe('prompts'),
+        Meteor.subscribe('myUsers'),
+      ];
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var part = Participants.findOne({_id: this.params.partID});
+          Session.set("currentParticipant", part);
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    },
+
+  });
+
   this.route('LegionFinalPage', {
     path: 'crowd/finished/:partID/',
   	template: 'LegionFinalPage',

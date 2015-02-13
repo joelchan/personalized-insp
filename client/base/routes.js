@@ -75,10 +75,10 @@ Router.map(function () {
     path: 'FinalizePage/:_id',
     template: 'FinalizePage'
   });
-  this.route('SurveyPage', {
-    path: 'SurveyPage/:_id',
-    template: 'SurveyPage'
-  });
+  // this.route('SurveyPage', {
+  //   path: 'SurveyPage/:_id',
+  //   template: 'SurveyPage'
+  // });
   this.route('IdeationSurvey', {
     path: 'IdeationSurvey/',
     template: 'IdeationSurvey'

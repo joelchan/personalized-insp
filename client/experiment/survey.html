@@ -1,9 +1,29 @@
 <template name="SurveyPage">
-<div class="container">
+  <div class="container">
+    
+    {{> SurveyDirections }}
+
+    {{> SurveyDemographics }}
+
+    {{#if isTreatment}}
+      {{> SurveyInspiration }}
+    {{/if}}
+
+    {{> SurveyInterfaceFeedback }}
+
+    {{> SurveySubmit }}
+    
+  </div>
+</template>
+
+<template name="SurveyDirections">
   <div class="directions">
     <h2>Directions:</h2>
     <p>Please complete the following survey questions</p>
   </div>
+</template>
+
+<template name="SurveyDemographics">
   <form class="surveyForm">
     <div class="row formQuestion">
       <div class="question">Gender:*</div><br/>
@@ -33,7 +53,7 @@
       <div class="question">What country do you call home?: *</div><br/>
       <input type="text" class="shortText" name="ethnicity">
     </div>
-    <div class="row formQuestion">
+    <!-- <div class="row formQuestion">
       <div class="question">Do you currently or have you ever owned either an ipod or an mp3 player of any sort?: *</div><br/>
       <input type="radio" class="radioButton" name="ipod" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="ipod" value="false">No
@@ -42,7 +62,7 @@
       <div class="question">Do you currently or have you ever owned a smartphone?: *</div><br/>
       <input type="radio" class="radioButton" name="smartphone" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="smartphone" value="false">No
-    </div>
+    </div> -->
     <div class="row formQuestion">
       <div class="question">How often do you do brainstorming-type activities at your work?: *</div><br/>
       <select id="brainstorming">
@@ -53,15 +73,25 @@
         <option value="1">Never</option>
       </select>
     </div>
+  </form>
+</template>
+
+<template name="SurveyInspiration">
+  <form class="surveyForm">
     <div class="row formQuestion">
-      <div class="question">Did you find any of the suggested ideas helpful?: *</div><br/>
-      <input type="radio" class="radioButton" name="ideaRecall" value="true">Yes<br/>
-      <input type="radio" class="radioButton" name="ideaRecall" value="false">No
+      <div class="question">Did you find any of the suggested inspirations helpful?: *</div><br/>
+      <input type="radio" class="radioButton" name="inspirationHelpful" value="true">Yes<br/>
+      <input type="radio" class="radioButton" name="inspirationHelpful" value="false">No
     </div>
     <div class="row formQuestion">
-      <div class="question">What was one of the example ideas given?:*</div><br/>
-      <textArea id="exampleIdeaSurvey" class="survey-textbox"></textarea>
+      <div class="question">Please briefly explain why or why not:*</div><br/>
+      <textArea id="inspirationExplainSurvey" class="survey-textbox"></textarea>
     </div>
+  </form>
+</template>
+
+<template name="SurveyInterfaceFeedback">
+  <form class="surveyForm">
     <div class="row formQuestion">
       <div class="question">Is there anything about the activity that you found particularly challenging?:</div><br/>
       <textArea id="activityLikeSurvey" class="survey-textbox"></textarea>
@@ -75,11 +105,12 @@
       <textArea id="intDislikeSurvey" class="survey-textbox"></textarea>
     </div>
   </form>
+</template>
 
-    <button id="submit" class="submitForm btn-xlarge2 btn-default btn-primary">
-     Submit 
-    </button>
-</div>
+<template name="SurveySubmit">
+  <button id="submit" class="submitForm btn-xlarge2 btn-default btn-primary">
+   Submit 
+  </button>
 </template>
 
 <template name="IdeationSurvey">
