@@ -184,8 +184,9 @@ ExperimentManager = (function () {
               logger.debug(numPartWanted + " participants wanted for " + cond.description + " condition, " + numPartAssigned + " assigned so far");
               
               // Square the number to heavily bias in favor conditions with fewer assigned participants
-              var thisCutOff = Math.pow((numPartWanted - numPartAssigned),2);
-              
+              var numToRecruit = numPartWanted - numPartAssigned;
+              logger.debug("Need to recruit " + numToRecruit + " for " + cond.description);
+              var thisCutOff = Math.pow(numToRecruit,3);
               // Construct the sampling space
               // Each element in cutOffs is a condition
               if (cutOffs.length == 0) {
@@ -193,7 +194,7 @@ ExperimentManager = (function () {
                 cutOffs.push(thisCutOff);  
               } else {
                 var priorCutOff = cutOffs[0];
-                for (var j=0; j<cutOffs.length; j++) {
+                for (var j=1; j<cutOffs.length; j++) {
                   // logger.trace("priorCutOff = " + priorCutOff);
                   priorCutOff += cutOffs[j];
                 }
@@ -203,6 +204,16 @@ ExperimentManager = (function () {
               }
             }
             logger.trace("Number line is :" + JSON.stringify(cutOffs));
+            var max = cutOffs[cutOffs.length-1]
+            for (var i=0; i<cutOffs.length; i++) {
+              if (i==0) {
+                var p = cutOffs[i]/max;
+              } else {
+                var p = (cutOffs[i]-cutOffs[i-1])/max;
+              }
+              var cName = exp.conditions[i].description;
+              logger.trace("Probability of sampling " + cName + ": " + p);
+            }
         }
         
         // Randomly assign to any condition if experiment is full
@@ -213,7 +224,6 @@ ExperimentManager = (function () {
         } else {
 
             // Define the sample space to draw from
-            var max = cutOffs[cutOffs.length-1];
             logger.trace("Max for sample is " + max);
             
             // Randomly sample a number
