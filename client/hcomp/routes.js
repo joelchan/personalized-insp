@@ -712,7 +712,7 @@ var initRolePage = function() {
       var timerTemplate = UI.render(Template.Timer);
       UI.insert(timerTemplate, $('#nav-right')[0]);
       //Setup timer for decrementing onscreen timer with 17 minute timeout
-      Session.set("timeLeft", prompt.length + 1);
+      Session.set("timeLeft", prompt.length);
       $('#time').text(prompt.length);
       if (Session.get("hasTimer") && !Session.get("tutorialTimer")) {
         Meteor.setTimeout(decrementTimer, 60000);
