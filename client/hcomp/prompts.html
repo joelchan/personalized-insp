@@ -177,9 +177,11 @@
           <input type="text" id="exp-title" class="modal-box" placeholder="Experiment name">
           
           <h5>Choose brainstorming prompt:</h5>
-          {{#each prompts}}
-            {{> ExperimentPromptItem }}
-          {{/each}}
+          <div class="exp-prompt-list">
+            {{#each prompts}}
+              {{> ExperimentPromptItem }}
+            {{/each}}
+          </div>
 
           <h4>Target number of participants per condition</h4>
           <input type="number" id="num-parts" class="modal-number-input" placeholder="participants">

@@ -91,3 +91,8 @@
 #newExpModal {
   height: 100%;
 }
+
+.exp-prompt-list {
+  max-height: 250px;
+  overflow:scroll;
+}

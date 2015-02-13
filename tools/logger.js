@@ -111,7 +111,7 @@ EventLogger = (function () {
     logBeginIdeation: function() {
       var msg = "User began ideation";
       var type = EventTypeManager.get(msg);
-      this.log(type, data);
+      this.log(type);
     },
 
     logEndRole: function() {
