@@ -48,17 +48,17 @@ Template.MturkIdeationPageControlTutorial.rendered = function(){
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
   //Setup Facilitation push to synthesis listener
-  MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-        logger.info("change to current user detected");
-        logger.trace(newDoc.route);
-        var route = newDoc.route;
-        logger.debug("Going to page with route: " + route);
-        var partID = Session.get("currentParticipant")._id;
-        logger.debug("partID: " + partID);
-        Router.go(route, {'partID': partID});
-    },
-  });
+  // MyUsers.find({_id: Session.get("currentUser")._id}).observe({
+  //   changed: function(newDoc, oldDoc) {
+  //       logger.info("change to current user detected");
+  //       logger.trace(newDoc.route);
+  //       var route = newDoc.route;
+  //       logger.debug("Going to page with route: " + route);
+  //       var partID = Session.get("currentParticipant")._id;
+  //       logger.debug("partID: " + partID);
+  //       Router.go(route, {'partID': partID});
+  //   },
+  // });
 };
 
 
@@ -372,20 +372,6 @@ Template.MturkIdeationPageTreatmentTutorial.rendered = function(){
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
-  //Setup Facilitation push to synthesis listener
-  MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-        logger.info("change to current user detected");
-        logger.trace(newDoc.route);
-        var route = newDoc.route;
-        logger.debug("Going to page with route: " + route);
-        var promptID = Session.get("currentPrompt")._id;
-        logger.debug("promptID: " + promptID);
-        var userID = Session.get("currentUser")._id;
-        logger.debug("userID: " + userID);
-        Router.go(route, {'promptID': promptID, 'userID': userID}); 
-    },
-  });
 };
 
 Template.MturkTaskListsTreatmentTutorial.helpers({
