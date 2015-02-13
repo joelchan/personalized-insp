@@ -381,19 +381,18 @@ Template.MturkTaskListsTreatmentTutorial.helpers({
 //    logger.trace(assignments);
 //    var taskIDs = getValsFromField(assignments, 'taskID');
 //    logger.trace(taskIDs);
-      var allTasks = DummyTasks.find().fetch();
-      var tasks = []
-      logger.trace("My taskIDs is now: " + myTaskIDs);
-      for (var i=0; i<myTaskIDs.length; i++) {
-          tasks.push(DummyTasks.findOne({_id: myTaskIDs[i]}));
-      }
+      var allMyTasks = DummyTasks.find({
+        authorID: Session.get("currentUser")._id,
+        promptID: Session.get("currentPrompt")._id,
+      }, {sort: {time: -1}});
+      
 //    var tasks = DummyTasks.find({_id: {$in: myTaskIDs}}).fetch();
 //    for (var i=0; i<taskIDs.length; i++) {
 //      tasks.push(DummyTasks.findOne({_id: taskIDs[i]}));
 //    };
     //var tasks = Tasks.find({_id: {$in: taskIDs}});
     //Sort tasks by assignment time
-    return tasks;
+    return allMyTasks;
   },
   prompt: function() {
     var prompt = Session.get("currentPrompt");
@@ -413,7 +412,6 @@ Template.MturkTaskListsTreatmentTutorial.events({
       
     logger.debug("Retrieving a new task"); 
 //    var task = DummyTasks.findOne({_id: {$nin: myTaskIDs}});
-     myTaskIDs.push(dummy1._id);
       
       DummyTasks.update({_id: dummy1._id}, {$push: {assignments: Session.get("currentUser")}});
       
