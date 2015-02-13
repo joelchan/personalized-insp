@@ -13,18 +13,23 @@ ExperimentManager = (function () {
   ****************************************************************/
   return {
 
-    createExp: function(promptID) {
+    createExp: function(promptID, desc, numParts) {
       /**************************************************************
        * Create a new experiment
        * @Params
        *    promptID - id of the prompt for the experiment
        * @Return
-       *    boolean - true if successful creation of experiment
+       *    expID - id of created experiment, false if unsuccessful
+       *    desc (string, optional) - name of experiment
+       *    numParts (int, optional) - desired number of participants per condition
        * ***********************************************************/
        logger.trace("Beginning ExperimentManager.createExp");
        if (promptID) {
          logger.trace("Creating new experiment object for prompt: " + promptID);
          var exp = new Experiment(promptID);
+         if (desc) {
+          exp.description = desc
+         }
          expID = Experiments.insert(exp);
          if (expID) {
            logger.trace("Successfully created new experiment with id " + expID);
@@ -35,15 +40,15 @@ ExperimentManager = (function () {
            
            // create experimental conditions
            // parameters are currently hard-coded
-           var control = this.createExpCond(expID, promptID, "Control", 25);
-           var treatment = this.createExpCond(expID, promptID, "Treatment", 25);
+           var control = this.createExpCond(expID, promptID, "Control", numParts);
+           var treatment = this.createExpCond(expID, promptID, "Treatment", numParts);
            Experiments.update({_id: expID},
             {$set: {conditions: [control,treatment]}});
            
            // initialize group references
            this.initGroupRefs(Experiments.findOne({_id: expID}));
 
-         return true;
+         return expID;
         } else {
          return false
         } 
