@@ -272,7 +272,7 @@ Template.TaskIdeaList.helpers({
 Template.ExperimentBeginModal.events({
   'click .popup-continue' : function() {
     EventLogger.logBeginIdeation();
-    // Participants.update({_id: Session.get("currentParticipant")._id}, 
-    //   {$set: {hasStarted: true}});
+    Participants.update({_id: Session.get("currentParticipant")._id}, 
+      {$set: {hasStarted: true}});
   },
 });
