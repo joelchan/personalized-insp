@@ -50,11 +50,9 @@ Template.MturkIdeationPageControlTutorial.rendered = function(){
         logger.trace(newDoc.route);
         var route = newDoc.route;
         logger.debug("Going to page with route: " + route);
-        var promptID = Session.get("currentPrompt")._id;
-        logger.debug("promptID: " + promptID);
-        var userID = Session.get("currentUser")._id;
-        logger.debug("userID: " + userID);
-        Router.go(route, {'promptID': promptID, 'userID': userID}); 
+        var partID = Session.get("currentParticipant")._id;
+        logger.debug("partID: " + partID);
+        Router.go(route, {'partID': partID});
     },
   });
 };
