@@ -151,8 +151,8 @@ ExperimentManager = (function () {
     getRandomCondition: function(exp) {
         /****************************************************************
         * Get a random condition from the experiment
-        * Probably of sampling a condition should be inversely proportional
-        * to the number of completed participants
+        * Probably of sampling a condition is inversely proportional
+        * to the number of assigned participants
         * should return cond id
         ****************************************************************/
         //Create an array with length = number of slot
@@ -172,44 +172,50 @@ ExperimentManager = (function () {
             for (var i=0; i<exp.conditions.length; i++) {
               
               //Determin number of participants expected - number already 
-              //  assigned and completed
+              //  assigned
               var numPartWanted = exp.conditions[i].partNum;
               var cond = Conditions.findOne({_id: exp.conditions[i]._id})
               var numPartAssigned = cond.assignedParts.length;
               logger.debug(numPartWanted + " participants wanted for " + cond.description + " condition, " + numPartAssigned + " assigned so far");
+              
+              // Square the number to heavily bias in favor conditions with fewer assigned participants
               var thisCutOff = Math.pow((numPartWanted - numPartAssigned),2);
+              
+              // Construct the sampling space
+              // Each element in cutOffs is a condition
               if (cutOffs.length == 0) {
                 logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
                 cutOffs.push(thisCutOff);  
               } else {
                 var priorCutOff = cutOffs[0];
                 for (var j=0; j<cutOffs.length; j++) {
-                  logger.trace("priorCutOff = " + priorCutOff);
+                  // logger.trace("priorCutOff = " + priorCutOff);
                   priorCutOff += cutOffs[j];
                 }
                 thisCutOff += priorCutOff
                 logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
                 cutOffs.push(thisCutOff);
               }
-              
-              // for (var j=0; j<samplingWeight; j++) {
-              //   slots.push(i);
-              // }  
             }
             logger.trace("Number line is :" + JSON.stringify(cutOffs));
         }
         
-        //Randomly assign to any condition if experiment is full
+        // Randomly assign to any condition if experiment is full
         if (cutOffs.length == 0) {
             randCond = getRandomElement(exp.conditions);
             logger.trace("Randomly drew " + randCond.description + " condition");
             return randCond._id;
         } else {
-            // var condIndex = getRandomElement(slots);
+
+            // Define the sample space to draw from
             var max = cutOffs[cutOffs.length-1];
             logger.trace("Max for sample is " + max);
+            
+            // Randomly sample a number
             var sample = Math.random() * (max-1) + 1;
             logger.trace("Drew random sample: " + sample);
+            
+            // Sample a condition
             var condIndex;
             for (var i=0; i<cutOffs.length; i++) {
               logger.trace("Comparing sample to cutoff: " + cutOffs[i]);
