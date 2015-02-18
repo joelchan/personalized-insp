@@ -220,7 +220,8 @@ Template.MturkTaskLists.events({
     EventLogger.logRequestInspiration(Session.get("currentPrompt"));
     var task = TaskManager.assignTask(
       Session.get("currentPrompt"),
-      Session.get("currentUser")
+      Session.get("currentUser"),
+      Session.get("currentExp").groupID
     );
    if (task) {
       logger.info("Got a new task");

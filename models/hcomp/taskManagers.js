@@ -93,9 +93,10 @@ TaskManager = (function() {
       return task;
 
     },
-    assignTask: function(prompt, user) {
+    assignTask: function(prompt, user, groupID) {
       logger.debug("assigning a task");
-      var tasks = Tasks.find({promptID: prompt._id}, 
+      var tasks = Tasks.find({promptID: prompt._id,
+          groupID: groupID}, 
           {sort: {priority: -1, time: -1}}).fetch()
       logger.trace(tasks);
       for (var i=0; i<tasks.length; i++) {
