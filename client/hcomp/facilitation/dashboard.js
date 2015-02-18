@@ -58,6 +58,7 @@ Template.HcompDashboard.rendered = function(){
   // make sure we start with a clean slate on render
   FilterManager.reset("Tasks Filter", Session.get("currentUser"), "tasks");
   FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
+  FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "groupID", Session.get("currentExp").groupID);
   
 };
 
