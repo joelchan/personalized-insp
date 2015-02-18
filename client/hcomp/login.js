@@ -60,13 +60,13 @@ Template.MturkLoginPage.events({
                 var condName = Conditions.findOne({_id: part.conditionID}).description;
                 var routeName = "MturkIdeation" + condName;
                 logger.debug("Sending to " + routeName);
-                Router.go(routeName, {partID: part._id});  
+                Router.go(routeName, {promptID: exp.promptID, partID: part._id});  
               } else {
                 logger.trace("Participant has been assigned but not yet completed tutorial");
                 var condName = Conditions.findOne({_id: part.conditionID}).description;
                 var routeName = "Tutorial" + condName;
                 logger.debug("Sending to " + routeName);
-                Router.go(routeName, {partID: part._id});  
+                Router.go(routeName, {promptID: exp.promptID, partID: part._id});  
               }
             }
           } else {

@@ -178,7 +178,7 @@ Template.MturkTaskLists.helpers({
     logger.debug("Getting a list of all tasks assigned to current user");
     var assignments = 
       Assignments.find({userID: Session.get("currentUser")._id,
-        promptID: Session.get("currentPrompt")._id}, 
+        promptID: Session.get("currentPrompt")._id},
         {sort: {'assignmentTime': -1}}).fetch();
     logger.trace(assignments);
     var taskIDs = getValsFromField(assignments, 'taskID');
@@ -200,7 +200,8 @@ Template.MturkTaskLists.helpers({
   tasksAvailable: function(){
       var prompt = Session.get("currentPrompt");
       var user = Session.get("currentUser");
-      var result = TaskManager.areTasksAvailable(prompt, user);
+      var groupID = Session.get("currentExp").groupID;
+      var result = TaskManager.areTasksAvailable(prompt, user, groupID);
       logger.trace("*********RESULT = " + result);
       if (result == false) {
           logger.trace("JS TASK NOT AVAILABLE");

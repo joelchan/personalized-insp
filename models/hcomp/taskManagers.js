@@ -120,10 +120,12 @@ TaskManager = (function() {
        * current user
        * Helper to disable and enable the inspire me button 
        * **********************************************************/
-    areTasksAvailable: function(prompt, user) {
-        var tasks = Tasks.find({promptID: prompt._id}, 
-          {assignments: {$nin: [user._id]}}).fetch();
-      logger.trace("THE AVAILABLE TASKS ARE  " + tasks);
+    areTasksAvailable: function(prompt, user, groupID) {
+      logger.trace("Getting tasks for group: " + groupID);
+      var tasks = Tasks.find({promptID: prompt._id, 
+        groupID: groupID},
+        {assignments: {$nin: [user._id]}}).fetch();
+      logger.trace("THE AVAILABLE TASKS ARE  " + JSON.stringify(tasks));
       logger.trace("TASK LENGTH IS = " + tasks.length);
       for (var i=0; i<tasks.length; i++) {
         var task = tasks[i];
