@@ -225,9 +225,9 @@ Template.MturkTaskLists.events({
       logger.info("Got a new task");
       EventLogger.logInspirationRequestSuccess(
         Session.get("currentPrompt"),
-        dummy1
+        task
       );
-      logger.trace(task);
+      logger.trace("New task is: " + JSON.stringify(task));
     } else {
       logger.info("No new task was assigned");
       EventLogger.logInspirationRequestFail(
