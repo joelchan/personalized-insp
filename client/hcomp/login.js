@@ -31,22 +31,22 @@ Template.MturkLoginPage.events({
             var alias = $('input#nickname').val().trim();
             LoginManager.setAlias(alias, user);
           }
-          var group;
-          if (prompt.groupIDs.length == 0) {
-            group = GroupManager.create(prompt.template);
-            PromptManager.addGroups(prompt, [group]);
-          } else {
-            group = Groups.findOne({_id: prompt.groupIDs[0]});
-          }
-          var role;
-          if (!GroupManager.hasUser(group, user)) {
-            role = RoleManager.defaults['HcompIdeator'];
-            GroupManager.addUser(group, user, role.title);
-          } else {
-            role = GroupManager.getRole(group, user);
-          }
-          Session.set("currentRole", role);
-          Session.set("currentGroup", group);
+          // var group;
+          // if (prompt.groupIDs.length == 0) {
+          //   group = GroupManager.create(prompt.template);
+          //   PromptManager.addGroups(prompt, [group]);
+          // } else {
+          //   group = Groups.findOne({_id: prompt.groupIDs[0]});
+          // }
+          // var role;
+          // if (!GroupManager.hasUser(group, user)) {
+          //   role = RoleManager.defaults['HcompIdeator'];
+          //   GroupManager.addUser(group, user, role.title);
+          // } else {
+          //   role = GroupManager.getRole(group, user);
+          // }
+          // Session.set("currentRole", role);
+          // Session.set("currentGroup", group);
           Session.set("currentPrompt", prompt);
           EventLogger.logUserLogin();
           var exp = Session.get("currentExp");

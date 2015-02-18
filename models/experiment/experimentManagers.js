@@ -309,8 +309,7 @@ ExperimentManager = (function () {
         
         // assign to a condition
         var condID = this.getRandomCondition(exp);
-        var groupID = Session.get("currentGroup")._id;
-        var part = new Participant(exp._id, user._id, condID, groupID)
+        var part = new Participant(exp._id, user._id, condID, exp.groupID)
         part._id = Participants.insert(part);
 
         // log assignment to the experiment
@@ -320,7 +319,7 @@ ExperimentManager = (function () {
         Conditions.update({_id: condID}, {$push: {assignedParts: part._id}});
 
         // log assignment to the group in the Experiments collection
-        var groupAssignField = "groups." + groupID;
+        var groupAssignField = "groups." + exp.groupID;
         Experiments.update({_id: exp._id}, {$set: {groupAssignField: condID}});
 
         logger.trace("Added new participant with id " + part._id);

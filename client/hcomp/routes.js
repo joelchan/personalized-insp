@@ -132,10 +132,10 @@ Router.map(function () {
         }
         var prompt = Prompts.findOne({_id: this.params.promptID});
         if (prompt) {
-          var group = Groups.findOne({_id: prompt.groupIDs[0]})
+          
           logger.debug("setting current prompt");
           Session.set("currentPrompt", prompt);
-          Session.set("currentGroup", group);
+          
           // FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
           // FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
           // FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
@@ -151,6 +151,8 @@ Router.map(function () {
         if (exp) {
           logger.debug("setting current exp");
           Session.set("currentExp",exp);
+          var group = Groups.findOne({_id: exp.groupID})
+          Session.set("currentGroup", group);
           // createDefaultIdeasFilter("Ideas Filter");
           // createDefaultIdeasFilter("IdeaWordCloud Filter");
         } else {
