@@ -121,9 +121,10 @@ TaskManager = (function() {
        * Helper to disable and enable the inspire me button 
        * **********************************************************/
     areTasksAvailable: function(prompt, user) {
-        var tasks = Tasks.find({promptID: prompt._id}, {assignments: {$nin: [user._id]}}).fetch();
+        var tasks = Tasks.find({promptID: prompt._id}, 
+          {assignments: {$nin: [user._id]}}).fetch();
       logger.trace("THE AVAILABLE TASKS ARE  " + tasks);
-        logger.trace("TASK LENGTH IS = " + tasks.length);
+      logger.trace("TASK LENGTH IS = " + tasks.length);
       for (var i=0; i<tasks.length; i++) {
         var task = tasks[i];
         logger.trace("looking at task: ");
@@ -137,8 +138,8 @@ TaskManager = (function() {
             } 
         }   
       }
-        logger.trace("TASKMANAGER TASK NOT AVAILABLE");
-        return false;
+      logger.trace("TASKMANAGER TASK NOT AVAILABLE");
+      return false;
     },
       
     isAssignedToTask: function (task, user) {
