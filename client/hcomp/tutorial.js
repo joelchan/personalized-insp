@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Tutorial');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
+//Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'debug');
-//Logger.setLevel('Client:Hcomp:Tutorial', 'info');
+Logger.setLevel('Client:Hcomp:Tutorial', 'info');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'warn');
 var myTaskIDs = [];
     
@@ -15,7 +15,7 @@ Template.TutorialControl.rendered = function() {
     // Setup Facilitation push to synthesis listener
     logger.trace("Rendering tutorial control page");
     MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-    changed: function(newDoc, oldDoc) {
+      changed: function(newDoc, oldDoc) {
         logger.info("change to current user detected");
         logger.trace("oldDoc: " + JSON.stringify(oldDoc));
         logger.trace("newDoc: " + JSON.stringify(newDoc));
@@ -25,8 +25,9 @@ Template.TutorialControl.rendered = function() {
         var partID = Session.get("currentParticipant")._id;
         logger.debug("partID: " + partID);
         Router.go(route, {'partID': partID});
-    },
-  });    
+      },
+    });    
+    EventLogger.logTutorialStarted();
 }
 
 //Template.TutorialControl.events({
@@ -35,6 +36,9 @@ Template.TutorialControl.rendered = function() {
     //},
 //});
 
+Template.MturkIdeationPageControl.rendered = function(){
+  EventLogger.logBeginIdeation(); 
+};
 Template.MturkIdeationPageControlTutorial.rendered = function(){
   //Hide logout
   $(".btn-login").toggleClass("hidden");
@@ -44,19 +48,17 @@ Template.MturkIdeationPageControlTutorial.rendered = function(){
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
   //Setup Facilitation push to synthesis listener
-  MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-        logger.info("change to current user detected");
-        logger.trace(newDoc.route);
-        var route = newDoc.route;
-        logger.debug("Going to page with route: " + route);
-        var promptID = Session.get("currentPrompt")._id;
-        logger.debug("promptID: " + promptID);
-        var userID = Session.get("currentUser")._id;
-        logger.debug("userID: " + userID);
-        Router.go(route, {'promptID': promptID, 'userID': userID}); 
-    },
-  });
+  // MyUsers.find({_id: Session.get("currentUser")._id}).observe({
+  //   changed: function(newDoc, oldDoc) {
+  //       logger.info("change to current user detected");
+  //       logger.trace(newDoc.route);
+  //       var route = newDoc.route;
+  //       logger.debug("Going to page with route: " + route);
+  //       var partID = Session.get("currentParticipant")._id;
+  //       logger.debug("partID: " + partID);
+  //       Router.go(route, {'partID': partID});
+  //   },
+  // });
 };
 
 
@@ -157,9 +159,6 @@ Template.MturkIdeaEntryBoxTutorial.events({
         Session.get("currentPrompt"),
         true
     );
-    if (idea) {
-      EventLogger.logIdeaSubmission(idea); 
-    }
     // Clear the text field
     inputBox.val('');
     //Adding Idea to list of task ideas if this is a task
@@ -170,6 +169,9 @@ Template.MturkIdeaEntryBoxTutorial.events({
       logger.debug("Adding a new idea to a task");
       logger.trace(this);
       TaskManager.addIdeaToTask(idea, this);
+      EventLogger.logIdeaSubmission(idea, this, true); 
+    } else {
+      EventLogger.logIdeaSubmission(idea, null, true); 
     }
   },
   //waits 3 seconds after user stops typing to change isTyping flag to false
@@ -192,6 +194,7 @@ Template.ControlTutorialFlow.events({
         $("#control-tutorial-timer").addClass("visible-tutorial-control");
         $(".timer").css({border: "10px solid #F5A623","min-width": 150,float: "right",clear: "right", padding: "3px"});
         $(".timer").zIndex(100);
+        EventLogger.logTutorialStepComplete(1,8);
     },
     //Timer
     'click .control-tutorial-timer-gotit': function() {
@@ -201,12 +204,14 @@ Template.ControlTutorialFlow.events({
         $(".timer").zIndex(0);
         $(".exitStudy").css({border: "10px solid #F5A623"});
         $(".exitStudy").zIndex(51);
+        EventLogger.logTutorialStepComplete(2,8);
     },
     'click .control-tutorial-timer-goback': function() {
         $("#control-tutorial-timer").removeClass("visible-tutorial-control");
         $("#control-tutorial-welcome").addClass("visible-tutorial-control");
         $(".timer").css({border: "none"});
         $(".timer").zIndex(0);
+        EventLogger.logTutorialStepRewind(2,8);
     },
     //Exit Early
     'click .control-tutorial-exit-gotit': function() {
@@ -222,12 +227,14 @@ Template.ControlTutorialFlow.events({
         });
         $(".exitStudy").css({border: "none"});
         $(".exitStudy").zIndex(1);
+        EventLogger.logTutorialStepComplete(3,8);
     },
     'click .control-tutorial-exit-goback': function() {
         $("#control-tutorial-exit").removeClass("visible-tutorial-control");
         $("#control-tutorial-timer").addClass("visible-tutorial-control");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
         $(".exitStudy").css({border: "none"});
+        EventLogger.logTutorialStepRewind(3,8);
     },
     //Prompt
     'click .control-tutorial-prompt-gotit': function() {
@@ -243,6 +250,7 @@ Template.ControlTutorialFlow.events({
         $(".main-prompt").css({
             "z-index": 60
         });
+        EventLogger.logTutorialStepComplete(4,8);
     },
     'click .control-tutorial-prompt-goback': function() {
         $("#control-tutorial-prompt").removeClass("visible-tutorial-control");
@@ -256,6 +264,7 @@ Template.ControlTutorialFlow.events({
             "<div class='tutorial-backdrop'></div>");
         $(".exitStudy").css({
             border: "10px solid #F5A623"});
+        EventLogger.logTutorialStepRewind(4,8);
     },
     //ideaEntry
     'click .control-tutorial-ideaEntry-gotit': function() {
@@ -263,6 +272,7 @@ Template.ControlTutorialFlow.events({
         $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial-control");
         $("#control-tutorial-ideaEntryTry").removeClass("control-tutorial-background");
         $(".idea-input-box").css({border: "none"});
+        EventLogger.logTutorialStepComplete(5,8);
     },
     'click .control-tutorial-ideaEntry-goback': function() {
         $("#control-tutorial-ideaEntry").removeClass("visible-tutorial-control");
@@ -275,6 +285,7 @@ Template.ControlTutorialFlow.events({
         $(".main-prompt").css({
             "z-index": 20 
         });
+        EventLogger.logTutorialStepRewind(5,8);
     },
     //ideaEntryTry
     'click #control-tutorial-ideaEntryTry-gotit': function() {
@@ -284,12 +295,14 @@ Template.ControlTutorialFlow.events({
         $("#ideator-directions-control").css({border: "10px solid #F5A623"});
         $("#directions-content").removeClass("collapse");
         $("#directions-content").addClass("collapse in");
+        EventLogger.logTutorialStepComplete(6,8);
     },
     'click .control-tutorial-ideaEntryTry-goback': function() {
         $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
         $("#control-tutorial-ideaEntry").addClass("visible-tutorial-control");
         $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
         $(".idea-input-box").css({border: "10px solid #F5A623"});
+        EventLogger.logTutorialStepRewind(6,8);
     },
     //Directions
     'click .control-tutorial-directions-gotit': function() {
@@ -299,23 +312,27 @@ Template.ControlTutorialFlow.events({
         $("#ideator-directions-control").css({border: "none"});
         // Mark the Particiapant as ready to begin the study
         ExperimentManager.logParticipantReady(Session.get("currentParticipant"));
+        EventLogger.logTutorialStepComplete(7,8);
     },
     'click .control-tutorial-directions-goback': function() {
         $("#control-tutorial-directions").removeClass("visible-tutorial-control");
         $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial-control");
         $("#ideator-directions-control").css({border: "none"});
+        EventLogger.logTutorialStepRewind(7,8);
     },
     //Please Wait
     'click .control-tutorial-pleaseWait-gotit': function() {
         $("#control-tutorial-pleaseWait").removeClass("visible-tutorial-control");
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
         $(".tutorial-backdrop").remove();
+        EventLogger.logTutorialStepComplete(8,8);
     },
     'click .control-tutorial-pleaseWait-goback': function() {
         $("#control-tutorial-pleaseWait").removeClass("visible-tutorial-control");
         $("#control-tutorial-directions").addClass("visible-tutorial-control");
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
         $("#ideator-directions-control").css({border: "10px solid #F5A623"});
+        EventLogger.logTutorialStepRewind(8,8);
     },
 });
  
@@ -355,20 +372,6 @@ Template.MturkIdeationPageTreatmentTutorial.rendered = function(){
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
-  //Setup Facilitation push to synthesis listener
-  MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-        logger.info("change to current user detected");
-        logger.trace(newDoc.route);
-        var route = newDoc.route;
-        logger.debug("Going to page with route: " + route);
-        var promptID = Session.get("currentPrompt")._id;
-        logger.debug("promptID: " + promptID);
-        var userID = Session.get("currentUser")._id;
-        logger.debug("userID: " + userID);
-        Router.go(route, {'promptID': promptID, 'userID': userID}); 
-    },
-  });
 };
 
 Template.MturkTaskListsTreatmentTutorial.helpers({
@@ -402,6 +405,7 @@ Template.MturkTaskListsTreatmentTutorial.helpers({
 
 Template.MturkTaskListsTreatmentTutorial.events({ 
   'click .get-task': function(e, t) {
+    EventLogger.logRequestInspiration(Session.get("currentPrompt"));
     document.getElementById("treatment-tutorial-inspireMeTry-gotit").disabled = false;
       
     var groupID = Session.get("currentUser").groupID;
@@ -417,9 +421,16 @@ Template.MturkTaskListsTreatmentTutorial.events({
       
     if (dummy1) {
       logger.info("Got a new task");
+      EventLogger.logInspirationRequestSuccess(
+        Session.get("currentPrompt"),
+        dummy1
+      );
       logger.trace(dummy1);
     } else {
       logger.info("No new task was assigned");
+      EventLogger.logInspirationRequestFail(
+        Session.get("currentPrompt")
+      );
       //alert("Sorry, there are no new tasks. Just keep on trying");
       $("#hcomp-new-task-modal").modal('show');
     }
@@ -475,6 +486,7 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-welcome").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-timer").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
+        EventLogger.logTutorialStepComplete(1,13);
     },
     //Timer
     'click .treatment-tutorial-timer-gotit': function() {
@@ -483,11 +495,13 @@ Template.TreatmentTutorialFlow.events({
         $(".timer").css({border: "none"});
         $(".exitStudy").css({border: "10px solid #F5A623"});
 //        $(".ideation-prompt-treatment").css({"z-index": 100});
+        EventLogger.logTutorialStepComplete(2,13);
     },
     'click .treatment-tutorial-timer-goback': function() {
         $("#treatment-tutorial-timer").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-welcome").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "none"});
+        EventLogger.logTutorialStepRewind(2,13);
     },
     //Exit Early
     'click .treatment-tutorial-exit-gotit': function() {
@@ -506,12 +520,14 @@ Template.TreatmentTutorialFlow.events({
             "<div class='tutorial-backdrop'></div>"
         );
         $(".ideation-prompt-treatment").zIndex(60);
+        EventLogger.logTutorialStepComplete(3,13);
     },
     'click .treatment-tutorial-exit-goback': function() {
         $("#treatment-tutorial-exit").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-timer").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
         $(".exitStudy").css({border: "none"});
+        EventLogger.logTutorialStepRewind(3,13);
     },
     //Prompt
     'click .treatment-tutorial-prompt-gotit': function() {
@@ -526,6 +542,7 @@ Template.TreatmentTutorialFlow.events({
           "z-index": "60",
           position: "relative"
         });
+        EventLogger.logTutorialStepComplete(4,13);
     },
     'click .treatment-tutorial-prompt-goback': function() {
         $("#treatment-tutorial-prompt").removeClass("visible-tutorial-treatment");
@@ -539,6 +556,7 @@ Template.TreatmentTutorialFlow.events({
             "<div class='tutorial-backdrop'></div>"
         );
         $(".exitStudy").css({border: "10px solid #F5A623"});
+        EventLogger.logTutorialStepRewind(4,13);
     },
     //ideaEntry
     'click .treatment-tutorial-ideaEntry-gotit': function() {
@@ -547,6 +565,7 @@ Template.TreatmentTutorialFlow.events({
 //        $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
         $(".idea-input-box").css({border: "none"});
         $(".general-idea-entry .tutorial-backdrop").remove();
+        EventLogger.logTutorialStepComplete(5,13);
     },
     'click .treatment-tutorial-ideaEntry-goback': function() {
         $("#treatment-tutorial-ideaEntry").removeClass("visible-tutorial-treatment");
@@ -560,6 +579,7 @@ Template.TreatmentTutorialFlow.events({
             border: "10px solid #F5A623",
             "z-index": 60
         });
+        EventLogger.logTutorialStepRewind(5,13);
     },
     
     //ideaEntryTry
@@ -578,6 +598,7 @@ Template.TreatmentTutorialFlow.events({
         $(".general-idea-entry").append(
             "<div class='tutorial-backdrop'></div>"
         );
+        EventLogger.logTutorialStepComplete(6,13);
     },
     'click .treatment-tutorial-ideaEntryTry-goback': function() {
         $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
@@ -595,6 +616,7 @@ Template.TreatmentTutorialFlow.events({
             "<div class='tutorial-backdrop'></div>"
         );
         logger.trace("IDEA ENTRY TRY");
+        EventLogger.logTutorialStepRewind(6,13);
     },
     
     //Inspire Me 
@@ -604,6 +626,7 @@ Template.TreatmentTutorialFlow.events({
 //        $("#treatment-tutorial-inspireMeTry").removeClass("treatment-tutorial-background");
         $(".get-task").css({border: "none"});
         $(".task-list-header .tutorial-backdrop").remove();
+        EventLogger.logTutorialStepComplete(7,13);
     },
     'click .treatment-tutorial-inspireMe-goback': function() {
         $("#treatment-tutorial-inspireMe").removeClass("visible-tutorial-treatment");
@@ -617,6 +640,7 @@ Template.TreatmentTutorialFlow.events({
         //$(".task-list-header").append(
             //"<div class='tutorial-backdrop'></div>"
         //);
+        EventLogger.logTutorialStepRewind(7,13);
     },
     
     //Inspire Me Try 
@@ -636,6 +660,7 @@ Template.TreatmentTutorialFlow.events({
         $(".task-list-header").append(
             "<div class='tutorial-backdrop'></div>"
         );
+        EventLogger.logTutorialStepComplete(8,13);
     },
     'click .treatment-tutorial-inspireMeTry-goback': function() {
         $("#treatment-tutorial-inspireMeTry").removeClass("visible-tutorial-treatment");
@@ -648,6 +673,7 @@ Template.TreatmentTutorialFlow.events({
         $(".task-list-header").append(
             "<div class='tutorial-backdrop'></div>"
         );
+        EventLogger.logTutorialStepRewind(8,13);
     },
     
     //Inspiration Card
@@ -661,6 +687,7 @@ Template.TreatmentTutorialFlow.events({
             //border: "none",
             //"z-index": 20
         //});
+        EventLogger.logTutorialStepComplete(9,13);
     },
     'click .treatment-tutorial-inspirationCard-goback': function() {
         $("#treatment-tutorial-inspirationCard").removeClass("visible-tutorial-treatment");
@@ -671,6 +698,7 @@ Template.TreatmentTutorialFlow.events({
             "z-index": 20
         });
         $(".task-list-header .tutorial-backdrop").remove();
+        EventLogger.logTutorialStepRewind(9,13);
     },
     
     //Inspiration Card Try
@@ -694,6 +722,7 @@ Template.TreatmentTutorialFlow.events({
             border: "none",
             "z-index": 20 
         });
+        EventLogger.logTutorialStepComplete(10,13);
     },
     'click .treatment-tutorial-inspirationCardTry-goback': function() {
         $("#treatment-tutorial-inspirationCardTry").removeClass("visible-tutorial-treatment");
@@ -703,6 +732,7 @@ Template.TreatmentTutorialFlow.events({
             border: "10px solid #F5A623",
            "z-index": 60
         });
+        EventLogger.logTutorialStepRewind(10,13);
     },
     
     //Inspiration Card Many 
@@ -733,6 +763,7 @@ Template.TreatmentTutorialFlow.events({
         $(".hcomp-ideation-pane").zIndex(10);
         $("#directions-content").removeClass("collapse");
         $("#directions-content").addClass("collapse in");
+        EventLogger.logTutorialStepComplete(11,13);
     },
     'click .treatment-tutorial-inspirationCardMany-goback': function() {
         $("#treatment-tutorial-inspirationCardMany").removeClass("visible-tutorial-treatment");
@@ -744,6 +775,7 @@ Template.TreatmentTutorialFlow.events({
             border: "10px solid #F5A623",
             "z-index": 60
         });
+        EventLogger.logTutorialStepRewind(11,13);
     },
     
     //Directions
@@ -763,6 +795,7 @@ Template.TreatmentTutorialFlow.events({
         });
         // Mark the Participant as ready to begin
         ExperimentManager.logParticipantReady(Session.get("currentParticipant"));  
+        EventLogger.logTutorialStepComplete(12,13);
     },
     'click .treatment-tutorial-directions-goback': function() {
         $("#treatment-tutorial-directions").removeClass("visible-tutorial-treatment");
@@ -778,12 +811,14 @@ Template.TreatmentTutorialFlow.events({
             //"<div class='tutorial-backdrop'></div>"
         //);
         $(".task-list-header .tutorial-backdrop").remove();
+        EventLogger.logTutorialStepRewind(12,13);
     },
     //Please Wait
     'click .treatment-tutorial-pleaseWait-gotit': function() {
         $(".tutorial-backdrop").remove();
         $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").addClass("treatment-tutorial-background");
+        EventLogger.logTutorialStepComplete(13,13);
     },
     'click .treatment-tutorial-pleaseWait-goback': function() {
         $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial-treatment");
@@ -795,6 +830,7 @@ Template.TreatmentTutorialFlow.events({
             position: "relative",
             "z-index": 60
         });
+        EventLogger.logTutorialStepRewind(13,13);
     },
 });
 

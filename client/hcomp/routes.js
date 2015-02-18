@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Routes');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Routes', 'trace');
+//Logger.setLevel('Client:Hcomp:Routes', 'trace');
 //Logger.setLevel('Client:Hcomp:Routes', 'debug');
-// Logger.setLevel('Client:Hcomp:Routes', 'info');
+Logger.setLevel('Client:Hcomp:Routes', 'info');
 //Logger.setLevel('Client:Hcomp:Routes', 'warn');
 
 //Maps routes to templates
@@ -307,6 +307,7 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
+        Session.set("tutorialTimer", true);
         this.render();
       } else
         this.render('loading');
@@ -359,6 +360,7 @@ Router.map(function () {
     },
     action: function(){
       if(this.ready()) {
+        Session.set("tutorialTimer", true);
         this.render();
       } else
         this.render('loading');
@@ -373,7 +375,7 @@ Router.map(function () {
   });
   
   this.route('MturkIdeationControl', {
-      path: 'crowd/IdeationC/:partID',
+      path: 'crowd/Ideate/:partID',
       template: 'MturkIdeationPageControl',
 
 //    path: 'crowd/Ideation/:promptID/:userID/',
@@ -442,7 +444,7 @@ Router.map(function () {
   });
   
   this.route('MturkIdeationTreatment', {
-      path: 'crowd/IdeationT/:partID',
+      path: 'crowd/Ideation/:partID',
       template: 'MturkIdeationPage',
 
     waitOn: function() {
@@ -504,6 +506,42 @@ Router.map(function () {
         insertExitStudy();
       }
     }
+
+  });
+
+  this.route('SurveyPage', {
+    path: 'crowd/survey/:partID/',
+    template: 'SurveyPage',
+    waitOn: function() {
+      logger.debug("Waiting on...");
+      return [
+        Meteor.subscribe('prompts'),
+        Meteor.subscribe('myUsers'),
+      ];
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var part = Participants.findOne({_id: this.params.partID});
+          Session.set("currentParticipant", part);
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
+    },
 
   });
 
@@ -674,9 +712,9 @@ var initRolePage = function() {
       var timerTemplate = UI.render(Template.Timer);
       UI.insert(timerTemplate, $('#nav-right')[0]);
       //Setup timer for decrementing onscreen timer with 17 minute timeout
-      Session.set("timeLeft", prompt.length + 1);
+      Session.set("timeLeft", prompt.length);
       $('#time').text(prompt.length);
-      if (Session.get("hasTimer")) {
+      if (Session.get("hasTimer") && !Session.get("tutorialTimer")) {
         Meteor.setTimeout(decrementTimer, 60000);
       }
     }

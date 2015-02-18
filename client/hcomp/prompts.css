@@ -87,3 +87,19 @@
 .hcomp-prompt-list .prompt-panel .prompt {
   margin-top:0px;
 }
+
+#newExpModal {
+  /*min-height:500px;*/
+  height:65%;
+  /*max-height:700px;*/
+  /*overflow: auto;*/
+  /*width:700px;*/
+  position: absolute;
+  left: 25%;
+  top: 25%;
+}
+
+#newExpModal .modal-dialog .modal-content .modal-body .exp-prompt-list {
+  max-height:500px;
+  overflow:scroll;
+}

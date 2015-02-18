@@ -93,8 +93,8 @@ decrementTimer = function decrementTimer() {
     logger.info("Exitting current page");
     //EventLogger.logEndRole();
     //exitPage();
-    ExperimentManager.logParticipantCompletion(Session.get("currentParticipant"));
-    Router.go("LegionFinalPage", {
+    
+    Router.go("SurveyPage", {
       'partID': Session.get("currentParticipant")._id
     });
   }

@@ -32,7 +32,10 @@ EventLogger = (function () {
       var exp = Session.get("currentExperiment");
       if (exp) {
         var part = Session.get("currentParticipant");
-        event['participantID'] = part._id;
+        if (part) {
+          event['participantID'] = part._id;
+          event['conditionID'] = part.conditionID;
+        }
         event['expID'] = exp._id;
       }
         
@@ -77,32 +80,6 @@ EventLogger = (function () {
 
     },
   
-    logExpEvent: function(msg, part, type, misc) {
-      /*
-      *  log an event from an experiment. Similar to event log but
-      *     handles extra fields for experiments
-      *   Input:
-      *   msg - a string describing the event
-      *   type - the type/level of the event logged (default = info)
-      *   part - a participant in the user to associate
-      *   misc - an array of objects to log where each object
-      *         has 2 fields, name and data
-      */ 
-      if (!misc) {
-        misc = []
-      }
-      if (!type) {
-        type = "info"
-      }
-      //Push relevant user fields into misc array
-      misc.push({name: 'userID', data: part._id});
-      misc.push({name: 'expID', data: part.experimentID});
-      //Retrieve user from user fields
-      user = MyUsers.findOne({_id: part.userID});
-      //Log Event
-      this.logEvent(msg, user, type, misc);
-    },
-   
     logUserLogin: function () {
       var msg = "User logged into experiment";
       var type = EventTypeManager.get(msg);
@@ -130,6 +107,11 @@ EventLogger = (function () {
           'role': role.title
       };
       this.log(type, data);
+    },
+    logBeginIdeation: function() {
+      var msg = "User began ideation";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
     },
 
     logEndRole: function() {
@@ -268,13 +250,22 @@ EventLogger = (function () {
     },
 
     /** Ideation events **/
-    logIdeaSubmission: function(idea) {
+    logIdeaSubmission: function(idea, task, tutorial) {
       var msg = "User submitted idea";
       var prompt = Session.get("currentPrompt");
       var type = EventTypeManager.get(msg);
       var data = {"ideaID": idea._id,
           'promptID': prompt._id,
       };
+      if (task) {
+        data['taskID'] = task._id;
+      }
+      if (tutorial) {
+        data['tutorial'] = true;
+      } else {
+        data['tutorial'] = false;
+      }
+
       this.log(type, data);
     },
 
@@ -397,7 +388,59 @@ EventLogger = (function () {
       };
       this.log(type, data);
     },
-
+    logSurveyBegan: function () {
+      var msg = "User began survey";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
+    logSurveyComplete: function () {
+      var msg = "User completed survey";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
+    logTutorialStarted: function () {
+      var msg = "User started a tutorial";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
+    logTutorialComplete: function () {
+      var msg = "User finished a tutorial";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
+    logTutorialStepRewind: function (current, max) {
+      //current is the current step before rewinding
+      var msg = "User rewound a tutorial step";
+      var type = EventTypeManager.get(msg);
+      var data = {"currentTaskStepNum": current, 
+        "taskStepMax": max
+      };
+      this.log(type, data);
+    },
+    logTutorialStepComplete: function (num, max) {
+      var msg = "User finished a tutorial step";
+      var type = EventTypeManager.get(msg);
+      var data = {"taskStepNum": num, "taskStepMax": max};
+      this.log(type, data);
+    },
+    logRequestInspiration: function (prompt) {
+      var msg = "User requested an inspiration";
+      var type = EventTypeManager.get(msg);
+      var data = {"promptID": prompt._id};
+      this.log(type, data);
+    },
+    logInspirationRequestSuccess: function (prompt, task) {
+      var msg = "User received an inspiration";
+      var type = EventTypeManager.get(msg);
+      var data = {"promptID": prompt._id, "taskID": task._id};
+      this.log(type, data);
+    },
+    logInspirationRequestFail: function (prompt) {
+      var msg = "User did not receive an inspiration";
+      var type = EventTypeManager.get(msg);
+      var data = {"promptID": prompt._id};
+      this.log(type, data);
+    },
   };
 }());
 

@@ -33,6 +33,26 @@ Template.CrowdBrainstorm.rendered = function() {
   });
 };
 
+Template.NewExperimentModal.helpers({
+  prompts: function() {
+    logger.trace("Getting prompts...");
+    return Prompts.find();
+  },
+});
+
+Template.ExperimentPromptItem.helpers({
+  question: function() {
+    return this.question;
+  },
+  timeLimit: function() {
+    if (this.length > 0) {
+      return this.length;
+    } else {
+      return "No time limit";
+    }
+  },
+});
+
 Template.CrowdExperiment.helpers({
   desc: function() {
     return this.description;
@@ -40,6 +60,14 @@ Template.CrowdExperiment.helpers({
   question: function() {
     var prompt = Prompts.findOne({_id: this.promptID});
     return prompt.question;
+  },
+  timeLimit: function() {
+    var prompt = Prompts.findOne({_id: this.promptID});
+    if (prompt.length = -1) {
+      return "Unlimited";
+    } else {
+      return prompt.length;  
+    }
   },
   expURL: function() {
     return this.url;
@@ -160,8 +188,6 @@ Template.CrowdBrainstorm.events({
   //},
 });
 
-
-
 /********************************************************************
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
@@ -192,6 +218,29 @@ Template.CrowdPromptPage.events({
       PromptManager.addGroups(newPrompt, group);
       GroupManager.addUser(group, Session.get("currentUser"),
           RoleManager.defaults['HcompFacilitator'].title);
+    },
+
+    'click button.createExp': function () {
+      logger.trace("clicked create exp button");
+      
+      // get the prompt selection
+      var promptID = $('input[name=promptRadios]:checked').val();
+      logger.trace("Selected prompt id: " + promptID);
+      // promptID = promptID.split("-")[1];
+      var prompt = Prompts.findOne({'_id': promptID});
+
+      // get other data
+      var expTitle = $('input#exp-title').val();
+      var numParts = parseInt($("input#num-parts").val());
+
+      if (prompt) {
+        logger.trace("found current prompt with id: " + prompt._id);  
+      }
+      expID = ExperimentManager.createExp(prompt._id, expTitle, numParts);
+
+      logger.trace("Experiment title: " + expTitle);
+      logger.trace("Number of participants: " + numParts);
+
     },
 
     'click .dash-button': function () {
@@ -263,15 +312,6 @@ Template.CrowdPromptPage.events({
         logger.error("couldn't find current prompt with id: " + 
             prompt._id);
       }
-    },
-
-    'click .create-exp-button': function () {
-      logger.trace("clicked create exp button");
-      var prompt = Prompts.findOne({'_id': this._id});
-      if (prompt) {
-        logger.trace("found current prompt with id: " + prompt._id);  
-      }
-      ExperimentManager.createExp(prompt._id);
     },
 
 });

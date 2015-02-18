@@ -175,8 +175,8 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
 
 
 if __name__ == '__main__':
-    clear_db(mongohq.ideagens)
+    clear_db(mongohq.local_meteor)
    # dump_db('data/hcompTest', mongohq.ideagens)
-    restore_db('data/hcompTest', mongohq.ideagens)
+    restore_db('data/hcompTest', mongohq.local_meteor)
     # get_data_output('data/hcompTest', mongohq.ideagens)
 

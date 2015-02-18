@@ -96,4 +96,3 @@ isInList = function(member, list, field, compare) {
   });
   return result;
 };
-

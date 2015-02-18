@@ -239,7 +239,7 @@ getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
 	var filteredIdeas = FilterManager.performQuery(ideasFilterName, 
 		  Session.get("currentUser"), 	
 		  "ideas").fetch();
-	logger.trace("Unsorted ideas: " + JSON.stringify(filteredIdeas));
+	// logger.trace("Unsorted ideas: " + JSON.stringify(filteredIdeas));
 
 	// apply search query, if it exists
 	var query = Session.get("searchQuery");
