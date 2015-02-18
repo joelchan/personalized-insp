@@ -224,8 +224,9 @@ Template.CrowdPromptPage.events({
       logger.trace("clicked create exp button");
       
       // get the prompt selection
-      var promptID = $('input[name=promptRadios]:checked').attr('id');
-      promptID = promptID.split("-")[1];
+      var promptID = $('input[name=promptRadios]:checked').val();
+      logger.trace("Selected prompt id: " + promptID);
+      // promptID = promptID.split("-")[1];
       var prompt = Prompts.findOne({'_id': promptID});
 
       // get other data
