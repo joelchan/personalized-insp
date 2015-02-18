@@ -45,8 +45,11 @@ ExperimentManager = (function () {
            Experiments.update({_id: expID},
             {$set: {conditions: [control,treatment]}});
            
-           // initialize group references
-           this.initGroupRefs(Experiments.findOne({_id: expID}));
+           // create a group for the experiment
+           this.addExpGroup(Experiments.findOne({_id: expID}))
+
+           // initialize group reference
+           // this.initGroupRefs(Experiments.findOne({_id: expID}));
 
          return expID;
         } else {
@@ -123,6 +126,7 @@ ExperimentManager = (function () {
       /***********************************************************
       * Initialize object fields for each condition with empty 
       * arrays to contain the groupIDs assigned to that condition
+      * NOW DEPRECATED
       ***********************************************************/
       for (var i=0; i<exp.conditions.length; i++) {
         logger.trace("Initializing group refs for " + exp.conditions[i].description + " condition");
@@ -132,6 +136,20 @@ ExperimentManager = (function () {
       //Update initialized groups to db
       Experiments.update({_id: exp._id},
           {$set: {groups: exp.groups}});
+    },
+
+    addExpGroup: function(exp) {
+      var prompt = Prompts.findOne({_id: exp.promptID});
+      logger.trace("Found prompt for experiment with id " + prompt._id + 
+        ", current groups: " + JSON.stringify(prompt.groupIDs));
+      var group = GroupManager.create(prompt.template);
+      logger.trace("Created new group for experiment: " + JSON.stringify(group));
+      PromptManager.addGroups(prompt, group);
+      logger.trace("Added group to prompt. Current groups are now: " + 
+        JSON.stringify(Prompts.findOne({_id: exp.promptID}).groupIDs));
+      Experiments.update({_id: exp._id},
+        {$set: {groupID: group._id}});
+      logger.trace("Added groupID to exp: " + Experiments.findOne({_id: exp._id}).groupID);
     },
 
     setNumGroups: function(exp, num) {
