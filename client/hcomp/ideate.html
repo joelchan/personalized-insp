@@ -76,16 +76,24 @@
   <div class='row task-list-header'>
     <h1 class="ideation-prompt">{{ prompt }}</h1> <br/>
     <div class="header">
-      <div class="btn btn-success btn-large get-task col-xs-3">
-        <img src="/LightBulbOn-white2.png" class="get-task-icon"/>
-        Inspire Me!
+        {{#if tasksAvailable}}
+            <div class="btn btn-success btn-large get-task get-task-enabled col-xs-3">
+            <img src="/LightBulbOn-white2.png" class="get-task-icon"/>
+            Inspire Me!
+            </div>
+        {{ else }}
+            <div class="btn btn-success btn-large disabled get-task get-task-disabled col-xs-3">
+            <img src="/LightBulbOn-white2.png" class="get-task-icon"/>
+            Inspire Me!
+            </div>
+        {{/if}}
+<!--        Inspire Me!-->
         <!-- <div class="col-xs-4">
           <img src="/LightBulbOn-white2.png" class="get-task-icon"/>
         </div>
         <div class="col-xs-4">
         Inspire <br>Me!
         </div> -->
-      </div>
       <!-- <div class = "col-xs-9">
         <h1>{{ prompt }}</h1> <br/>
       </div> -->

@@ -114,6 +114,33 @@ TaskManager = (function() {
       //No unassigned tasks, so returning null;
       return null;
     },
+    
+    /**************************************************************
+       * Checks to see if there are any available tasks for the
+       * current user
+       * Helper to disable and enable the inspire me button 
+       * **********************************************************/
+    areTasksAvailable: function(prompt, user) {
+        var tasks = Tasks.find({promptID: prompt._id}, {assignments: {$nin: [user._id]}}).fetch();
+      logger.trace("THE AVAILABLE TASKS ARE  " + tasks);
+        logger.trace("TASK LENGTH IS = " + tasks.length);
+      for (var i=0; i<tasks.length; i++) {
+        var task = tasks[i];
+        logger.trace("looking at task: ");
+        logger.trace(task);
+        logger.debug("Task assignments: " + task.assignments.length +
+          " Number of tasks: " + task.num);
+        if (task.assignments.length < task.num) {
+          if (this.isAssignedToTask(task, Session.get("currentUser"))) {
+              logger.trace("TASKMANAGER TASK AVAILABLE");
+              return true;
+            } 
+        }   
+      }
+        logger.trace("TASKMANAGER TASK NOT AVAILABLE");
+        return false;
+    },
+      
     isAssignedToTask: function (task, user) {
       return (!isInList({userID: user._id}, task.assignments, 'userID'))
     },

@@ -160,9 +160,6 @@ Template.MturkIdeaEntryBox.events({
   }
 });
 
-Template.MturkTaskLists.rendered = function() {
-  
-};
 
 Template.MturkTaskLists.helpers({
   getMyTasks: function() {
@@ -182,11 +179,26 @@ Template.MturkTaskLists.helpers({
     //var tasks = Tasks.find({_id: {$in: taskIDs}});
     //Sort tasks by assignment time
     return tasks;
+    Session.set("CurrentTasks",tasks);
   },
   prompt: function() {
     var prompt = Session.get("currentPrompt");
     return prompt.question;
   },
+    tasksAvailable: function(){
+        var prompt = Session.get("currentPrompt");
+        var user = Session.get("currentUser");
+        var result = TaskManager.areTasksAvailable(prompt, user);
+        logger.trace("*********RESULT = " + result);
+        if (result == false) {
+            logger.trace("JS TASK NOT AVAILABLE");
+            return false;
+        }
+        else {
+            logger.trace("JS TASK AVAILABLE");
+            return true;
+        }
+    },
 });
 
 Template.MturkTaskLists.events({ 
@@ -196,14 +208,14 @@ Template.MturkTaskLists.events({
       Session.get("currentPrompt"),
       Session.get("currentUser")
     );
-    if (task) {
+//    if (task) {
       logger.info("Got a new task");
       logger.trace(task);
-    } else {
-      logger.info("No new task was assigned");
-      //alert("Sorry, there are no new tasks. Just keep on trying");
-      $("#hcomp-new-task-modal").modal('show');
-    }
+//    } else {
+//      logger.info("No new task was assigned");
+//      //alert("Sorry, there are no new tasks. Just keep on trying");
+//      $("#hcomp-new-task-modal").modal('show');
+//    }
   },
   'click .begin-synthesis': function(e, t) {
     logger.debug("beginning new task"); 
