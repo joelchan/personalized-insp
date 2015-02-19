@@ -167,9 +167,9 @@ Template.MturkIdeaEntryBox.events({
   },
   //waits 3 seconds after user stops typing to change isTyping flag to false
   'keyup textarea' : function(e, target){
-    logger.debug(e);
-    logger.debug(target);
-    console.log("key pressed")
+    logger.trace(e);
+    logger.trace(target);
+    //console.log("key pressed")
     if(e.keyCode===13) {
       logger.debug("enter pressed")
       var btn = $(target.firstNode).children('.submit-idea')
