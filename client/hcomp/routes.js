@@ -312,13 +312,13 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
-        Session.set("tutorialTimer", true);
+        Session.set("isTutorialTimer", true);
         this.render();
       } else
         this.render('loading');
     },
     onAfterAction: function() {
-        if (this.ready()) {
+      if (this.ready()) {
         initRolePage();
         insertExitStudy();
       }
@@ -330,6 +330,9 @@ Router.map(function () {
       path: 'tutorial/ideation/:partID',
       template: 'TutorialTreatment',
     waitOn: function() {
+      return [
+          Meteor.subscribe('experiments'),
+      ];
       
     },
     onBeforeAction: function(pause) {
@@ -365,7 +368,8 @@ Router.map(function () {
     },
     action: function(){
       if(this.ready()) {
-        Session.set("tutorialTimer", true);
+        Session.set("useTimer", true);
+        Session.set("isTutorialTimer", true);
         this.render();
       } else
         this.render('loading');
@@ -373,8 +377,8 @@ Router.map(function () {
     onAfterAction: function() {
         //Session.set("nextPage", "MturkIdeation");
         if (this.ready()) {
-            initRolePage();
-            insertExitStudy();
+          initRolePage();
+          insertExitStudy();
         }
     },
   });
@@ -385,15 +389,12 @@ Router.map(function () {
 
 //    path: 'crowd/Ideation/:promptID/:userID/',
 //  	template: 'MturkIdeationPage',
-    waitOn: function() {
+    subscriptions: function() {
       logger.debug("Waiting on control page...");
-      // var part = Participants.findOne({_id: this.params.partID});
-      // Session.set("currentParticipant", part);
-      // var exp = Experiments.findOne({_id: part.experimentID})
-      // var pID = exp.promptID;
       return [
         Meteor.subscribe('ideas', {promptID: this.params.promptID}),
         Meteor.subscribe('prompts'),
+        Meteor.subscribe('experiments'),
         Meteor.subscribe('myUsers'),
         Meteor.subscribe('participants'),
       ];
@@ -432,14 +433,16 @@ Router.map(function () {
     },
     action: function(){
       if(this.ready()) {
+        logger.debug("rendering the page");
         Session.set("useTimer", true);
-        Session.set("tutorialTimer", false);
+        Session.set("isTutorialTimer", false);
         this.render();
       } else
         this.render('loading');
     },
     onAfterAction: function() {
       if (this.ready()) {
+        logger.debug("After rendering the page");
         initRolePage();
         insertExitStudy();
       }
@@ -463,8 +466,6 @@ Router.map(function () {
         Meteor.subscribe('prompts'),
         Meteor.subscribe('myUsers'),
         Meteor.subscribe('tasks', {promptID: this.params.promptID}),
-        Meteor.subscribe('questions'),
-        Meteor.subscribe('assignments', {promptID: this.params.promptID}),
       ];
     },
     onBeforeAction: function(pause) {
@@ -501,7 +502,7 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
-        Session.set("tutorialTimer", false);
+        Session.set("isTutorialTimer", false);
         this.render();
       } else
         this.render('loading');
@@ -710,6 +711,7 @@ var insertExitStudy = function() {
 };
 
 var initRolePage = function() {
+  logger.debug("Initializing a role page");
   //Add timer
   var prompt = Session.get("currentPrompt");
   if (prompt.length > 0) {
@@ -718,12 +720,14 @@ var initRolePage = function() {
       Session.set("hasTimer", true);
       Blaze.render(Template.Timer, $('#nav-right')[0]);
       //Setup timer for decrementing onscreen timer with 17 minute timeout
+    }
+    if (Session.get("useTimer")) {
       Session.set("timeLeft", prompt.length);
       $('#time').text(prompt.length);
       logger.debug("************** checking if setting timer decrement ***************");
       logger.trace("Use Timer: " + JSON.stringify(Session.get("useTimer")));
-      logger.trace("Tutorial timer: " + JSON.stringify(Session.get("tutorialTimer")));
-      if (Session.get("useTimer") && !Session.get("tutorialTimer")) {
+      logger.trace("Tutorial timer: " + JSON.stringify(Session.get("isTutorialTimer")));
+      if (!Session.get("isTutorialTimer")) {
         logger.debug("Setting decrement for timer");
         Meteor.setTimeout(decrementTimer, 60000);
       }
