@@ -8,9 +8,9 @@ Logger.setLevel('info');
 // Configure logger for event logging 
 var logger = new Logger('Tools:Logging');
 // Comment out to use global logging level
-Logger.setLevel('Tools:Logging', 'trace');
+//Logger.setLevel('Tools:Logging', 'trace');
 //Logger.setLevel('Tools:Logging', 'debug');
-//Logger.setLevel('Tools:Logging', 'info');
+Logger.setLevel('Tools:Logging', 'info');
 //Logger.setLevel('Tools:Logging', 'warn');
 
 EventLogger = (function () {

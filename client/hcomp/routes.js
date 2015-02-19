@@ -720,7 +720,10 @@ var initRolePage = function() {
       //Setup timer for decrementing onscreen timer with 17 minute timeout
       Session.set("timeLeft", prompt.length);
       $('#time').text(prompt.length);
-      if (Session.get("hasTimer") && !Session.get("tutorialTimer")) {
+      logger.debug("************** checking if setting timer decrement ***************");
+      logger.trace("Use Timer: " + JSON.stringify(Session.get("useTimer")));
+      logger.trace("Tutorial timer: " + JSON.stringify(Session.get("tutorialTimer")));
+      if (Session.get("useTimer") && !Session.get("tutorialTimer")) {
         logger.debug("Setting decrement for timer");
         Meteor.setTimeout(decrementTimer, 60000);
       }

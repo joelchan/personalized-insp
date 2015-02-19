@@ -249,10 +249,10 @@ ExperimentManager = (function () {
             logger.trace("Drew random sample: " + sample);
             
             // Sample a condition
-            var condIndex;
+            var condIndex = 0;
             for (var i=0; i<cutOffs.length; i++) {
               logger.trace("Comparing sample to cutoff: " + cutOffs[i]);
-              if (sample < cutOffs[i]) {
+              if (sample <= cutOffs[i]) {
                 logger.trace("Sample of " + sample + " is less than cutoff " + cutOffs[i]);
                 condIndex = i;
                 break;
