@@ -41,7 +41,7 @@ Experiment = function (promptID, desc) {
   this.participantIDs = [];
   
   //Tracks group references: key: condition.id, value: array of groupIDs
-  this.groups = {};
+  this.groupID = null;
 
   //Optional set of users not allowed to participate
   this.excludeUsers = [];

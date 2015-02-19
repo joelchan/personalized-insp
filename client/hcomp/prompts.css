@@ -89,10 +89,17 @@
 }
 
 #newExpModal {
-  height: 100%;
+  /*min-height:500px;*/
+  height:65%;
+  /*max-height:700px;*/
+  /*overflow: auto;*/
+  /*width:700px;*/
+  position: absolute;
+  left: 25%;
+  top: 25%;
 }
 
-.exp-prompt-list {
-  max-height: 250px;
+#newExpModal .modal-dialog .modal-content .modal-body .exp-prompt-list {
+  max-height:500px;
   overflow:scroll;
 }

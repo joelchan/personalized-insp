@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Routes');
 // Comment out to use global logging level
-//Logger.setLevel('Client:Hcomp:Routes', 'trace');
+Logger.setLevel('Client:Hcomp:Routes', 'trace');
 //Logger.setLevel('Client:Hcomp:Routes', 'debug');
-Logger.setLevel('Client:Hcomp:Routes', 'info');
+// Logger.setLevel('Client:Hcomp:Routes', 'info');
 //Logger.setLevel('Client:Hcomp:Routes', 'warn');
 
 //Maps routes to templates
@@ -132,10 +132,10 @@ Router.map(function () {
         }
         var prompt = Prompts.findOne({_id: this.params.promptID});
         if (prompt) {
-          var group = Groups.findOne({_id: prompt.groupIDs[0]})
+          
           logger.debug("setting current prompt");
           Session.set("currentPrompt", prompt);
-          Session.set("currentGroup", group);
+          
           // FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
           // FilterManager.create("IdeaWordCloud Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
           // FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
@@ -151,6 +151,8 @@ Router.map(function () {
         if (exp) {
           logger.debug("setting current exp");
           Session.set("currentExp",exp);
+          var group = Groups.findOne({_id: exp.groupID})
+          Session.set("currentGroup", group);
           // createDefaultIdeasFilter("Ideas Filter");
           // createDefaultIdeasFilter("IdeaWordCloud Filter");
         } else {
@@ -378,19 +380,19 @@ Router.map(function () {
   });
   
   this.route('MturkIdeationControl', {
-      path: 'crowd/Ideate/:partID',
+      path: 'crowd/Ideate/:promptID/:partID',
       template: 'MturkIdeationPageControl',
 
 //    path: 'crowd/Ideation/:promptID/:userID/',
 //  	template: 'MturkIdeationPage',
     waitOn: function() {
       logger.debug("Waiting on...");
-      var part = Participants.findOne({_id: this.params.partID});
-      Session.set("currentParticipant", part);
-      var exp = Experiments.findOne({_id: part.experimentID})
-      var pID = exp.promptID;
+      // var part = Participants.findOne({_id: this.params.partID});
+      // Session.set("currentParticipant", part);
+      // var exp = Experiments.findOne({_id: part.experimentID})
+      // var pID = exp.promptID;
       return [
-        Meteor.subscribe('ideas', {promptID: pID}),
+        Meteor.subscribe('ideas', {promptID: this.params.promptID}),
         Meteor.subscribe('prompts'),
         Meteor.subscribe('myUsers'),
       ];
@@ -408,7 +410,8 @@ Router.map(function () {
           logger.debug("Data ready");
           var part = Participants.findOne({_id: this.params.partID});
           Session.set("currentParticipant", part);
-          var exp = Experiments.findOne({_id: part.experimentID})
+          var exp = Experiments.findOne({_id: part.experimentID});
+          Session.set("currentExp", exp);
           var pID = exp.promptID;
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
@@ -444,22 +447,23 @@ Router.map(function () {
   });
   
   this.route('MturkIdeationTreatment', {
-      path: 'crowd/Ideation/:partID',
+      path: 'crowd/Ideation/:promptID/:partID',
       template: 'MturkIdeationPage',
 
     waitOn: function() {
       logger.debug("Waiting on...");
-      var part = Participants.findOne({_id: this.params.partID});
-      Session.set("currentParticipant", part);
-      var exp = Experiments.findOne({_id: part.experimentID})
-      var pID = exp.promptID;
+      // var part = Participants.findOne({_id: this.params.partID});
+      // logger.trace("Participant is: " + JSON.stringify(part));
+      // Session.set("currentParticipant", part);
+      // var exp = Experiments.findOne({_id: part.experimentID})
+      // var pID = exp.promptID;
       return [
-        Meteor.subscribe('ideas', {promptID: pID}),
+        Meteor.subscribe('ideas', {promptID: this.params.promptID}),
         Meteor.subscribe('prompts'),
         Meteor.subscribe('myUsers'),
-        Meteor.subscribe('tasks', {promptID: pID}),
+        Meteor.subscribe('tasks', {promptID: this.params.promptID}),
         Meteor.subscribe('questions'),
-        Meteor.subscribe('assignments', {promptID: pID}),
+        Meteor.subscribe('assignments', {promptID: this.params.promptID}),
       ];
       Session.set("useTimer", true);
     },
@@ -475,7 +479,8 @@ Router.map(function () {
           logger.debug("Data ready");
           var part = Participants.findOne({_id: this.params.partID});
           Session.set("currentParticipant", part);
-          var exp = Experiments.findOne({_id: part.experimentID})
+          var exp = Experiments.findOne({_id: part.experimentID});
+          Session.set("currentExp",exp);
           var pID = exp.promptID;
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);

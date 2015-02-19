@@ -178,16 +178,13 @@ Template.MturkIdeaEntryBox.events({
   }
 });
 
-Template.MturkTaskLists.rendered = function() {
-  
-};
 
 Template.MturkTaskLists.helpers({
   getMyTasks: function() {
     logger.debug("Getting a list of all tasks assigned to current user");
     var assignments = 
       Assignments.find({userID: Session.get("currentUser")._id,
-        promptID: Session.get("currentPrompt")._id}, 
+        promptID: Session.get("currentPrompt")._id},
         {sort: {'assignmentTime': -1}}).fetch();
     logger.trace(assignments);
     var taskIDs = getValsFromField(assignments, 'taskID');
@@ -200,10 +197,26 @@ Template.MturkTaskLists.helpers({
     //var tasks = Tasks.find({_id: {$in: taskIDs}});
     //Sort tasks by assignment time
     return tasks;
+    Session.set("CurrentTasks",tasks);
   },
   prompt: function() {
     var prompt = Session.get("currentPrompt");
     return prompt.question;
+  },
+  tasksAvailable: function(){
+      var prompt = Session.get("currentPrompt");
+      var user = Session.get("currentUser");
+      var groupID = Session.get("currentExp").groupID;
+      var result = TaskManager.areTasksAvailable(prompt, user, groupID);
+      logger.trace("*********RESULT = " + result);
+      if (result == false) {
+          logger.trace("JS TASK NOT AVAILABLE");
+          return false;
+      }
+      else {
+          logger.trace("JS TASK AVAILABLE");
+          return true;
+      }
   },
 });
 
@@ -213,15 +226,16 @@ Template.MturkTaskLists.events({
     EventLogger.logRequestInspiration(Session.get("currentPrompt"));
     var task = TaskManager.assignTask(
       Session.get("currentPrompt"),
-      Session.get("currentUser")
+      Session.get("currentUser"),
+      Session.get("currentExp").groupID
     );
-    if (task) {
+   if (task) {
       logger.info("Got a new task");
       EventLogger.logInspirationRequestSuccess(
         Session.get("currentPrompt"),
-        dummy1
+        task
       );
-      logger.trace(task);
+      logger.trace("New task is: " + JSON.stringify(task));
     } else {
       logger.info("No new task was assigned");
       EventLogger.logInspirationRequestFail(

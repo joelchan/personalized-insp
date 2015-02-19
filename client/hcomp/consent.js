@@ -19,6 +19,16 @@ Template.HcompConsentPage.events({
           if (part) {
             logger.trace("Successfully created participant with id " + part._id);
             condDesc = Conditions.findOne({_id: part.conditionID}).description;
+            var group = Groups.findOne({_id: exp.groupID});
+            var role;
+            if (!GroupManager.hasUser(group, user)) {
+              role = RoleManager.defaults['HcompIdeator'];
+              GroupManager.addUser(group, user, role.title);
+            } else {
+              role = GroupManager.getRole(group, user);
+            }
+            Session.set("currentRole", role);
+            Session.set("currentGroup", group);
             if (condDesc == "Treatment") {
                 logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
                 Session.set("nextPage", "TutorialTreatment");

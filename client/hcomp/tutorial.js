@@ -23,8 +23,9 @@ Template.TutorialControl.rendered = function() {
         var route = newDoc.route;
         logger.debug("Going to page with route: " + route);
         var partID = Session.get("currentParticipant")._id;
+        var promptID = Session.get("currentPrompt")._id;
         logger.debug("partID: " + partID);
-        Router.go(route, {'partID': partID});
+        Router.go(route, {'promptID': promptID, 'partID': partID});
       },
     });    
     EventLogger.logTutorialStarted();
@@ -352,8 +353,9 @@ Template.TutorialTreatment.rendered = function() {
         var route = newDoc.route;
         logger.debug("Going to page with route: " + route);
         var partID = Session.get("currentParticipant")._id;
+        var promptID = Session.get("currentPrompt")._id;
         logger.debug("partID: " + partID);
-        Router.go(route, {'partID': partID});
+        Router.go(route, {'promptID': promptID, 'partID': partID});
     },
   });    
 }
