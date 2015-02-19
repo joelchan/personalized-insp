@@ -172,8 +172,11 @@ Router.map(function () {
     path: '/crowd/Ideate/Login/:expID',
     template: 'MturkLoginPage',
     waitOn: function() {
-      // Meteor.subscribe('prompts', this.params.promptID);
-      return Meteor.subscribe('experiments', this.params.expID);
+      return [
+        Meteor.subscribe('experiments', this.params.expID),
+        Meteor.subscribe('prompts', this.params.promptID)
+      ];
+
     },
     onBeforeAction: function() {
       console.log("before action");
@@ -383,7 +386,7 @@ Router.map(function () {
 //    path: 'crowd/Ideation/:promptID/:userID/',
 //  	template: 'MturkIdeationPage',
     waitOn: function() {
-      logger.debug("Waiting on...");
+      logger.debug("Waiting on control page...");
       // var part = Participants.findOne({_id: this.params.partID});
       // Session.set("currentParticipant", part);
       // var exp = Experiments.findOne({_id: part.experimentID})
@@ -392,14 +395,11 @@ Router.map(function () {
         Meteor.subscribe('ideas', {promptID: this.params.promptID}),
         Meteor.subscribe('prompts'),
         Meteor.subscribe('myUsers'),
-        Meteor.subscribe('tasks', {promptID: this.params.promptID}),
-        Meteor.subscribe('questions'),
-        Meteor.subscribe('assignments', {promptID: this.params.promptID}),
+        Meteor.subscribe('participants'),
       ];
-      Session.set("useTimer", true);
     },
     onBeforeAction: function(pause) {
-        logger.debug("before action");
+        logger.debug("before action Ideation Control Page");
         //if (!Session.get("currentUser")) {
           ////if there is no user currently logged in, then render the login page
           //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
@@ -433,6 +433,7 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
+        Session.set("tutorialTimer", false);
         this.render();
       } else
         this.render('loading');
@@ -465,7 +466,6 @@ Router.map(function () {
         Meteor.subscribe('questions'),
         Meteor.subscribe('assignments', {promptID: this.params.promptID}),
       ];
-      Session.set("useTimer", true);
     },
     onBeforeAction: function(pause) {
         logger.debug("before action");
@@ -501,6 +501,7 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
+        Session.set("tutorialTimer", false);
         this.render();
       } else
         this.render('loading');
@@ -694,8 +695,7 @@ Router.map(function () {
 
 var insertExitStudy = function() {
   if ($('.exitStudy').length == 0) {
-    var exitStudyBtn = UI.render(Template.ExitStudy);
-    UI.insert(exitStudyBtn, $('.login')[0]);
+    Blaze.render(Template.ExitStudy, $('.login')[0]);
   }
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
@@ -714,17 +714,16 @@ var initRolePage = function() {
   var prompt = Session.get("currentPrompt");
   if (prompt.length > 0) {
     if ($('.timer').length == 0 && Session.get("useTimer")) {
-      console.log("using a timer");
+      logger.info("using a timer");
       Session.set("hasTimer", true);
-      var timerTemplate = UI.render(Template.Timer);
-      UI.insert(timerTemplate, $('#nav-right')[0]);
+      Blaze.render(Template.Timer, $('#nav-right')[0]);
       //Setup timer for decrementing onscreen timer with 17 minute timeout
       Session.set("timeLeft", prompt.length);
       $('#time').text(prompt.length);
       if (Session.get("hasTimer") && !Session.get("tutorialTimer")) {
+        logger.debug("Setting decrement for timer");
         Meteor.setTimeout(decrementTimer, 60000);
       }
     }
   }
 };
-

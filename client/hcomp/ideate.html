@@ -31,7 +31,7 @@
 
 <template name="MturkMainPrompt">
   <div class = "ideator-directions">
-    <label class="directions-header"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
+    <label class="directions-header"> Instructions&nbsp; </label><a class="show-hide" data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
     <!-- <div class="row"> -->
       <div id="directions-container">
         <div id="directions-content" class="collapse in">
@@ -177,20 +177,19 @@
 
 <template name="MturkIdeationPageControl">
   <div class="hcomp-ideation-pane-control">
-        <div class = "ideation-prompt-control-container">
-            <h1 class="ideation-prompt-control">{{ prompt }}</h1> <br/>
-        </div>
-        <div class="main-prompt">
-            {{> MturkMainPromptControl}}
-        </div>
-        
-    </div>
-    {{> ExperimentBeginModal }}
+      <div class = "ideation-prompt-control-container">
+          <h1 class="ideation-prompt-control">{{ prompt }}</h1>
+      </div>
+      <div class="main-prompt">
+          {{> MturkMainPromptControl}}
+      </div>
+  </div>
+  {{> ExperimentBeginModal }}
 </template>
 
 <template name="MturkMainPromptControl">
   <div class = "ideator-directions-control">
-    <label class="directions-header-control"> Instructions&nbsp; </label><a data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
+    <label class="directions-header-control"> Instructions&nbsp; </label><a class="show-hide" data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
     <!-- <div class="row"> -->
       <div id="directions-container-control">
         <div id="directions-content" class="collapse in">

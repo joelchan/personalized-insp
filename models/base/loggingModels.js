@@ -63,6 +63,7 @@ Meteor.startup(function() {
       EventTypeManager.get("User began role " + title, fields);
       EventTypeManager.get("User finished role " + title, fields);
     });
+    EventTypeManager.get("User entered ideation");
     EventTypeManager.get("User began ideation");
     EventTypeManager.get("User exited study early");
     
@@ -125,6 +126,8 @@ Meteor.startup(function() {
     
     fields = ['ideaID', 'sourceID'];
     EventTypeManager.get("User unclustered idea", fields);
+    fields = ['isHidden'];
+    EventTypeManager.get("User clicked show/hide instructions", fields);
   }
 });
   

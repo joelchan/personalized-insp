@@ -61,7 +61,6 @@
         </center>
       </div> <!-- End Row -->
 
-      {{> NewExperimentModal }}
       
       <div class="row hcomp-prompt-list"> 
         {{#each experiments}}
@@ -69,6 +68,7 @@
         {{/each}}
       </div>
     </div> <!-- End experiments tab -->
+    {{> NewExperimentModal }}
   </div> <!-- End tab content container -->
 
 </template>
@@ -176,6 +176,8 @@
           {{ desc }}<br/>
           <strong>Prompt: </strong> {{ question }}<br/>
           <strong>Time limit: </strong> {{ timeLimit }}<br/>
+          <strong>Target Number of Participants per Condition: </strong> 
+            {{ partNumber }}<br/>
           <strong>Participant login URL: </strong> 
             <a href="{{ expURL }}">
               {{ expURL }}
