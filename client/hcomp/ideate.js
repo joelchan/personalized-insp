@@ -69,6 +69,21 @@ Template.MturkMainPrompt.rendered = function(){
 
 };
 
+Template.MturkMainPrompt.events({ 
+  "click .show-hide": function(e, elm) {
+    var isHidden = $('.show-hide').hasClass("collapsed"); 
+    EventLogger.logShowHideClick(isHidden);
+  },
+});
+
+Template.MturkMainPromptControl.events({ 
+  "click .show-hide": function(e, elm) {
+    var isHidden = $('.show-hide').hasClass("collapsed"); 
+    logger.debug("Logging show-hide click with isHidden: " + isHidden);
+    EventLogger.logShowHideClick(isHidden);
+  },
+});
+
 
 Template.MturkIdeaList.helpers({
   ideas: function() {

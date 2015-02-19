@@ -105,6 +105,8 @@ Meteor.startup(function() {
     EventTypeManager.get("User inserted idea to cluster", fields);
     fields = ['ideaID', 'sourceID'];
     EventTypeManager.get("User unclustered idea", fields);
+    fields = ['isHidden'];
+    EventTypeManager.get("User clicked show/hide instructions", fields);
   }
 });
   

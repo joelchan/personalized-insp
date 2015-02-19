@@ -8,7 +8,7 @@ Logger.setLevel('Client:Hcomp:Survey', 'trace');
 
 Template.SurveyPage.rendered = function() {
     $("#ss-submit").click(function() {
-        console.log("form submitted");
+        logger.info("form submitted");
         EventLogger.logSurveyComplete();
     });
 
