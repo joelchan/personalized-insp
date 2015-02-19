@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Ideate');
 // Comment out to use global logging level
-//Logger.setLevel('Client:Hcomp:Ideate', 'trace');
+Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 //Logger.setLevel('Client:Hcomp:Ideate', 'debug');
-Logger.setLevel('Client:Hcomp:Ideate', 'info');
+//Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
@@ -14,7 +14,9 @@ Template.MturkIdeationPage.rendered = function(){
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
+  logger.debug("checking to show begin ideation modal");
   if (!Session.get("currentParticipant").hasStarted) {
+    logger.debug("showing begin ideation modal");
     $("#exp-begin-modal").modal('show');  
   }
   //Setup Facilitation push to synthesis listener
@@ -34,7 +36,9 @@ Template.MturkIdeationPage.rendered = function(){
 };
 
 Template.MturkIdeationPageControl.rendered = function(){
+  logger.debug("checking to show begin ideation modal");
   if (!Session.get("currentParticipant").hasStarted) {
+    logger.debug("showing begin ideation modal");
     $("#exp-begin-modal").modal('show');  
   }
 };

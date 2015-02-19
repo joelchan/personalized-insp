@@ -693,7 +693,7 @@ Router.map(function () {
 var insertExitStudy = function() {
   if ($('.exitStudy').length == 0) {
     var exitStudyBtn = UI.render(Template.ExitStudy);
-    UI.insert(exitStudyBtn, $('.login')[0]);
+    Blaze.render(Template.ExitStudy, $('.login')[0]);
   }
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {
@@ -712,17 +712,16 @@ var initRolePage = function() {
   var prompt = Session.get("currentPrompt");
   if (prompt.length > 0) {
     if ($('.timer').length == 0 && Session.get("useTimer")) {
-      console.log("using a timer");
+      logger.info("using a timer");
       Session.set("hasTimer", true);
-      var timerTemplate = UI.render(Template.Timer);
-      UI.insert(timerTemplate, $('#nav-right')[0]);
+      Blaze.render(Template.Timer, $('#nav-right')[0]);
       //Setup timer for decrementing onscreen timer with 17 minute timeout
       Session.set("timeLeft", prompt.length);
       $('#time').text(prompt.length);
       if (Session.get("hasTimer") && !Session.get("tutorialTimer")) {
+        logger.debug("Setting decrement for timer");
         Meteor.setTimeout(decrementTimer, 60000);
       }
     }
   }
 };
-

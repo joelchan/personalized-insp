@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Main');
 // Comment out to use global logging level
-//Logger.setLevel('Client:Main', 'trace');
+Logger.setLevel('Client:Main', 'trace');
 //Logger.setLevel('Client:Main', 'debug');
-Logger.setLevel('Client:Main', 'info');
+//Logger.setLevel('Client:Main', 'info');
 //Logger.setLevel('Client:Main', 'warn');
 
 Template.IdeaGen.helpers({
@@ -87,8 +87,8 @@ decrementTimer = function decrementTimer() {
   Session.set("timeLeft", nextTime);
   var time = $('#time').text(nextTime);
   if (nextTime > 0) {
+    logger.debug("Decrementing timer");
     Meteor.setTimeout(decrementTimer, 60000);
-    // console.log("Decrementing timer")
   } else {
     logger.info("Exitting current page");
     //EventLogger.logEndRole();
