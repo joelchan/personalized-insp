@@ -386,7 +386,7 @@ Router.map(function () {
 //    path: 'crowd/Ideation/:promptID/:userID/',
 //  	template: 'MturkIdeationPage',
     waitOn: function() {
-      logger.debug("Waiting on...");
+      logger.debug("Waiting on control page...");
       // var part = Participants.findOne({_id: this.params.partID});
       // Session.set("currentParticipant", part);
       // var exp = Experiments.findOne({_id: part.experimentID})
@@ -395,6 +395,7 @@ Router.map(function () {
         Meteor.subscribe('ideas', {promptID: this.params.promptID}),
         Meteor.subscribe('prompts'),
         Meteor.subscribe('myUsers'),
+        Meteor.subscribe('participants'),
       ];
       Session.set("useTimer", true);
     },
@@ -692,7 +693,6 @@ Router.map(function () {
 
 var insertExitStudy = function() {
   if ($('.exitStudy').length == 0) {
-    var exitStudyBtn = UI.render(Template.ExitStudy);
     Blaze.render(Template.ExitStudy, $('.login')[0]);
   }
   //Add event handler for the exit study button

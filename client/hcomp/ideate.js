@@ -36,6 +36,7 @@ Template.MturkIdeationPage.rendered = function(){
 };
 
 Template.MturkIdeationPageControl.rendered = function(){
+  logger.trace("*************************************");
   logger.debug("checking to show begin ideation modal");
   if (!Session.get("currentParticipant").hasStarted) {
     logger.debug("showing begin ideation modal");
@@ -74,6 +75,9 @@ Template.MturkMainPrompt.helpers({
 //  },
 });
 
+Template.MturkIdeaList.rendered = function() {
+  logger.debug("****************************");
+};
 Template.MturkIdeaList.helpers({
   ideas: function() {
     //return Ideas.find({$and: [
