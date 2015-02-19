@@ -8,7 +8,10 @@ Logger.setLevel('info');
 // Configure logger for event logging 
 var logger = new Logger('Tools:Logging');
 // Comment out to use global logging level
-Logger.setLevel('Tools:Logging', 'info');
+Logger.setLevel('Tools:Logging', 'trace');
+//Logger.setLevel('Tools:Logging', 'debug');
+// Logger.setLevel('Tools:Logging', 'info');
+//Logger.setLevel('Tools:Logging', 'warn');
 
 EventLogger = (function () {
   return {
@@ -138,10 +141,11 @@ EventLogger = (function () {
   
     logSubmittedSurvey: function(response) {
       var msg = "User submitted survey";
-      var prompt = Session.get("currentPrompt");
+      var exp = Session.get("currentExperiment");
+      logger.trace("Current experiment: " + JSON.stringify(exp));
       var type = EventTypeManager.get(msg);
       var data = {'responseID': response._id,
-          'promptID': prompt._id
+          'expID': exp._id
       };
       this.log(type, data);
     },

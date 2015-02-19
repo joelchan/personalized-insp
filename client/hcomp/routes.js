@@ -536,6 +536,8 @@ Router.map(function () {
           logger.debug("Data ready");
           var part = Participants.findOne({_id: this.params.partID});
           Session.set("currentParticipant", part);
+          var exp = Experiments.findOne({_id: part.experimentID});
+          Session.set("currentExperiment", exp);
           this.next();
         } else {
           logger.debug("Not ready");

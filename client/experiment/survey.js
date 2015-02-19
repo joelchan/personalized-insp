@@ -57,32 +57,50 @@ Template.SurveyPage.events({
 	},*/
 
 	'click button.submitForm' : function(){
-    try {
-      var part = Session.get("currentParticipant");
-      var cond = Conditions.findOne({_id: part.conditionID});
-      if (cond.description == "Treatment") {
-        var resp = getTreatmentResponse();
-      } else {
-        var resp = getControlResponse();
-      }
-      resp._id = SurveyResponses.insert(resp);
-      EventLogger.logSubmittedSurvey(part, resp);
-      //Mark participant as finished
-      ExperimentManager.logParticipantCompletion(part);
-      // Participants.update({_id: part._id},
-      //     {$set: {hasFinished: true}});
-      //console.log("formsubmitted");
-      Router.go("LegionFinalPage", {'partID': part._id});
-      // Router.goToNextPage("SurveyPage");
-    } catch (err) {
-      console.log(err);
-      alert("Please complete all questions in the survey before continuing");
+    var part = Session.get("currentParticipant");
+    var cond = Conditions.findOne({_id: part.conditionID});
+    if (cond.description == "Treatment") {
+      var resp = getTreatmentResponse();
+    } else {
+      var resp = getControlResponse();
     }
+    resp._id = SurveyResponses.insert(resp);
+    logger.trace("Created survey response with ID: " + resp._id);
+    EventLogger.logSubmittedSurvey(part, resp);
+    //Mark participant as finished
+    ExperimentManager.logParticipantCompletion(part);
+    // Participants.update({_id: part._id},
+    //     {$set: {hasFinished: true}});
+    //console.log("formsubmitted");
+    Router.go("LegionFinalPage", {'partID': part._id});
+    // Router.goToNextPage("SurveyPage");
+    // try {
+    //   var part = Session.get("currentParticipant");
+    //   var cond = Conditions.findOne({_id: part.conditionID});
+    //   if (cond.description == "Treatment") {
+    //     var resp = getTreatmentResponse();
+    //   } else {
+    //     var resp = getControlResponse();
+    //   }
+    //   resp._id = SurveyResponses.insert(resp);
+    //   EventLogger.logSubmittedSurvey(part, resp);
+    //   //Mark participant as finished
+    //   ExperimentManager.logParticipantCompletion(part);
+    //   // Participants.update({_id: part._id},
+    //   //     {$set: {hasFinished: true}});
+    //   //console.log("formsubmitted");
+    //   Router.go("LegionFinalPage", {'partID': part._id});
+    //   // Router.goToNextPage("SurveyPage");
+    // } catch (err) {
+    //   console.log(err);
+    //   alert("Please complete all questions in the survey before continuing");
+    // }
 
 	}
 })
 
 checkResponse = function(answer) {
+  logger.debug("Checking response");
   if (!answer) {
     throw "Incomplete survey error";
   }
@@ -92,23 +110,23 @@ getControlResponse = function() {
   var responses = [];
   //Gender
   var answer = $("input[name='gender']:checked").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("Gender", answer));
         
   //Age
   answer = $("input[name='age']").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("Age", answer));
   //English 1st language
   answer = $("input[name='lang1']:checked").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("Is English your first language", answer));
   var lang1 = answer;
   var lang2 = "false";
   //2nd language yes/no
   if (lang1 == "true") {
     answer = $("input[name='lang2']:checked").val();
-    checkResponse(answer)
+    // checkResponse(answer)
     responses.push(new QuestionResponse("Do you speak a 2nd language", answer));
     lang2 = answer;
 
@@ -116,15 +134,15 @@ getControlResponse = function() {
   //2nd language
   if (lang1 == "false" || lang2 == "true") {
     answer = $("input[name='lang2text']").val();
-    checkResponse(answer)
+    // checkResponse(answer)
     responses.push(new QuestionResponse("What is your 2nd language", answer));
   }
   //Ethnicity
   answer = $("input[name='ethnicity']").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("What country do you call home", answer));
   answer = $("select option:selected").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("How Frequently do you brainstorm", answer));
   
   // activity/interface feedback
@@ -142,23 +160,23 @@ getTreatmentResponse = function() {
   var responses = [];
   //Gender
   var answer = $("input[name='gender']:checked").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("Gender", answer));
         
   //Age
   answer = $("input[name='age']").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("Age", answer));
   //English 1st language
   answer = $("input[name='lang1']:checked").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("Is English your first language", answer));
   var lang1 = answer;
   var lang2 = "false";
   //2nd language yes/no
   if (lang1 == "true") {
     answer = $("input[name='lang2']:checked").val();
-    checkResponse(answer)
+    // checkResponse(answer)
     responses.push(new QuestionResponse("Do you speak a 2nd language", answer));
     lang2 = answer;
 
@@ -166,24 +184,24 @@ getTreatmentResponse = function() {
   //2nd language
   if (lang1 == "false" || lang2 == "true") {
     answer = $("input[name='lang2text']").val();
-    checkResponse(answer)
+    // checkResponse(answer)
     responses.push(new QuestionResponse("What is your 2nd language", answer));
   }
   //Ethnicity
   answer = $("input[name='ethnicity']").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("What country do you call home", answer));
   //brainstorming
   answer = $("select option:selected").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("How Frequently do you brainstorm", answer));
   
   // inspirations
   answer = $("input[name='inspirationHelpful']:checked").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("Did you find any of the suggested inspirations helpful", answer));
   answer = $("#inspirationExplainSurvey").val();
-  checkResponse(answer)
+  // checkResponse(answer)
   responses.push(new QuestionResponse("Briefly explain why inspiration (not) helpful", answer));
   
   // activity/interface feedback
