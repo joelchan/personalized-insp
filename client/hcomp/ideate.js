@@ -7,6 +7,7 @@ Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
+  EventLogger.logEnterIdeation(); 
   //Hide logout
   $(".btn-login").toggleClass("hidden");
   //Set height of elements to viewport height
@@ -36,7 +37,7 @@ Template.MturkIdeationPage.rendered = function(){
 };
 
 Template.MturkIdeationPageControl.rendered = function(){
-  logger.trace("*************************************");
+  EventLogger.logEnterIdeation(); 
   logger.debug("checking to show begin ideation modal");
   if (!Session.get("currentParticipant").hasStarted) {
     logger.debug("showing begin ideation modal");
@@ -47,7 +48,7 @@ Template.MturkIdeationPageControl.rendered = function(){
 Template.MturkIdeationPageControl.helpers({
   prompt: function() {
     return Session.get("currentPrompt").question;
-  }
+  },
 });
 
 Template.MturkMainPrompt.rendered = function(){
@@ -68,16 +69,7 @@ Template.MturkMainPrompt.rendered = function(){
 
 };
 
-Template.MturkMainPrompt.helpers({
-//    prompt: function() {
-//    var prompt = Session.get("currentPrompt");
-//    return prompt.question;
-//  },
-});
 
-Template.MturkIdeaList.rendered = function() {
-  logger.debug("****************************");
-};
 Template.MturkIdeaList.helpers({
   ideas: function() {
     //return Ideas.find({$and: [

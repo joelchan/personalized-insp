@@ -61,6 +61,7 @@ Meteor.startup(function() {
       EventTypeManager.get("User began role " + title, fields);
       EventTypeManager.get("User finished role " + title, fields);
     });
+    EventTypeManager.get("User entered ideation");
     EventTypeManager.get("User began ideation");
     EventTypeManager.get("User exited study early");
     fields = ['ideaID', 'promptID', 'taskID', 'tutorial'];

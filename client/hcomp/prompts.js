@@ -78,7 +78,10 @@ Template.CrowdExperiment.helpers({
   },
   conditions: function() {
     return Conditions.find({expID: this._id});
-  }
+  },
+  partNumber: function() {
+    return this.conditions[0].partNum;
+  },
 });
 
 Template.CrowdExperimentCondition.helpers({

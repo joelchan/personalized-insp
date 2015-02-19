@@ -397,10 +397,9 @@ Router.map(function () {
         Meteor.subscribe('myUsers'),
         Meteor.subscribe('participants'),
       ];
-      Session.set("useTimer", true);
     },
     onBeforeAction: function(pause) {
-        logger.debug("before action");
+        logger.debug("before action Ideation Control Page");
         //if (!Session.get("currentUser")) {
           ////if there is no user currently logged in, then render the login page
           //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
@@ -434,6 +433,7 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
+        Session.set("tutorialTimer", false);
         this.render();
       } else
         this.render('loading');
@@ -466,7 +466,6 @@ Router.map(function () {
         Meteor.subscribe('questions'),
         Meteor.subscribe('assignments', {promptID: this.params.promptID}),
       ];
-      Session.set("useTimer", true);
     },
     onBeforeAction: function(pause) {
         logger.debug("before action");
@@ -502,6 +501,7 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
+        Session.set("tutorialTimer", false);
         this.render();
       } else
         this.render('loading');

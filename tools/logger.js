@@ -113,7 +113,11 @@ EventLogger = (function () {
       var type = EventTypeManager.get(msg);
       this.log(type);
     },
-
+    logEnterIdeation: function() {
+      var msg = "User entered ideation";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
     logEndRole: function() {
       var role = Session.get("currentRole");
       var prompt = Session.get("currentPrompt");
