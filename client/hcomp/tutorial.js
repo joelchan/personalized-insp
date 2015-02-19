@@ -626,6 +626,7 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspireMe").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspireMeTry").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-inspireMeTry").removeClass("treatment-tutorial-background");
+        $(".get-task").removeClass("get-task-disabled");
         $(".get-task").css({border: "none"});
         $(".task-list-header .tutorial-backdrop").remove();
         EventLogger.logTutorialStepComplete(7,13);
@@ -668,6 +669,7 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspireMeTry").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-inspireMe").addClass("treatment-tutorial-background");
+        $(".get-task").addClass("get-task-disabled");
         $(".get-task").css({
             border: "10px solid #F5A623",
             "z-index": 60
