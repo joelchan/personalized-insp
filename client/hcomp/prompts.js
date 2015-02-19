@@ -11,11 +11,15 @@ Logger.setLevel('Client:Hcomp:Prompts', 'trace');
  * *****************************************************************/
 Template.CrowdPromptPage.helpers({
   prompts: function() {
-    return Prompts.find({userIDs: Session.get("currentUser")._id});
+    return Prompts.find(
+        {userIDs: Session.get("currentUser")._id}, 
+        {sort: {time: -1}}
+    );
   },
 
   experiments: function() {
-    return Experiments.find().fetch(); //TODO: make experiments owned by a user
+    //TODO: make experiments owned by a user
+    return Experiments.find({},{sort: {creationTime: -1}}); 
   }
 });
 
@@ -218,6 +222,11 @@ Template.CrowdPromptPage.events({
       PromptManager.addGroups(newPrompt, group);
       GroupManager.addUser(group, Session.get("currentUser"),
           RoleManager.defaults['HcompFacilitator'].title);
+      //Clear textfield values
+      $("input#prompt-text").val("");
+      $("input#prompt-title").val("");
+      $("input#prompt-length").val(0);
+      
     },
 
     'click button.createExp': function () {
@@ -240,6 +249,10 @@ Template.CrowdPromptPage.events({
 
       logger.trace("Experiment title: " + expTitle);
       logger.trace("Number of participants: " + numParts);
+      //Clear textfield values
+      $('input[name=promptRadios]').val([]);
+      $('input#exp-title').val("");
+      $("input#num-parts").val("");
 
     },
 
