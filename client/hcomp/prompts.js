@@ -63,10 +63,10 @@ Template.CrowdExperiment.helpers({
   },
   timeLimit: function() {
     var prompt = Prompts.findOne({_id: this.promptID});
-    if (prompt.length = -1) {
-      return "Unlimited";
+    if (prompt.length > 0) {
+      return prompt.length;
     } else {
-      return prompt.length;  
+      return "Unlimited";
     }
   },
   expURL: function() {
