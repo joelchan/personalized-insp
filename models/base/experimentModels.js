@@ -79,12 +79,12 @@ ExpCondition = function(expID, promptID, desc, partNum) {
   }
   
   //List of participantIDs assigned to this condition
-  assignedParts = [];
+  this.assignedParts = [];
 
   //List of participantIDs for who has completed the experiment in this condition
-  completedParts = [];
+  this.completedParts = [];
 
-  readyParts = [];
+  this.readyParts = [];
   //Miscellaneous data associated with assignmnt
   this.misc;
 };
