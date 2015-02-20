@@ -1,10 +1,10 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Dashboard');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
+// Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
 // Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
-// Logger.setLevel('Client:Hcomp:Dashboard', 'info');
-//Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
+Logger.setLevel('Client:Hcomp:Dashboard', 'info');
+// Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
 
 
 var filters = {

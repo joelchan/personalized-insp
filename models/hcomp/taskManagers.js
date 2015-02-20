@@ -1,10 +1,10 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Hcomp:TaskManagers');
 // Comment out to use global logging level
-Logger.setLevel('Model:Hcomp:TaskManagers', 'trace');
+// Logger.setLevel('Model:Hcomp:TaskManagers', 'trace');
 //Logger.setLevel('Model:Hcomp:TaskManagers', 'debug');
-//Logger.setLevel('Model:Hcomp:TaskManagers', 'info');
-//Logger.setLevel('Model:Hcomp:TaskManagers', 'warn');
+Logger.setLevel('Model:Hcomp:TaskManagers', 'info');
+// Logger.setLevel('Model:Hcomp:TaskManagers', 'warn');
 
 
 //Meteor remote invocation

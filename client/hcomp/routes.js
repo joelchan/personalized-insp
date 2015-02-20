@@ -1,10 +1,10 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Routes');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Routes', 'trace');
+// Logger.setLevel('Client:Hcomp:Routes', 'trace');
 //Logger.setLevel('Client:Hcomp:Routes', 'debug');
-// Logger.setLevel('Client:Hcomp:Routes', 'info');
-//Logger.setLevel('Client:Hcomp:Routes', 'warn');
+Logger.setLevel('Client:Hcomp:Routes', 'info');
+// Logger.setLevel('Client:Hcomp:Routes', 'warn');
 
 //Maps routes to templates
 Router.map(function () {

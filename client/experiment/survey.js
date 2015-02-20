@@ -1,10 +1,10 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Survey');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Survey', 'trace');
+// Logger.setLevel('Client:Hcomp:Survey', 'trace');
 //Logger.setLevel('Client:Hcomp:Survey', 'debug');
-// Logger.setLevel('Client:Hcomp:Survey', 'info');
-//Logger.setLevel('Client:Hcomp:Survey', 'warn');
+Logger.setLevel('Client:Hcomp:Survey', 'info');
+// Logger.setLevel('Client:Hcomp:Survey', 'warn');
 
 Template.SurveyPage.rendered = function() {
     $("#ss-submit").click(function() {
