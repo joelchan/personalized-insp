@@ -32,7 +32,7 @@ EventLogger = (function () {
       var user = Session.get("currentUser");
       var event = new Event(type, user);
       //Index participantID and experimentID if experiment is set
-      var exp = Session.get("currentExperiment");
+      var exp = Session.get("currentExp");
       if (exp) {
         var part = Session.get("currentParticipant");
         if (part) {
@@ -145,7 +145,7 @@ EventLogger = (function () {
   
     logSubmittedSurvey: function(response) {
       var msg = "User submitted survey";
-      var exp = Session.get("currentExperiment");
+      var exp = Session.get("currentExp");
       logger.trace("Current experiment: " + JSON.stringify(exp));
       var type = EventTypeManager.get(msg);
       var data = {'responseID': response._id,

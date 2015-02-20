@@ -396,6 +396,7 @@ Router.map(function () {
         Meteor.subscribe('prompts'),
         Meteor.subscribe('experiments'),
         Meteor.subscribe('myUsers'),
+        Meteor.subscribe('assignments'),
         Meteor.subscribe('participants'),
       ];
     },
@@ -465,6 +466,7 @@ Router.map(function () {
         Meteor.subscribe('ideas', {promptID: this.params.promptID}),
         Meteor.subscribe('prompts'),
         Meteor.subscribe('myUsers'),
+        Meteor.subscribe('assignments'),
         Meteor.subscribe('tasks', {promptID: this.params.promptID}),
       ];
     },
@@ -539,7 +541,7 @@ Router.map(function () {
           var part = Participants.findOne({_id: this.params.partID});
           Session.set("currentParticipant", part);
           var exp = Experiments.findOne({_id: part.experimentID});
-          Session.set("currentExperiment", exp);
+          Session.set("currentExp", exp);
           this.next();
         } else {
           logger.debug("Not ready");

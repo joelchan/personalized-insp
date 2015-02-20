@@ -1,8 +1,8 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Ideate');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Ideate', 'trace');
-//Logger.setLevel('Client:Hcomp:Ideate', 'debug');
+// Logger.setLevel('Client:Hcomp:Ideate', 'trace');
+Logger.setLevel('Client:Hcomp:Ideate', 'debug');
 //Logger.setLevel('Client:Hcomp:Ideate', 'info');
 //Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
@@ -207,12 +207,13 @@ Template.MturkTaskLists.helpers({
     var tasks = [];
     for (var i=0; i<taskIDs.length; i++) {
       tasks.push(Tasks.findOne({_id: taskIDs[i]}));
-      logger.trace(tasks);
+      // logger.trace(tasks);
     };
+    logger.trace("User's tasks: " + JSON.stringify(tasks));
     //var tasks = Tasks.find({_id: {$in: taskIDs}});
     //Sort tasks by assignment time
     return tasks;
-    Session.set("CurrentTasks",tasks);
+    // Session.set("CurrentTasks",tasks);
   },
   prompt: function() {
     var prompt = Session.get("currentPrompt");

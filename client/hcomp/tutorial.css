@@ -51,26 +51,27 @@
     display: inline;
 }
 .control-tutorial-description {    
-    width: 25%;
+    width: 22%;
     position: absolute;
     top: 30%;
     right: 0;
     background: none;
     margin: 0 15px;
     z-index: 51;
+    padding: 12px;
 }
 .control-tutorial-description p {
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.6em;
+    font-size: 1.5em;
     color: #F5A623;
-    font-weight:bold;
+    /*font-weight:bold;*/
     margin-bottom: 3em;
 }
 .control-tutorial-description .control-tutorial-gotit {
     background-color: #7ED321;
     color: white;
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em;
     position: absolute;
     bottom: 1em;
     right: 1em;
@@ -80,7 +81,7 @@
     background-color: #979797;
     color: white;
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em;
     position: absolute;
     bottom: 1em;
     left: 1em;
@@ -91,7 +92,7 @@
     background-color: #7ED321;
     color: white;
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em;
     position: absolute;
     bottom: 1em;
     right: 1em;
@@ -147,14 +148,15 @@
 .treatment-tutorial-description {    
     width: 40%;
     position: absolute;
-    right: 15em;
+    right: 1em;
     bottom: 0;
     background: none;
     z-index: 51;
 }
 .treatment-tutorial-description p {
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.6em;
+    font-size: 1.5em;
+    /*font-weight: bold;*/
     color: #F5A623;
     margin-bottom: 3em;
 }
@@ -162,7 +164,7 @@
     background-color: #7ED321;
     color: white;
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em;
     position: absolute;
     bottom: 1em;
     right: 0;
@@ -172,7 +174,7 @@
     background-color: #979797;
     color: white;
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em;
     position: absolute;
     bottom: 1em;
     left: 0;
@@ -183,7 +185,7 @@
     background-color: #7ED321;
     color: white;
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em;
     position: absolute;
     bottom: 1em;
     right: 0;
@@ -203,7 +205,7 @@
     background-color: #7ED321;
     color: white;
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em;
     position: absolute;
     bottom: 1em;
     right: 0;
