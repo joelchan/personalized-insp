@@ -4,17 +4,18 @@
 
 <template name="HcompDashboard">
 	<div class="row hcomp-dashboard" id="hcomp-dashboard-container">
-		<div class="ideas-view col-sm-3">
+		
+    <div class="ideas-view col-sm-3">
       {{> HcompDashIdeabox }}
     </div>
+
     <div class="notes-view col-sm-5">
-      <!-- <h3>Understand What's Going On!</h3> -->
       {{> HcompBigPictureViz }}
 
-      <hr />
-
       {{> HcompScratchPad }}
+
     </div> <!-- close notes-view col -->
+
     <div class="tasks-view col-sm-4">
       <div class="row fac-actions">
         <div class="col-xs-7">
@@ -75,11 +76,13 @@
         {{> HcompOverallStats}}
       </div>
       <div class="col-md-10">
-        {{> HcompIdeaWordCloud}}
-        <!-- {{> HcompTagCloud }} -->
+        <!--{{> HcompIdeaWordCloud}}-->
+        {{> HcompOtherViz }}
+        <!--{{> HcompTagCloud }} -->
       </div>
   </div>
 </template>
+
 
 <template name="HcompOverallStats">
   <!-- <span class="fa fa-lightbulb-o"></span> -->
@@ -106,7 +109,17 @@
     {{else}}
       No ideas yet!
     {{/if}}
-  </div>
+    {{#each ideas}}
+      <span>
+        <p  style="width: {{getFontSize}}px; background-color: blue;"> {{getWord}} </p>
+      </span>
+      {{drawVis}}
+    {{/each}}
+      </div>
+</template>
+
+<template name="HcompOtherViz">
+  <div id="svgdiv"></div>
 </template>
 
 <template name="HcompScratchPad">

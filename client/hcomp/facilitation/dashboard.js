@@ -24,11 +24,11 @@ Template.HcompDashboard.rendered = function(){
   $(".ideas-view").height(height);
   $(".tasks-view").height(height);
   $(".notes-view").height(height);
-  logger.debug(height.toString());
-  logger.debug((height*0.7).toString());
-  $("#big-picture-viz").height(height*0.45);
-  $("#ideawordcloud").height(height*0.45);
-  $("#scratchpad").height(height*0.45);
+  //logger.debug(height.toString());
+  //logger.debug((height*0.7).toString());
+  $("#big-picture-viz").height(height*0.65);
+  $("#ideawordcloud").height(height*0.55);
+  $("#scratchpad").height(height*0.25);
   var scratchpadHeight = $("#scratchpad").height();
   // console.log("Scratchpad height:" + scratchpadHeight);
   // $(".scratchpad-form").height(height*0.38);
@@ -63,7 +63,7 @@ Template.HcompDashboard.rendered = function(){
 
 Template.HcompIdeaWordCloud.rendered = function() {
     FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
-    logger.trace("Creating default filter for ideawordcloud filter");
+    //logger.trace("Creating default filter for ideawordcloud filter");
     createDefaultIdeasFilter("IdeaWordCloud Filter");
 };
 //
@@ -80,6 +80,145 @@ Template.HcompBeginSynthesis.events({
   //   });
   // },
 });
+
+Template.HcompOtherViz.rendered = function() {
+
+var margin = {
+    top: 120,
+    right: 0,
+    bottom: 0,
+    left: 0
+},
+width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var n = 56,
+    m = 1,
+    padding = 16,
+    radius = d3.scale.sqrt().range([0, 25]),
+    color = d3.scale.category10().domain(d3.range(m)),
+    x = d3.scale.ordinal().domain(d3.range(m)).rangePoints([0, width], 1);
+
+
+//input the cloudItems, map each item to an object with
+
+var cloud = getCloudFromIdeas();
+
+var nodes = cloud.map(function (item) {
+    var i = Math.floor(Math.random() * m); //color
+       // v = (i + 1) / m * -Math.log(Math.random()); //value
+    return {
+        radius: radius(item.count),
+        color: color(i),
+        cx: x(i),
+        cy: height / 3,
+        title: item.word,
+        likes: item.likes
+    };
+
+});
+
+
+
+console.log("nodes are:");
+console.log(nodes);
+
+var force = d3.layout.force()
+    .nodes(nodes)
+    .size([width, height])
+    .gravity(0)
+    .charge(0)
+    .on("tick", tick)
+    .start();
+
+var svg = d3.select("#svgdiv").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var circle = svg.selectAll("circle")
+    .data(nodes)
+    .enter().append("circle")
+    .attr("r", function (d) {
+    return d.radius;
+})
+    .attr("fill", function(d) {if (d.likes==1) {return "green";} 
+                                             else {return "red";};})
+
+    .call(force.drag);
+
+var tex = svg.selectAll("text")
+    .data(nodes)
+    .enter().append("text")
+    .attr("x", function (d) {
+      return d.cx-d.radius;
+    })
+    .attr("y", function (d) {
+      return d.cy;
+    })
+    .text(function(d) {return d.title;})
+    .style("font-size", function(d) {return d.radius/2;})
+    .call(force.drag);
+
+
+function tick(e) {
+    circle.each(gravity(.1 * e.alpha))
+        .each(collide(.5))
+        .attr("cx", function (d) {
+        return d.x;
+    })
+        .attr("cy", function (d) {
+        return d.y;
+    });
+    tex.each(gravity(.2 * e.alpha))
+        .each(collide(.5))
+        .attr("x", function (d) {
+        return d.x-17;
+    })
+        .attr("y", function (d) {
+        return d.y;
+    });
+}
+
+// Move nodes toward cluster focus.
+function gravity(alpha) {
+    return function (d) {
+        d.y += (d.cy - d.y) * alpha /2;
+        d.x += (d.cx - d.x) * alpha /2;
+    };
+}
+
+// Resolve collisions between nodes.
+function collide(alpha) {
+    var quadtree = d3.geom.quadtree(nodes);
+    return function (d) {
+        var r = d.radius + radius.domain()[1] + padding,
+            nx1 = d.x - r,
+            nx2 = d.x + r,
+            ny1 = d.y - r,
+            ny2 = d.y + r;
+        quadtree.visit(function (quad, x1, y1, x2, y2) {
+            if (quad.point && (quad.point !== d)) {
+                var x = d.x - quad.point.x,
+                    y = d.y - quad.point.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = d.radius + quad.point.radius + (d.color !== quad.point.color) * padding;
+                if (l < r) {
+                    l = (l - r) / l * alpha;
+                    d.x -= x *= l;
+                    d.y -= y *= l;
+                    quad.point.x += x;
+                    quad.point.y += y;
+                }
+            }
+            return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+        });
+    };
+}
+
+};
+
 
 ///********************************************************************
 //* Template Helpers
@@ -101,6 +240,8 @@ Template.HcompOverallStats.helpers({
     var allIdeas = FilterManager.performQuery("IdeaWordCloud Filter", 
         Session.get("currentUser"),   
         "ideas").fetch();
+    //console.log("ALLIDEAS");
+    //console.log(allIdeas);
     return allIdeas.length;
     // return getFilteredIdeas("Ideas Filter").length;
   },
@@ -128,6 +269,9 @@ Template.HcompIdeaWordCloud.helpers({
     },
     getFontSize : function() {
         var count = this.count;
+        //console.log(count);
+        //console.log("this:")
+        //console.log(this);
         return 10 +(count * 4);
     },
     getWordCount : function() {
@@ -276,7 +420,7 @@ Template.HcompDashboard.events({
     //   logger.debug("Updating route for user with id: " + id);
     //   MyUsers.update({_id: id}, {$set: {'route': "MturkSynthesis"}});
     // });
-    logger.debug("Sending self to synthesis");
+    //logger.debug("Sending self to synthesis");
     Router.go('MturkSynthesis', 
         {'promptID': Session.get("currentPrompt")._id, 
         'userID': Session.get("currentUser")._id}
@@ -285,12 +429,12 @@ Template.HcompDashboard.events({
   },
 
   'click .review-brainstorm' : function() {
-    logger.debug("Sending self to review brainstorm page");
+    //logger.debug("Sending self to review brainstorm page");
     Router.go('HcompResultsPage', {promptID: Session.get("currentPrompt")._id, userID: Session.get("currentUser")._id});
   },
 
   'click .goto-prompts-page' : function() {
-    logger.debug("Sending self to prompts page");
+    //logger.debug("Sending self to prompts page");
     Router.go('CrowdPromptPage', {userID: Session.get("currentUser")._id});
   },
 
@@ -450,11 +594,11 @@ function getCloudFromIdeas() {
                                        .replace(/[^\w\s]|_/g, "")
                                        .replace(/\s{2,}/g," ");
   }
-  logger.debug("Prompt stop words: " + promptStopWords.toString());
+  //logger.debug("Prompt stop words: " + promptStopWords.toString());
   var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
-  logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
+  //logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
   // console.log(ideas);
 	var cloud = [];
 	for (var i = 0; i < ideas.length; i++) {
@@ -466,8 +610,8 @@ function getCloudFromIdeas() {
                 .replace(/[^\w\s]|_/g, "")
                 .replace(/\s{2,}/g," ");
 
-			var cloudItem = {'word': '', 'count': 0};
-			
+			var cloudItem = {'word': '', 'count': 0, 'likes':0};
+			cloudItem.likes = ideas[i].votes.length;
 			var containsWord = Boolean(false);
 			for (var k = 0; k < cloud.length; k++) {
 				if (cloud[k].word == word) {
@@ -483,7 +627,7 @@ function getCloudFromIdeas() {
         && promptStopWords.indexOf(word) == -1) {
 				// console.log(stopWords);
         cloudItem.word = word;
-				cloudItem.count = 1;
+				cloudItem.count += 1;
 				cloud.push(cloudItem);
 			}
 		}	
@@ -493,6 +637,8 @@ function getCloudFromIdeas() {
       if(a.word > b.word) return 1;
       return 0;
   });
+  console.log("CLOUD");
+  console.log(sortedCloud);
 	return sortedCloud;
 };
 
