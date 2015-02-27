@@ -746,7 +746,12 @@ var initRolePage = function() {
       //Setup timer for decrementing onscreen timer with 17 minute timeout
     }
     if (Session.get("useTimer")) {
-      Session.set("timeLeft", prompt.length);
+      logger.debug("Checking to Setting timer length");
+      logger.trace(Session.get("isDecrementing"));
+      if (!Session.get("isDecrementing")) {
+        logger.debug("Setting timer length");
+        Session.set("timeLeft", prompt.length);
+      }
       $('#time').text(prompt.length);
       logger.debug("checking if setting timer decrement");
       logger.trace("Use Timer: " + JSON.stringify(Session.get("useTimer")));
