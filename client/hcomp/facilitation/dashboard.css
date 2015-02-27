@@ -192,7 +192,9 @@
 .hcomp-dashboard .task-priority {
   /*text-align: center;*/
   padding: 0px 0px 15px 20px;
-  display:inline-block;
+/*  display:inline-block;*/
+    display: none;
+    
 }
 
 .hcomp-dashboard .task-priority .radio-inline input[type=radio] {
@@ -234,7 +236,6 @@
 }
 
 .hcomp-dashboard .task-card-main {
-  padding:2px;
   vertical-align: center;
 }
 
@@ -244,6 +245,7 @@
   padding:5px 5px 0px 0px;
   cursor:pointer;
   opacity:0.75;
+    display: none;
 }
 
 /*.hcomp-dashboard .card-edit:hover {
@@ -255,10 +257,27 @@
 }*/
 
 .hcomp-dashboard .card-description {
-  font-size:20px;
-  font-weight: bold;
-  padding-right:0px;
-  padding-left:0px;
+    font-size:20px;
+    font-weight: bold;
+    padding-right:0px;
+    padding-left:0px;
+    height: 1.5em;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hcomp-dashboard .card-description a {
+    width: 100%;
+    text-decoration: none;
+}
+    
+.hcomp-dashboard .card-description:hover {
+    overflow: visible;
+    height: auto;
+    width: 100%;
+    cursor: pointer;
+    white-space: normal;
 }
 
 .hcomp-dashboard .card-other-data {
@@ -354,7 +373,8 @@
   
 }
 .hcomp-dashboard #CreateTask #task-create {
-  
+    background-color: rgb(102,164,74);
+    color: black;
 }
 
 .hcomp-dashboard .gamechangestar, .modal .gamechangestar{

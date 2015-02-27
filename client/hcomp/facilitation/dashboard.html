@@ -19,8 +19,9 @@
     <div class="tasks-view col-sm-4">
       <div class="row fac-actions">
         <div class="col-xs-7">
-          {{> HcompCreateTaskButton }}
+<!--          {{> HcompCreateTaskButton }}-->
         </div>
+<!--
         <div class="col-sm-5 other-fac-actions">
           <strong><u>Other actions:</u></strong>
           <div class="goto-prompts-page">
@@ -36,6 +37,7 @@
             <a href="">Review brainstorm</a>
           </div>
         </div>
+-->
           <!-- {{> HcompBeginSynthesis }} -->
       </div>
       <div class="row" id="create-task-container">
@@ -155,10 +157,11 @@
 </template>
 
 <template name="CreateTask">
-	<div id="CreateTask" class="collapse">
+	<div id="CreateTask">
     <span class="card-description">Create a new inspiration</span>
     <hr />
 		<form role="form" class="form">
+<!--  display none right now-->
       <div class="row task-priority">
         <form id="task-priority" role="form">
           <label class="">Choose a Priority: &nbsp;</label>
@@ -222,23 +225,22 @@
 		<div class="task-card" id="{{getID}}">
 			<div class="row task-card-main">
 				<div class="card-description col-xs-10">
-					{{getDescription}}
+                    <a>{{getDescription}}</a>
 				</div>
         <div class="card-edit col-xs-2 col-xs-offset-2">
           <span title="Edit" class="glyphicon glyphicon-edit card-edit"> </span>    
         </div>
 			</div>
-			<hr />
 			<div class="task-data row">
         <div class="card-ideas col-xs-3">
           {{#if getIdeas}}
-            <!-- <span title="Ideas" class="glyphicon glyphicon-exclamation-sign"> </span> -->
-            <span class="badge">{{getIdeas}}</span> 
-            <a data-toggle="collapse" data-parent="#task-{{getID}}-ideas-group" href="#task-{{getID}}-ideas">&nbsp;ideas</a>
+            <!-- <span title="Ideas" class="glyphicon glyphicon-exclamation-sign"> </span> --> 
+            <a data-toggle="collapse" data-parent="#task-{{getID}}-ideas-group" href="#task-{{getID}}-ideas"><span class="badge">{{getIdeas}}</span></a>
           {{else}}
-            <span class="badge">{{getIdeas}}</span> &nbsp;ideas
+            <span class="badge">{{getIdeas}}</span>
           {{/if}}
         </div>
+<!--
         <div class="card-priority card-other-data col-xs-1 col-xs-offset-1">
           <span title="Priority" class="glyphicon glyphicon-warning-sign"> </span>
           {{getPriority}}       
@@ -247,6 +249,7 @@
           <span title="Ideators"  class="glyphicon glyphicon-user"> </span>
           {{getIdeators}}     
         </div>
+-->
         <!-- <div class="card-questions col-xs-3 btn">
           <span title="Questions" class="glyphicon glyphicon-question-sign"> </span>
           {{getQuestions}}      

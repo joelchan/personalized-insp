@@ -299,6 +299,11 @@ Template.TaskCards.helpers({
     }
 
 });
+//Template.TaskCard.events({
+//    'click .show-full-description': function() {
+//        $(".card-description").css({height: "auto", overflow: "visible"});
+//    },
+//}),
 
 Template.TaskCard.helpers({
     getDescription : function() {
@@ -450,64 +455,65 @@ Template.HcompDashboard.events({
 
 	'click #task-create' : function(){
 		var message = $("#task-description").val();
-		// var priorityText = $("#task-priority").val();
-    // console.log("Creating task with priority: " + priorityText);
-		var priorityNum = parseInt($("#CreateTask" + " input[type='radio'][name='taskPriorityOptions']:checked").val());
-		var ideatorsVal = priorityToNumIdeators(priorityNum);
-    // var ideatorsVal;
-    // switch (priorityNum) {
-    //   case 1:
-    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.33); // change this later once we have group assignment working
-    //     break;
-    //   case 2:
-    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
-    //     break;
-    //   case 3:
-    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length);
-    //     break;
-    //   default:
-    //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
-    //     break;
-    // }
-    // var ideatorsVal = $("#task-ideators").val();
-		// var ideasVal = $("#task-ideas").val();
-		// var minutesVal = $("#task-minutes").val();
+        if (message != "") {
+            // var priorityText = $("#task-priority").val();
+        // console.log("Creating task with priority: " + priorityText);
+            var priorityNum = parseInt($("#CreateTask" + " input[type='radio'][name='taskPriorityOptions']:checked").val());
+            var ideatorsVal = priorityToNumIdeators(priorityNum);
+        // var ideatorsVal;
+        // switch (priorityNum) {
+        //   case 1:
+        //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.33); // change this later once we have group assignment working
+        //     break;
+        //   case 2:
+        //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
+        //     break;
+        //   case 3:
+        //     ideatorsVal = parseInt(Session.get("currentGroup").users.length);
+        //     break;
+        //   default:
+        //     ideatorsVal = parseInt(Session.get("currentGroup").users.length*0.66);
+        //     break;
+        // }
+        // var ideatorsVal = $("#task-ideators").val();
+            // var ideasVal = $("#task-ideas").val();
+            // var minutesVal = $("#task-minutes").val();
 
-		// switch (priorityText)
-		// {
-		// 	case "Low":
-		// 		priorityNum = 1;
-		// 		break;
-		// 	case "Medium":
-		// 		priorityNum = 2;
-		// 		break;
-		// 	case "High":
-		// 		priorityNum = 3;
-		// 		break;
-		// 	default: 
-		// 		priorityNum = 1;
-		// 		break;
-		// }
-		// var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal, ideasRequested=ideasVal, minutesRequested=minutesVal); 
-    var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal); 
-		task._id = Tasks.insert(task);
+            // switch (priorityText)
+            // {
+            // 	case "Low":
+            // 		priorityNum = 1;
+            // 		break;
+            // 	case "Medium":
+            // 		priorityNum = 2;
+            // 		break;
+            // 	case "High":
+            // 		priorityNum = 3;
+            // 		break;
+            // 	default: 
+            // 		priorityNum = 1;
+            // 		break;
+            // }
+            // var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal, ideasRequested=ideasVal, minutesRequested=minutesVal); 
+        var task = new Task(Session.get('currentUser'), Session.get('currentPrompt'), Session.get('currentGroup'), message, 'open', priority=priorityNum, num=ideatorsVal); 
+            task._id = Tasks.insert(task);
 
-    // clear the message description
-    $("#task-description").val("");
+        // clear the message description
+        $("#task-description").val("");
 
-    $('#CreateTask').toggleClass('in');
+    //    $('#CreateTask').toggleClass('in');
 
-    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='1']").prop("checked",false);
-    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").prop("checked",true);
-    $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='3']").prop("checked",false);
+        $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='1']").prop("checked",false);
+        $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").prop("checked",true);
+        $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='3']").prop("checked",false);
 
-    // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").parent().attr("checked","checked");
-    // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").attr("checked","checked");
-
+        // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").parent().attr("checked","checked");
+        // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").attr("checked","checked");
+        }
 	},
 
   'click #task-create-cancel' : function() {
-    $('#CreateTask').toggleClass('in');
+//    $('#CreateTask').toggleClass('in');
     $("#task-description").val("");
     $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='1']").prop("checked",false);
     $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").prop("checked",true);
