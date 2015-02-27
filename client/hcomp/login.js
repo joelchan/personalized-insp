@@ -68,6 +68,9 @@ Template.MturkLoginPage.events({
                 logger.debug("Sending to " + routeName);
                 Router.go(routeName, {promptID: exp.promptID, partID: part._id});  
               }
+            } else {
+              logger.trace("Participant has finished experiment; rejecting participant");
+              Router.go('NoParticipation');
             }
           } else {
             logger.trace("not a participant yet");

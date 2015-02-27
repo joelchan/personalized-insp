@@ -13,33 +13,45 @@ Template.HcompConsentPage.events({
         var exp = Session.get("currentExp");
         var user = Session.get("currentUser");
         logger.trace("Checking if participant has participated before");
-        if (ExperimentManager.canParticipate(exp, user.name)) {
-          logger.trace("New participant, randomly assigning to condition in experiment");
-          part = ExperimentManager.addExperimentParticipant(exp, user);
-          if (part) {
-            logger.trace("Successfully created participant with id " + part._id);
-            condDesc = Conditions.findOne({_id: part.conditionID}).description;
-            var group = Groups.findOne({_id: exp.groupID});
-            var role;
-            if (!GroupManager.hasUser(group, user)) {
-              role = RoleManager.defaults['HcompIdeator'];
-              GroupManager.addUser(group, user, role.title);
+        Meteor.call('canParticipate2', exp._id, user.name, 
+            function(error, okToParticipate) {
+                logger.trace("OK to participate: " + okToParticipate);
+                if (okToParticipate) {
+                  logger.trace("New participant, randomly assigning to condition in experiment");
+                  // part = ExperimentManager.addExperimentParticipant(exp, user);
+                  Meteor.call('addParticipant2', exp._id, user._id, 
+                    function(error, part) {
+                        logger.trace("Result of server addParticipant: " + JSON.stringify(part))
+                        if (part) {
+                          logger.trace("Successfully created participant with id " + part._id);
+                          condDesc = Conditions.findOne({_id: part.conditionID}).description;
+                          var group = Groups.findOne({_id: exp.groupID});
+                          var role;
+                          if (!GroupManager.hasUser(group, user)) {
+                            role = RoleManager.defaults['HcompIdeator'];
+                            GroupManager.addUser(group, user, role.title);
+                          } else {
+                            role = GroupManager.getRole(group, user);
+                          }
+                          Session.set("currentRole", role);
+                          Session.set("currentGroup", group);
+                          if (condDesc == "Treatment") {
+                              logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
+                              Session.set("nextPage", "TutorialTreatment");
+                          } else {
+                              logger.trace("Assigned to control condition, sending to control tutorial page");
+                              Session.set("nextPage", "TutorialControl");
+                          }
+                        }
+                        EventLogger.logConsent();
+                        Router.go(Session.get("nextPage"), {partID: part._id});
+              });
             } else {
-              role = GroupManager.getRole(group, user);
+              logger.trace("Participant has participated before; rejecting participant");
+              Router.go('NoParticipation');
             }
-            Session.set("currentRole", role);
-            Session.set("currentGroup", group);
-            if (condDesc == "Treatment") {
-                logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
-                Session.set("nextPage", "TutorialTreatment");
-            } else {
-                logger.trace("Assigned to control condition, sending to control tutorial page");
-                Session.set("nextPage", "TutorialControl");
-            }
-          }
-        } else {
-          logger.trace("Participant has participated before; rejecting participant");
-        }
+        });
+        logger.trace("******* After meteor call to canparticipate *******");
         //console.log("**** clicked continue ****");
         //login user
         //var userName = $('input#name').val().trim();
@@ -47,8 +59,7 @@ Template.HcompConsentPage.events({
         //loginUser(myUser);
 
         //Go to next page
-        EventLogger.logConsent();
-        Router.go(Session.get("nextPage"), {partID: part._id});
+        
     }
 });
 

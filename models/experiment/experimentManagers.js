@@ -1,9 +1,9 @@
 // Configure logger for ExperimentManager
 var logger = new Logger('Managers:Experiment');
 // Comment out to use global logging level
-// Logger.setLevel('Managers:Experiment', 'trace');
+Logger.setLevel('Managers:Experiment', 'trace');
 //Logger.setLevel('Managers:Experiment', 'debug');
-Logger.setLevel('Managers:Experiment', 'info');
+// Logger.setLevel('Managers:Experiment', 'info');
 // Logger.setLevel('Managers:Experiment', 'warn');
 
 ExperimentManager = (function () {
@@ -183,6 +183,7 @@ ExperimentManager = (function () {
         var unlimitedRecruitment;
         var randCond;
         var cutOffs = [];
+        var wantedRecruits = [];
 
         if (exp.conditions[0].partNum == -1) {
             unlimitedRecruitment = true;
@@ -196,33 +197,58 @@ ExperimentManager = (function () {
               
               //Determin number of participants expected - number already 
               //  assigned
-              var numPartWanted = exp.conditions[i].partNum;
+              var numPartWanted = exp.conditions[i].partNum; // desired number of participants
               var cond = Conditions.findOne({_id: exp.conditions[i]._id})
-              var numPartAssigned = cond.assignedParts.length;
+              var numPartAssigned = cond.assignedParts.length; // number of participants currently assigned
               logger.debug(numPartWanted + " participants wanted for " + cond.description + " condition, " + numPartAssigned + " assigned so far");
               
               // Square the number to heavily bias in favor conditions with fewer assigned participants
               var numToRecruit = numPartWanted - numPartAssigned;
+              wantedRecruits.push(numToRecruit);
               logger.debug("Need to recruit " + numToRecruit + " for " + cond.description);
-              var thisCutOff = Math.pow(numToRecruit,3);
+              var thisCutOff = Math.pow(numToRecruit,3); // this is the width between each point on the number line
               // Construct the sampling space
               // Each element in cutOffs is a condition
               if (cutOffs.length == 0) {
                 logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
                 cutOffs.push(thisCutOff);  
               } else {
-                var priorCutOff = cutOffs[0];
-                for (var j=1; j<cutOffs.length; j++) {
-                  // logger.trace("priorCutOff = " + priorCutOff);
-                  priorCutOff += cutOffs[j];
-                }
-                thisCutOff += priorCutOff
-                logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
-                cutOffs.push(thisCutOff);
+                // var priorCutOff = cutOffs[0]; // need to edit this to generalize beyond two conditions
+                // for (var j=1; j<cutOffs.length; j++) {
+                //   // logger.trace("priorCutOff = " + priorCutOff);
+                //   priorCutOff += cutOffs[j];
+                // }
+                // thisCutOff += priorCutOff
+                // logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
+                cutOffs.push(thisCutOff + cutOffs[cutOffs.length-1]);
               }
             }
             logger.trace("Number line is :" + JSON.stringify(cutOffs));
             var max = cutOffs[cutOffs.length-1]
+            if (max <= 0) {
+              logger.debug("Conditions are both full, randomly sampling smaller condition");
+              var condIndex = _.indexOf(wantedRecruits,_.max(wantedRecruits));
+              logger.trace("Drawing from wantedRecruits: " + JSON.stringify(wantedRecruits));
+              logger.debug("Drew condition index: " + condIndex);
+              randCond = exp.conditions[condIndex];
+              logger.trace("Randomly drew " + randCond.description + " condition");
+              return randCond._id;    
+              // reconstruct numberline
+              // cutOffs = [];
+              // for (var i=0; i<exp.conditions.length; i++) {
+              //   var numWantedFull = exp.conditions[i].partNum; // desired number of participants
+              //   thisCutOff = Math.pow(numWantedFull,3);
+              //   if (cutOffs.length == 0) {
+              //     logger.trace("Cutoff for " + cond.description + ": " + thisCutOff);
+              //     cutOffs.push(thisCutOff);  
+              //   } else {
+              //     cutOffs.push(thisCutOff + cutOffs[cutOffs.length-1]);
+              //   }
+              // }
+              // max = cutOffs[cutOffs.length-1]
+            }
+
+            // for logging
             for (var i=0; i<cutOffs.length; i++) {
               if (i==0) {
                 var p = cutOffs[i]/max;
