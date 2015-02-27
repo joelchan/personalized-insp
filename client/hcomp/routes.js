@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Routes');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Routes', 'trace');
+ Logger.setLevel('Client:Hcomp:Routes', 'trace');
 //Logger.setLevel('Client:Hcomp:Routes', 'debug');
-Logger.setLevel('Client:Hcomp:Routes', 'info');
+//Logger.setLevel('Client:Hcomp:Routes', 'info');
 // Logger.setLevel('Client:Hcomp:Routes', 'warn');
 
 //Maps routes to templates
@@ -386,20 +386,29 @@ Router.map(function () {
   this.route('MturkIdeationControl', {
       path: 'crowd/Ideate/:promptID/:partID',
       template: 'MturkIdeationPageControl',
+      subscriptions: function() {
+        logger.debug("Waiting on...");
+        this.subscribe('ideas', {promptID: this.params.promptID})
+        this.subscribe('prompts').wait();
+        this.subscribe('experiments').wait();
+        this.subscribe('myUsers').wait();
+        this.subscribe('assignments').wait();
+        this.subscribe('tasks', {promptID: this.params.promptID});
+      },
 
 //    path: 'crowd/Ideation/:promptID/:userID/',
 //  	template: 'MturkIdeationPage',
-    subscriptions: function() {
-      logger.debug("Waiting on control page...");
-      return [
-        Meteor.subscribe('ideas', {promptID: this.params.promptID}),
-        Meteor.subscribe('prompts'),
-        Meteor.subscribe('experiments'),
-        Meteor.subscribe('myUsers'),
-        Meteor.subscribe('assignments'),
-        Meteor.subscribe('participants'),
-      ];
-    },
+    // subscriptions: function() {
+      // logger.debug("Waiting on control page...");
+      // return [
+        // Meteor.subscribe('ideas', {promptID: this.params.promptID}),
+        // Meteor.subscribe('prompts'),
+        // Meteor.subscribe('experiments'),
+        // Meteor.subscribe('myUsers'),
+        // Meteor.subscribe('assignments'),
+        // Meteor.subscribe('participants'),
+      // ];
+    // },
     onBeforeAction: function(pause) {
         logger.debug("before action Ideation Control Page");
         //if (!Session.get("currentUser")) {
@@ -418,7 +427,7 @@ Router.map(function () {
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
           // MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeationControl'}});
-          LoginManager.loginUser(user.name);
+          // LoginManager.loginUser(user.name);
           logger.trace("Logging in the user");
           Session.set("currentUser", user);
           var prompt = Prompts.findOne({_id: pID});
@@ -454,22 +463,31 @@ Router.map(function () {
   this.route('MturkIdeationTreatment', {
       path: 'crowd/Ideation/:promptID/:partID',
       template: 'MturkIdeationPage',
-
-    waitOn: function() {
-      logger.debug("Waiting on...");
-      // var part = Participants.findOne({_id: this.params.partID});
-      // logger.trace("Participant is: " + JSON.stringify(part));
-      // Session.set("currentParticipant", part);
-      // var exp = Experiments.findOne({_id: part.experimentID})
-      // var pID = exp.promptID;
-      return [
-        Meteor.subscribe('ideas', {promptID: this.params.promptID}),
-        Meteor.subscribe('prompts'),
-        Meteor.subscribe('myUsers'),
-        Meteor.subscribe('assignments'),
-        Meteor.subscribe('tasks', {promptID: this.params.promptID}),
-      ];
-    },
+      subscriptions: function() {
+        logger.debug("Waiting on...");
+        this.subscribe('ideas', {promptID: this.params.promptID})
+        this.subscribe('prompts').wait();
+        this.subscribe('experiments').wait();
+        this.subscribe('myUsers').wait();
+        this.subscribe('assignments').wait();
+        this.subscribe('tasks', {promptID: this.params.promptID});
+      },
+    // waitOn: function() {
+      // logger.debug("Waiting on...");
+      // // var part = Participants.findOne({_id: this.params.partID});
+      // // logger.trace("Participant is: " + JSON.stringify(part));
+      // // Session.set("currentParticipant", part);
+      // // var exp = Experiments.findOne({_id: part.experimentID})
+      // // var pID = exp.promptID;
+      // return [
+        // Meteor.subscribe('ideas', {promptID: this.params.promptID}),
+        // Meteor.subscribe('prompts'),
+        // Meteor.subscribe('experiments'),
+        // Meteor.subscribe('myUsers'),
+        // Meteor.subscribe('assignments'),
+        // Meteor.subscribe('tasks', {promptID: this.params.promptID}),
+      // ];
+    // },
     onBeforeAction: function(pause) {
         logger.debug("before action");
         //if (!Session.get("currentUser")) {
@@ -499,6 +517,7 @@ Router.map(function () {
           this.next();
         } else {
           logger.debug("Not ready");
+          this.next();
         }
     },
     action: function(){
@@ -713,6 +732,9 @@ var insertExitStudy = function() {
 };
 
 var initRolePage = function() {
+  /****************************************************************
+   * This has local routes.js scope only
+   * *************************************************************/
   logger.debug("Initializing a role page");
   //Add timer
   var prompt = Session.get("currentPrompt");
@@ -726,11 +748,13 @@ var initRolePage = function() {
     if (Session.get("useTimer")) {
       Session.set("timeLeft", prompt.length);
       $('#time').text(prompt.length);
-      logger.debug("************** checking if setting timer decrement ***************");
+      logger.debug("checking if setting timer decrement");
       logger.trace("Use Timer: " + JSON.stringify(Session.get("useTimer")));
       logger.trace("Tutorial timer: " + JSON.stringify(Session.get("isTutorialTimer")));
-      if (!Session.get("isTutorialTimer")) {
-        logger.debug("Setting decrement for timer");
+      if (!Session.get("isTutorialTimer") && 
+          !Session.get("isDecrementing") ){
+        logger.debug("************Setting decrement for timer*************");
+        Session.set("isDecrementing", true);
         Meteor.setTimeout(decrementTimer, 60000);
       }
     }

@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Ideate');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Ideate', 'trace');
+Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 // Logger.setLevel('Client:Hcomp:Ideate', 'debug');
-Logger.setLevel('Client:Hcomp:Ideate', 'info');
+// Logger.setLevel('Client:Hcomp:Ideate', 'info');
 // Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
