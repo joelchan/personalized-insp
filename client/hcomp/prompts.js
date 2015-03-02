@@ -91,6 +91,16 @@ Template.CrowdExperimentCondition.helpers({
   numAssigned: function() {
     return this.assignedParts.length;
   },
+  numBegan: function() {
+    var numBegan = 0;
+    this.assignedParts.forEach(function(p) {
+      var thisP = Participants.findOne({_id: p});
+      if (thisP.hasStarted) {
+        numBegan += 1;
+      }
+    });
+    return numBegan;
+  },
   numCompleted: function() {
     return this.completedParts.length;
   },
