@@ -2,9 +2,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:LegionTools');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:LegionTools', 'trace');
+// Logger.setLevel('Client:Hcomp:LegionTools', 'trace');
 //Logger.setLevel('Client:Hcomp:LegionTools', 'debug');
-//Logger.setLevel('Client:Hcomp:LegionTools', 'info');
+Logger.setLevel('Client:Hcomp:LegionTools', 'info');
 //Logger.setLevel('Client:Hcomp:LegionTools', 'warn');
 
 Template.LegionFinalPage.rendered = function() {

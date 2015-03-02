@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Server:Base:Experiment');
 // Comment out to use global logging level
-Logger.setLevel('Server:Base:Experiment', 'trace');
+// Logger.setLevel('Server:Base:Experiment', 'trace');
 //Logger.setLevel('Server:Base:Experiment', 'debug');
-//Logger.setLevel('Server:Base:Experiment', 'info');
+Logger.setLevel('Server:Base:Experiment', 'info');
 //Logger.setLevel('Server:Base:Experiment', 'warn');
 
 Meteor.methods({

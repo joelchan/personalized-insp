@@ -1,9 +1,9 @@
 // Configure logger for ExperimentManager
 var logger = new Logger('Managers:Experiment');
 // Comment out to use global logging level
-Logger.setLevel('Managers:Experiment', 'trace');
+// Logger.setLevel('Managers:Experiment', 'trace');
 //Logger.setLevel('Managers:Experiment', 'debug');
-// Logger.setLevel('Managers:Experiment', 'info');
+Logger.setLevel('Managers:Experiment', 'info');
 // Logger.setLevel('Managers:Experiment', 'warn');
 
 ExperimentManager = (function () {
