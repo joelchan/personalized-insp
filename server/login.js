@@ -2,32 +2,27 @@
 Meteor.users.allow({remove:function() { return true }});
 
 Meteor.methods({
-signupTrial: function(user) {
+  signupTrial: function(user) {
 
-	var userId = Accounts.createUser(user);
+	  var userId = Accounts.createUser(user);
+  
+	  /* Trial user get auto deleted after timeout */
+	  if(userId) {
+		  return userId;
+	  }
+  },
 
-	/* Trial user get auto deleted after timeout */
-	if(userId) {
-		return userId;
-	}
-}
- });
-
-
-Meteor.methods({
-signup: function(user) {
-
-  var userId = Accounts.createUser(user);
-
-  /* Trial user get auto deleted after timeout */
-  if(userId) {
-    return userId;
+  signup: function(user) {
+  
+    var userId = Accounts.createUser(user);
+  
+    /* Trial user get auto deleted after timeout */
+    if(userId) {
+      return userId;
+    }
   }
-}
- });
-
-
-
+});
+  
 Accounts.onCreateUser(function(options, user) {
   // Use provided profile in options, or create an empty profile object
   user.profile = options.profile || {};
