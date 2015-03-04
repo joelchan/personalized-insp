@@ -179,9 +179,7 @@
           <strong>Target Number of Participants per Condition: </strong> 
             {{ partNumber }}<br/>
           <strong>Participant login URL: </strong> 
-            <a href="{{ expURL }}">
-              {{ expURL }}
-            </a><br/>
+            <a href="{{ expURL }}">{{ expURL }}</a><br/>
           <!-- <strong>Conditions: </strong><br/> -->
           {{#each conditions}}
             {{> CrowdExperimentCondition }}
