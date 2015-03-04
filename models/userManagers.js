@@ -341,7 +341,7 @@ GroupManager = (function () {
         //   role = RoleManager.defaults[role];
         // }
         if (!isInList(user, group.users, '_id')) {
-          logger.debug("adding new user to group with id: " + user._id);
+          logger.debug("adding new user (id: " + user._id + " to group (id: " + group._id + ")");
           group.users.push(user);
         } else {
           logger.warn("Attempting to add already present user to group");

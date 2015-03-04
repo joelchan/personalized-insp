@@ -8,7 +8,10 @@ Logger.setLevel('info');
 // Configure logger for event logging 
 var logger = new Logger('Tools:Logging');
 // Comment out to use global logging level
+//Logger.setLevel('Tools:Logging', 'trace');
+//Logger.setLevel('Tools:Logging', 'debug');
 Logger.setLevel('Tools:Logging', 'info');
+//Logger.setLevel('Tools:Logging', 'warn');
 
 EventLogger = (function () {
   return {
@@ -29,7 +32,7 @@ EventLogger = (function () {
       var user = Session.get("currentUser");
       var event = new Event(type, user);
       //Index participantID and experimentID if experiment is set
-      var exp = Session.get("currentExperiment");
+      var exp = Session.get("currentExp");
       if (exp) {
         var part = Session.get("currentParticipant");
         if (part) {
@@ -42,7 +45,7 @@ EventLogger = (function () {
       //Set each field specified in type
       if (type.fields) {
         type.fields.forEach(function(field) {
-          if (data[field]) {
+          if (_.has(data, field)) {
             event[field] = data[field];
           } else {
             logger.warn("Expected field \"" + field +
@@ -113,7 +116,11 @@ EventLogger = (function () {
       var type = EventTypeManager.get(msg);
       this.log(type);
     },
-
+    logEnterIdeation: function() {
+      var msg = "User entered ideation";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
     logEndRole: function() {
       var role = Session.get("currentRole");
       var prompt = Session.get("currentPrompt");
@@ -138,10 +145,11 @@ EventLogger = (function () {
   
     logSubmittedSurvey: function(response) {
       var msg = "User submitted survey";
-      var prompt = Session.get("currentPrompt");
+      var exp = Session.get("currentExp");
+      logger.trace("Current experiment: " + JSON.stringify(exp));
       var type = EventTypeManager.get(msg);
       var data = {'responseID': response._id,
-          'promptID': prompt._id
+          'expID': exp._id
       };
       this.log(type, data);
     },
@@ -439,6 +447,13 @@ EventLogger = (function () {
       var msg = "User did not receive an inspiration";
       var type = EventTypeManager.get(msg);
       var data = {"promptID": prompt._id};
+      this.log(type, data);
+    },
+    logShowHideClick: function(isHidden) {
+      var msg = "User clicked show/hide instructions";
+      var type = EventTypeManager.get(msg);
+      var data = {'isHidden': isHidden};
+      logger.debug(data);
       this.log(type, data);
     },
   };

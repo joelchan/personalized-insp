@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Filterbox');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
+// Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
 // Logger.setLevel('Client:Hcomp:Filterbox', 'debug');
-//Logger.setLevel('Client:Hcomp:Filterbox', 'info');
+Logger.setLevel('Client:Hcomp:Filterbox', 'info');
 //Logger.setLevel('Client:Hcomp:Filterbox', 'warn');
 
 

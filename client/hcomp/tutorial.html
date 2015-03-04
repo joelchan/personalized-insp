@@ -28,6 +28,7 @@
         <div id="directions-content" class="collapse">
           <ol>
             <li>Your task is to generate as many creative ideas as you can for the brainstorming problem for 10 minutes. When the time is up, you will complete a brief survey, and be taken to a page where you can submit the HIT.</li>
+            <li><strong>IMPORTANT!</strong> DO NOT REFRESH YOUR BROWSER DURING THE HIT: If you do, the system will kick you out of the HIT and you will not be able to complete it.</li>
             <li>If at any time you do not wish to continue, you may exit the study by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
           </ol>
           <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
@@ -111,7 +112,8 @@
         <div id="directions-content" class="collapse">
           <ol>
             <li>Your task is to generate as many creative ideas as you can for the brainstorming problem for 10 minutes. When the time is up, you will complete a brief survey, and be taken to a page where you can submit the HIT.</li>
-            <li>If you run out of ideas or want some fresh inspiration, hit the <strong>"Inspire Me!"</strong> button. You will receive an "inspiration card" that contains a question or idea meant to stimulate your thinking.</li>
+            <li><strong>IMPORTANT!</strong> DO NOT REFRESH YOUR BROWSER DURING THE HIT: If you do, the system will kick you out of the HIT and you will not be able to complete it.</li>
+            <li>If you run out of ideas or want some fresh inspiration, hit the <strong>"Inspire Me!"</strong> button. The button will turn green when there are fresh inspirations available for you.If inspirations are available, you will receive an "inspiration card" that contains a question or idea meant to stimulate your thinking.</li>
             <li>If the inspiration sparks any new ideas, we would like you to enter them directly into that card (ideas unrelated to any inspiration can go in the main idea entry box.</li>
             <li>If at any time you do not wish to continue, you may exit the study by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
           </ol>
@@ -133,7 +135,7 @@
   <div class='row task-list-header'>
     <h1 class="ideation-prompt-treatment">The Brainstorming Problem</h1> <br/>
     <div class="header">
-      <div class="btn btn-success btn-large get-task col-xs-3">
+      <div class="btn btn-success btn-large get-task get-task-disabled col-xs-3">
         <img src="/LightBulbOn-white2.png" class="get-task-icon"/>
         Inspire Me!
         <!-- <div class="col-xs-4">
@@ -226,7 +228,7 @@
         </div>
         <div class = "tutorial-text control-tutorial-timer-text control-tutorial-description">
             <p>
-                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. Once the time is up, you will be taken to a final screen where you can submit the HIT.
+                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. Once the time is up, you will be taken to a final screen where you can submit the HIT. <strong>DO NOT REFRESH YOUR BROWSER DURING THE HIT</strong>. If you do, the system will kick you out of the HIT and you will not be able to complete it.
             </p>
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-timer-goback'>
@@ -342,7 +344,7 @@
           Go Back!
                 </button>
                 <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-pleaseWait-gotit'>
-          Hide Message
+          Dismiss
                 </button>
             </div>
         </div>
@@ -372,7 +374,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-timer-text treatment-tutorial-description">
             <p>
-                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. Once the time is up, you will be taken to a final screen where you can submit the HIT.
+                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. Once the time is up, you will be taken to a final screen where you can submit the HIT. <strong>DO NOT REFRESH YOUR BROWSER DURING THE HIT</strong>. If you do, the system will kick you out of the HIT and you will not be able to complete it.
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-timer-goback'>
@@ -466,7 +468,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-inspireMe-text treatment-tutorial-description">
             <p>
-                If you run out of ideas or want some fresh inspiration, hit this button. 
+                If you run out of ideas or want some fresh inspiration, hit this button. The button will turn green when there are fresh inspirations available for you.
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspireMe-goback'>
@@ -481,7 +483,7 @@
     <div id = "treatment-tutorial-inspireMeTry" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-inspireMeTry-text treatment-tutorial-description">
             <p>
-                Give it a try! Hit the inspire me button and see what happens.  
+                The inspire me button looks like this when there are inspirations available. Give it a try! Hit the button and see what happens.
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspireMeTry-goback'>
@@ -503,7 +505,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-inspirationCard-text treatment-tutorial-description">
             <p>
-                This is an "inspiration card". The card will contain a question or idea that is meant to stimulate your thinking.  
+                This is an "inspiration card". The card will contain a question or idea that is meant to stimulate your thinking.
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCard-goback'>
@@ -518,7 +520,7 @@
     <div id = "treatment-tutorial-inspirationCardTry" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-inspirationCardTry-text treatment-tutorial-description">
             <p>
-                If the inspiration sparks any new ideas, we would like you to enter them directly into this box (ideas unrelated to any inspiration can go in the main idea entry box. Go ahead and give it a try!    
+                If the inspiration sparks any new ideas, we would like you to enter them directly into this box (ideas unrelated to any inspiration can go in the main idea entry box). Go ahead and give it a try!    
             </p>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCardTry-goback'>
@@ -581,7 +583,7 @@
           Go Back!
                 </button>
                 <button class='btn btn-default btn-primary treatment-tutorial-gotit treatment-tutorial-pleaseWait-gotit'>
-          Hide Message
+          Dismiss
                 </button>
             </div>
         </div>

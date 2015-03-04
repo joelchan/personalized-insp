@@ -23,8 +23,9 @@ Template.TutorialControl.rendered = function() {
         var route = newDoc.route;
         logger.debug("Going to page with route: " + route);
         var partID = Session.get("currentParticipant")._id;
+        var promptID = Session.get("currentPrompt")._id;
         logger.debug("partID: " + partID);
-        Router.go(route, {'partID': partID});
+        Router.go(route, {'promptID': promptID, 'partID': partID});
       },
     });    
     EventLogger.logTutorialStarted();
@@ -36,9 +37,6 @@ Template.TutorialControl.rendered = function() {
     //},
 //});
 
-Template.MturkIdeationPageControl.rendered = function(){
-  EventLogger.logBeginIdeation(); 
-};
 Template.MturkIdeationPageControlTutorial.rendered = function(){
   //Hide logout
   $(".btn-login").toggleClass("hidden");
@@ -352,8 +350,9 @@ Template.TutorialTreatment.rendered = function() {
         var route = newDoc.route;
         logger.debug("Going to page with route: " + route);
         var partID = Session.get("currentParticipant")._id;
+        var promptID = Session.get("currentPrompt")._id;
         logger.debug("partID: " + partID);
-        Router.go(route, {'partID': partID});
+        Router.go(route, {'promptID': promptID, 'partID': partID});
     },
   });    
 }
@@ -624,6 +623,7 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspireMe").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspireMeTry").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-inspireMeTry").removeClass("treatment-tutorial-background");
+        $(".get-task").removeClass("get-task-disabled");
         $(".get-task").css({border: "none"});
         $(".task-list-header .tutorial-backdrop").remove();
         EventLogger.logTutorialStepComplete(7,13);
@@ -666,6 +666,7 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspireMeTry").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-inspireMe").addClass("treatment-tutorial-background");
+        $(".get-task").addClass("get-task-disabled");
         $(".get-task").css({
             border: "10px solid #F5A623",
             "z-index": 60

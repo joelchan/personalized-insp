@@ -23,6 +23,8 @@ Prompt = function(question, user, template, title, exp, cond) {
    * @return {object} Prompt object 
   ********************************************************************/
   this.question = question;
+  //The time the prompt is created
+  this.time = new Date().getTime();
   //Users working on the prompt
   if (user) {
   this.userIDs = [user._id];

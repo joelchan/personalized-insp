@@ -4,7 +4,7 @@ var logger = new Logger('Client:Hcomp:Dashboard');
 Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
 // Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
 // Logger.setLevel('Client:Hcomp:Dashboard', 'info');
-//Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
+// Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
 
 
 var filters = {
@@ -58,6 +58,7 @@ Template.HcompDashboard.rendered = function(){
   // make sure we start with a clean slate on render
   FilterManager.reset("Tasks Filter", Session.get("currentUser"), "tasks");
   FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
+  FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "groupID", Session.get("currentExp").groupID);
   
 };
 
@@ -250,14 +251,21 @@ Template.HcompOverallStats.helpers({
     var userIDs;
     var exp = Session.get("currentExp");
     if (exp) {
-      // get treatment userIDs
-      userIDs = ExperimentManager.getUsersInCond(exp, "Treatment");
+      var numIdeators = 0;
+      var participants = Conditions.findOne({expID: exp._id, description: "Treatment"}).assignedParts;
+      participants.forEach(function(pID) {
+        var part = Participants.findOne({_id: pID});
+        if (part.hasStarted) {
+          numIdeators += 1;
+        }
+      });
+      return numIdeators;
     } else {
       var groupID = Session.get("currentPrompt").groupIDs[0];
       var group = Groups.findOne({_id: groupID});
       userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+      return userIDs.length;
     }
-    return userIDs.length;
   },
 });
 
@@ -598,7 +606,7 @@ function getCloudFromIdeas() {
   var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
-  //logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
+  // logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
   // console.log(ideas);
 	var cloud = [];
 	for (var i = 0; i < ideas.length; i++) {
@@ -645,20 +653,34 @@ function getCloudFromIdeas() {
 priorityToNumIdeators = function(priorityNum) {
   switch (priorityNum) {
     case 1:
-      var prop = 0.33;
+      var prop = 1/3;
       break;
     case 2:
-      var prop = 0.66;
+      var prop = 2/3;
       break;
     case 3:
-      var prop = 1.0;
+      var prop = 3/3;
       break;
     default:
-      var prop = 0.66;
+      var prop = 2/3;
       break;
   }
-
-  var ideatorsValTemp = parseInt(Session.get("currentGroup").users.length*prop);
+  var exp = Session.get("currentExp");
+  logger.trace("Current experiment: " + JSON.stringify(exp));
+  if (exp) {
+    var ideators = []
+    var participants = Conditions.findOne({expID: exp._id, description: "Treatment"}).assignedParts;
+    participants.forEach(function(pID) {
+      var part = Participants.findOne({_id: pID});
+      if (part.hasStarted) {
+        ideators.push(part._id)
+      }
+    });
+    logger.trace("Participants in treatment condition who have started experiment: " + JSON.stringify(ideators));
+    var ideatorsValTemp = parseInt(ideators.length*prop);
+  } else {
+    var ideatorsValTemp = parseInt(Session.get("currentGroup").users.length*prop);
+  }
   if (ideatorsValTemp < 1) {
     var ideatorsVal = 1;
   } else {

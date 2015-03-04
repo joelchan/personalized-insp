@@ -11,11 +11,15 @@ Logger.setLevel('Client:Hcomp:Prompts', 'trace');
  * *****************************************************************/
 Template.CrowdPromptPage.helpers({
   prompts: function() {
-    return Prompts.find({userIDs: Session.get("currentUser")._id});
+    return Prompts.find(
+        {userIDs: Session.get("currentUser")._id}, 
+        {sort: {time: -1}}
+    );
   },
 
   experiments: function() {
-    return Experiments.find().fetch(); //TODO: make experiments owned by a user
+    //TODO: make experiments owned by a user
+    return Experiments.find({},{sort: {creationTime: -1}}); 
   }
 });
 
@@ -63,10 +67,10 @@ Template.CrowdExperiment.helpers({
   },
   timeLimit: function() {
     var prompt = Prompts.findOne({_id: this.promptID});
-    if (prompt.length = -1) {
-      return "Unlimited";
+    if (prompt.length > 0) {
+      return prompt.length;
     } else {
-      return prompt.length;  
+      return "Unlimited";
     }
   },
   expURL: function() {
@@ -74,7 +78,10 @@ Template.CrowdExperiment.helpers({
   },
   conditions: function() {
     return Conditions.find({expID: this._id});
-  }
+  },
+  partNumber: function() {
+    return this.conditions[0].partNum;
+  },
 });
 
 Template.CrowdExperimentCondition.helpers({
@@ -83,6 +90,16 @@ Template.CrowdExperimentCondition.helpers({
   },
   numAssigned: function() {
     return this.assignedParts.length;
+  },
+  numBegan: function() {
+    var numBegan = 0;
+    this.assignedParts.forEach(function(p) {
+      var thisP = Participants.findOne({_id: p});
+      if (thisP.hasStarted) {
+        numBegan += 1;
+      }
+    });
+    return numBegan;
   },
   numCompleted: function() {
     return this.completedParts.length;
@@ -218,14 +235,20 @@ Template.CrowdPromptPage.events({
       PromptManager.addGroups(newPrompt, group);
       GroupManager.addUser(group, Session.get("currentUser"),
           RoleManager.defaults['HcompFacilitator'].title);
+      //Clear textfield values
+      $("input#prompt-text").val("");
+      $("input#prompt-title").val("");
+      $("input#prompt-length").val(0);
+      
     },
 
     'click button.createExp': function () {
       logger.trace("clicked create exp button");
       
       // get the prompt selection
-      var promptID = $('input[name=promptRadios]:checked').attr('id');
-      promptID = promptID.split("-")[1];
+      var promptID = $('input[name=promptRadios]:checked').val();
+      logger.trace("Selected prompt id: " + promptID);
+      // promptID = promptID.split("-")[1];
       var prompt = Prompts.findOne({'_id': promptID});
 
       // get other data
@@ -239,6 +262,10 @@ Template.CrowdPromptPage.events({
 
       logger.trace("Experiment title: " + expTitle);
       logger.trace("Number of participants: " + numParts);
+      //Clear textfield values
+      $('input[name=promptRadios]').val([]);
+      $('input#exp-title').val("");
+      $("input#num-parts").val("");
 
     },
 

@@ -31,22 +31,22 @@ Template.MturkLoginPage.events({
             var alias = $('input#nickname').val().trim();
             LoginManager.setAlias(alias, user);
           }
-          var group;
-          if (prompt.groupIDs.length == 0) {
-            group = GroupManager.create(prompt.template);
-            PromptManager.addGroups(prompt, [group]);
-          } else {
-            group = Groups.findOne({_id: prompt.groupIDs[0]});
-          }
-          var role;
-          if (!GroupManager.hasUser(group, user)) {
-            role = RoleManager.defaults['HcompIdeator'];
-            GroupManager.addUser(group, user, role.title);
-          } else {
-            role = GroupManager.getRole(group, user);
-          }
-          Session.set("currentRole", role);
-          Session.set("currentGroup", group);
+          // var group;
+          // if (prompt.groupIDs.length == 0) {
+          //   group = GroupManager.create(prompt.template);
+          //   PromptManager.addGroups(prompt, [group]);
+          // } else {
+          //   group = Groups.findOne({_id: prompt.groupIDs[0]});
+          // }
+          // var role;
+          // if (!GroupManager.hasUser(group, user)) {
+          //   role = RoleManager.defaults['HcompIdeator'];
+          //   GroupManager.addUser(group, user, role.title);
+          // } else {
+          //   role = GroupManager.getRole(group, user);
+          // }
+          // Session.set("currentRole", role);
+          // Session.set("currentGroup", group);
           Session.set("currentPrompt", prompt);
           EventLogger.logUserLogin();
           var exp = Session.get("currentExp");
@@ -60,14 +60,17 @@ Template.MturkLoginPage.events({
                 var condName = Conditions.findOne({_id: part.conditionID}).description;
                 var routeName = "MturkIdeation" + condName;
                 logger.debug("Sending to " + routeName);
-                Router.go(routeName, {partID: part._id});  
+                Router.go(routeName, {promptID: exp.promptID, partID: part._id});  
               } else {
                 logger.trace("Participant has been assigned but not yet completed tutorial");
                 var condName = Conditions.findOne({_id: part.conditionID}).description;
                 var routeName = "Tutorial" + condName;
                 logger.debug("Sending to " + routeName);
-                Router.go(routeName, {partID: part._id});  
+                Router.go(routeName, {promptID: exp.promptID, partID: part._id});  
               }
+            } else {
+              logger.trace("Participant has finished experiment; rejecting participant");
+              Router.go('NoParticipation');
             }
           } else {
             logger.trace("not a participant yet");
