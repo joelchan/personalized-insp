@@ -110,14 +110,21 @@ Template.HcompOverallStats.helpers({
     var userIDs;
     var exp = Session.get("currentExp");
     if (exp) {
-      // get treatment userIDs
-      userIDs = ExperimentManager.getUsersInCond(exp, "Treatment");
+      var numIdeators = 0;
+      var participants = Conditions.findOne({expID: exp._id, description: "Treatment"}).assignedParts;
+      participants.forEach(function(pID) {
+        var part = Participants.findOne({_id: pID});
+        if (part.hasStarted) {
+          numIdeators += 1;
+        }
+      });
+      return numIdeators;
     } else {
       var groupID = Session.get("currentPrompt").groupIDs[0];
       var group = Groups.findOne({_id: groupID});
       userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+      return userIDs.length;
     }
-    return userIDs.length;
   },
 });
 
