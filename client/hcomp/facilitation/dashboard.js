@@ -462,7 +462,7 @@ function getCloudFromIdeas() {
   var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
-  logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
+  // logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
   // console.log(ideas);
 	var cloud = [];
 	for (var i = 0; i < ideas.length; i++) {
@@ -507,16 +507,16 @@ function getCloudFromIdeas() {
 priorityToNumIdeators = function(priorityNum) {
   switch (priorityNum) {
     case 1:
-      var prop = 0.33;
+      var prop = 1/3;
       break;
     case 2:
-      var prop = 0.66;
+      var prop = 2/3;
       break;
     case 3:
-      var prop = 1.0;
+      var prop = 3/3;
       break;
     default:
-      var prop = 0.66;
+      var prop = 2/3;
       break;
   }
   var exp = Session.get("currentExp");
