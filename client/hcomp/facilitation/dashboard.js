@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Dashboard');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
+Logger.setLevel('Client:Hcomp:Dashboard', 'trace');
 // Logger.setLevel('Client:Hcomp:Dashboard', 'debug');
-Logger.setLevel('Client:Hcomp:Dashboard', 'info');
+// Logger.setLevel('Client:Hcomp:Dashboard', 'info');
 // Logger.setLevel('Client:Hcomp:Dashboard', 'warn');
 
 
@@ -512,8 +512,22 @@ priorityToNumIdeators = function(priorityNum) {
       var prop = 0.66;
       break;
   }
-
-  var ideatorsValTemp = parseInt(Session.get("currentGroup").users.length*prop);
+  var exp = Session.get("currentExp");
+  logger.trace("Current experiment: " + JSON.stringify(exp));
+  if (exp) {
+    var ideators = []
+    var participants = Conditions.findOne({expID: exp._id, description: "Treatment"}).assignedParts;
+    participants.forEach(function(pID) {
+      var part = Participants.findOne({_id: pID});
+      if (part.hasStarted) {
+        ideators.push(part._id)
+      }
+    });
+    logger.trace("Participants in treatment condition who have started experiment: " + JSON.stringify(ideators));
+    var ideatorsValTemp = parseInt(ideators.length*prop);
+  } else {
+    var ideatorsValTemp = parseInt(Session.get("currentGroup").users.length*prop);
+  }
   if (ideatorsValTemp < 1) {
     var ideatorsVal = 1;
   } else {
