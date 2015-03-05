@@ -1,12 +1,13 @@
-import pymongo, json
+#!/usr/bin/env python
+
+# Author: Steven Dang stevencdang.com
+import json
 from pymongo.errors import DuplicateKeyError
 import mongohq
 import pandas as pd
 from os import mkdir, listdir, path
-from datetime import datetime
 import dateutil.parser
-from file_out import write_json_to_file
-from ideagens import Db_Manager
+from file_manager import write_json_to_file
 
 # collections to ignore
 default_collections = [

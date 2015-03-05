@@ -9,6 +9,7 @@ import itertools as it
 # import numpy as np
 import networkx as nx
 import mongohq
+import nlp
 # from nltk.stem.snowball import SnowballStemmer
 # from nltk.corpus import wordnet as wn
 from gensim import corpora, models, similarities, matutils
@@ -23,13 +24,13 @@ A networkx graph G, composed of
 """
 
 if __name__  == '__main__':
-    passWord = sys.argv[1]
+    # passWord = sys.argv[1]
     THRESHOLD = 0.5
 
 
     # read data from mongoDB
     # Get Ideas
-    db = mongohq.Data_Utility(mongohq.fac_exp)
+    db = mongohq.Data_Utility('data', mongohq.fac_exp)
     ideas = db.get_data('ideas')
 
     #### tokenize ####
@@ -38,13 +39,16 @@ if __name__  == '__main__':
     # get bag of words
     data, expandedText = nlp.bag_of_words(ideas, stopWords);
 
+    print data[0]
+    # prepare dictionary
+    dictionary = corpora.Dictionary(expandedText)
+
     # convert tokenized documents to a corpus of vectors
     corpus = [dictionary.doc2bow(text) for text in expandedText]
 
     # convert raw vectors to tfidf vectors
     tfidf = models.TfidfModel(corpus) #initialize model
     corpus_tfidf = tfidf[corpus] #apply tfidf model to whole corpus
-
     # make lsa space
     if len(data) > 300:
 	    dim = 300 # default is 300 dimensions
@@ -62,16 +66,16 @@ if __name__  == '__main__':
     edges = []
     sims = []
     for pair in pairs:
-	    node1 = data[pair[0]]['id']
-	    node2 = data[pair[1]]['id']
-	    # print len(vMatrix[pair[0]]), len(vMatrix[pair[1]])
-	    # print node1
-	    # print node2
-	    sim = cosine(pair[0],pair[1],vMatrix)
-	    sims.append(sim)
-	    # print sim
-	    if sim > THRESHOLD:
-		    edges.append((node1,node2))
+        node1 = data[pair[0]]['_id']
+        node2 = data[pair[1]]['_id']
+        # print len(vMatrix[pair[0]]), len(vMatrix[pair[1]])
+        # print node1
+        # print node2
+        sim = nlp.cosine(pair[0],pair[1],vMatrix)
+        sims.append(sim)
+        # print sim
+        if sim > THRESHOLD:
+            edges.append((node1,node2))
 
     # testout = open("/Users/jchan/Desktop/edges.txt",'w')
     # for edge in edges:
@@ -103,10 +107,10 @@ if __name__  == '__main__':
 
     #nodes = [d['id'] for d in data]
     G.add_edges_from(edges)
-    print "nodes: %d" % G.number_of_nodes()
-    print "edges: %d" % G.number_of_edges()
+    # print "nodes: %d" % G.number_of_nodes()
+    # print "edges: %d" % G.number_of_edges()
 
     solve = solver(G)
     clusters = solver.run(solve)
     clusters.sort(key=len, reverse=True)
-    print clusters
+    # print clusters
