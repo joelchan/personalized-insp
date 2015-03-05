@@ -30,7 +30,7 @@ fac_exp = {'url': "ds043981.mongolab.com",
         'port': 43981,
         'dbName': 'joelcprotolab',
         'user': 'joelc',
-        'pswd': 'lnC00K=beta{5}'
+        'pswd': 'password'
         }
 
 # Info for connecting to a local instance of meteor's mongo.
