@@ -17,11 +17,12 @@
     </div> <!-- close notes-view col -->
 
     <div class="tasks-view col-sm-4">
+
+<!--
       <div class="row fac-actions">
         <div class="col-xs-7">
-<!--          {{> HcompCreateTaskButton }}-->
+          {{> HcompCreateTaskButton }}
         </div>
-<!--
         <div class="col-sm-5 other-fac-actions">
           <strong><u>Other actions:</u></strong>
           <div class="goto-prompts-page">
@@ -38,8 +39,9 @@
           </div>
         </div>
 -->
+
           <!-- {{> HcompBeginSynthesis }} -->
-      </div>
+      <!--</div>-->
       <div class="row" id="create-task-container">
 	    {{> CreateTask }}
       </div>
@@ -158,8 +160,8 @@
 
 <template name="CreateTask">
 	<div id="CreateTask">
-    <span class="card-description">Create a new inspiration</span>
-    <hr />
+<!--    <span class="card-description">Create a new inspiration</span>-->
+<!--    <hr />-->
 		<form role="form" class="form">
 <!--  display none right now-->
       <div class="row task-priority">
@@ -179,7 +181,7 @@
 			<div class="row">
 		  		<div class="col-xs-12">
 					<label class="sr-only" for="task-description">Task Instructions</label>
-					<textarea class="form-control" rows="2" id="task-description" placeholder="Describe your inspiration..."></textarea>
+					<textarea class="form-control" rows="2" id="task-description" placeholder="Create your new inspiration..."></textarea>
 				</div>
 			</div>
 			<div class="row task-main-options">
@@ -188,7 +190,7 @@
 				</div> -->
         <div class="form-group task-options pull-right">
           <button id="task-create-cancel" type="button" class="btn btn-default">
-            Cancel
+            Clear
           </button>
           <button id="task-create" type="button" class="btn btn-primary">
             Create
@@ -326,7 +328,7 @@
 				<div class="row">
 			  		<div class="col-xs-12">
 						<label class="sr-only">Task Instructions</label>
-						<textarea class="form-control task-description" rows="2" id="" placeholder="Describe your inspiration...">{{getDescription}}</textarea>
+						<textarea class="form-control task-description" rows="2" id="" placeholder="Create your new inspiration...">{{getDescription}}</textarea>
 					</div>
 				</div>
 				<div class="row task-main-options">

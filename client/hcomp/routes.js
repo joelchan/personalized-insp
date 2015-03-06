@@ -159,6 +159,13 @@ Router.map(function () {
         this.next();
       }
     },
+    action: function(){
+      if(this.ready()) {
+        Session.set("useTimer", true);
+        this.render();
+      } else
+        this.render('loading');
+    },
     onAfterAction: function() {
       if (this.ready()) {
         initRolePage();

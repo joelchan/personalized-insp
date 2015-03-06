@@ -453,7 +453,7 @@ Template.HcompDashboard.events({
 	},
 
 
-	'click #task-create' : function(){
+	'click #task-create' : function(e, target){
 		var message = $("#task-description").val();
         if (message != "") {
             // var priorityText = $("#task-priority").val();
@@ -500,7 +500,8 @@ Template.HcompDashboard.events({
 
         // clear the message description
         $("#task-description").val("");
-
+            
+            
     //    $('#CreateTask').toggleClass('in');
 
         $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='1']").prop("checked",false);
@@ -511,7 +512,7 @@ Template.HcompDashboard.events({
         // $("#CreateTask" + " input[type='radio'][name='taskPriorityOptions'][value='2']").attr("checked","checked");
         }
 	},
-
+    
   'click #task-create-cancel' : function() {
 //    $('#CreateTask').toggleClass('in');
     $("#task-description").val("");
@@ -654,13 +655,13 @@ priorityToNumIdeators = function(priorityNum) {
       var prop = 0.33;
       break;
     case 2:
-      var prop = 0.66;
+      var prop = 0.33;
       break;
     case 3:
-      var prop = 1.0;
+      var prop = 0.33;
       break;
     default:
-      var prop = 0.66;
+      var prop = 0.33;
       break;
   }
 
