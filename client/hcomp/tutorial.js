@@ -349,6 +349,13 @@ Template.TutorialTreatment.rendered = function() {
     ideas.forEach(function(idea) {
       DummyIdeas.remove({'_id': idea._id});
     });
+    //Clear out any Dummy Tasks
+    var tasks = DummyTasks.find({'authorID': Session.get("currentUser")._id,
+        'promptID': Session.get("currentPrompt")._id})
+    tasks.forEach(function(task) {
+      logger.debug("removing task with id: " + task._id);
+      DummyTasks.remove({'_id': task._id});
+    });
     // Setup Facilitation push to synthesis listener
     MyUsers.find({_id: Session.get("currentUser")._id}).observe({
     changed: function(newDoc, oldDoc) {
@@ -484,7 +491,7 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-welcome").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-timer").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
-        EventLogger.logTutorialStepComplete(1,13);
+        EventLogger.logTutorialStepComplete(1,11);
     },
     //Timer
     'click .treatment-tutorial-timer-gotit': function() {
@@ -493,13 +500,13 @@ Template.TreatmentTutorialFlow.events({
         $(".timer").css({border: "none"});
         $(".exitStudy").css({border: "10px solid #F5A623"});
 //        $(".ideation-prompt-treatment").css({"z-index": 100});
-        EventLogger.logTutorialStepComplete(2,13);
+        EventLogger.logTutorialStepComplete(2,11);
     },
     'click .treatment-tutorial-timer-goback': function() {
         $("#treatment-tutorial-timer").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-welcome").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "none"});
-        EventLogger.logTutorialStepRewind(2,13);
+        EventLogger.logTutorialStepRewind(2,11);
     },
     //Exit Early
     'click .treatment-tutorial-exit-gotit': function() {
@@ -519,14 +526,14 @@ Template.TreatmentTutorialFlow.events({
             "<div class='tutorial-backdrop'></div>"
         );
         $(".ideation-prompt-treatment").zIndex(60);
-        EventLogger.logTutorialStepComplete(3,13);
+        EventLogger.logTutorialStepComplete(3,11);
     },
     'click .treatment-tutorial-exit-goback': function() {
         $("#treatment-tutorial-exit").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-timer").addClass("visible-tutorial-treatment");
         $(".timer").css({border: "10px solid #F5A623",width: 200,float: "right",clear: "right"});
         $(".exitStudy").css({border: "none"});
-        EventLogger.logTutorialStepRewind(3,13);
+        EventLogger.logTutorialStepRewind(3,11);
     },
     //Prompt
     'click .treatment-tutorial-prompt-gotit': function() {
@@ -541,7 +548,7 @@ Template.TreatmentTutorialFlow.events({
           "z-index": "60",
           position: "relative"
         });
-        EventLogger.logTutorialStepComplete(4,13);
+        EventLogger.logTutorialStepComplete(4,11);
     },
     'click .treatment-tutorial-prompt-goback': function() {
         $("#treatment-tutorial-prompt").removeClass("visible-tutorial-treatment");
@@ -556,7 +563,7 @@ Template.TreatmentTutorialFlow.events({
             "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
         );
         $(".exitStudy").css({border: "10px solid #F5A623"});
-        EventLogger.logTutorialStepRewind(4,13);
+        EventLogger.logTutorialStepRewind(4,11);
     },
     //ideaEntry
     'click .treatment-tutorial-ideaEntry-gotit': function() {
@@ -565,7 +572,7 @@ Template.TreatmentTutorialFlow.events({
 //        $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
         $(".idea-input-box").css({border: "none"});
         $(".general-idea-entry .tutorial-backdrop").remove();
-        EventLogger.logTutorialStepComplete(5,13);
+        EventLogger.logTutorialStepComplete(5,11);
     },
     'click .treatment-tutorial-ideaEntry-goback': function() {
         $("#treatment-tutorial-ideaEntry").removeClass("visible-tutorial-treatment");
@@ -579,7 +586,7 @@ Template.TreatmentTutorialFlow.events({
             border: "10px solid #F5A623",
             "z-index": 60
         });
-        EventLogger.logTutorialStepRewind(5,13);
+        EventLogger.logTutorialStepRewind(5,11);
     },
     
     //ideaEntryTry
@@ -599,7 +606,7 @@ Template.TreatmentTutorialFlow.events({
         $(".general-idea-entry").append(
             "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
         );
-        EventLogger.logTutorialStepComplete(6,13);
+        EventLogger.logTutorialStepComplete(6,11);
     },
     'click .treatment-tutorial-ideaEntryTry-goback': function() {
         $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
@@ -618,7 +625,7 @@ Template.TreatmentTutorialFlow.events({
             "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
         );
         logger.trace("IDEA ENTRY TRY");
-        EventLogger.logTutorialStepRewind(6,13);
+        EventLogger.logTutorialStepRewind(6,11);
     },
     
     //Inspire Me 
@@ -648,7 +655,7 @@ Template.TreatmentTutorialFlow.events({
             // "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
         // );
         //$(".task-list-header .tutorial-backdrop").remove();
-        EventLogger.logTutorialStepComplete(7,13);
+        EventLogger.logTutorialStepComplete(7,11);
     },
     'click .treatment-tutorial-inspireMe-goback': function() {
         $("#treatment-tutorial-inspireMe").removeClass("visible-tutorial-treatment");
@@ -662,7 +669,7 @@ Template.TreatmentTutorialFlow.events({
         //$(".task-list-header").append(
             //"<div class='tutorial-backdrop'></div>"
         //);
-        EventLogger.logTutorialStepRewind(7,13);
+        EventLogger.logTutorialStepRewind(7,11);
     },
    //Eliminated this step 
     //Inspire Me Try 
@@ -765,12 +772,13 @@ Template.TreatmentTutorialFlow.events({
             //height: "auto",
             //"z-index": 60
         //});
-        //$(".get-task").zIndex(60);
+        $(".get-task").click();
+        $(".get-task").click();
         $(".ideate-task").css({
             border: "none",
             "z-index": 20 
         });
-        EventLogger.logTutorialStepComplete(10,13);
+        EventLogger.logTutorialStepComplete(8,11);
     },
     'click .treatment-tutorial-inspirationCardTry-goback': function() {
         $("#treatment-tutorial-inspirationCardTry").removeClass("visible-tutorial-treatment");
@@ -797,7 +805,7 @@ Template.TreatmentTutorialFlow.events({
             DummyTasks.remove({'_id': task._id});
           });
         }
-        EventLogger.logTutorialStepRewind(10,13);
+        EventLogger.logTutorialStepRewind(8,11);
     },
     
     //Inspiration Card Many 
@@ -805,10 +813,10 @@ Template.TreatmentTutorialFlow.events({
         $("#treatment-tutorial-inspirationCardMany").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-directions").addClass("visible-tutorial-treatment");
 //        $("#treatment-tutorial-pleaseWait").removeClass("treatment-tutorial-background");
-        $(".task-list-pane").css({
-            border: "none",
-            "z-index": 20
-        });
+        // $(".task-list-pane").css({
+            // border: "none",
+            // "z-index": 20
+        // });
         $(".get-task").zIndex(20);
         var height = $(window).height() - 50; //Navbar height=50
         $(".task-list-header").append(
@@ -829,7 +837,7 @@ Template.TreatmentTutorialFlow.events({
         $(".hcomp-ideation-pane").zIndex(10);
         $("#directions-content").removeClass("collapse");
         $("#directions-content").addClass("collapse in");
-        EventLogger.logTutorialStepComplete(11,13);
+        EventLogger.logTutorialStepComplete(9,11);
     },
     'click .treatment-tutorial-inspirationCardMany-goback': function() {
         $("#treatment-tutorial-inspirationCardMany").removeClass("visible-tutorial-treatment");
@@ -842,7 +850,7 @@ Template.TreatmentTutorialFlow.events({
             border: "10px solid #F5A623",
             "z-index": 60
         });
-        EventLogger.logTutorialStepRewind(11,13);
+        EventLogger.logTutorialStepRewind(9,11);
     },
     
     //Directions
@@ -862,7 +870,7 @@ Template.TreatmentTutorialFlow.events({
         });
         // Mark the Participant as ready to begin
         ExperimentManager.logParticipantReady(Session.get("currentParticipant"));  
-        EventLogger.logTutorialStepComplete(12,13);
+        EventLogger.logTutorialStepComplete(10,11);
     },
     'click .treatment-tutorial-directions-goback': function() {
         $("#treatment-tutorial-directions").removeClass("visible-tutorial-treatment");
@@ -878,14 +886,14 @@ Template.TreatmentTutorialFlow.events({
             //"<div class='tutorial-backdrop'></div>"
         //);
         $(".task-list-header .tutorial-backdrop").remove();
-        EventLogger.logTutorialStepRewind(12,13);
+        EventLogger.logTutorialStepRewind(10,11);
     },
     //Please Wait
     'click .treatment-tutorial-pleaseWait-gotit': function() {
         $(".tutorial-backdrop").remove();
         $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").addClass("treatment-tutorial-background");
-        EventLogger.logTutorialStepComplete(13,13);
+        EventLogger.logTutorialStepComplete(11,11);
     },
     'click .treatment-tutorial-pleaseWait-goback': function() {
         $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial-treatment");
@@ -897,7 +905,7 @@ Template.TreatmentTutorialFlow.events({
             position: "relative",
             "z-index": 60
         });
-        EventLogger.logTutorialStepRewind(13,13);
+        EventLogger.logTutorialStepRewind(11,11);
     },
 });
 
