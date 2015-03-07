@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Main');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Main', 'trace');
+Logger.setLevel('Client:Main', 'trace');
 // Logger.setLevel('Client:Main', 'debug');
-Logger.setLevel('Client:Main', 'info');
+// Logger.setLevel('Client:Main', 'info');
 // Logger.setLevel('Client:Main', 'warn');
 
 Template.IdeaGen.helpers({
