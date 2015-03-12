@@ -12,6 +12,10 @@ Router.map(function () {
       path: '/Chi',
       template: 'LoginPage',
   });
+  this.route("landingPageHome", {
+      path: '/landingPageHome',
+      template: 'LandingPage',
+  });
   this.route("Home", {
       path: '/',
       template: 'HcompLoginPage',
