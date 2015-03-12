@@ -40,6 +40,7 @@ Template.TutorialControl.rendered = function() {
       },
     });    
     EventLogger.logTutorialStarted();
+    Session.set("currentTutorialStep",1);
 }
 
 //Template.TutorialControl.events({
@@ -70,6 +71,25 @@ Template.MturkIdeationPageControlTutorial.rendered = function(){
   // });
 };
 
+Template.TutorialProgressControl.helpers({
+  tutorialProgress: function() {
+    var step = Session.get("currentTutorialStep");
+    logger.trace("Current step:" + step);
+    var progress = Math.round(step/tutorialLengthControl*100);
+    logger.trace("Progress = " + progress);
+    return progress;
+  }
+});
+
+Template.TutorialProgressTreatment.helpers({
+  tutorialProgress: function() {
+    var step = Session.get("currentTutorialStep");
+    logger.trace("Current step:" + step);
+    var progress = Math.round(step/tutorialLengthTreatment*100);
+    logger.trace("Progress = " + progress);
+    return progress;
+  }
+});
 
 Template.MturkIdeationPageControlTutorial.helpers({
   prompt: function() {

@@ -1,3 +1,19 @@
+<template name="TutorialProgressControl">
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="{{tutorialProgress}}" aria-valuemin="0" aria-valuemax="100" style="width:{{tutorialProgress}}%;">
+      {{tutorialProgress}}% of tutorial complete
+    </div>
+  </div>
+</template>
+
+<template name="TutorialProgressTreatment">
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="{{tutorialProgress}}" aria-valuemin="0" aria-valuemax="100" style="width:{{tutorialProgress}}%;">
+      {{tutorialProgress}}% of tutorial complete
+    </div>
+  </div>
+</template>
+
 <template name="TutorialControl">
   <div class="tutorial-page-control">
 <!--    <h1>Tutorial page for the control condition</h1>-->
@@ -230,6 +246,7 @@
             <p>
                 Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. Once the time is up, you will be taken to a final screen where you can submit the HIT. <strong>DO NOT REFRESH YOUR BROWSER DURING THE HIT</strong>. If you do, the system will kick you out of the HIT and you will not be able to complete it.
             </p>
+            {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-timer-goback'>
           Go Back!
