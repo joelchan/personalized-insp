@@ -8,9 +8,9 @@ Logger.setLevel('info');
 // Configure logger for event logging 
 var logger = new Logger('Tools:Logging');
 // Comment out to use global logging level
-//Logger.setLevel('Tools:Logging', 'trace');
+Logger.setLevel('Tools:Logging', 'trace');
 //Logger.setLevel('Tools:Logging', 'debug');
-Logger.setLevel('Tools:Logging', 'info');
+// Logger.setLevel('Tools:Logging', 'info');
 //Logger.setLevel('Tools:Logging', 'warn');
 
 EventLogger = (function () {
@@ -415,6 +415,7 @@ EventLogger = (function () {
       var msg = "User finished a tutorial";
       var type = EventTypeManager.get(msg);
       this.log(type);
+      logger.debug(msg);
     },
     logTutorialStepRewind: function (current, max) {
       //current is the current step before rewinding
@@ -430,6 +431,7 @@ EventLogger = (function () {
       var type = EventTypeManager.get(msg);
       var data = {"taskStepNum": num, "taskStepMax": max};
       this.log(type, data);
+      logger.debug("Finished tutorial step " + num + " of " + max);
     },
     logRequestInspiration: function (prompt) {
       var msg = "User requested an inspiration";
