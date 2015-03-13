@@ -382,6 +382,50 @@ Router.map(function () {
         }
     },
   });
+
+this.route('ExpBaselineFluency', {
+      path: 'base/:partID',
+      template: 'ExpBaselineFluencyPage',
+    waitOn: function() {
+    },
+    onBeforeAction: function(pause) {
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var part = Participants.findOne({_id: this.params.partID});
+          logger.trace("participant: " + part.userName);
+          Session.set("currentParticipant", part);
+          var user = MyUsers.findOne({_id: part.userID});
+          logger.trace("user: " + user.name);
+          // MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
+          Session.set("currentUser", user);
+          var exp = Experiments.findOne({_id: part.experimentID});
+          if (exp) {
+            logger.trace("Found exp with id: " + part.experimentID)
+            Session.set("currentExp", exp);
+          } else {
+            logger.warn("no experiment found with id: " + part.experimentID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready()) {
+        // Session.set("useTimer", true);
+        // Session.set("isTutorialTimer", true);
+        this.render();
+      } else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      if (this.ready()) {
+        // initRolePage();
+        insertExitStudy();
+      }
+      //Session.set("nextPage", "MturkIdeationControl");
+    },
+  });
   
   this.route('MturkIdeationControl', {
       path: 'crowd/Ideate/:promptID/:partID',
