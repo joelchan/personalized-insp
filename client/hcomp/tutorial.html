@@ -1,15 +1,25 @@
 <template name="TutorialProgressControl">
-  <div class="progress">
-    <div class="progress-bar" role="progressbar" aria-valuenow="{{tutorialProgress}}" aria-valuemin="0" aria-valuemax="100" style="width:{{tutorialProgress}}%;">
-      {{tutorialProgress}}% of tutorial complete
+  <div class="progress-container">
+    <div class="col-xs-3" style="margin-left:-1; margin-right:-1; padding: 0px">
+      Progress:
+    </div>
+    <div class="progress col-xs-9" style="padding:0px">
+      <div class="progress-bar-success" role="progressbar" aria-valuenow="{{tutorialProgress}}" aria-valuemin="0" aria-valuemax="100" style="width:{{tutorialProgress}}%;">
+        &nbsp; {{tutorialProgress}}%
+      </div>
     </div>
   </div>
 </template>
 
 <template name="TutorialProgressTreatment">
-  <div class="progress">
-    <div class="progress-bar" role="progressbar" aria-valuenow="{{tutorialProgress}}" aria-valuemin="0" aria-valuemax="100" style="width:{{tutorialProgress}}%;">
-      {{tutorialProgress}}% of tutorial complete
+  <div class="progress-container">
+    <div class="col-xs-2" style="margin-left:-1; margin-right:-1; padding: 0px">
+      Progress:
+    </div>
+    <div class="progress col-xs-10" style="padding:0px">
+      <div class="progress-bar-success" role="progressbar" aria-valuenow="{{tutorialProgress}}" aria-valuemin="0" aria-valuemax="100" style="width:{{tutorialProgress}}%;">
+        &nbsp; {{tutorialProgress}}%
+      </div>
     </div>
   </div>
 </template>
@@ -208,7 +218,7 @@
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <h3 class="modal-title" id="myModalLabel">
-          No inspirations yet - try again soon!
+          No inspirations yet - try again soon! Remember, the "inspire me" button will turn green when there are inspirations available.
         </h3>
         <button type="button" class="btn btn-success popup-continue" 
           data-dismiss="modal">
@@ -230,6 +240,8 @@
             <p>
                 Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface.
             </p>
+            <br/>
+            <br/>
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-gotit control-tutorial-welcome-gotit'>
           Got it!
@@ -244,10 +256,11 @@
         </div>
         <div class = "tutorial-text control-tutorial-timer-text control-tutorial-description">
             <p>
-                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. Once the time is up, you will be taken to a final screen where you can submit the HIT. <strong>DO NOT REFRESH YOUR BROWSER DURING THE HIT</strong>. If you do, the system will kick you out of the HIT and you will not be able to complete it.
+                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. <strong>DO NOT REFRESH YOUR BROWSER DURING THE HIT</strong>. If you do, the system will kick you out of the HIT and you will not be able to complete it.
             </p>
             {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
+                
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-timer-goback'>
           Go Back!
                 </button>
@@ -266,6 +279,7 @@
             <p>
                 If at any time you do not wish to continue, you may exit the study by clicking on this button. Your compensation will be pro-rated based on how long you participated. 
             </p>
+            {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-exit-goback'>
           Go Back!
@@ -285,6 +299,7 @@
             <p>
                 The brainstorming problem will be shown here.  
             </p>
+            {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-prompt-goback'>
           Go Back!
@@ -304,6 +319,7 @@
             <p>
                 You will enter your ideas here.  
             </p>
+            {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-ideaEntry-goback'>
           Go Back!
@@ -319,6 +335,7 @@
             <p>
                 Let’s give it a try! Enter something into the text field and either press enter or the “Submit Idea” button.   
             </p>
+            {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-ideaEntryTry-goback'>
           Go Back!
@@ -339,8 +356,9 @@
         </div>
         <div class = "control-tutorial-directions-text control-tutorial-description">
             <p>
-                All of the instructions from this tutorial will be summarized in this section. It will be available throughout the task: click "show/hide" to show or hide the instructions.  
+                All of the instructions from this tutorial will be summarized in this section. It will be available throughout the task: just click "show/hide" to show or hide the instructions.  
             </p>
+            {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-directions-goback'>
           Go Back!
@@ -354,8 +372,10 @@
     <div id = "control-tutorial-pleaseWait" class = "control-tutorial control-tutorial-background">
         <div class = "control-tutorial-pleaseWait-text control-tutorial-description">
             <p>
-                This concludes the tutorial. Your brainstorm will begin momentarily. In the meantime, feel free to play around with the interface! 
+                That's it! Please stay tuned, the brainstorm will begin momentarily. In the meantime, feel free to play around with the interface!  
             </p>
+            <br/>
+            <br/>
             <div class = "control-tutorial-button">
                 <button class='btn btn-default btn-primary control-tutorial-goback control-tutorial-pleaseWait-goback'>
           Go Back!
@@ -377,6 +397,8 @@
             <p>
                 Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface.
             </p>
+            <br/>
+            <br/>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-gotit treatment-tutorial-welcome-gotit'>
           Got it!
@@ -391,8 +413,9 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-timer-text treatment-tutorial-description">
             <p>
-                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. Once the time is up, you will be taken to a final screen where you can submit the HIT. <strong>DO NOT REFRESH YOUR BROWSER DURING THE HIT</strong>. If you do, the system will kick you out of the HIT and you will not be able to complete it.
+                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. <strong>DO NOT REFRESH YOUR BROWSER DURING THE HIT</strong>. If you do, the system will kick you out of the HIT and you will not be able to complete it.
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-timer-goback'>
           Go Back!
@@ -412,6 +435,7 @@
             <p>
                 If at any time you do not wish to continue, you may exit the study by clicking on this button. Your compensation will be pro-rated based on how long you participated. 
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-exit-goback'>
           Go Back!
@@ -431,6 +455,7 @@
             <p>
                 The brainstorming problem will be shown here.  
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-prompt-goback'>
           Go Back!
@@ -450,6 +475,7 @@
             <p>
                 You will enter your ideas here.  
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-ideaEntry-goback'>
           Go Back!
@@ -465,6 +491,7 @@
             <p>
                 Let’s give it a try! Enter something into the text field and either press enter or the “Submit Idea” button.   
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-ideaEntryTry-goback'>
           Go Back!
@@ -485,8 +512,9 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-inspireMe-text treatment-tutorial-description">
             <p>
-                If you run out of ideas or want some fresh inspiration, hit this button. The button will turn green when there are fresh inspirations available for you.
+                If you run out of ideas or want some fresh inspiration AND the button is green, press the button to get a question or idea that is meant to stimulate your thinking.
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspireMe-goback'>
           Go Back!
@@ -497,6 +525,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Deprecated -->
     <div id = "treatment-tutorial-inspireMeTry" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-inspireMeTry-text treatment-tutorial-description">
             <p>
@@ -515,6 +545,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Deprecated -->
     <div id = "treatment-tutorial-inspirationCard" class = "treatment-tutorial-background">
         <div id = "treatment-tutorial-highlight-inspirationCard" class = "treatment-tutorial-highlight-container">
             <div class = "treatment-tutorial-highlight">
@@ -522,8 +554,9 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-inspirationCard-text treatment-tutorial-description">
             <p>
-                This is an "inspiration card". The card will contain a question or idea that is meant to stimulate your thinking.
+                This is an "inspiration card". It will contain a question or idea that is meant to stimulate your thinking. If the inspiration sparks any new ideas, we would like you to enter them directly into this box (ideas unrelated to any inspiration can go in the main idea entry box).
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCard-goback'>
           Go Back!
@@ -534,11 +567,13 @@
             </div>
         </div>
     </div>
+
     <div id = "treatment-tutorial-inspirationCardTry" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-inspirationCardTry-text treatment-tutorial-description">
             <p>
-                If the inspiration sparks any new ideas, we would like you to enter them directly into this box (ideas unrelated to any inspiration can go in the main idea entry box). Go ahead and give it a try!    
+                This is an "inspiration card". It will contain a question or idea that is meant to stimulate your thinking. If the inspiration sparks any new ideas, we would like you to enter them directly into this box (ideas unrelated to any inspiration can go in the main idea entry box). Let's give it a try! Enter something into the text field and either press enter or the “Submit Idea” button.
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCardTry-goback'>
           Go Back!
@@ -561,6 +596,7 @@
             <p>
                 You can ask for more inspirations at any time. New inspirations will show up here. Newest inspirations come in on the left. If you have more inspiration cards than the screen will fit, you may have to scroll right to see older ones.
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-inspirationCardMany-goback'>
           Go Back!
@@ -578,8 +614,9 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-directions-text treatment-tutorial-description">
             <p>
-                All of the instructions from this tutorial will be summarized in this section. It will be available throughout the task by clicking "show/hide" to show or hide the instructions.  
+                All of the instructions from this tutorial will be summarized in this section. It will be available throughout the task: just click "show/hide" to show or hide the instructions. 
             </p>
+            {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-directions-goback'>
           Go Back!
@@ -593,8 +630,12 @@
     <div id = "treatment-tutorial-pleaseWait" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-pleaseWait-text treatment-tutorial-description">
             <p>
-                This concludes the tutorial. Your brainstorm will begin momentarily. In the meantime, feel free to play around with the interface! 
+                That's it! Please stay tuned, the brainstorm will begin momentarily. In the meantime, feel free to play around with the interface! 
             </p>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
             <div class = "treatment-tutorial-button">
                 <button class='btn btn-default btn-primary treatment-tutorial-goback treatment-tutorial-pleaseWait-goback'>
           Go Back!

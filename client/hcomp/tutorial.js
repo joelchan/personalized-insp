@@ -6,8 +6,8 @@ Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 // Logger.setLevel('Client:Hcomp:Tutorial', 'info');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'warn');
 var myTaskIDs = [];
-var tutorialLengthTreatment = 11;
-var tutorialLengthControl = 8;
+var tutorialLengthTreatment = 10;
+var tutorialLengthControl = 7;
     
 //CONTROL TUTORIAL
 Template.TutorialControl.rendered = function() {
@@ -340,20 +340,21 @@ Template.ControlTutorialFlow.events({
         $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial-control");
         $("#ideator-directions-control").css({border: "none"});
         EventLogger.logTutorialStepRewind(7,tutorialLengthControl);
+        EventLogger.logTutorialStepComplete(7,tutorialLengthControl);
     },
     //Please Wait
     'click .control-tutorial-pleaseWait-gotit': function() {
         $("#control-tutorial-pleaseWait").removeClass("visible-tutorial-control");
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
         $(".tutorial-backdrop").remove();
-        EventLogger.logTutorialStepComplete(8,tutorialLengthControl);
+        // EventLogger.logTutorialStepComplete(8,tutorialLengthControl);
     },
     'click .control-tutorial-pleaseWait-goback': function() {
         $("#control-tutorial-pleaseWait").removeClass("visible-tutorial-control");
         $("#control-tutorial-directions").addClass("visible-tutorial-control");
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
         $("#ideator-directions-control").css({border: "10px solid #F5A623"});
-        EventLogger.logTutorialStepRewind(8,tutorialLengthControl);
+        // EventLogger.logTutorialStepRewind(8,tutorialLengthControl);
     },
 });
  
@@ -549,7 +550,7 @@ Template.TreatmentTutorialFlow.events({
             "<div class='tutorial-backdrop'></div>"
         );
         $(".ideation-prompt-treatment").zIndex(60);
-        EventLogger.logTutorialStepComplete(3,11);
+        EventLogger.logTutorialStepComplete(3,tutorialLengthTreatment);
     },
     'click .treatment-tutorial-exit-goback': function() {
         $("#treatment-tutorial-exit").removeClass("visible-tutorial-treatment");
@@ -740,6 +741,7 @@ Template.TreatmentTutorialFlow.events({
         EventLogger.logTutorialStepRewind(8,tutorialLengthTreatment);
     },
     
+    //Eliminated this step
     //Inspiration Card
     'click .treatment-tutorial-inspirationCard-gotit': function() {
         logger.trace("Inspiration card*****************");

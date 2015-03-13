@@ -425,7 +425,7 @@ EventLogger = (function () {
         "taskStepMax": max
       };
       this.log(type, data);
-      Session.set("currentTutorialStep",current-1);
+      Session.set("currentTutorialStep",current);
     },
     logTutorialStepComplete: function (num, max) {
       var msg = "User finished a tutorial step";
@@ -433,7 +433,7 @@ EventLogger = (function () {
       var data = {"taskStepNum": num, "taskStepMax": max};
       this.log(type, data);
       logger.debug("Finished tutorial step " + num + " of " + max);
-      Session.set("currentTutorialStep",num);
+      Session.set("currentTutorialStep",num+1);
     },
     logRequestInspiration: function (prompt) {
       var msg = "User requested an inspiration";

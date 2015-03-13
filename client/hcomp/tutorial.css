@@ -1,4 +1,10 @@
+
 /*CONTROL TUTORIAL STYLING*/
+.tutorial-page-control .progress-container {
+    display: block;
+    margin-bottom: 6.5em;
+}
+
 .tutorial-page-control {
     width: 100%;
     height: 100%;
@@ -65,7 +71,7 @@
     font-size: 1.5em;
     color: #F5A623;
     /*font-weight:bold;*/
-    margin-bottom: 3em;
+    /*margin-bottom: 3em;*/
 }
 .control-tutorial-description .control-tutorial-gotit {
     background-color: #7ED321;
@@ -127,6 +133,12 @@
   position: relative;
   background: #F5F5F5;
 }
+
+.tutorial-page-treatment .progress-container {
+    display: block;
+    margin-bottom: 7em;
+}
+
 .treatment-tutorial-background {
     width: 100%;
     height: 100%;
@@ -158,7 +170,7 @@
     font-size: 1.5em;
     /*font-weight: bold;*/
     color: #F5A623;
-    margin-bottom: 3em;
+    /*margin-bottom: 3em;*/
 }
 .treatment-tutorial-description .treatment-tutorial-gotit {
     background-color: #7ED321;
