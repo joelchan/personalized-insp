@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Routes');
 // Comment out to use global logging level
- // Logger.setLevel('Client:Hcomp:Routes', 'trace');
+ Logger.setLevel('Client:Hcomp:Routes', 'trace');
 //Logger.setLevel('Client:Hcomp:Routes', 'debug');
-Logger.setLevel('Client:Hcomp:Routes', 'info');
+// Logger.setLevel('Client:Hcomp:Routes', 'info');
 // Logger.setLevel('Client:Hcomp:Routes', 'warn');
 
 //Maps routes to templates
@@ -388,27 +388,30 @@ this.route('ExpBaselineFluency', {
       template: 'ExpBaselineFluencyPage',
     subscriptions: function() {
         this.subscribe('fluencyMeasures');
+        this.subscribe('experiments');
+        this.subscribe('prompts');
     },
-    waitOn: function() {
+    // waitOn: function() {
 
-    },
+    // },
     onBeforeAction: function(pause) {
         if (this.ready()) {
+          logger.debug("onBeforeAction for fluency");
           logger.debug("Data ready");
           var part = Participants.findOne({_id: this.params.partID});
           logger.trace("participant: " + part.userName);
           Session.set("currentParticipant", part);
-          var user = MyUsers.findOne({_id: part.userID});
-          logger.trace("user: " + user.name);
+          // var user = MyUsers.findOne({_id: part.userID});
+          // logger.trace("user: " + user.name);
           // MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
-          Session.set("currentUser", user);
-          var exp = Experiments.findOne({_id: part.experimentID});
-          if (exp) {
-            logger.trace("Found exp with id: " + part.experimentID)
-            Session.set("currentExp", exp);
-          } else {
-            logger.warn("no experiment found with id: " + part.experimentID);
-          }
+          // Session.set("currentUser", user);
+          // var exp = Experiments.findOne({_id: part.experimentID});
+          // if (exp) {
+          //   logger.trace("Found exp with id: " + part.experimentID)
+          //   Session.set("currentExp", exp);
+          // } else {
+          //   logger.warn("no experiment found with id: " + part.experimentID);
+          // }
           this.next();
         } else {
           logger.debug("Not ready");
@@ -416,15 +419,15 @@ this.route('ExpBaselineFluency', {
     },
     action: function(){
       if(this.ready()) {
-        // Session.set("useTimer", true);
-        // Session.set("isTutorialTimer", true);
+        Session.set("useTimer", true);
+        Session.set("isTutorialTimer", false);
         this.render();
       } else
         this.render('loading');
     },
     onAfterAction: function() {
       if (this.ready()) {
-        // initRolePage();
+        initFluencyPage();
         insertExitStudy();
       }
       //Session.set("nextPage", "MturkIdeationControl");
@@ -432,6 +435,7 @@ this.route('ExpBaselineFluency', {
   });
   
   this.route('MturkIdeationControl', {
+      name: 'MturkIdeationControl',
       path: 'crowd/Ideate/:promptID/:partID',
       template: 'MturkIdeationPageControl',
       subscriptions: function() {
@@ -509,6 +513,7 @@ this.route('ExpBaselineFluency', {
   });
   
   this.route('MturkIdeationTreatment', {
+      name: 'MturkIdeationTreatment',
       path: 'crowd/Ideation/:promptID/:partID',
       template: 'MturkIdeationPage',
       subscriptions: function() {
@@ -578,6 +583,7 @@ this.route('ExpBaselineFluency', {
     },
     onAfterAction: function() {
       if (this.ready()) {
+        logger.debug("on after action ideation treatment")
         initRolePage();
         insertExitStudy();
       }
@@ -777,6 +783,37 @@ var insertExitStudy = function() {
       'partID': Session.get("currentParticipant")._id
     });
   });
+};
+
+var initFluencyPage = function() {
+  logger.debug("Initializing fluency page");
+  var fluencyTaskLength = 10;
+  //Add timer
+  if ($('.timer').length == 0 && Session.get("useTimer")) {
+    logger.info("using a timer");
+    Session.set("hasTimer", true);
+    Blaze.render(Template.Timer, $('#nav-right')[0]);
+    //Setup timer for decrementing onscreen timer with 17 minute timeout
+  }
+  if (Session.get("useTimer")) {
+    logger.debug("Checking to Setting timer length");
+    logger.trace(Session.get("isDecrementing"));
+    if (!Session.get("isDecrementing")) {
+      logger.debug("Setting timer length");
+      Session.set("timeLeft", fluencyTaskLength);
+    }
+    $('#time').text(fluencyTaskLength);
+    logger.debug("checking if setting timer decrement");
+    logger.trace("Use Timer: " + JSON.stringify(Session.get("useTimer")));
+    logger.trace("Tutorial timer: " + JSON.stringify(Session.get("isTutorialTimer")));
+    if (!Session.get("isTutorialTimer") && 
+        !Session.get("isDecrementing") ){
+      logger.debug("************Setting decrement for timer*************");
+      Session.set("isDecrementing", true);
+      var handler = Meteor.setTimeout(decrementFluencyTimer, 1000);
+      Session.set("fluencyTimerTimeoutHandler",handler);
+    }
+  }
 };
 
 var initRolePage = function() {
