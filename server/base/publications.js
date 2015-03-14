@@ -62,6 +62,9 @@ Meteor.startup(function(){
 		Meteor.publish("SurveyResponses", function(){
 			return SurveyResponses.find();
 		});
+		Meteor.publish("fluencyMeasures", function() {
+			return FluencyMeasures.find();
+		});
 		/*****************************************************************
 		* Publish loggingModels.js collection
 		******************************************************************/

@@ -11,6 +11,8 @@ Consents = new Meteor.Collection("consents");
 Participants = new Meteor.Collection("participants");
 // Holds response to a experiment surveys
 SurveyResponses = new Meteor.Collection("surveyResponses");
+// Holds baseline fluency data for participants
+FluencyMeasures = new Meteor.Collection("fluencyMeasures");
 
 Experiment = function (promptID, desc) {
    /****************************************************************
@@ -131,6 +133,11 @@ SurveyResponse = function(responses, participant) {
   this.responses = responses;
   this.participant = participant;
 };
+
+FluencyMeasure = function(answers, participant) {
+  this.answers = answers;
+  this.participant = participant;
+}
 
 QuestionResponse = function(question, answer) {
   this.question = question;

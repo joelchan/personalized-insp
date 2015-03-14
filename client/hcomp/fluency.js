@@ -23,5 +23,14 @@ Template.ExpBaselineFluencyPage.events({
     var text = $("#baseFluencyInput").val();
     var answers = text.split("\n");
     logger.trace("Answers: " + JSON.stringify(answers));
+    var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+    var measureID = FluencyMeasures.insert(measure);
+    if (measureID) {
+      logger.trace("Fluency measure for " + 
+        Session.get("currentParticipant")._id + 
+        ": " + JSON.stringify(measure));
+    } else {
+      logger.debug("Failed to grab the data")
+    }
   }
 })

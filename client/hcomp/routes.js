@@ -386,7 +386,11 @@ Router.map(function () {
 this.route('ExpBaselineFluency', {
       path: 'base/:partID',
       template: 'ExpBaselineFluencyPage',
+    subscriptions: function() {
+        this.subscribe('fluencyMeasures');
+    },
     waitOn: function() {
+
     },
     onBeforeAction: function(pause) {
         if (this.ready()) {
