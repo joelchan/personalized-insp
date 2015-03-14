@@ -627,10 +627,13 @@ this.route('ExpBaselineFluency', {
         }
     },
     action: function(){
-      if(this.ready())
+      if(this.ready()) {
+        Session.set("isDecrementing", false);
+        Session.set("useTimer",false);
         this.render();
-      else
+      } else {
         this.render('loading');
+      }
     },
 
   });
@@ -817,6 +820,7 @@ var initFluencyPage = function() {
       logger.debug("************Setting decrement for fluency timer*************");
       Session.set("fluencyIsDecrementing", true);
       Meteor.setTimeout(decrementFluencyTimer, 60000);
+      // Meteor.setTimeout(decrementFluencyTimer, 1000);
     }
   }
 };
@@ -851,6 +855,7 @@ var initRolePage = function() {
         logger.debug("************Setting decrement for timer*************");
         Session.set("isDecrementing", true);
         Meteor.setTimeout(decrementTimer, 60000);
+        // Meteor.setTimeout(decrementTimer, 1000);
       }
     }
   }

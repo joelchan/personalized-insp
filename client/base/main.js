@@ -89,9 +89,10 @@ decrementTimer = function decrementTimer() {
   if (nextTime > 0) {
     logger.debug("Decrementing timer");
     Meteor.setTimeout(decrementTimer, 60000);
+    // Meteor.setTimeout(decrementTimer, 1000);
   } else {
     logger.info("Exitting current page");
-    Session.set("isDecrementing", false);
+    // Session.set("isDecrementing", false);
     //EventLogger.logEndRole();
     //exitPage();
     
@@ -112,6 +113,7 @@ decrementFluencyTimer = function decrementFluencyTimer() {
     logger.debug("Decrementing fluency timer");
     logger.trace(this);
     Meteor.setTimeout(decrementFluencyTimer, 60000);
+    // Meteor.setTimeout(decrementFluencyTimer, 1000);
     // Session.set("fluencyTimerTimeoutHandler",handler);
   } else {
     logger.debug("Grabbing fluency data");
