@@ -384,16 +384,17 @@ Router.map(function () {
   });
 
 this.route('ExpBaselineFluency', {
-      path: 'base/:partID',
+      name: 'ExpBaselineFluency',
+      path: 'warmup/:partID',
       template: 'ExpBaselineFluencyPage',
     subscriptions: function() {
         this.subscribe('fluencyMeasures');
         this.subscribe('experiments');
         this.subscribe('prompts');
     },
-    // waitOn: function() {
+    waitOn: function() {
 
-    // },
+    },
     onBeforeAction: function(pause) {
         if (this.ready()) {
           logger.debug("onBeforeAction for fluency");
@@ -419,7 +420,7 @@ this.route('ExpBaselineFluency', {
     },
     action: function(){
       if(this.ready()) {
-        Session.set("useTimer", true);
+        Session.set("useFluencyTimer", true);
         Session.set("isTutorialTimer", false);
         this.render();
       } else
@@ -497,6 +498,7 @@ this.route('ExpBaselineFluency', {
       if(this.ready()) {
         logger.debug("rendering the page");
         Session.set("useTimer", true);
+        Session.set("useFluencyTimer", false);
         Session.set("isTutorialTimer", false);
         this.render();
       } else
@@ -576,6 +578,7 @@ this.route('ExpBaselineFluency', {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
+        Session.set("useFluencyTimer", false);
         Session.set("isTutorialTimer", false);
         this.render();
       } else
@@ -584,6 +587,9 @@ this.route('ExpBaselineFluency', {
     onAfterAction: function() {
       if (this.ready()) {
         logger.debug("on after action ideation treatment")
+        // Session.set("useTimer", true);
+        // Session.set("useFluencyTimer", false);
+        // Session.set("isTutorialTimer", false);
         initRolePage();
         insertExitStudy();
       }
@@ -787,31 +793,30 @@ var insertExitStudy = function() {
 
 var initFluencyPage = function() {
   logger.debug("Initializing fluency page");
-  var fluencyTaskLength = 10;
+  var fluencyTaskLength = 3;
   //Add timer
-  if ($('.timer').length == 0 && Session.get("useTimer")) {
+  if ($('.timer').length == 0 && Session.get("useFluencyTimer")) {
     logger.info("using a timer");
     Session.set("hasTimer", true);
     Blaze.render(Template.Timer, $('#nav-right')[0]);
     //Setup timer for decrementing onscreen timer with 17 minute timeout
   }
-  if (Session.get("useTimer")) {
-    logger.debug("Checking to Setting timer length");
-    logger.trace(Session.get("isDecrementing"));
-    if (!Session.get("isDecrementing")) {
-      logger.debug("Setting timer length");
-      Session.set("timeLeft", fluencyTaskLength);
+  if (Session.get("useFluencyTimer")) {
+    logger.debug("Checking to Setting fluency timer length");
+    logger.trace("Fluency is decrementing: " + Session.get("fluencyIsDecrementing"));
+    if (!Session.get("fluencyIsDecrementing")) {
+      logger.debug("Setting fluency timer length");
+      Session.set("fluencyTimeLeft", fluencyTaskLength);
     }
     $('#time').text(fluencyTaskLength);
     logger.debug("checking if setting timer decrement");
-    logger.trace("Use Timer: " + JSON.stringify(Session.get("useTimer")));
+    logger.trace("Use fluency Timer: " + JSON.stringify(Session.get("useFluencyTimer")));
     logger.trace("Tutorial timer: " + JSON.stringify(Session.get("isTutorialTimer")));
     if (!Session.get("isTutorialTimer") && 
-        !Session.get("isDecrementing") ){
-      logger.debug("************Setting decrement for timer*************");
-      Session.set("isDecrementing", true);
-      var handler = Meteor.setTimeout(decrementFluencyTimer, 1000);
-      Session.set("fluencyTimerTimeoutHandler",handler);
+        !Session.get("fluencyIsDecrementing") ){
+      logger.debug("************Setting decrement for fluency timer*************");
+      Session.set("fluencyIsDecrementing", true);
+      Meteor.setTimeout(decrementFluencyTimer, 1000);
     }
   }
 };

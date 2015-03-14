@@ -105,19 +105,21 @@ decrementFluencyTimer = function decrementFluencyTimer() {
   /******************************************************************
   * Decrement the onscreen timer
   ******************************************************************/
-  var nextTime = Session.get("timeLeft") - 1;
-  Session.set("timeLeft", nextTime);
+  var nextTime = Session.get("fluencyTimeLeft") - 1;
+  Session.set("fluencyTimeLeft", nextTime);
   var time = $('#time').text(nextTime);
   if (nextTime > 0) {
     logger.debug("Decrementing fluency timer");
-    var handler = Meteor.setTimeout(decrementFluencyTimer, 1000);
-    Session.set("fluencyTimerTimeoutHandler",handler);
+    logger.trace(this);
+    Meteor.setTimeout(decrementFluencyTimer, 1000);
+    // Session.set("fluencyTimerTimeoutHandler",handler);
   } else {
     logger.info("Exitting current page");
-    Session.set("isDecrementing", false);
-    var handler = Session.get("fluencyTimerTimeoutHandler");
-    logger.debug("Timeout handler: " + handler);
-    Meteor.clearTimeout(handler);
+    // Session.set("fluencyIsDecrementing", false);
+    // Session.set("useFluencyTimer", false);
+    // var handler = Session.get("fluencyTimerTimeoutHandler");
+    // logger.debug("Timeout handler: " + handler);
+    // Meteor.clearTimeout(handler);
     //EventLogger.logEndRole();
     //exitPage();
     
@@ -125,6 +127,7 @@ decrementFluencyTimer = function decrementFluencyTimer() {
     var condName = Conditions.findOne({_id: part.conditionID}).description;
     var routeName = "MturkIdeation" + condName;
     var promptID = Experiments.findOne({_id: part.experimentID}).promptID;
+    logger.debug("Sending to " + routeName);
     Router.go(routeName, {'promptID': promptID, 'partID': part._id});
   }
 };

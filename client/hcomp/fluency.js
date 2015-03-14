@@ -7,7 +7,7 @@ Logger.setLevel('Client:Hcomp:Fluency', 'trace');
 // Logger.setLevel('Client:Hcomp:Fluency', 'warn');
 
 Template.ExpBaselineFluencyPage.rendered = function(){
-  EventLogger.logEnterIdeation(); 
+  // EventLogger.logEnterIdeation(); 
   //Hide logout
   $(".btn-login").toggleClass("hidden");
   
