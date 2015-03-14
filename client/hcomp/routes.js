@@ -816,7 +816,7 @@ var initFluencyPage = function() {
         !Session.get("fluencyIsDecrementing") ){
       logger.debug("************Setting decrement for fluency timer*************");
       Session.set("fluencyIsDecrementing", true);
-      Meteor.setTimeout(decrementFluencyTimer, 1000);
+      Meteor.setTimeout(decrementFluencyTimer, 60000);
     }
   }
 };

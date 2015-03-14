@@ -111,9 +111,23 @@ decrementFluencyTimer = function decrementFluencyTimer() {
   if (nextTime > 0) {
     logger.debug("Decrementing fluency timer");
     logger.trace(this);
-    Meteor.setTimeout(decrementFluencyTimer, 1000);
+    Meteor.setTimeout(decrementFluencyTimer, 60000);
     // Session.set("fluencyTimerTimeoutHandler",handler);
   } else {
+    logger.debug("Grabbing fluency data");
+    var text = $("#baseFluencyInput").val();
+    var answers = text.split("\n");
+    logger.trace("Answers: " + JSON.stringify(answers));
+    var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+    var measureID = FluencyMeasures.insert(measure);
+    if (measureID) {
+      logger.trace("Fluency measure for " + 
+        Session.get("currentParticipant")._id + 
+        ": " + JSON.stringify(measure));
+    } else {
+      logger.debug("Failed to grab the data")
+    }
+
     logger.info("Exitting current page");
     // Session.set("fluencyIsDecrementing", false);
     // Session.set("useFluencyTimer", false);
