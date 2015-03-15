@@ -6,6 +6,31 @@ Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 // Logger.setLevel('Client:Hcomp:Ideate', 'info');
 // Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
+var timer = new Tock({
+    callback: function () {
+        $('#clockface').text(timer.msToTime(timer.lap()));
+    }
+});
+
+var countdown = Tock({
+    countdown: true,
+    interval: 1000,
+    callback: function () {
+        // console.log(countdown.lap() / 1000);
+        $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
+    },
+    complete: function () {
+        console.log('end');
+        alert("Time's up!");
+        
+        logger.info("Exitting current page");
+        
+        Router.go("SurveyPage", {
+              'partID': Session.get("currentParticipant")._id
+            });
+    }
+});
+
 Template.MturkIdeationPage.rendered = function(){
   EventLogger.logEnterIdeation(); 
   //Hide logout
@@ -34,6 +59,7 @@ Template.MturkIdeationPage.rendered = function(){
         //Router.go(route, {'promptID': promptID, 'userID': userID}); 
     //},
   //});
+  initializeTimer();
 };
 
 Template.MturkIdeationPageControl.rendered = function(){
@@ -312,3 +338,14 @@ Template.ExperimentBeginModal.events({
       {$set: {hasStarted: true}});
   },
 });
+
+initializeTimer = function() {
+  var prompt = Session.get("currentPrompt");
+  if ($('.timer').length == 0 && prompt.length > 0) {
+    logger.info("using a timer");
+    // Session.set("hasTimer",true);
+    Blaze.render(Template.TockTimer, $('#nav-right')[0]);
+    var promptLength = prompt.length*60000;
+    countdown.start(promptLength);
+  }
+}

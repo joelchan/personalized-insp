@@ -420,7 +420,7 @@ this.route('ExpBaselineFluency', {
     },
     action: function(){
       if(this.ready()) {
-        // Session.set("useFluencyTimer", true);
+        Session.set("useFluencyTimer", true);
         // Session.set("isTutorialTimer", false);
         this.render();
       } else
@@ -519,7 +519,7 @@ this.route('ExpBaselineFluency', {
       path: 'crowd/Ideation/:promptID/:partID',
       template: 'MturkIdeationPage',
       subscriptions: function() {
-        logger.debug("Waiting on...");
+        logger.debug("Waiting on data for ideation treatment...");
         this.subscribe('ideas', {promptID: this.params.promptID})
         this.subscribe('prompts').wait();
         this.subscribe('experiments').wait();
@@ -590,7 +590,7 @@ this.route('ExpBaselineFluency', {
         // Session.set("useTimer", true);
         // Session.set("useFluencyTimer", false);
         // Session.set("isTutorialTimer", false);
-        initRolePage();
+        // initRolePage();
         insertExitStudy();
       }
     }
@@ -858,5 +858,8 @@ var initRolePage = function() {
         // Meteor.setTimeout(decrementTimer, 1000);
       }
     }
+  } else {
+    logger.info("not using a timer");
+    $('.timer').remove();
   }
 };

@@ -22,10 +22,39 @@ var countdown = Tock({
     complete: function () {
         console.log('end');
         alert("Time's up!");
+        logger.debug("Grabbing fluency data");
+        var text = $("#baseFluencyInput").val();
+        var answers = text.split("\n");
+        logger.trace("Answers: " + JSON.stringify(answers));
+        var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+        var measureID = FluencyMeasures.insert(measure);
+        if (measureID) {
+          logger.trace("Fluency measure for " + 
+            Session.get("currentParticipant")._id + 
+            ": " + JSON.stringify(measure));
+        } else {
+          logger.debug("Failed to grab the data")
+        }
+
+        logger.info("Exitting current page");
+        // Session.set("fluencyIsDecrementing", false);
+        // Session.set("useFluencyTimer", false);
+        // var handler = Session.get("fluencyTimerTimeoutHandler");
+        // logger.debug("Timeout handler: " + handler);
+        // Meteor.clearTimeout(handler);
+        //EventLogger.logEndRole();
+        //exitPage();
+        
+        var part = Session.get("currentParticipant");
+        var condName = Conditions.findOne({_id: part.conditionID}).description;
+        var routeName = "MturkIdeation" + condName;
+        var promptID = Experiments.findOne({_id: part.experimentID}).promptID;
+        logger.debug("Sending to " + routeName);
+        Router.go(routeName, {'promptID': promptID, 'partID': part._id});
     }
 });
 
-var fluencyTaskLength = 3*60000;
+var fluencyTaskLength = 1/6*60000;
 
 Template.ExpBaselineFluencyPage.rendered = function(){
   // EventLogger.logEnterIdeation(); 
@@ -37,8 +66,12 @@ Template.ExpBaselineFluencyPage.rendered = function(){
     logger.debug("showing begin ideation modal");
     $("#exp-begin-modal").modal('show');  
   }
-
-  Blaze.render(Template.TockTimer, $('#nav-right')[0]);
+  if ($('.timer').length == 0 && Session.get("useFluencyTimer")) {
+    logger.info("using a timer");
+    Session.set("hasTimer",true);
+    Blaze.render(Template.TockTimer, $('#nav-right')[0]);  
+  }
+  
 
 }
 
