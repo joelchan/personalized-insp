@@ -9,9 +9,19 @@
       <div class="row fluency-input-area">
         <textArea id="baseFluencyInput" class="form-control" rows="10" placeholder="Write your ideas here, each on a new line."></textarea>
       </div>
-      <button class="btn-default grab-fluency-input">
+      <section>
+          <h2>Countdown</h2>
+          <p>
+              <button id="startCountdown">Start</button> 
+              <button id="stopCountdown">Stop</button> 
+              <button id="pauseCountdown">Pause</button> 
+              <!-- <button id="resetCountdown">Reset</button>  -->
+              <!-- <input id="countdown_clock" placeholder="00:00" value="00:02"> -->
+          </p>
+      </section>
+      <!-- <button class="btn-default grab-fluency-input">
         Grab
-      </button>
+      </button> -->
   </div>
   {{> ExperimentBeginModal }}
 </template>

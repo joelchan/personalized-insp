@@ -420,15 +420,15 @@ this.route('ExpBaselineFluency', {
     },
     action: function(){
       if(this.ready()) {
-        Session.set("useFluencyTimer", true);
-        Session.set("isTutorialTimer", false);
+        // Session.set("useFluencyTimer", true);
+        // Session.set("isTutorialTimer", false);
         this.render();
       } else
         this.render('loading');
     },
     onAfterAction: function() {
       if (this.ready()) {
-        initFluencyPage();
+        // initFluencyPage();
         insertExitStudy();
       }
       //Session.set("nextPage", "MturkIdeationControl");

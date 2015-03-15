@@ -6,6 +6,27 @@ Logger.setLevel('Client:Hcomp:Fluency', 'trace');
 // Logger.setLevel('Client:Hcomp:Fluency', 'info');
 // Logger.setLevel('Client:Hcomp:Fluency', 'warn');
 
+var timer = new Tock({
+    callback: function () {
+        $('#clockface').text(timer.msToTime(timer.lap()));
+    }
+});
+
+var countdown = Tock({
+    countdown: true,
+    interval: 1000,
+    callback: function () {
+        // console.log(countdown.lap() / 1000);
+        $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
+    },
+    complete: function () {
+        console.log('end');
+        alert("Time's up!");
+    }
+});
+
+var fluencyTaskLength = 3*60000;
+
 Template.ExpBaselineFluencyPage.rendered = function(){
   // EventLogger.logEnterIdeation(); 
   //Hide logout
@@ -16,6 +37,9 @@ Template.ExpBaselineFluencyPage.rendered = function(){
     logger.debug("showing begin ideation modal");
     $("#exp-begin-modal").modal('show');  
   }
+
+  Blaze.render(Template.TockTimer, $('#nav-right')[0]);
+
 }
 
 Template.ExpBaselineFluencyPage.events({
@@ -32,5 +56,26 @@ Template.ExpBaselineFluencyPage.events({
     } else {
       logger.debug("Failed to grab the data")
     }
-  }
+  },
+
+  'click #startCountdown' : function () {
+    // countdown.start($('#countdown_clock').val());
+    var startTime = timer.msToTime(fluencyTaskLength)
+    logger.trace("Fluency task length is: " + startTime);
+    countdown.start(fluencyTaskLength);
+  },
+
+  'click #pauseCountdown' : function () {
+    countdown.pause();
+  },
+
+  'click #stopCountdown' : function () {
+    countdown.stop();
+  },
+
+  'click #resetCountdown' : function () {
+    countdown.stop();
+    $('#countdown_clock').val('00:02');
+  },
+
 })
