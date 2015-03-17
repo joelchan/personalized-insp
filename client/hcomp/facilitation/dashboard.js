@@ -570,8 +570,33 @@ Template.HcompDashboard.events({
     var taskID = $(event.target).parent().parent().parent().parent().attr('id');
     Tasks.update({ _id: taskID },{$set: { edited: false}});
   },
-
+    
+    'keyup textarea' : function(e, target){
+        logger.debug(e);
+        logger.debug(target);
+        console.log("key pressed")
+        if(e.keyCode===13) {
+          logger.debug("enter pressed")
+          $("#task-create").click();
+        }
+      }, 
+         
+    'click .hcomp-dashboard .card-description' : function(e, target) {
+        logger.debug("Clicked on Description");
+        logger.debug(e.target);
+        logger.debug(target);
+        $(e.target).parent().toggleClass("expandDescription");
+    }
 });
+
+Template.TaskCard.events({
+//    'click .hcomp-dashboard .card-description a' : function(e, target) {
+//        logger.debug("Clicked on Description");
+//        logger.debug(e);
+//        logger.debug(target);
+//        $(target).toggleClass("expandDescription");
+//    }
+})
 
 Template.HcompIdeaWordCloud.events({
   'click .cloudItem' : function() {

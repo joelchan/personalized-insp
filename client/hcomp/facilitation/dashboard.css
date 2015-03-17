@@ -281,14 +281,16 @@
 .hcomp-dashboard .card-description a {
     width: 100%;
     text-decoration: none;
+    cursor: pointer;
 }
     
-.hcomp-dashboard .card-description:hover {
+.hcomp-dashboard .task-card-main .expandDescription{
     overflow: visible;
     height: auto;
     width: 100%;
     cursor: pointer;
     white-space: normal;
+    word-wrap: break-word;
 }
 
 .hcomp-dashboard .card-other-data {
