@@ -16,7 +16,7 @@ var countdown = Tock({
     countdown: true,
     interval: 1000,
     callback: function () {
-        // console.log(countdown.lap() / 1000);
+        logger.debug(countdown.lap() / 1000);
         $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
     },
     complete: function () {
@@ -345,6 +345,9 @@ initializeTimer = function() {
     logger.info("using a timer");
     // Session.set("hasTimer",true);
     Blaze.render(Template.TockTimer, $('#nav-right')[0]);
+    var promptLength = prompt.length*60000;
+    countdown.start(promptLength);
+  } else if (prompt.length > 0) {
     var promptLength = prompt.length*60000;
     countdown.start(promptLength);
   }

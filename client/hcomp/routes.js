@@ -778,6 +778,14 @@ this.route('ExpBaselineFluency', {
 
 });
 
+var insertTimer = function() {
+  if ($('.timer').length == 0 && Session.get("useFluencyTimer")) {
+    logger.info("using a timer");
+    Session.set("hasTimer",true);
+    Blaze.render(Template.TockTimer, $('#nav-right')[0]);  
+  }
+};
+
 var insertExitStudy = function() {
   if ($('.exitStudy').length == 0) {
     Blaze.render(Template.ExitStudy, $('.login')[0]);
@@ -836,7 +844,7 @@ var initRolePage = function() {
     if ($('.timer').length == 0 && Session.get("useTimer")) {
       logger.info("using a timer");
       Session.set("hasTimer", true);
-      Blaze.render(Template.Timer, $('#nav-right')[0]);
+      Blaze.render(Template.TockTimer, $('#nav-right')[0]);
       //Setup timer for decrementing onscreen timer with 17 minute timeout
     }
     if (Session.get("useTimer")) {

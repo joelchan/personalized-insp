@@ -8,6 +8,70 @@ Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 var myTaskIDs = [];
 var tutorialLengthTreatment = 10;
 var tutorialLengthControl = 7;
+
+var timer = new Tock({
+    callback: function () {
+        $('#clockface').text(timer.msToTime(timer.lap()));
+    }
+});
+
+var countdown = Tock({
+    countdown: true,
+    interval: 1000,
+    callback: function () {
+        // console.log(countdown.lap() / 1000);
+        $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
+    },
+    complete: function () {
+        console.log('end');
+        alert("Time's up!");
+        logger.debug("Grabbing fluency data");
+        var answers = DummyIdeas.find(
+                        {userID: Session.get("currentUser")._id,
+                        'prompt._id': Session.get("currentPrompt")._id}).fetch();
+        logger.trace("Answers: " + JSON.stringify(answers));
+        var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+        var measureID = FluencyMeasures.insert(measure);
+        if (measureID) {
+          logger.trace("Fluency measure for " + 
+            Session.get("currentParticipant")._id + 
+            ": " + JSON.stringify(measure));
+        } else {
+          logger.debug("Failed to grab the data")
+        }        
+        var part = Session.get("currentParticipant");
+        var condName = Conditions.findOne({_id: part.conditionID}).description;
+        
+        if (condName == "Control") {
+          $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
+          $("#control-tutorial-directions").addClass("visible-tutorial-control");
+          $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
+          $("#ideator-directions-control").css({border: "10px solid #F5A623"});
+          $("#directions-content").removeClass("collapse");
+          $("#directions-content").addClass("collapse in");
+          EventLogger.logTutorialStepComplete(6,tutorialLengthControl); 
+        } else {
+          $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
+          $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
+          // $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
+          $(".get-task").css({
+              border: "10px solid #F5A623",
+              "z-index": 60
+          });
+          $(".idea-input-box").css({
+              border: "none",
+              "z-index": 20
+          });
+          var height = $(window).height() - 50; //Navbar height=50
+          $(".general-idea-entry").append(
+              "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
+          );
+          EventLogger.logTutorialStepComplete(6,tutorialLengthTreatment);
+        }
+    }
+});
+
+var fluencyTaskLength = 1/6*60000;
     
 //CONTROL TUTORIAL
 Template.TutorialControl.rendered = function() {
@@ -23,22 +87,22 @@ Template.TutorialControl.rendered = function() {
     ideas.forEach(function(idea) {
       DummyIdeas.remove({'_id': idea._id});
     });
-    // Setup Facilitation push to synthesis listener
+    // Setup Experimenter push to ideation listener
     logger.trace("Rendering tutorial control page");
-    // MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-    //   changed: function(newDoc, oldDoc) {
-    //     logger.info("change to current user detected");
-    //     logger.trace("oldDoc: " + JSON.stringify(oldDoc));
-    //     logger.trace("newDoc: " + JSON.stringify(newDoc));
-    //     // logger.trace(newDoc.route);
-    //     var route = newDoc.route;
-    //     logger.debug("Going to page with route: " + route);
-    //     var partID = Session.get("currentParticipant")._id;
-    //     var promptID = Session.get("currentPrompt")._id;
-    //     logger.debug("partID: " + partID);
-    //     Router.go(route, {'promptID': promptID, 'partID': partID});
-    //   },
-    // });    
+    MyUsers.find({_id: Session.get("currentUser")._id}).observe({
+      changed: function(newDoc, oldDoc) {
+        logger.info("change to current user detected");
+        logger.trace("oldDoc: " + JSON.stringify(oldDoc));
+        logger.trace("newDoc: " + JSON.stringify(newDoc));
+        // logger.trace(newDoc.route);
+        var route = newDoc.route;
+        logger.debug("Going to page with route: " + route);
+        var partID = Session.get("currentParticipant")._id;
+        var promptID = Session.get("currentPrompt")._id;
+        logger.debug("partID: " + partID);
+        Router.go(route, {'promptID': promptID, 'partID': partID});
+      },
+    });    
     EventLogger.logTutorialStarted();
     Session.set("currentTutorialStep",1);
 }
@@ -155,13 +219,13 @@ Template.MturkIdeaEntryBoxTutorial.rendered = function(){
 Template.MturkIdeaEntryBoxTutorial.events({
     
   'click .submit-idea': function (e, target) {    
-    if ($("#control-tutorial-ideaEntryTry-gotit").length) {
-      document.getElementById("control-tutorial-ideaEntryTry-gotit").disabled = false;
-    }
+    // if ($("#control-tutorial-ideaEntryTry-gotit").length) {
+    //   document.getElementById("control-tutorial-ideaEntryTry-gotit").disabled = false;
+    // }
     
-    if ($("#treatment-tutorial-ideaEntryTry-gotit").length) {
-      document.getElementById("treatment-tutorial-ideaEntryTry-gotit").disabled = false;
-    }
+    // if ($("#treatment-tutorial-ideaEntryTry-gotit").length) {
+    //   document.getElementById("treatment-tutorial-ideaEntryTry-gotit").disabled = false;
+    // }
     if ($("#treatment-tutorial-inspirationCardTry-gotit").length) {
       document.getElementById("treatment-tutorial-inspirationCardTry-gotit").disabled = false;
     }
@@ -270,6 +334,7 @@ Template.ControlTutorialFlow.events({
         $(".main-prompt").css({
             "z-index": 60
         });
+        $('.ideation-prompt-control').text("Alternative uses for a brick")
         EventLogger.logTutorialStepComplete(4,tutorialLengthControl);
     },
     'click .control-tutorial-prompt-goback': function() {
@@ -309,13 +374,16 @@ Template.ControlTutorialFlow.events({
     },
     //ideaEntryTry
     'click #control-tutorial-ideaEntryTry-gotit': function() {
-        $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
-        $("#control-tutorial-directions").addClass("visible-tutorial-control");
-        $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
-        $("#ideator-directions-control").css({border: "10px solid #F5A623"});
-        $("#directions-content").removeClass("collapse");
-        $("#directions-content").addClass("collapse in");
-        EventLogger.logTutorialStepComplete(6,tutorialLengthControl);
+        // $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
+        // $("#control-tutorial-directions").addClass("visible-tutorial-control");
+        // $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
+        // $("#ideator-directions-control").css({border: "10px solid #F5A623"});
+        // $("#directions-content").removeClass("collapse");
+        // $("#directions-content").addClass("collapse in");
+        // EventLogger.logTutorialStepComplete(6,tutorialLengthControl);
+        var startTime = timer.msToTime(fluencyTaskLength)
+        logger.trace("Fluency task length is: " + startTime);
+        countdown.start(fluencyTaskLength);
     },
     'click .control-tutorial-ideaEntryTry-goback': function() {
         $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
@@ -380,20 +448,20 @@ Template.TutorialTreatment.rendered = function() {
       logger.debug("removing task with id: " + task._id);
       DummyTasks.remove({'_id': task._id});
     });
-    // Setup Facilitation push to synthesis listener
-  //   MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-  //   changed: function(newDoc, oldDoc) {
-  //       logger.info("change to current user detected");
-  //       logger.trace("oldDoc: " + JSON.stringify(oldDoc));
-  //       logger.trace("newDoc: " + JSON.stringify(newDoc));
-  //       var route = newDoc.route;
-  //       logger.debug("Going to page with route: " + route);
-  //       var partID = Session.get("currentParticipant")._id;
-  //       var promptID = Session.get("currentPrompt")._id;
-  //       logger.debug("partID: " + partID);
-  //       Router.go(route, {'promptID': promptID, 'partID': partID});
-  //   },
-  // });    
+    // Setup Experimenter push to ideation listener
+    MyUsers.find({_id: Session.get("currentUser")._id}).observe({
+    changed: function(newDoc, oldDoc) {
+        logger.info("change to current user detected");
+        logger.trace("oldDoc: " + JSON.stringify(oldDoc));
+        logger.trace("newDoc: " + JSON.stringify(newDoc));
+        var route = newDoc.route;
+        logger.debug("Going to page with route: " + route);
+        var partID = Session.get("currentParticipant")._id;
+        var promptID = Session.get("currentPrompt")._id;
+        logger.debug("partID: " + partID);
+        Router.go(route, {'promptID': promptID, 'partID': partID});
+    },
+  });    
 }
 //Template.TutorialTreatment.events({
     //'click button.nextPage': function () {
@@ -615,22 +683,22 @@ Template.TreatmentTutorialFlow.events({
     
     //ideaEntryTry
     'click #treatment-tutorial-ideaEntryTry-gotit': function() {
-        $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
-        $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
-//        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
-        $(".get-task").css({
-            border: "10px solid #F5A623",
-            "z-index": 60
-        });
-        $(".idea-input-box").css({
-            border: "none",
-            "z-index": 20
-        });
-        var height = $(window).height() - 50; //Navbar height=50
-        $(".general-idea-entry").append(
-            "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
-        );
-        EventLogger.logTutorialStepComplete(6,tutorialLengthTreatment);
+        // $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
+        // $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
+        // // $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
+        // $(".get-task").css({
+        //     border: "10px solid #F5A623",
+        //     "z-index": 60
+        // });
+        // $(".idea-input-box").css({
+        //     border: "none",
+        //     "z-index": 20
+        // });
+        // var height = $(window).height() - 50; //Navbar height=50
+        // $(".general-idea-entry").append(
+        //     "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
+        // );
+        // EventLogger.logTutorialStepComplete(6,tutorialLengthTreatment);
     },
     'click .treatment-tutorial-ideaEntryTry-goback': function() {
         $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
