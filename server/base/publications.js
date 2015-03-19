@@ -43,6 +43,9 @@ Meteor.startup(function(){
 		});
 		Meteor.publish("filters", function(){
 			return Filters.find();
+		});
+		Meteor.publish("sorters", function(){
+			return Filters.find();
 		});				
 		/*****************************************************************
 		* Publish experimentModels.js collections

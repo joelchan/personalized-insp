@@ -18,6 +18,8 @@ Template.HcompFilterbox.rendered = function(){
 	// FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
  //    logger.trace("Creating default filter for ideawordcloud filter");
  //    createDefaultIdeasFilter("IdeaWordCloud Filter");
+	//FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+//
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 
@@ -125,6 +127,31 @@ Template.HcompFilterBoxHeader.events({
 	      var btn = $('.search-apply-btn')
 	      btn.click();
 	    }
+  	},
+
+  	'change #sortingfields' : function(e,target)
+  	{
+  		var sortingField  = $("[id=sortingfields]").val();
+  		FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas",sortingField , 1,1);
+  		var sorters = Session.get("sorters");
+
+  		if(sorters)
+  		{
+  			if(sorters === 1)
+  			{
+  				Session.set("sorters",0);	
+  			}
+  			else
+  			{
+  				Session.set("sorters",1);	
+  			}
+  		}
+  		else
+  		{
+  			Session.set("sorters",1);	
+  		}
+  		//Session.set("searchQuery","");
+  		//getFilteredIdeas("Ideas Filter");
   	},
 
 	// clear full-text search of idea content
@@ -243,6 +270,10 @@ getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
 
 	// apply search query, if it exists
 	var query = Session.get("searchQuery");
+
+	//Will trigger automatic calc of ideas,sorters not used anywhere in this functions
+	var sorters = Session.get("sorters");
+
 	var queriedIdeas = [];
 	if (query != "") {
 		queryArr = stringToWords(query);
@@ -257,8 +288,10 @@ getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
 		queriedIdeas = filteredIdeas.slice();
 	}
 
-	var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-	return sortedIdeas;
+	//var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+	// console.log(sortedIdeas);
+	// return sortedIdeas;
+	return queriedIdeas;
 }
 
 isLastFilter = function() {

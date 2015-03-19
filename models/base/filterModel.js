@@ -1,6 +1,7 @@
 // Generic Filters for dynamic UI filtering
 //    -- currently only supports comparison filters
 Filters = new Meteor.Collection("filters");
+Sorters = new Meteor.Collection("sorters");
 
 // Configure logger for Filters
 var logger = new Logger('Models:Filter');
@@ -34,6 +35,56 @@ Filter = function (name, user, collection, field, val, op) {
   } else {
     this.op = "eq";
   }
+};
+
+
+Sorter = function (name, user, collection, field, position,val) {
+  /******************************************************************
+   * Sorter definition with parameters for filtering across a given
+   * collection> 
+   *
+   * @params
+   *    name - String describing the filter, useful as a lookup ref
+   *    user - user associated with a given filter
+   *    collection - string matching the collection name string
+   *    field - the field of the document to match
+   *    val - could be ascending or desc
+   *****************************************************************/
+  this.name = name;
+  this.user = user;
+  this.collection = collection;
+  this.field = field;
+  this.position = position;
+
+  /* default behavior is ascending */
+  if (val) {
+    this.val = val;
+  } else {
+    this.val = 1;
+  }
+
+
+
+};
+
+
+UniqueSorter = function (name, user, collection, field) {
+  /******************************************************************
+   * Sorter definition with parameters for filtering across a given
+   * collection> 
+   *
+   * @params
+   *    name - String describing the filter, useful as a lookup ref
+   *    user - user associated with a given filter
+   *    collection - string matching the collection name string
+   *    field - the field of the document to match
+   *    val - could be ascending or desc
+   *****************************************************************/
+  this.name = name;
+  this.user = user;
+  this.collection = collection;
+  this.field = field;  
+
 };
 
 

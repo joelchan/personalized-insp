@@ -610,6 +610,109 @@ FilterManager = (function () {
       return query;
 
     },
+
+
+    createSorter : function(name, user, col, field, val, position){
+    /**************************************************************
+       * Creates a new sorter. Delete if there are any existing for 
+       * the provided field , collection, user and name.
+       * @Params
+       *    name - An identifier used but the sorting component
+       *    user - the user that is using the query
+       *    col - the colleciton that will be queried
+       *    field - field of collection that will be used for sorting
+       *    val - can take only +1/-1. Signifies ascending descending
+       *    position - to support multiple level of sorting
+       * @Return
+       *    cursor pointing to list of sorters 
+       * ***********************************************************/
+      /*****************   Stub code *******************************/
+      /*****************   End Stub code ***************************/
+      /*****************   Actual Implementation code **************/
+
+
+    var newSorter = new Sorter(name, user, col, field, val, position);
+    //var findObject = new UniqueSorter(name, user, col, field);
+    //var upsert  = { 'upsert' : true };
+    //this.removeSorter(name, user, col, field)
+
+    /* inserts the value of sorter if found, else inserts a new one */
+    newSorter._id = Sorters.insert(newSorter);
+
+    logger.debug("New Sorter: ");
+    logger.debug(newSorter);
+    return true;
+
+    },
+
+    removeSorter : function(name, user, col, field)
+    {
+      var sorter = Sorters.findOne({'name': name, 
+                'user': user, 
+                'collection': col,
+                'field': field
+          });
+
+      if(sorter)
+      {
+        Sorters.remove({ '_id' : sorter._id} );
+      }
+    },
+
+
+    getSorterList: function(name, user, col) {
+      /**************************************************************
+       * Get the raw list of sorters that will shape the query
+       * @Params
+       *    name - An identifier used but the sortering component
+       *    user - the user that is using the query
+       *    col - the colleciton that will be queried
+       * @Return
+       *    cursor pointing to list of sorters 
+       * ***********************************************************/
+      /*****************   Stub code *******************************/
+      /*****************   End Stub code ***************************/
+      /*****************   Actual Implementation code **************/
+      logger.trace("Beginning getSortersList");
+      
+      var results = Sorters.find({'name': name, 
+          'user': user, 
+          'collection' : col,
+      });
+
+      logger.debug("Found " + results.count() + " sorters matching");
+
+      return results;
+      /*****************   End Actual Implementation code **********/
+
+    },
+
+    getSortingQuery: function (sorters) {
+    /******************************************************************
+    * Uses the sorters cursor to generate a string sorting query
+    * @Params
+    *     sorters - 
+    * @Return
+    *     sorting query string
+    *****************************************************************/
+    var sortArray = sorters.fetch();
+    if(sortArray.length === 0)
+    {
+      return {};
+    }
+
+    var sorterObj = {};
+
+
+    for (var i = sortArray.length - 1; i >= 0; i--) {
+      sorterObj[sortArray[i].field] = sortArray[i].val;
+    }
+
+      return { 'sort' : sorterObj };
+    },
+
+
+
     performQuery: function(name, user, collection) {
       /**************************************************************
        * Create a new filter
@@ -628,8 +731,14 @@ FilterManager = (function () {
       var parsed = this.parseFilterOps(filters);
       var query = this.getQuery(parsed);
       logger.debug("got query string: " + JSON.stringify(query));
+
+      var sorters = this.getSorterList(name, user, collection);
+      var sortingQuery = this.getSortingQuery(sorters);
+
       var col = getCollection(collection);
-      var result = col.find(query);
+      //var result = col.find(query,{'sort' : { 'content' :1 }});
+      var result = col.find(query,sortingQuery);
+
       return result;
 
       /*****************   End Actual Implementation code **********/

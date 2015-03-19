@@ -11,6 +11,7 @@ MyCollections =
     'clusters': Clusters,
     'ideasToProcess': IdeasToProcess,
     'filters': Filters,
+    'sorters':Sorters,
     'notifications': Notifications,
     'experiments': Experiments,
     'exp-conditions': Conditions,
