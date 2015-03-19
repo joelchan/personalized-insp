@@ -79,6 +79,9 @@ Template.IdeaGen.events({
 });
 
 
+
+
+
 decrementTimer = function decrementTimer() {
   /******************************************************************
   * Decrement the onscreen timer
@@ -95,9 +98,7 @@ decrementTimer = function decrementTimer() {
     //EventLogger.logEndRole();
     //exitPage();
     
-    Router.go("SurveyPage", {
-      'partID': Session.get("currentParticipant")._id
-    });
+    Router.go(Session.get("nextPage"), Session.get("nextPageParams"));
   }
 };
 

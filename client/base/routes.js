@@ -235,14 +235,19 @@ var initRolePage = function() {
   }
 }
 
+setNextPage = function (routeName, routeParams) {
+  Session.set("nextPage", routeName);
+  Session.set("nextPageParams", routeParams);
+}
+
 Router.goToNextPage = function () {
-  var currentPage = Router.current().route.name;
-  var role = Session.get("currentRole");
-  if (!role) {
-    logger.trace("Going to PromptPage");
-    Router.go("PromptPage");
+  logger.debug("Going to next page");
+  var next = Session.get("nextPage");
+  var params = Session.get("nextPageParams");
+  if (next) {
+    logger.debug("Next page is " + next);
+    Router.go(next, params);
   } else {
-    logger.trace("Going to: " + JSON.stringify(role.workflow));
-    Router.go(RoleManager.getNextFunc(role, currentPage));
+    logger.warn("Attempted to go to next page, but no next page set");
   }
-};
+}

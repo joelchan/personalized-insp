@@ -582,7 +582,7 @@ Router.map(function () {
   });
 
   this.route('CrowdIdeation', {
-      path: 'crowd/Ideation/:promptID/:userID',
+      path: 'crowd/Ideations/:promptID/:userID',
       template: 'MturkIdeationPage',
       subscriptions: function() {
         logger.debug("Waiting on...");
@@ -622,6 +622,11 @@ Router.map(function () {
     },
     onAfterAction: function() {
       if (this.ready()) {
+        setNextPage("MturkSynthesis", 
+          {promptID: Session.get("currentPrompt")._id,
+            userID: Session.get("currentUser")._id
+          }
+        );
         initRolePage();
       }
     }

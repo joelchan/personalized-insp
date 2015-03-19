@@ -16,9 +16,11 @@ Template.MturkIdeationPage.rendered = function(){
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
   logger.debug("checking to show begin ideation modal");
-  if (!Session.get("currentParticipant").hasStarted) {
-    logger.debug("showing begin ideation modal");
-    $("#exp-begin-modal").modal('show');  
+  if (Session.get("currentExp")) {
+    if (!Session.get("currentParticipant").hasStarted) {
+      logger.debug("showing begin ideation modal");
+      $("#exp-begin-modal").modal('show');  
+    }
   }
   //Setup Facilitation push to synthesis listener
   //MyUsers.find({_id: Session.get("currentUser")._id}).observe({
@@ -222,7 +224,13 @@ Template.MturkTaskLists.helpers({
   tasksAvailable: function(){
       var prompt = Session.get("currentPrompt");
       var user = Session.get("currentUser");
-      var groupID = Session.get("currentExp").groupID;
+      var exp = Session.get("currentExp");
+      var groupID;
+      if (exp) {
+        groupID = exp.groupID;
+      } else {
+        groupID = Session.get("currentGroup")._id;
+      }
       var result = TaskManager.areTasksAvailable(prompt, user, groupID);
       logger.trace("*********RESULT = " + result);
       if (result == false) {
