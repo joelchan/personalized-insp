@@ -39,7 +39,6 @@ if __name__  == '__main__':
     # get bag of words
     data, expandedText = nlp.bag_of_words(ideas, stopWords);
 
-    print data[0]
     # prepare dictionary
     dictionary = corpora.Dictionary(expandedText)
 
@@ -107,10 +106,10 @@ if __name__  == '__main__':
 
     #nodes = [d['id'] for d in data]
     G.add_edges_from(edges)
-    # print "nodes: %d" % G.number_of_nodes()
-    # print "edges: %d" % G.number_of_edges()
+    print "nodes: %d" % G.number_of_nodes()
+    print "edges: %d" % G.number_of_edges()
 
     solve = solver(G)
     clusters = solver.run(solve)
     clusters.sort(key=len, reverse=True)
-    # print clusters
+    print clusters
