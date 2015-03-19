@@ -84,15 +84,18 @@ Template.MturkClustering.rendered = function(){
     logger.info("No user graph found.  Initializing new graph");
     Meteor.call("graphCreate", prompt._id, group._id, user._id,
       function (error, result) {
-        logger.trace("User graph create error: " + JSON.stringify(error));
+        logger.trace("User graph create error msg: " + JSON.stringify(error));
         logger.debug("Setting User graph");
-        var g = Graphs.findOne({_id: result});
-        Session.set("currentGraph", g);
-        setFilters(g);
+        var cg = Graphs.findOne({_id: result});
+        Session.set("currentGraph", cg);
+        if (Session.get("sharedGraph")) {
+          logger.debug("setting filters after getting userGraph");
+          setFilters(cg, Session.get("sharedGraph"));
+        }
         Tracker.autorun(function(c) {
-          logger.debug("Attempting to set shared graph listener");
+          logger.debug("Attempting to set shared graph listener.");
           if (Session.get("sharedGraph")) {
-            setSharedGraphListener(Session.get("sharedGraph"), g);
+            setSharedGraphListener(Session.get("sharedGraph"), cg);
             //c.stop();
           } 
         });
@@ -125,8 +128,13 @@ Template.MturkClustering.rendered = function(){
       function (error, result) {
         logger.trace("Shared graph create error: " + JSON.stringify(error));
         logger.debug("Setting shared graph");
-        var g = Graphs.findOne({_id: result});
-        Session.set("sharedGraph", g);
+        var sg = Graphs.findOne({_id: result});
+        Session.set("sharedGraph", sg);
+        if (Session.get("currentGraph")) {
+          logger.debug("setting filters after getting sharedGraph");
+          setFilters(Session.get("currentGraph"), sg);
+        }
+
       }
     );
   } else {
@@ -143,6 +151,7 @@ Template.MturkClustering.rendered = function(){
   FilterManager.reset(clusterFilterName,
       Session.get("currentUser"),
       "nodes"); 
+  Session.set("filtersSet", false);
   //Create base filters for ideas
   FilterManager.create(ideaFilterName,
       Session.get("currentUser"),
@@ -163,10 +172,15 @@ Template.MturkClustering.rendered = function(){
       "isTrash",
       false 
   );
-  if (Session.get("currentGraph")) {
-    setFilters(Session.get("currentGraph"));
+  if (Session.get("currentGraph") && Session.get("sharedGraph")) {
+    logger.debug("setting filters immediately");
+    setFilters(
+        Session.get("currentGraph"), 
+        Session.get("sharedGraph")
+    );
   } else {
-    FilterManager.create(ideaFilterName,
+    FilterManager.create(
+        ideaFilterName,
         Session.get("currentUser"),
         "nodes",
         "graphID",
@@ -233,8 +247,10 @@ var setSharedGraphListener = function(sharedGraph, userGraph) {
   });
 };
 
-var setFilters = function(userGraph) {
+var setFilters = function(userGraph, sharedGraph) {
   logger.debug("Removing old filters with null graphID");
+  logger.trace("User Graph: " + JSON.stringify(userGraph));
+  logger.trace("Shared Graph: " + JSON.stringify(sharedGraph));
   FilterManager.remove(ideaFilterName,
       Session.get("currentUser"),
       "nodes",
@@ -252,7 +268,7 @@ var setFilters = function(userGraph) {
       Session.get("currentUser"),
       "nodes",
       "graphID",
-      userGraph._id
+      sharedGraph._id
   );
   FilterManager.create(clusterFilterName,
       Session.get("currentUser"),
@@ -342,6 +358,7 @@ Template.MturkClusteringIdeaList.helpers({
       logger.trace("total number of ideas: " + result.count());
       return result;
     } else {
+      logger.debug("Filters are not set");
       return null;
     }
   },
@@ -350,7 +367,7 @@ Template.MturkClusteringIdeaList.helpers({
     if (Session.get("filtersSet")) {
 	    return FilterManager.performQuery(
         ideaFilterName, 
-		    Session.get("currentUser"), 	
+		    Session.get("currentUser"),
 		    "nodes").count();
     } else {
       return 0;
@@ -583,6 +600,8 @@ Template.MturkClusterarea.helpers({
 		    Session.get("currentUser"), 	
 		    "nodes"
       );
+      logger.trace("clusterIDs: " + 
+        JSON.stringify(getIDs(result)));
       logger.debug("******** number of clusters: " + 
           result.count() + " ***********");
       return result;

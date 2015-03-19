@@ -17,7 +17,7 @@ Filter = function (name, user, collection, field, val, op) {
    *
    * @params
    *    name - String describing the filter, useful as a lookup ref
-   *    user - user associated with a given filter
+   *    user - id of user associated with a given filter
    *    collection - string matching the collection name string
    *    field - the field of the document to match
    *    val - the value of the document
@@ -25,7 +25,7 @@ Filter = function (name, user, collection, field, val, op) {
    *        matching is performed 
    *****************************************************************/
   this.name = name;
-  this.user = user;
+  this.user = user._id;
   this.collection = collection;
   this.field = field;
   this.val = val;

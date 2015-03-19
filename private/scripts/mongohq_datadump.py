@@ -195,8 +195,10 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
    participantsDF.to_csv(file_path)
 
 if __name__ == '__main__':
-    clear_db(mongohq.fac_exp)
-    # dump_db('data/facPilot', mongohq.fac_exp)
-    # restore_db('data/hcompTest', mongohq.local_meteor)
-    # get_data_output('data/hcompTest', mongohq.ideagens)
+   clear_db(mongohq.local_meteor)
+   restore_db('data/hcompTest', mongohq.local_meteor)
+   # clear_db(mongohq.ideagens)
+   # dump_db('data/hcompTest', mongohq.ideagens)
+   # restore_db('data/hcompTest', mongohq.ideagens)
+   # get_data_output('data/hcompTest', mongohq.ideagens)
 

@@ -88,6 +88,29 @@
 </li>
 </template>
 
+<template name="MturkClusteringIdeaList">
+	
+  {{ > HcompFilterBoxHeader }}
+
+  <!--Idea List-->
+  <div id="idealistwrapper">
+    <!-- <h3 id="idealistHeader">Idea List</h3> -->
+    
+    <div class="idea-box-header">
+      <span>
+        {{ numIdeas }} Ideas
+      </span>
+    </div>
+
+    <ul id="idealist" class="ideadeck cluster-idea-list">
+      {{#each ideas}}
+        <!-- {{> MturkClusterIdeaItem}} -->
+        {{> MturkClusteringIdeaListIdeaItem}}
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
 <template name="MturkClusteringIdeaListIdeaItem">
 <li id=idea-{{_id}} class="idea-item"><!-- {{#if isNotInCluster}} unsorted-idea {{else}} sorted-idea {{/if}}"-->
     <div class="row">
@@ -112,29 +135,6 @@
       {{ voteNum }}
     </span> -->
 </li>
-</template>
-
-<template name="MturkClusteringIdeaList">
-	
-  {{ > HcompFilterBoxHeader }}
-
-  <!--Idea List-->
-  <div id="idealistwrapper">
-    <!-- <h3 id="idealistHeader">Idea List</h3> -->
-    
-    <div class="idea-box-header">
-      <span>
-        {{ numIdeas }} Ideas
-      </span>
-    </div>
-
-    <ul id="idealist" class="ideadeck cluster-idea-list">
-      {{#each ideas}}
-        <!-- {{> MturkClusterIdeaItem}} -->
-        {{> MturkClusteringIdeaListIdeaItem}}
-      {{/each}}
-    </ul>
-  </div>
 </template>
 
 
