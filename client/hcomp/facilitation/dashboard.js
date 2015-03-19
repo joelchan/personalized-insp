@@ -685,7 +685,7 @@ function getCloudFromIdeas() {
 priorityToNumIdeators = function(priorityNum) {
   switch (priorityNum) {
     case 1:
-      var prop = 1/3;
+      var prop = 0.33;
       break;
     case 2:
       var prop = 0.33;

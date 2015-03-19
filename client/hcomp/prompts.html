@@ -6,7 +6,7 @@
   <!-- Nav tabs -->
   <ul class="nav nav-tabs hcomp-prompts-page" role="tablist">
     <li role="presentation" class="active"><a href="#promptList" aria-controls="promptList" role="tab" data-toggle="tab">Prompts</a></li>
-    <li role="presentation"><a href="#expList" aria-controls="expList" role="tab" data-toggle="tab">Experiments</a></li>
+    <!-- <li role="presentation"><a href="#expList" aria-controls="expList" role="tab" data-toggle="tab">Experiments</a></li> -->
   </ul>
 
   <!-- Tab panes -->
@@ -52,23 +52,24 @@
       </div>
     </div> <!-- End prompts tab -->
     <!-- Experiments tab -->
-    <div role="tabpanel" class="tab-pane" id="expList"> 
-      <div class="row hcomp-prompts-page">
-        <center>
-          <button id="new-exp" class="new-exp btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newExpModal">
-            New Experiment
-          </button> 
-        </center>
-      </div> <!-- End Row -->
+    <!-- <div role="tabpanel" class="tab-pane" id="expList"> -->
+    <!-- <div class="row hcomp-prompts-page">-->
+    <!-- <center> -->
+    <!-- <button id="new-exp" class="new-exp btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newExpModal"> -->
+    <!-- New Experiment -->
+    <!-- </button>  -->
+    <!-- </center> -->
+    <!-- </div> -->
+    <!-- End Row -->
 
       
-      <div class="row hcomp-prompt-list"> 
-        {{#each experiments}}
-          {{> CrowdExperiment }}
-        {{/each}}
-      </div>
-    </div> <!-- End experiments tab -->
-    {{> NewExperimentModal }}
+    <!-- <div class="row hcomp-prompt-list">  -->
+    <!-- {{#each experiments}} -->
+    <!-- {{> CrowdExperiment }} -->
+    <!-- {{/each}} -->
+    <!-- </div> -->
+    <!-- </div> --> <!-- End experiments tab -->
+    <!-- {{> NewExperimentModal }} -->
   </div> <!-- End tab content container -->
 
 </template>
@@ -92,8 +93,8 @@
           <!--<strong>URL: </strong> {{urlFor route='HcompDashboard' data=_id}} <h3>id: {{_id}}</h3> -->
           {{#with promptID}}
             <strong>Crowd Ideator URL: </strong> 
-            <a href="{{formUrl}}{{pathFor route="MturkLoginPage"}}">
-              {{formUrl}}{{pathFor "MturkLoginPage"}}
+            <a href="{{formUrl}}{{pathFor route="CrowdLoginPage"}}">
+              {{formUrl}}{{pathFor "CrowdLoginPage"}}
             </a><br/>
             <strong>Crowd Clustering URL: </strong> 
             <a href="{{formUrl}}{{pathFor route="MturkSynthLoginPage"}}">

@@ -174,6 +174,43 @@ Router.map(function () {
       }
     }
   });
+  this.route('CrowdLoginPage', {
+    path: '/crowd/Ideate/Login/:promptID',
+    template: 'MturkLoginPage',
+    waitOn: function() {
+      return [
+        Meteor.subscribe('prompts', this.params.promptID)
+      ];
+
+    },
+    onBeforeAction: function() {
+      console.log("before action");
+      Session.set("currentUser", null);
+      if (this.ready()) {
+        logger.debug("Data ready");
+        var prompt = Prompts.findOne({_id: this.params.promptID});
+        logger.debug("setting current prompt");
+        if (prompt) {
+        Session.set("currentPrompt", prompt);
+        } else {
+           logger.warn("no prompt found with id: " + this.params.promptID);
+        }
+        this.next();
+      } else {
+        logger.warn("Not ready");
+      }
+    },
+    action: function() {
+      if (this.ready()) {
+        this.render();
+      } else {
+        this.render('loading');
+      }
+    },
+    onAfterAction: function() {
+      Session.set("nextPage", "CrowdIdeation");
+    },
+  });
   this.route('MturkLoginPage', {
     // path: '/crowd/Ideate/Login/:promptID',
     path: '/crowd/Ideate/Login/:expID',
@@ -544,6 +581,52 @@ Router.map(function () {
 
   });
 
+  this.route('CrowdIdeation', {
+      path: 'crowd/Ideation/:promptID/:userID',
+      template: 'MturkIdeationPage',
+      subscriptions: function() {
+        logger.debug("Waiting on...");
+        this.subscribe('ideas', {promptID: this.params.promptID})
+        this.subscribe('prompts', {_id: this.params.promptID}).wait();
+        this.subscribe('assignments').wait();
+        this.subscribe('tasks', {promptID: this.params.promptID});
+      },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var user = MyUsers.findOne({_id: this.params.userID});
+          logger.trace("user: " + user.name);
+          // MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeationTreatment'}});
+          LoginManager.loginUser(user.name);
+          Session.set("currentUser", user);
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          if (prompt) {
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + pID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+          this.next();
+        }
+    },
+    action: function(){
+      if(this.ready()) {
+        Session.set("useTimer", true);
+        Session.set("isTutorialTimer", false);
+        this.render();
+      } else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      if (this.ready()) {
+        initRolePage();
+      }
+    }
+
+  });
   this.route('SurveyPage', {
     path: 'crowd/survey/:partID/',
     template: 'SurveyPage',
