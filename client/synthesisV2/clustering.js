@@ -71,7 +71,7 @@ Template.MturkClustering.rendered = function(){
 
   //Get Data and setup listeners
   var prompt = Session.get("currentPrompt");
-  var group = Session.get("currentGroup");
+  var group = Groups.findOne({_id: Session.get("currentGroupID")});
   var user = Session.get("currentUser");
   //Get user graph
   var userGraph = Graphs.findOne({
@@ -191,8 +191,7 @@ Template.MturkClustering.rendered = function(){
         "nodes",
         "graphID",
         ""
-    );
-
+    ); 
   }
   
 };
@@ -200,6 +199,7 @@ Template.MturkClustering.rendered = function(){
 var setSharedGraphListener = function(sharedGraph, userGraph) {
   logger.debug("Setting up shared graph listener");
   Tracker.autorun(function() {
+    logger.debug("*********Setting up shared graph listener *************");
     if (!Session.get("duplicatingNode")) {
       var sharedThemes = Nodes.find({graphID: sharedGraph._id, 
           type: 'theme'});
@@ -289,9 +289,10 @@ startServerListener = function() {
       //setIdeaListener(users, Session.get("currentPrompt"));
     //},
   //});
+  var group = Groups.findOne({_id: Session.get("currentGroupID")});
   Meteor.call("graphIdeaListener",
     Session.get("currentGraph")._id, 
-    getIDs(Session.get("currentGroup").users),
+    getIDs(group.users),
     Session.get("currentPrompt")._id,
     function(error, result) {
       logger.debug("Idea Listener started");

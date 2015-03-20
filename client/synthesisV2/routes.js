@@ -16,6 +16,7 @@ Router.map(function () {
     path: '/crowd/Categorize/Login/:promptID',
     template: 'MturkLoginPage',
     waitOn: function() {
+      logger.debug("Waiting on...");
       return Meteor.subscribe('prompts', this.params.promptID);
     },
     onBeforeAction: function() {
@@ -57,7 +58,7 @@ Router.map(function () {
         Meteor.subscribe('edges', {promptID: pID}),
         ];
     },
-    onBeforeAction: function(pause) {
+    onBeforeAction: function() {
         logger.debug("before action");
         if (this.ready()) {
           var user = MyUsers.findOne({_id: this.params.userID});
@@ -69,12 +70,7 @@ Router.map(function () {
           if (prompt) {
             logger.debug("setting current Prompt");
             Session.set("currentPrompt", prompt);
-            var groupIDs = prompt.groupIDs;
-            logger.trace("group IDS of the prompt");
-            logger.trace(groupIDs);
-            var group = Groups.findOne({_id: prompt.groupIDs[0]});
-            logger.trace(group);
-            Session.set("currentGroup", group);
+            Session.set("currentGroupID", prompt.groupIDs[0]);
             Session.set("filtersSet", false);
           } else {
             logger.warn("no prompt found with id: " + this.params.promptID);
