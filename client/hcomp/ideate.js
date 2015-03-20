@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Ideate');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Ideate', 'trace');
+Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 // Logger.setLevel('Client:Hcomp:Ideate', 'debug');
-Logger.setLevel('Client:Hcomp:Ideate', 'info');
+// Logger.setLevel('Client:Hcomp:Ideate', 'info');
 // Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
@@ -227,8 +227,10 @@ Template.MturkTaskLists.helpers({
       var exp = Session.get("currentExp");
       var groupID;
       if (exp) {
+        logger.debug("Getting groupID from experiment");
         groupID = exp.groupID;
       } else {
+        logger.debug("Getting groupID from currentGroup");
         groupID = Session.get("currentGroup")._id;
       }
       var result = TaskManager.areTasksAvailable(prompt, user, groupID);
@@ -248,11 +250,20 @@ Template.MturkTaskLists.events({
   'click .get-task': function(e, t) {
     logger.debug("Retrieving a new task"); 
     EventLogger.logRequestInspiration(Session.get("currentPrompt"));
-    var task = TaskManager.assignTask(
-      Session.get("currentPrompt"),
-      Session.get("currentUser"),
-      Session.get("currentExp").groupID
-    );
+    var task;
+    if (Session.get("currentExp")) {
+      task = TaskManager.assignTask(
+        Session.get("currentPrompt"),
+        Session.get("currentUser"),
+        Session.get("currentExp").groupID
+      ); 
+    } else {
+      task = TaskManager.assignTask(
+        Session.get("currentPrompt"),
+        Session.get("currentUser"),
+        Session.get("currentPrompt").groupIDs[0]
+      ); 
+    }
    if (task) {
       logger.info("Got a new task");
       EventLogger.logInspirationRequestSuccess(
