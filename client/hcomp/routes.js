@@ -288,7 +288,7 @@ Router.map(function () {
           Session.set("currentParticipant", part);
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
-          // MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
+          MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
           Session.set("currentUser", user);
           var exp = Experiments.findOne({_id: part.experimentID});
           if (exp) {
@@ -319,7 +319,7 @@ Router.map(function () {
     },
     onAfterAction: function() {
       if (this.ready()) {
-        initRolePage();
+        // initRolePage();
         insertExitStudy();
       }
       //Session.set("nextPage", "MturkIdeationControl");
@@ -507,7 +507,7 @@ this.route('ExpBaselineFluency', {
     onAfterAction: function() {
       if (this.ready()) {
         logger.debug("After rendering the page");
-        initRolePage();
+        // initRolePage();
         insertExitStudy();
       }
     }
@@ -871,3 +871,4 @@ var initRolePage = function() {
     $('.timer').remove();
   }
 };
+

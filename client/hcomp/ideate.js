@@ -20,7 +20,7 @@ var countdown = Tock({
         $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
     },
     complete: function () {
-        console.log('end');
+        // console.log('end');
         alert("Time's up!");
         
         logger.info("Exitting current page");
@@ -69,6 +69,7 @@ Template.MturkIdeationPageControl.rendered = function(){
     logger.debug("showing begin ideation modal");
     $("#exp-begin-modal").modal('show');  
   }
+  initializeTimer();
 };
 
 Template.MturkIdeationPageControl.helpers({
@@ -339,7 +340,7 @@ Template.ExperimentBeginModal.events({
   },
 });
 
-initializeTimer = function() {
+var initializeTimer = function() {
   var prompt = Session.get("currentPrompt");
   if ($('.timer').length == 0 && prompt.length > 0) {
     logger.info("using a timer");

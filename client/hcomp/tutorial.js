@@ -71,7 +71,7 @@ var countdown = Tock({
     }
 });
 
-var fluencyTaskLength = 1/6*60000;
+var fluencyTaskLength = 2*60000;
     
 //CONTROL TUTORIAL
 Template.TutorialControl.rendered = function() {
@@ -103,6 +103,7 @@ Template.TutorialControl.rendered = function() {
         Router.go(route, {'promptID': promptID, 'partID': partID});
       },
     });    
+    initializeTutorialTimer();
     EventLogger.logTutorialStarted();
     Session.set("currentTutorialStep",1);
 }
@@ -334,7 +335,6 @@ Template.ControlTutorialFlow.events({
         $(".main-prompt").css({
             "z-index": 60
         });
-        $('.ideation-prompt-control').text("Alternative uses for a brick")
         EventLogger.logTutorialStepComplete(4,tutorialLengthControl);
     },
     'click .control-tutorial-prompt-goback': function() {
@@ -381,6 +381,8 @@ Template.ControlTutorialFlow.events({
         // $("#directions-content").removeClass("collapse");
         // $("#directions-content").addClass("collapse in");
         // EventLogger.logTutorialStepComplete(6,tutorialLengthControl);
+        alert("Ready, set, go! Click 'ok' and the timer will start!")
+        $('.ideation-prompt-control').text("Alternative uses for a brick")
         var startTime = timer.msToTime(fluencyTaskLength)
         logger.trace("Fluency task length is: " + startTime);
         countdown.start(fluencyTaskLength);
@@ -918,7 +920,13 @@ Template.TreatmentTutorialFlow.events({
     },
 });
 
-
-
+var initializeTutorialTimer = function() {
+  if ($('.timer').length == 0) {
+    Blaze.render(Template.TockTimer, $('#nav-right')[0]);
+    countdown.stop();
+  } else {
+    countdown.stop();
+  }
+}
 
 
