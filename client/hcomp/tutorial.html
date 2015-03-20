@@ -53,9 +53,9 @@
       <div id="directions-container-control">
         <div id="directions-content" class="collapse">
           <ol>
-            <li>Your task is to generate as many creative ideas as you can for the brainstorming problem for 10 minutes. When the time is up, you will complete a brief survey, and be taken to a page where you can submit the HIT.</li>
-            <li><strong>IMPORTANT!</strong> DO NOT REFRESH YOUR BROWSER DURING THE HIT: If you do, the system will kick you out of the HIT and you will not be able to complete it.</li>
-            <li>If at any time you do not wish to continue, you may exit the study by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
+            <li>{{>InstructionsGeneral}}</li>
+            <li>{{>InstructionsNoRefresh}}</li>
+            <li>{{>InstructionsExitEarly}}</li>
           </ol>
           <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
               2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
@@ -238,7 +238,8 @@
       class = "control-tutorial control-tutorial-background visible-tutorial-control">
         <div class = "tutorial-text control-tutorial-welcome-text control-tutorial-description">
             <p>
-                Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface.
+                <!-- Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface. -->
+                {{> TutorialWelcome}}
             </p>
             <br/>
             <br/>
@@ -256,7 +257,7 @@
         </div>
         <div class = "tutorial-text control-tutorial-timer-text control-tutorial-description">
             <p>
-                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. Time remaining for the task is displayed here. <strong>DO NOT</strong> refresh your browser during the HIT: you'll be kicked out of the system and won't be able to complete the HIT.
+                {{> TutorialGeneralInfo}}
             </p>
             {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
@@ -277,7 +278,7 @@
         </div>
         <div class = "tutorial-text control-tutorial-exit-text control-tutorial-description">
             <p>
-                If at any time you do not wish to continue, you may exit the study by clicking on this button. Your compensation will be pro-rated based on how long you participated. 
+                {{> TutorialExitEarly}}
             </p>
             {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
@@ -297,7 +298,7 @@
         </div>
         <div class = "tutorial-text control-tutorial-prompt-text control-tutorial-description">
             <p>
-                The brainstorming problem will be shown here.  
+                {{> TutorialProblem}}  
             </p>
             {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
@@ -317,7 +318,7 @@
         </div>
         <div class = "tutorial-text control-tutorial-ideaEntry-text control-tutorial-description">
             <p>
-                You will enter your ideas here. Submit ideas by pressing enter of clicking on the "Submit Idea" button.
+                {{> TutorialIdeaEntry}}
             </p>
             {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
@@ -333,7 +334,7 @@
     <div id = "control-tutorial-ideaEntryTry" class = "control-tutorial control-tutorial-background">
         <div class = "control-tutorial-ideaEntryTry-text control-tutorial-description">
             <p>
-                Now let's practice the interface with a warm-up task. For the next 2 minutes, try to think of as many uses as you can for a brick. Do not merely list other things associated with bricks (e.g., house, construction hat), but rather things you could use a brick for (e.g., builing material, doorstop, anchor, etc.). When you are ready, click "Got it".   
+                {{> TutorialIdeaTry}}
             </p>
             {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
@@ -356,7 +357,7 @@
         </div>
         <div class = "control-tutorial-directions-text control-tutorial-description">
             <p>
-                All of the instructions from this tutorial will be summarized in this section. It will be available throughout the task: just click "show/hide" to show or hide the instructions.  
+                {{> TutorialInstructions}}
             </p>
             {{> TutorialProgressControl}}
             <div class = "control-tutorial-button">
@@ -372,7 +373,7 @@
     <div id = "control-tutorial-pleaseWait" class = "control-tutorial control-tutorial-background">
         <div class = "control-tutorial-pleaseWait-text control-tutorial-description">
             <p>
-                That's it! Please stay tuned, the brainstorm will begin momentarily. In the meantime, feel free to play around with the interface!  
+                {{> TutorialWait}}
             </p>
             <br/>
             <br/>

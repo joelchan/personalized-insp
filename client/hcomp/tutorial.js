@@ -8,6 +8,7 @@ Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 var myTaskIDs = [];
 var tutorialLengthTreatment = 10;
 var tutorialLengthControl = 7;
+var fluencyTaskLength = 2*60000;
 
 var timer = new Tock({
     callback: function () {
@@ -49,6 +50,7 @@ var countdown = Tock({
           $("#ideator-directions-control").css({border: "10px solid #F5A623"});
           $("#directions-content").removeClass("collapse");
           $("#directions-content").addClass("collapse in");
+          $('#control-tutorial-ideaEntryTry-gotit').attr('disabled',false);
           EventLogger.logTutorialStepComplete(6,tutorialLengthControl); 
         } else {
           $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
@@ -71,8 +73,6 @@ var countdown = Tock({
     }
 });
 
-var fluencyTaskLength = 2*60000;
-    
 //CONTROL TUTORIAL
 Template.TutorialControl.rendered = function() {
     $(".tutorial-page-control").append(
@@ -100,6 +100,9 @@ Template.TutorialControl.rendered = function() {
         var partID = Session.get("currentParticipant")._id;
         var promptID = Session.get("currentPrompt")._id;
         logger.debug("partID: " + partID);
+        //
+        // TODO grab the fluency measure if we haven't!
+        //
         Router.go(route, {'promptID': promptID, 'partID': partID});
       },
     });    
@@ -381,6 +384,7 @@ Template.ControlTutorialFlow.events({
         // $("#directions-content").removeClass("collapse");
         // $("#directions-content").addClass("collapse in");
         // EventLogger.logTutorialStepComplete(6,tutorialLengthControl);
+        $('#control-tutorial-ideaEntryTry-gotit').attr('disabled',true)
         alert("Ready, set, go! Click 'ok' and the timer will start!")
         $('.ideation-prompt-control').text("Alternative uses for a brick")
         var startTime = timer.msToTime(fluencyTaskLength)
@@ -462,8 +466,9 @@ Template.TutorialTreatment.rendered = function() {
         var promptID = Session.get("currentPrompt")._id;
         logger.debug("partID: " + partID);
         Router.go(route, {'promptID': promptID, 'partID': partID});
-    },
-  });    
+      },
+    });    
+    initializeTutorialTimer();
 }
 //Template.TutorialTreatment.events({
     //'click button.nextPage': function () {
