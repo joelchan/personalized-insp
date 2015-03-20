@@ -82,15 +82,17 @@ Template.HcompBeginSynthesis.events({
   // },
 });
 
-Template.HcompOtherViz.rendered = function() {
+
+
+function drawBubbles() {
 
 var margin = {
     top: 120,
     right: 0,
     bottom: 0,
     left: 0
-},
-width = 460 - margin.left - margin.right,
+    },
+    width = 460 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
 var n = 56,
@@ -102,8 +104,7 @@ var n = 56,
 
 
 //input the cloudItems, map each item to an object with
-
-var cloud = getCloudFromIdeas();
+var cloud =  getCloudFromIdeas();
 
 var nodes = cloud.map(function (item) {
     var i = Math.floor(Math.random() * m); //color
@@ -138,16 +139,26 @@ var svg = d3.select("#svgdiv").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var rem = svg.selectAll("circle")
+    .data(nodes, function(d) {return d})
+    .exit()
+    .style("fill", "grey");
+
+
 var circle = svg.selectAll("circle")
     .data(nodes)
     .enter().append("circle")
-    .attr("r", function (d) {
-    return d.radius;
-})
+    .attr("r", function (d) {return d.radius;})
     .attr("fill", function(d) {if (d.likes==1) {return "green";} 
                                              else {return "red";};})
-
     .call(force.drag);
+
+    circle.remove()
+
+
+console.log("rem:")
+console.log(rem[0])
+
 
 var tex = svg.selectAll("text")
     .data(nodes)
@@ -160,6 +171,8 @@ var tex = svg.selectAll("text")
     })
     .text(function(d) {return d.title;})
     .style("font-size", function(d) {return d.radius/2;})
+    .style("stroke", function(d) {if (d.likes==1) {return "green";} 
+                                             else {return "red";};})
     .call(force.drag);
 
 
@@ -218,7 +231,25 @@ function collide(alpha) {
     };
 }
 
-};
+}
+
+Template.HcompOtherViz.rendered = function() {
+  Deps.autorun(function() {
+    //get the new dataset 
+    //var ideas = getFilteredIdeas("Ideas Filter");
+
+    //selectAll svg elements that correspond, then bind the relevant data to it
+
+    //enter
+
+    //transition
+
+    //exit....remove()
+    drawBubbles();
+  })
+  
+}
+
 
 
 ///********************************************************************
@@ -272,7 +303,7 @@ Template.HcompOverallStats.helpers({
 Template.HcompIdeaWordCloud.helpers({
     ideas : function() {
         // console.log("calling ideas for HcompIdeaWordCloud");
-        cursor = getCloudFromIdeas();
+        cursor = getFilteredIdeas("Ideas Filter"); //getCloudFromIdeas();
         return cursor;
     },
     getFontSize : function() {
@@ -603,9 +634,14 @@ function getCloudFromIdeas() {
                                        .replace(/\s{2,}/g," ");
   }
   //logger.debug("Prompt stop words: " + promptStopWords.toString());
-  var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
+  var firstIdeas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
+  console.log("old ideas:")
+  console.log(firstIdeas)
+  var ideas = getFilteredIdeas("Ideas Filter");
+  console.log("new ideas:")
+  console.log(ideas)
   // logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
   // console.log(ideas);
 	var cloud = [];
