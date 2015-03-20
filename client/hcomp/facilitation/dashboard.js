@@ -685,16 +685,16 @@ function getCloudFromIdeas() {
 priorityToNumIdeators = function(priorityNum) {
   switch (priorityNum) {
     case 1:
-      var prop = 0.33;
+      var prop = 0.67;
       break;
     case 2:
-      var prop = 0.33;
+      var prop = 0.67;
       break;
     case 3:
-      var prop = 0.33;
+      var prop = 0.67;
       break;
     default:
-      var prop = 0.33;
+      var prop = 0.67;
       break;
   }
   var exp = Session.get("currentExp");
