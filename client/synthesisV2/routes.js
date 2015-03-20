@@ -64,13 +64,12 @@ Router.map(function () {
           var user = MyUsers.findOne({_id: this.params.userID});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
-          MyUsers.update({_id: user._id}, {$set: {route: 'MturkSynthesis'}});
+          //MyUsers.update({_id: user._id}, {$set: {route: 'MturkSynthesis'}});
           logger.debug("Data ready");
           var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {
             logger.debug("setting current Prompt");
             Session.set("currentPrompt", prompt);
-            Session.set("currentGroupID", prompt.groupIDs[0]);
             Session.set("filtersSet", false);
           } else {
             logger.warn("no prompt found with id: " + this.params.promptID);

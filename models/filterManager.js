@@ -736,8 +736,9 @@ FilterManager = (function () {
       var sortingQuery = this.getSortingQuery(sorters);
 
       var col = getCollection(collection);
+      return col.find(query);
       //var result = col.find(query,{'sort' : { 'content' :1 }});
-      var result = col.find(query,sortingQuery);
+      //var result = col.find(query,sortingQuery);
 
       return result;
 

@@ -71,7 +71,10 @@ Template.MturkClustering.rendered = function(){
 
   //Get Data and setup listeners
   var prompt = Session.get("currentPrompt");
-  var group = Groups.findOne({_id: Session.get("currentGroupID")});
+  var group = Groups.findOne({_id: prompt.groupIDs[0]});
+  Session.set("currentGroup", group);
+  //var group = Groups.findOne({_id: Session.get("currentGroupID")});
+  var group = Session.get("currentGroup");
   var user = Session.get("currentUser");
   //Get user graph
   var userGraph = Graphs.findOne({
