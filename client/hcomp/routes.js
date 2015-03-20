@@ -603,7 +603,8 @@ Router.map(function () {
           var prompt = Prompts.findOne({_id: this.params.promptID});
           if (prompt) {
             Session.set("currentPrompt", prompt);
-            Session.set("currentGroup", prompt.groupIDs[0]);
+            var group = Groups.findOne({_id: prompt.groupIDs[0]});
+            Session.set("currentGroup", group);
           } else {
             logger.warn("no prompt found with id: " + pID);
           }
