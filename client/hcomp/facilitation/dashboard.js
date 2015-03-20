@@ -764,63 +764,6 @@ Template.ForceV.rendered = function() {
 
   var newData = formatData(rawIdeas)
 
-  incomingIdeaData =  
-  [
-    {    "id":1,    "idea":"sleep schedule",    "categories":["Health and Wellbeing"],    "quality":0  },
-    {    "id":2,    "idea":"health-centered app",    "categories":["Health and Wellbeing"],    "quality":2  },
-    {    "id":3,    "idea":"something to track strength over time",    "categories":["Health and Wellbeing"],    "quality":4  },
-    {    "id":4,    "idea":"workout routines for EMTs",    "categories":["Health and Wellbeing"],    "quality":5  },
-    {    "id":5,    "idea":"game to test finger dexterity",    "categories":["Skillbuilding"],    "quality":5  },
-    {    "id":6,    "idea":"well-being monitor",    "categories":["Health and Wellbeing"],    "quality":4  },
-    {    "id":7,    "idea":"an app to share funny stories about the things they see",    "categories":["Emotional support"],    "quality":6  },
-    {    "id":8,    "idea":"critical incident support guide",    "categories":["Health and Wellbeing"],    "quality":6  },
-    {    "id":9,    "idea":"EMT task checklist",    "categories":["Workflow Improvement"],    "quality":5  },
-    {    "id":10,    "idea":"group journalling app",    "categories":["Emotional support"],    "quality":6  },
-    {    "id":11,    "idea":"messenger app for work ",    "categories":["Workflow Improvement"],    "quality":3  },
-    {    "id":12,    "idea":"health resource app",    "categories":["Emotional support"],    "quality":4  },
-    {    "id":13,    "idea":"Quick access to first aid instructions",    "categories":["Workflow Improvement"],    "quality":6  },
-    {    "id":14,    "idea":"app to tell family/friends when they'll get off work",    "categories":["Family/friends support"],    "quality":5  },
-    {    "id":15,    "idea":"game where person drives around a map as quickly as possible",    "categories":["Gamification"],    "quality":6  },
-    {    "id":16,    "idea":"app to log best practices for specific situations for other EMTs",    "categories":["Skillbuilding"],    "quality":6  },
-    {    "id":17,    "idea":"app that tracks career skillbuilding",    "categories":["Skillbuilding"],    "quality":5  },
-    {    "id":18,    "idea":"EMT social network",    "categories":["Emotional support"],    "quality":60  },
-    {    "id":19,    "idea":"upload health information using mobile data",    "categories":["Workflow Improvement"],    "quality":6  },
-    {    "id":20,    "idea":"Family activity planner",    "categories":["Family/friends support"],    "quality":2  },
-    {    "id":21,    "idea":"using cameras to recognize injuries",    "categories":["Workflow Improvement"],    "quality":6  },
-    {    "id":22,    "idea":"app for building strength at the gym (can be a game)",    "categories":["Health and Wellbeing"],    "quality":4  },
-    {    "id":23,    "idea":"use fingerprint technology to identify individual",    "categories":["Workflow Improvement"],    "quality":2  },
-    {    "id":24,    "idea":"app to track driving record",    "categories":["Logging and Performance"],    "quality":4  },
-    {    "id":25,    "idea":"Job skill assessment",    "categories":["Skillbuilding"],    "quality":2  },
-    {    "id":26,    "idea":"using vibrations/sound to identify proximity to patient",    "categories":["Workflow Improvement"],    "quality":6  },
-    {    "id":27,    "idea":"Cheerleader/coach app for emotional support at end of day",    "categories":["Emotional support"],    "quality":5  },
-    {    "id":28,    "idea":"app for quick tutorials about career-advancing skills (e.g., how to use excel)",    "categories":["Skillbuilding"],    "quality":4  },
-    {    "id":29,    "idea":"Communication systems game",    "categories":["Communication", "Gamification"],    "quality":2  },
-    {    "id":30,    "idea":"Medical codes/procedures game",    "categories":["Gamification"],    "quality":20  },
-    {    "id":31,    "idea":"\"Work mode\" for the phone",    "categories":["Workflow Improvement"],    "quality":50  },
-    {    "id":32,   "idea":"upload patient data using voice recording to cross reference what they said at time of accident versus post accident",    "categories":["Workflow Improvement"],    "quality":6  },
-    {    "id":33,    "idea":"use app to visualize health status of patient - connected to devices that measure it such as heart rate monitor,blood pressure etc",   "categories":["Workflow Improvement"],   "quality":7  },
-    {    "id":34,    "idea":"Aggregate communications log",   "categories":["Communication", "Logging and Performance"],    "quality":4  },
-    {    "id":35,    "idea":"Patient info/status",    "categories":["Logging and Performance"],    "quality":10  },
-    {    "id":36,    "idea":"Password protected files",    "categories":["Data/Job tasks"],   "quality":1  },  
-    {    "id":37,    "idea":"walkie talkie app",    "categories":["Communication", "hospital, dispatch, cops"],    "quality":2  },
-    {    "id":38,    "idea":"Frequent injuries based on area",   "categories":["Workflow Improvement"],    "quality":7  },
-    {    "id":39,    "idea":"App that records things done well - offers a reward system for successes - based on roland's need to reassurance while on the job that he is meeting expectations",    "categories":["Logging and Performance"],    "quality":6  },
-    {    "id":40,    "idea":"Newsfeed of all EMTs",    "categories":["Community/ Support"],    "quality":6  },
-    {    "id":41,    "idea":"gamification of good performance - inspires them to do certain procedure properly",    "categories":["Logging and Performance", "Gamification"],    "quality":5  },
-    {    "id":42,    "idea":"Shift/driver/assignment",   "categories":["Logging and Performance"],    "quality":7  },
-    {    "id":43,    "idea":"post-critical incident assessment",    "categories":["Communication", "hospital, dispatch, cops"],    "quality":6  },
-    {    "id":44,    "idea":"Unrelated stress relief game (angry birds) that passively builds skills",    "categories":["Apps for after work hours", "Skillbuilding"],    "quality":5  },
-    {    "id":45,    "idea":"\"Rookie\" app - Learn the basics",    "categories":["Gamification"],    "quality":2  },
-    {    "id":46,    "idea":"app that shows the most dangerous areas of the city based on EMT-generated logs (e.g., intersection of X and Y is known to be bad)",    "categories":["Data/Job tasks"],   "quality":7  },
-    {    "id":47,    "idea":"Dictated status logging for events and comms",    "categories":["Communication","Logging and Performance"],    "quality":5  },
-    {    "id":48,    "idea":"app that sends notifications to EMT's family in the case that somehting happens to the EMT",    "categories":["Family/friends support"],    "quality":5  },
-    {    "id":49,    "idea":"driving game where person learns how to get around traffic/streets better",    "categories":["Gamification"],    "quality":6  },
-    {    "id":50,    "idea":"app that chronicles positive on the job stories",    "categories":["Emotional support"],    "quality":5  },
-    {    "id":51,    "idea":"app that sends bits of inspiration (quotes, pictures, etc) for EMTs when they're burnt out/tired",    "categories":["Emotional support"],    "quality":7  },
-    {    "id":52,    "idea":"Send pics to other parties (hospital or cops)",    "categories":["Communication", "hospital, dispatch, cops"],    "quality":5  }
-  ];
-
-
   //generateIdeaData(); 
 
   // incomingIdeaData = parseGraph("bb5MupdMxKKk6qgkN");
@@ -1700,32 +1643,38 @@ function CreateForceDiagram(forceData)
     .style("stroke", "black")
     .style("opacity", function(d) 
     {
-      return 0.3;
-    })
-        .style("stroke-width", function(d) 
-    {
-      return Math.round(Math.sqrt(d.strength));
+      return d.strength/100;
     });
+        //.style("stroke-width", function(d) 
+    //{
+    //  return Math.round(Math.sqrt(d.strength));
+    //});
 
   //making the svg text that are the nodes
   //choosing colors from the ordinal scale for the text
   var nodes = svg.selectAll(".node")
     .data(dataset.nodes)
     .enter()
-    .append("circle")
+    .append("g")
+    .append("text")
     .attr("class", "node")
-    .attr("r", function(d) 
+    .attr("font-size", function(d) 
     { 
-      return Math.sqrt(d.size) * 2; 
+      return d.size/10; 
     })
+    .text(function(d) {return d.text;})
     .style("fill", function(d, i) 
     {
       return colors(i);
     })
     .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
-  nodes.append("title")
-    .text(function(d) { return d.text; });
+  /*svg.selectAll("g")
+     .data(dataset.nodes)
+     .enter()
+     .append("text")
+     .style("stroke", "black")
+     .text(function(d) { return d.text; });*/
 
   //this tells the visualization what to do when time passes
   //it updates where the nodes and edges should be
@@ -1748,11 +1697,11 @@ function CreateForceDiagram(forceData)
           return d.target.y; 
         });
 
-    nodes.attr("cx", function(d) 
+    nodes.attr("x", function(d) 
     {
       return d.x; 
     })
-    .attr("cy", function(d) 
+    .attr("y", function(d) 
     { 
       return d.y; 
     });
