@@ -40,13 +40,20 @@
 	        	<i class="fa fa-times"></i>
 	        </button>
 	      </span>
-	      <select  id= "sortingfields" class="form-control star-filter-opts-btn">
-				<option class="star-filter-opt">---</option>
-				<option class="star-filter-opt">content</option>
-		  </select>
+        <!-- {{> FilterBoxSorter }} -->
 
 	    </div> <!--close search bar input group-->	
 	</div> <!--close filterbox header-->
+</template>
+
+<template name="FilterBoxSorter">
+  <div class="filterbox-sorting">
+	  <select  id= "sortingfields" class="form-control star-filter-opts-btn">
+      <option class="star-filter-opt">---</option>
+		  <option class="star-filter-opt">content</option>
+	  </select>
+  </div>
+
 </template>
 
 <template name="HcompFilterBoxIdeaItem">
