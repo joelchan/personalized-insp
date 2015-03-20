@@ -1539,10 +1539,10 @@ function trimForceData(forceData, cutOffValue)
 function CreateForceDiagram(forceData)
 {
   // global intensity of attraction
-  var charge = -200;
+  var charge = -20;
   // link distance factor used to determine line length;
-  var distanceFactor = 40;
-  var maxDistance = 250;
+  var distanceFactor = 140;
+  var maxDistance = 650;
 
   //size of the svg
   var width = 800;
@@ -1582,7 +1582,7 @@ function CreateForceDiagram(forceData)
   //scales the sizes to between 10px and 30px
   var size_scale = d3.scale.linear()
     .domain([sizeMin, sizeMax])
-    .range([1, 50]);
+    .range([1, 150]);
 
   //find min and max of the sizes in order to scale them to needed size
   forceData.edges.forEach(function(d) 
@@ -1615,7 +1615,9 @@ function CreateForceDiagram(forceData)
     var sourceNode = parseInt(indexByName.get(forceData.edges[x].source_idea_id));
         var targetNode = parseInt(indexByName.get(forceData.edges[x].target_idea_id));
         var linkStrength = parseInt(strength_scale(forceData.edges[x].strength)); 
-
+        console.log("source:" + sourceNode)
+        console.log("target:" + targetNode)
+        console.log(linkStrength)
         edges.push({source: sourceNode, target: targetNode, strength: linkStrength});
   }
 
@@ -1627,10 +1629,11 @@ function CreateForceDiagram(forceData)
     .nodes(dataset.nodes)
     .links(dataset.edges)
     .size([width, height])
-    .linkDistance(function(d) 
-    {
-      return maxDistance - (Math.round(Math.sqrt(d.strength)) * distanceFactor);
-    })
+    .linkDistance(function(d){return d.strength*15})
+    //.linkDistance(function(d) 
+    //{
+    //  return maxDistance - (Math.round(Math.sqrt(d.strength)) * distanceFactor);
+    //})
     .charge(charge)
     .start();
 
