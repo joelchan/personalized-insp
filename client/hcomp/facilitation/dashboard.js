@@ -734,7 +734,36 @@ Template.HcompOtherViz.rendered = function() {
   
 }
 
+function formatData(rawIdeas) {
+
+  //takes a list of objects creates list of objects 
+    // {id:i , idea:content, categories:[], quality:votes.length}
+
+  var newData = [];
+
+  for (var i = 0; i < rawIdeas.length; i++) {
+    var id = i+1
+    var idea = rawIdeas[i].content
+    var quality = rawIdeas[i].votes.length
+
+    var obj = {"id":1, "idea":" ", "categories":[" "], "quality":0 }
+
+    obj.id = id
+    obj.idea = idea 
+    obj.quality = quality 
+
+    newData.push(obj);
+  }
+
+  return newData;
+}
+
 Template.ForceV.rendered = function() {
+
+  var rawIdeas = getFilteredIdeas("Ideas Filter");
+
+  var newData = formatData(rawIdeas)
+
   incomingIdeaData =  
   [
     {    "id":1,    "idea":"sleep schedule",    "categories":["Health and Wellbeing"],    "quality":0  },
@@ -796,7 +825,7 @@ Template.ForceV.rendered = function() {
 
   // incomingIdeaData = parseGraph("bb5MupdMxKKk6qgkN");
 
-  CreateForceDiagram(GetForceData(incomingIdeaData));
+  CreateForceDiagram(GetForceData(newData));
 
 }
 
