@@ -31,43 +31,52 @@ Template.MturkLoginPage.events({
             var alias = $('input#nickname').val().trim();
             LoginManager.setAlias(alias, user);
           }
-          var group;
-          if (prompt.groupIDs.length == 0) {
-            group = GroupManager.create(prompt.template);
-            PromptManager.addGroups(prompt, [group]);
+          if (!Session.get("currentExp")) {
+            var group;
+            if (prompt.groupIDs.length == 0) {
+              group = GroupManager.create(prompt.template);
+              PromptManager.addGroups(prompt, [group]);
+            } else {
+              group = Groups.findOne({_id: prompt.groupIDs[0]});
+            }
+            var role;
+            if (!GroupManager.hasUser(group, user)) {
+              role = RoleManager.defaults['HcompIdeator'];
+              GroupManager.addUser(group, user, role.title);
+            } else {
+              role = GroupManager.getRole(group, user);
+            }
+            Session.set("currentRole", role);
+            Session.set("currentGroup", group);
+            Router.go(Session.get("nextPage"), 
+                  {promptID: Session.get("currentPrompt")._id, 
+                    userID: Session.get("currentUser")._id
+                  });  
           } else {
-            group = Groups.findOne({_id: prompt.groupIDs[0]});
-          }
-          var role;
-          if (!GroupManager.hasUser(group, user)) {
-            role = RoleManager.defaults['HcompIdeator'];
-            GroupManager.addUser(group, user, role.title);
-          } else {
-            role = GroupManager.getRole(group, user);
-          }
-          Session.set("currentRole", role);
-          Session.set("currentGroup", group);
-          Session.set("currentPrompt", prompt);
-          EventLogger.logUserLogin();
-          var exp = Session.get("currentExp");
-          logger.trace("current experiment is: " + JSON.stringify(exp));
-          var part = Participants.findOne({userID: user._id, experimentID: exp._id});
-          if (part) {
-            logger.trace("already a participant");
-            if (!part.hasFinished) {
-              if (part.hasStarted) {
-                logger.trace("Participant has started but not yet finished");
-                var condName = Conditions.findOne({_id: part.conditionID}).description;
-                var routeName = "MturkIdeation" + condName;
-                logger.debug("Sending to " + routeName);
-                Router.go(routeName, {partID: part._id});  
-              } else {
-                logger.trace("Participant has been assigned but not yet completed tutorial");
-                var condName = Conditions.findOne({_id: part.conditionID}).description;
-                var routeName = "Tutorial" + condName;
-                logger.debug("Sending to " + routeName);
-                Router.go(routeName, {partID: part._id});  
-              }
+             Session.set("currentPrompt", prompt);
+             EventLogger.logUserLogin();
+             var exp = Session.get("currentExp");
+             logger.trace("current experiment is: " + JSON.stringify(exp));
+             var part = Participants.findOne({userID: user._id, experimentID: exp._id});
+            if (part) {
+              logger.trace("already a participant");
+              if (!part.hasFinished) {
+                if (part.hasStarted) {
+                  logger.trace("Participant has started but not yet finished");
+                  var condName = Conditions.findOne({_id: part.conditionID}).description;
+                  var routeName = "MturkIdeation" + condName;
+                  logger.debug("Sending to " + routeName);
+                  Router.go(routeName, {promptID: exp.promptID, partID: part._id});  
+                } else {
+                  logger.trace("Participant has been assigned but not yet completed tutorial");
+                  var condName = Conditions.findOne({_id: part.conditionID}).description;
+                  var routeName = "Tutorial" + condName;
+                  logger.debug("Sending to " + routeName);
+                  Router.go(routeName, {promptID: exp.promptID, partID: part._id});  
+                }
+            } else {
+              logger.trace("Participant has finished experiment; rejecting participant");
+              Router.go('NoParticipation');
             }
           } else {
             logger.trace("not a participant yet");
@@ -75,6 +84,7 @@ Template.MturkLoginPage.events({
               {expID: Session.get("currentExp")._id, userID: user._id});  
           }
         }
+      }
 
     /********************* Disable experiment logic ************/
     },

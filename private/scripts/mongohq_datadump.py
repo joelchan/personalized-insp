@@ -173,6 +173,26 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
    file_path = path.join(dir_path, "notifications.csv")
    notificationsDF.to_csv(file_path)
 
+   participants = []
+   for participant in db.participants.find():
+    print participant
+    rowDict = {}
+    rowDict['participantID'] = participant[u'_id']
+    rowDict['userName'] = participant[u'userName']
+    expID = participant[u'experimentID']
+    exp = db.experiments.find_one({u'_id':expID})
+    print exp
+    rowDict['experimentID'] = expID
+    rowDict['experimentName'] = exp[u'description']
+    rowDict['promptID'] = exp[u'promptID']
+    cond = db['exp-conditions'].find_one({u'_id':participant[u'conditionID']})
+    print cond
+    rowDict['condition'] = cond[u'description']
+    participants.append(rowDict)
+   
+   participantsDF = pd.DataFrame(participants)
+   file_path = path.join(dir_path, "participants.csv")
+   participantsDF.to_csv(file_path)
 
 if __name__ == '__main__':
    clear_db(mongohq.local_meteor)

@@ -26,6 +26,13 @@ chi1 = {'url': "kahana.mongohq.com",
         'pswd': 'lTwI9iiTm7'
         }
 
+fac_exp = {'url': "ds043981.mongolab.com",
+        'port': 43981,
+        'dbName': 'joelcprotolab',
+        'user': 'joelc',
+        'pswd': 'password'
+        }
+
 # Info for connecting to a local instance of meteor's mongo.
 # Meteor must be running to connect
 local_meteor = {'url': "localhost",

@@ -1,10 +1,10 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Hcomp:TaskManagers');
 // Comment out to use global logging level
-Logger.setLevel('Model:Hcomp:TaskManagers', 'trace');
+// Logger.setLevel('Model:Hcomp:TaskManagers', 'trace');
 //Logger.setLevel('Model:Hcomp:TaskManagers', 'debug');
-//Logger.setLevel('Model:Hcomp:TaskManagers', 'info');
-//Logger.setLevel('Model:Hcomp:TaskManagers', 'warn');
+Logger.setLevel('Model:Hcomp:TaskManagers', 'info');
+// Logger.setLevel('Model:Hcomp:TaskManagers', 'warn');
 
 
 //Meteor remote invocation
@@ -93,9 +93,10 @@ TaskManager = (function() {
       return task;
 
     },
-    assignTask: function(prompt, user) {
+    assignTask: function(prompt, user, groupID) {
       logger.debug("assigning a task");
-      var tasks = Tasks.find({promptID: prompt._id}, 
+      var tasks = Tasks.find({promptID: prompt._id,
+          groupID: groupID}, 
           {sort: {priority: -1, time: -1}}).fetch()
       logger.trace(tasks);
       for (var i=0; i<tasks.length; i++) {
@@ -114,6 +115,36 @@ TaskManager = (function() {
       //No unassigned tasks, so returning null;
       return null;
     },
+    
+    /**************************************************************
+       * Checks to see if there are any available tasks for the
+       * current user
+       * Helper to disable and enable the inspire me button 
+       * **********************************************************/
+    areTasksAvailable: function(prompt, user, groupID) {
+      logger.trace("Getting tasks for group: " + groupID);
+      var tasks = Tasks.find({promptID: prompt._id, 
+        groupID: groupID},
+        {assignments: {$nin: [user._id]}}).fetch();
+      logger.trace("THE AVAILABLE TASKS ARE  " + JSON.stringify(tasks));
+      logger.trace("TASK LENGTH IS = " + tasks.length);
+      for (var i=0; i<tasks.length; i++) {
+        var task = tasks[i];
+        logger.trace("looking at task: ");
+        logger.trace(task);
+        logger.debug("Task assignments: " + task.assignments.length +
+          " Number of tasks: " + task.num);
+        if (task.assignments.length < task.num) {
+          if (this.isAssignedToTask(task, Session.get("currentUser"))) {
+              logger.trace("TASKMANAGER TASK AVAILABLE");
+              return true;
+            } 
+        }   
+      }
+      logger.trace("TASKMANAGER TASK NOT AVAILABLE");
+      return false;
+    },
+      
     isAssignedToTask: function (task, user) {
       return (!isInList({userID: user._id}, task.assignments, 'userID'))
     },

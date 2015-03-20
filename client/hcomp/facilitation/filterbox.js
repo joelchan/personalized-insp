@@ -1,7 +1,7 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Filterbox');
 // Comment out to use global logging level
-//Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
+// Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
 // Logger.setLevel('Client:Hcomp:Filterbox', 'debug');
 Logger.setLevel('Client:Hcomp:Filterbox', 'info');
 //Logger.setLevel('Client:Hcomp:Filterbox', 'warn');
@@ -18,6 +18,8 @@ Template.HcompFilterbox.rendered = function(){
 	// FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
  //    logger.trace("Creating default filter for ideawordcloud filter");
  //    createDefaultIdeasFilter("IdeaWordCloud Filter");
+	//FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+//
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 
@@ -38,69 +40,12 @@ Template.HcompFilterbox.helpers({
 	ideas : function(){
 		filteredIdeas = getFilteredIdeas("Ideas Filter");
 		return filteredIdeas;
-		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-		//   Session.get("currentUser")._id, 	
-		//   "ideas").fetch();
-
-		// // apply search query, if it exists
-		// var query = Session.get("searchQuery");
-		// var queriedIdeas = [];
-		// if (query != "") {
-		// 	queryArr = stringToWords(query);
-		// 	filteredIdeas.forEach(function(idea){
-		// 		// console.log(idea);
-		// 		if (searchQueryMatch(idea,queryArr)) {
-		// 			// console.log("Matched query");
-		// 			queriedIdeas.push(idea);
-		// 		} else {
-		// 			// console.log("Not matching");
-		// 			// filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-		// 		}
-		// 	});
-		// 	// create an array from the query
-			
-		// } else {
-		// 	queriedIdeas = filteredIdeas.slice();
-		// }
-
-		// var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-		// // console.log(sortedIdeas);
-		// return sortedIdeas;
-		// return cursor;
 	},
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
 	},
 
 	numIdeas : function() {
-		// var filteredIdeas = FilterManager.performQuery("Ideas Filter", 
-		//   Session.get("currentUser")._id, 	
-		//   "ideas").fetch();
-
-		// // apply search query, if it exists
-		// var query = Session.get("searchQuery");
-		// var queriedIdeas = [];
-		// if (query != "") {
-		// 	queryArr = stringToWords(query);
-		// 	filteredIdeas.forEach(function(idea){
-		// 		// console.log(idea);
-		// 		if (searchQueryMatch(idea,queryArr)) {
-		// 			// console.log("Matched query");
-		// 			queriedIdeas.push(idea);
-		// 		} else {
-		// 			// console.log("Not matching");
-		// 			// filteredIdeas.splice(filteredIdeas.indexOf(idea),1);
-		// 		}
-		// 	});
-		// 	// create an array from the query
-			
-		// } else {
-		// 	queriedIdeas = filteredIdeas.slice();
-		// }
-
-		// var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-		// // console.log(sortedIdeas);
-		// return sortedIdeas.length;
 		return getFilteredIdeas("Ideas Filter").length;
 	}
 });
@@ -182,6 +127,31 @@ Template.HcompFilterBoxHeader.events({
 	      var btn = $('.search-apply-btn')
 	      btn.click();
 	    }
+  	},
+
+  	'change #sortingfields' : function(e,target)
+  	{
+  		var sortingField  = $("[id=sortingfields]").val();
+  		FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas",sortingField , 1,1);
+  		var sorters = Session.get("sorters");
+
+  		if(sorters)
+  		{
+  			if(sorters === 1)
+  			{
+  				Session.set("sorters",0);	
+  			}
+  			else
+  			{
+  				Session.set("sorters",1);	
+  			}
+  		}
+  		else
+  		{
+  			Session.set("sorters",1);	
+  		}
+  		//Session.set("searchQuery","");
+  		//getFilteredIdeas("Ideas Filter");
   	},
 
 	// clear full-text search of idea content
@@ -296,10 +266,14 @@ getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
 	var filteredIdeas = FilterManager.performQuery(ideasFilterName, 
 		  Session.get("currentUser"), 	
 		  "ideas").fetch();
-	logger.trace("Unsorted ideas: " + JSON.stringify(filteredIdeas));
+	// logger.trace("Unsorted ideas: " + JSON.stringify(filteredIdeas));
 
 	// apply search query, if it exists
 	var query = Session.get("searchQuery");
+
+	//Will trigger automatic calc of ideas,sorters not used anywhere in this functions
+	var sorters = Session.get("sorters");
+
 	var queriedIdeas = [];
 	if (query != "") {
 		queryArr = stringToWords(query);
@@ -314,8 +288,10 @@ getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
 		queriedIdeas = filteredIdeas.slice();
 	}
 
-	var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
-	return sortedIdeas;
+	//var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+	// console.log(sortedIdeas);
+	// return sortedIdeas;
+	return queriedIdeas;
 }
 
 isLastFilter = function() {

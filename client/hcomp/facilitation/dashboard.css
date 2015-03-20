@@ -174,13 +174,13 @@
 .hcomp-dashboard .task-card {
   border: solid 1px #ddd;
   background-color: white;
-  margin: 10px 0px;
-  padding: 15px;
+  margin: 5px 0px;
+  padding: 10px;
 }
 
 .hcomp-dashboard #CreateTask {
   border: solid black 1px;
-  padding: 15px 15px 0px 15px;
+/*  padding: 15px 15px 0px 15px;*/
 }
 
 .hcomp-dashboard .edit-task {
@@ -192,7 +192,9 @@
 .hcomp-dashboard .task-priority {
   /*text-align: center;*/
   padding: 0px 0px 15px 20px;
-  display:inline-block;
+/*  display:inline-block;*/
+    display: none;
+    
 }
 
 .hcomp-dashboard .task-priority .radio-inline input[type=radio] {
@@ -231,12 +233,22 @@
 .hcomp-dashboard #task-create-cancel, .hcomp-dashboard .task-update-cancel {
   /*margin-left:15px;*/
   /*margin-right:5px;*/
+    background-color: #F3F3F3;
+    color: black;
 }
 
 .hcomp-dashboard .task-card-main {
-  padding:2px;
   vertical-align: center;
+    width: 90%;
+    float: left;
+    clear: left;
 }
+.hcomp-dashboard .task-data {
+    width: 10%;
+    float: right;
+    clear: right;
+}
+    
 
 .hcomp-dashboard .card-edit {
   margin-left:0px;
@@ -244,6 +256,7 @@
   padding:5px 5px 0px 0px;
   cursor:pointer;
   opacity:0.75;
+    display: none;
 }
 
 /*.hcomp-dashboard .card-edit:hover {
@@ -255,10 +268,29 @@
 }*/
 
 .hcomp-dashboard .card-description {
-  font-size:20px;
-  font-weight: bold;
-  padding-right:0px;
-  padding-left:0px;
+    font-size:20px;
+    font-weight: bold;
+    padding-right:0px;
+    padding-left:0px;
+    height: 1.5em;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hcomp-dashboard .card-description a {
+    width: 100%;
+    text-decoration: none;
+    cursor: pointer;
+}
+    
+.hcomp-dashboard .task-card-main .expandDescription{
+    overflow: visible;
+    height: auto;
+    width: 100%;
+    cursor: pointer;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .hcomp-dashboard .card-other-data {
@@ -284,8 +316,12 @@
 .hcomp-dashboard #CreateTask {
   border: solid 1px #ddd;
   background-color: white;
+    margin-top: 10px;
+    padding: 5px;
+/*
   margin: 10px 0px;
   padding: 15px;
+*/
 }
 
 .hcomp-dashboard .task-card .row {
@@ -354,7 +390,8 @@
   
 }
 .hcomp-dashboard #CreateTask #task-create {
-  
+    background-color: rgb(102,164,74);
+    color: black;
 }
 
 .hcomp-dashboard .gamechangestar, .modal .gamechangestar{

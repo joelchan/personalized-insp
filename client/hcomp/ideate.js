@@ -1,13 +1,13 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Ideate');
 // Comment out to use global logging level
-//Logger.setLevel('Client:Hcomp:Ideate', 'trace');
-//Logger.setLevel('Client:Hcomp:Ideate', 'debug');
-Logger.setLevel('Client:Hcomp:Ideate', 'info');
-//Logger.setLevel('Client:Hcomp:Ideate', 'warn');
+Logger.setLevel('Client:Hcomp:Ideate', 'trace');
+// Logger.setLevel('Client:Hcomp:Ideate', 'debug');
+// Logger.setLevel('Client:Hcomp:Ideate', 'info');
+// Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
 Template.MturkIdeationPage.rendered = function(){
-  EventLogger.logBeginIdeation();
+  EventLogger.logEnterIdeation(); 
   //Hide logout
   $(".btn-login").toggleClass("hidden");
   //Set height of elements to viewport height
@@ -15,8 +15,12 @@ Template.MturkIdeationPage.rendered = function(){
   logger.debug("window viewport height = " + height.toString());
   $(".main-prompt").height(height);
   $(".task-list-pane").height(height-85);
-  if (!Session.get("currentParticipant").hasStarted) {
-    $("#exp-begin-modal").modal('show');  
+  logger.debug("checking to show begin ideation modal");
+  if (Session.get("currentExp")) {
+    if (!Session.get("currentParticipant").hasStarted) {
+      logger.debug("showing begin ideation modal");
+      $("#exp-begin-modal").modal('show');  
+    }
   }
   //Setup Facilitation push to synthesis listener
   //MyUsers.find({_id: Session.get("currentUser")._id}).observe({
@@ -35,10 +39,19 @@ Template.MturkIdeationPage.rendered = function(){
 };
 
 Template.MturkIdeationPageControl.rendered = function(){
+  EventLogger.logEnterIdeation(); 
+  logger.debug("checking to show begin ideation modal");
   if (!Session.get("currentParticipant").hasStarted) {
+    logger.debug("showing begin ideation modal");
     $("#exp-begin-modal").modal('show');  
   }
 };
+
+Template.MturkIdeationPageControl.helpers({
+  prompt: function() {
+    return Session.get("currentPrompt").question;
+  },
+});
 
 Template.MturkMainPrompt.rendered = function(){
   //Setup filters for users and filter update listener
@@ -58,12 +71,21 @@ Template.MturkMainPrompt.rendered = function(){
 
 };
 
-Template.MturkMainPrompt.helpers({
-//    prompt: function() {
-//    var prompt = Session.get("currentPrompt");
-//    return prompt.question;
-//  },
+Template.MturkMainPrompt.events({ 
+  "click .show-hide": function(e, elm) {
+    var isHidden = $('.show-hide').hasClass("collapsed"); 
+    EventLogger.logShowHideClick(isHidden);
+  },
 });
+
+Template.MturkMainPromptControl.events({ 
+  "click .show-hide": function(e, elm) {
+    var isHidden = $('.show-hide').hasClass("collapsed"); 
+    logger.debug("Logging show-hide click with isHidden: " + isHidden);
+    EventLogger.logShowHideClick(isHidden);
+  },
+});
+
 
 Template.MturkIdeaList.helpers({
   ideas: function() {
@@ -162,9 +184,9 @@ Template.MturkIdeaEntryBox.events({
   },
   //waits 3 seconds after user stops typing to change isTyping flag to false
   'keyup textarea' : function(e, target){
-    logger.debug(e);
-    logger.debug(target);
-    console.log("key pressed")
+    logger.trace(e);
+    logger.trace(target);
+    //console.log("key pressed")
     if(e.keyCode===13) {
       logger.debug("enter pressed")
       var btn = $(target.firstNode).children('.submit-idea')
@@ -173,16 +195,13 @@ Template.MturkIdeaEntryBox.events({
   }
 });
 
-Template.MturkTaskLists.rendered = function() {
-  
-};
 
 Template.MturkTaskLists.helpers({
   getMyTasks: function() {
     logger.debug("Getting a list of all tasks assigned to current user");
     var assignments = 
       Assignments.find({userID: Session.get("currentUser")._id,
-        promptID: Session.get("currentPrompt")._id}, 
+        promptID: Session.get("currentPrompt")._id},
         {sort: {'assignmentTime': -1}}).fetch();
     logger.trace(assignments);
     var taskIDs = getValsFromField(assignments, 'taskID');
@@ -190,15 +209,40 @@ Template.MturkTaskLists.helpers({
     var tasks = [];
     for (var i=0; i<taskIDs.length; i++) {
       tasks.push(Tasks.findOne({_id: taskIDs[i]}));
-      logger.trace(tasks);
+      // logger.trace(tasks);
     };
+    logger.trace("User's tasks: " + JSON.stringify(tasks));
     //var tasks = Tasks.find({_id: {$in: taskIDs}});
     //Sort tasks by assignment time
     return tasks;
+    // Session.set("CurrentTasks",tasks);
   },
   prompt: function() {
     var prompt = Session.get("currentPrompt");
     return prompt.question;
+  },
+  tasksAvailable: function(){
+      var prompt = Session.get("currentPrompt");
+      var user = Session.get("currentUser");
+      var exp = Session.get("currentExp");
+      var groupID;
+      if (exp) {
+        logger.debug("Getting groupID from experiment");
+        groupID = exp.groupID;
+      } else {
+        logger.debug("Getting groupID from currentGroup");
+        groupID = Session.get("currentGroup")._id;
+      }
+      var result = TaskManager.areTasksAvailable(prompt, user, groupID);
+      logger.trace("*********RESULT = " + result);
+      if (result == false) {
+          logger.trace("JS TASK NOT AVAILABLE");
+          return false;
+      }
+      else {
+          logger.trace("JS TASK AVAILABLE");
+          return true;
+      }
   },
 });
 
@@ -206,17 +250,27 @@ Template.MturkTaskLists.events({
   'click .get-task': function(e, t) {
     logger.debug("Retrieving a new task"); 
     EventLogger.logRequestInspiration(Session.get("currentPrompt"));
-    var task = TaskManager.assignTask(
-      Session.get("currentPrompt"),
-      Session.get("currentUser")
-    );
-    if (task) {
+    var task;
+    if (Session.get("currentExp")) {
+      task = TaskManager.assignTask(
+        Session.get("currentPrompt"),
+        Session.get("currentUser"),
+        Session.get("currentExp").groupID
+      ); 
+    } else {
+      task = TaskManager.assignTask(
+        Session.get("currentPrompt"),
+        Session.get("currentUser"),
+        Session.get("currentPrompt").groupIDs[0]
+      ); 
+    }
+   if (task) {
       logger.info("Got a new task");
       EventLogger.logInspirationRequestSuccess(
         Session.get("currentPrompt"),
-        dummy1
+        task
       );
-      logger.trace(task);
+      logger.trace("New task is: " + JSON.stringify(task));
     } else {
       logger.info("No new task was assigned");
       EventLogger.logInspirationRequestFail(
@@ -272,6 +326,7 @@ Template.TaskIdeaList.helpers({
 
 Template.ExperimentBeginModal.events({
   'click .popup-continue' : function() {
+    EventLogger.logBeginIdeation();
     Participants.update({_id: Session.get("currentParticipant")._id}, 
       {$set: {hasStarted: true}});
   },

@@ -1,10 +1,10 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Main');
 // Comment out to use global logging level
-//Logger.setLevel('Client:Main', 'trace');
-//Logger.setLevel('Client:Main', 'debug');
-Logger.setLevel('Client:Main', 'info');
-//Logger.setLevel('Client:Main', 'warn');
+Logger.setLevel('Client:Main', 'trace');
+// Logger.setLevel('Client:Main', 'debug');
+// Logger.setLevel('Client:Main', 'info');
+// Logger.setLevel('Client:Main', 'warn');
 
 Template.IdeaGen.helpers({
   loggedIn: function() {
@@ -79,6 +79,9 @@ Template.IdeaGen.events({
 });
 
 
+
+
+
 decrementTimer = function decrementTimer() {
   /******************************************************************
   * Decrement the onscreen timer
@@ -87,16 +90,15 @@ decrementTimer = function decrementTimer() {
   Session.set("timeLeft", nextTime);
   var time = $('#time').text(nextTime);
   if (nextTime > 0) {
+    logger.debug("Decrementing timer");
     Meteor.setTimeout(decrementTimer, 60000);
-    // console.log("Decrementing timer")
   } else {
     logger.info("Exitting current page");
+    Session.set("isDecrementing", false);
     //EventLogger.logEndRole();
     //exitPage();
-    ExperimentManager.logParticipantCompletion(Session.get("currentParticipant"));
-    Router.go("LegionFinalPage", {
-      'partID': Session.get("currentParticipant")._id
-    });
+    
+    Router.go(Session.get("nextPage"), Session.get("nextPageParams"));
   }
 };
 

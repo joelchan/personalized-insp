@@ -4,18 +4,21 @@
 
 <template name="HcompDashboard">
 	<div class="row hcomp-dashboard" id="hcomp-dashboard-container">
-		<div class="ideas-view col-sm-3">
+		
+    <div class="ideas-view col-sm-3">
       {{> HcompDashIdeabox }}
     </div>
+
     <div class="notes-view col-sm-5">
-      <!-- <h3>Understand What's Going On!</h3> -->
       {{> HcompBigPictureViz }}
 
-      <hr />
-
       {{> HcompScratchPad }}
+
     </div> <!-- close notes-view col -->
+
     <div class="tasks-view col-sm-4">
+
+<!--
       <div class="row fac-actions">
         <div class="col-xs-7">
           {{> HcompCreateTaskButton }}
@@ -35,8 +38,10 @@
             <a href="">Review brainstorm</a>
           </div>
         </div>
+-->
+
           <!-- {{> HcompBeginSynthesis }} -->
-      </div>
+      <!--</div>-->
       <div class="row" id="create-task-container">
 	    {{> CreateTask }}
       </div>
@@ -76,10 +81,12 @@
       </div>
       <div class="col-md-10">
         {{> HcompIdeaWordCloud}}
-        <!-- {{> HcompTagCloud }} -->
+        <!-- {{> HcompOtherViz }} -->
+        <!--{{> HcompTagCloud }} -->
       </div>
   </div>
 </template>
+
 
 <template name="HcompOverallStats">
   <!-- <span class="fa fa-lightbulb-o"></span> -->
@@ -106,7 +113,17 @@
     {{else}}
       No ideas yet!
     {{/if}}
-  </div>
+    <!-- {{#each ideas}} -->
+    <!-- <span> -->
+    <!-- <p  style="width: {{getFontSize}}px; background-color: blue;"> {{getWord}} </p> -->
+    <!-- </span> -->
+    <!-- {{drawVis}} -->
+    <!-- {{/each}} -->
+      </div>
+</template>
+
+<template name="HcompOtherViz">
+  <div id="svgdiv"></div>
 </template>
 
 <template name="HcompScratchPad">
@@ -142,10 +159,11 @@
 </template>
 
 <template name="CreateTask">
-	<div id="CreateTask" class="collapse">
-    <span class="card-description">Create a new inspiration</span>
-    <hr />
+	<div id="CreateTask">
+<!--    <span class="card-description">Create a new inspiration</span>-->
+<!--    <hr />-->
 		<form role="form" class="form">
+<!--  display none right now-->
       <div class="row task-priority">
         <form id="task-priority" role="form">
           <label class="">Choose a Priority: &nbsp;</label>
@@ -163,7 +181,7 @@
 			<div class="row">
 		  		<div class="col-xs-12">
 					<label class="sr-only" for="task-description">Task Instructions</label>
-					<textarea class="form-control" rows="2" id="task-description" placeholder="Describe your inspiration..."></textarea>
+					<textarea class="form-control" rows="2" id="task-description" placeholder="Create your new inspiration..."></textarea>
 				</div>
 			</div>
 			<div class="row task-main-options">
@@ -172,7 +190,7 @@
 				</div> -->
         <div class="form-group task-options pull-right">
           <button id="task-create-cancel" type="button" class="btn btn-default">
-            Cancel
+            Clear
           </button>
           <button id="task-create" type="button" class="btn btn-primary">
             Create
@@ -209,23 +227,22 @@
 		<div class="task-card" id="{{getID}}">
 			<div class="row task-card-main">
 				<div class="card-description col-xs-10">
-					{{getDescription}}
+                    <a>{{getDescription}}</a>
 				</div>
         <div class="card-edit col-xs-2 col-xs-offset-2">
           <span title="Edit" class="glyphicon glyphicon-edit card-edit"> </span>    
         </div>
 			</div>
-			<hr />
 			<div class="task-data row">
         <div class="card-ideas col-xs-3">
           {{#if getIdeas}}
-            <!-- <span title="Ideas" class="glyphicon glyphicon-exclamation-sign"> </span> -->
-            <span class="badge">{{getIdeas}}</span> 
-            <a data-toggle="collapse" data-parent="#task-{{getID}}-ideas-group" href="#task-{{getID}}-ideas">&nbsp;ideas</a>
+            <!-- <span title="Ideas" class="glyphicon glyphicon-exclamation-sign"> </span> --> 
+            <a data-toggle="collapse" data-parent="#task-{{getID}}-ideas-group" href="#task-{{getID}}-ideas"><span class="badge">{{getIdeas}}</span></a>
           {{else}}
-            <span class="badge">{{getIdeas}}</span> &nbsp;ideas
+            <span class="badge">{{getIdeas}}</span>
           {{/if}}
         </div>
+<!--
         <div class="card-priority card-other-data col-xs-1 col-xs-offset-1">
           <span title="Priority" class="glyphicon glyphicon-warning-sign"> </span>
           {{getPriority}}       
@@ -234,6 +251,7 @@
           <span title="Ideators"  class="glyphicon glyphicon-user"> </span>
           {{getIdeators}}     
         </div>
+-->
         <!-- <div class="card-questions col-xs-3 btn">
           <span title="Questions" class="glyphicon glyphicon-question-sign"> </span>
           {{getQuestions}}      
@@ -310,7 +328,7 @@
 				<div class="row">
 			  		<div class="col-xs-12">
 						<label class="sr-only">Task Instructions</label>
-						<textarea class="form-control task-description" rows="2" id="" placeholder="Describe your inspiration...">{{getDescription}}</textarea>
+						<textarea class="form-control task-description" rows="2" id="" placeholder="Create your new inspiration...">{{getDescription}}</textarea>
 					</div>
 				</div>
 				<div class="row task-main-options">
