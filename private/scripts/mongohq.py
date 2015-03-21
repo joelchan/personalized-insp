@@ -49,6 +49,13 @@ local_meteor = {'url': "localhost",
                 'pswd': '',
 }
 
+DB_PARAMS = {'ideagens': ideagens,
+             'ideagenstest': ideagenstest,
+             'chi1': chi1,
+             'fac_exp': fac_exp,
+             'local': local_meteor
+          }
+
 
 def get_db(db=None):
   """
