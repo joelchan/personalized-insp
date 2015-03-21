@@ -219,6 +219,28 @@ class Data_Utility:
                 filtered_data.append(rowDict)
             return filtered_data
 
+    def join_data(self, base_data, join_data, base_field, join_fields):
+        """
+        Perform a similar operation to a sql join for 2 sets of data.
+        
+        @Params
+        base_data - list of fields to extend with joined data
+        join_data - dictionary of data, indexed by base_field value
+        base_field - value to use as key in lookup in join_data 
+            dictionary
+        join_fields - list of field data to replace the base_field id
+
+        @Return
+        The modified base_data list of data
+
+        """
+        for data in base_data:
+          extra = join_data[data[base_field]]
+          for field in join_fields:
+            data[field] = extra[field]
+        
+        return base_data
+  
     def get_ideas(self):
         """
         Get a list of all the ideas

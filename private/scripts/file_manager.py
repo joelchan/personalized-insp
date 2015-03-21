@@ -72,11 +72,12 @@ def read_data(filename):
 	return data
 
 
-def data_to_csv(data, file_path):
+def data_to_csv(data, file_path, fields=None):
     """
     Convert a list of uniform data objects be written to a csv file
 
     """
+          
     dataDF = pd.DataFrame(data)
     dataDF.to_csv(file_path)
 
