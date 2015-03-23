@@ -137,11 +137,11 @@
       <div id="directions-container-treatment">
         <div id="directions-content" class="collapse">
           <ol>
-            <li>Your task is to generate as many creative ideas as you can for the brainstorming problem for 10 minutes. When the time is up, you will complete a brief survey, and be taken to a page where you can submit the HIT.</li>
-            <li><strong>IMPORTANT!</strong> DO NOT REFRESH YOUR BROWSER DURING THE HIT: If you do, the system will kick you out of the HIT and you will not be able to complete it.</li>
-            <li>If you run out of ideas or want some fresh inspiration, hit the <strong>"Inspire Me!"</strong> button. The button will turn green when there are fresh inspirations available for you.If inspirations are available, you will receive an "inspiration card" that contains a question or idea meant to stimulate your thinking.</li>
-            <li>If the inspiration sparks any new ideas, we would like you to enter them directly into that card (ideas unrelated to any inspiration can go in the main idea entry box.</li>
-            <li>If at any time you do not wish to continue, you may exit the study by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
+            <li>{{> InstructionsGeneral}}</li>
+            <li>{{> InstructionsNoRefresh}}</li>
+            <li>{{> InstructionsTreatInsp}}</li>
+            <li>{{> InstructionsTreatInspIdeas}}</li>
+            <li>{{> InstructionsExitEarly}}</li>
           </ol>
           <!-- <p> 1) Begin entering ideas for the main prompt here.<br>
               2) If you run out of ideas or want some fresh inspiration, hit the "Inspire Me!" button for a new stream of thought. You will receive an "inspiration card" where you can generate ideas for a more focused version of the main prompt.<br>
@@ -396,7 +396,7 @@
     <div id = "treatment-tutorial-welcome" class = "treatment-tutorial-background visible-tutorial-treatment">
         <div class = "tutorial-text treatment-tutorial-welcome-text treatment-tutorial-description">
             <p>
-                Welcome! Before we start the HIT, we will take you through a short step-by-step tutorial to familiarize you with the interface.
+                {{> TutorialWelcome}}
             </p>
             <br/>
             <br/>
@@ -414,7 +414,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-timer-text treatment-tutorial-description">
             <p>
-                Your task is to generate as many creative ideas as you can for a brainstorming problem for 10 minutes. The amount of time remaining for the task will be displayed here. <strong>DO NOT REFRESH YOUR BROWSER DURING THE HIT</strong>. If you do, the system will kick you out of the HIT and you will not be able to complete it.
+                {{> TutorialGeneralInfo}}
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -434,7 +434,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-exit-text treatment-tutorial-description">
             <p>
-                If at any time you do not wish to continue, you may exit the study by clicking on this button. Your compensation will be pro-rated based on how long you participated. 
+                {{> TutorialExitEarly}} 
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -454,7 +454,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-prompt-text treatment-tutorial-description">
             <p>
-                The brainstorming problem will be shown here.  
+                {{> TutorialProblem}}  
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -474,7 +474,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-ideaEntry-text treatment-tutorial-description">
             <p>
-                You will enter your ideas here.  
+                {{>TutorialIdeaEntry}}  
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -490,7 +490,7 @@
     <div id = "treatment-tutorial-ideaEntryTry" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-ideaEntryTry-text treatment-tutorial-description">
             <p>
-                Let’s give it a try! Enter something into the text field and either press enter or the “Submit Idea” button.   
+                {{> TutorialIdeaTry}}   
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -513,7 +513,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-inspireMe-text treatment-tutorial-description">
             <p>
-                If you run out of ideas or want some fresh inspiration AND the button is green, press the button to get a question or idea that is meant to stimulate your thinking.
+                {{> TutorialTreatInsp}}
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -572,7 +572,7 @@
     <div id = "treatment-tutorial-inspirationCardTry" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-inspirationCardTry-text treatment-tutorial-description">
             <p>
-                This is an "inspiration card". It will contain a question or idea that is meant to stimulate your thinking. If the inspiration sparks any new ideas, we would like you to enter them directly into this box (ideas unrelated to any inspiration can go in the main idea entry box). Let's give it a try! Enter something into the text field and either press enter or the “Submit Idea” button.
+                {{> TutorialTreatInspTry}}
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -595,7 +595,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-inspirationCardMany-text treatment-tutorial-description">
             <p>
-                You can ask for more inspirations at any time. Newer inspirations will come in on the left. If you have more inspiration cards than the screen will fit, you may have to scroll right to see older ones.
+                {{> TutorialTreatInspMany}}
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -615,7 +615,7 @@
         </div>
         <div class = "tutorial-text treatment-tutorial-directions-text treatment-tutorial-description">
             <p>
-                All of the instructions from this tutorial will be summarized in this section. It will be available throughout the task: just click "show/hide" to show or hide the instructions. 
+                {{> TutorialInstructions}}
             </p>
             {{> TutorialProgressTreatment}}
             <div class = "treatment-tutorial-button">
@@ -631,7 +631,7 @@
     <div id = "treatment-tutorial-pleaseWait" class = "treatment-tutorial-background">
         <div class = "tutorial-text treatment-tutorial-pleaseWait-text treatment-tutorial-description">
             <p>
-                That's it! Please stay tuned, the brainstorm will begin momentarily. In the meantime, feel free to play around with the interface! 
+                {{> TutorialWait}} 
             </p>
             <br/>
             <br/>
