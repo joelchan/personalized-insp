@@ -272,10 +272,12 @@ Router.map(function () {
       if (Session.get("currentUser")) {
         return [ 
           Meteor.subscribe('prompts'),
+          Meteor.subscribe('fluencyMeasures')
           ]
       } else {
         return [
           Meteor.subscribe('prompts'),
+          Meteor.subscribe('fluencyMeasures')
         ]
       }
     },
@@ -332,6 +334,7 @@ Router.map(function () {
     waitOn: function() {
       return [
           Meteor.subscribe('experiments'),
+          Meteor.subscribe('fluencyMeasures')
       ];
       
     },

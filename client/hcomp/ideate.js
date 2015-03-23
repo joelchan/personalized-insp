@@ -16,7 +16,7 @@ var countdown = Tock({
     countdown: true,
     interval: 1000,
     callback: function () {
-        logger.debug(countdown.lap() / 1000);
+        // logger.debug(countdown.lap() / 1000);
         $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
     },
     complete: function () {
