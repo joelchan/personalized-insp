@@ -61,6 +61,7 @@ Router.map(function () {
           Meteor.subscribe('tasks', {promptID: pID}),
           Meteor.subscribe('questions'),
           Meteor.subscribe('assignments', {promptID: pID}),
+          Meteor.subscribe('sorters'),
       ];
     }, 
     onBeforeAction: function() {
