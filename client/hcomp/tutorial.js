@@ -706,6 +706,12 @@ Template.TreatmentTutorialFlow.events({
         //     "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
         // );
         // EventLogger.logTutorialStepComplete(6,tutorialLengthTreatment);
+        $('#treatment-tutorial-ideaEntryTry-gotit').attr('disabled',true)
+        alert("Ready, set, go! Click 'ok' and the timer will start!")
+        $('.ideation-prompt-treatment').text("Alternative uses for a brick")
+        var startTime = timer.msToTime(fluencyTaskLength)
+        logger.trace("Fluency task length is: " + startTime);
+        countdown.start(fluencyTaskLength);
     },
     'click .treatment-tutorial-ideaEntryTry-goback': function() {
         $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
