@@ -8,7 +8,7 @@ Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 var myTaskIDs = [];
 var tutorialLengthTreatment = 10;
 var tutorialLengthControl = 7;
-var fluencyTaskLength = 2*60000;
+var fluencyTaskLength = 1/3*60000;
 
 var timer = new Tock({
     callback: function () {
@@ -24,7 +24,6 @@ var countdown = Tock({
         $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
     },
     complete: function () {
-        console.log('end');
         alert("Time's up!");
         logger.debug("Grabbing fluency data");
         var answers = DummyIdeas.find(
@@ -42,6 +41,7 @@ var countdown = Tock({
         }        
         var part = Session.get("currentParticipant");
         var condName = Conditions.findOne({_id: part.conditionID}).description;
+        EventLogger.logFluencyTaskComplete();
         
         if (condName == "Control") {
           $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
@@ -51,6 +51,7 @@ var countdown = Tock({
           $("#directions-content").removeClass("collapse");
           $("#directions-content").addClass("collapse in");
           $('#control-tutorial-ideaEntryTry-gotit').attr('disabled',false);
+          $('.control-tutorial-ideaEntryTry-goback').attr('disabled',false);
           EventLogger.logTutorialStepComplete(6,tutorialLengthControl); 
         } else {
           $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
@@ -68,6 +69,8 @@ var countdown = Tock({
           $(".general-idea-entry").append(
               "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
           );
+          $('#treatment-tutorial-ideaEntryTry-gotit').attr('disabled',false);
+          $('.treatment-tutorial-ideaEntryTry-goback').attr('disabled',false);
           EventLogger.logTutorialStepComplete(6,tutorialLengthTreatment);
         }
     }
@@ -384,11 +387,13 @@ Template.ControlTutorialFlow.events({
         // $("#directions-content").removeClass("collapse");
         // $("#directions-content").addClass("collapse in");
         // EventLogger.logTutorialStepComplete(6,tutorialLengthControl);
-        $('#control-tutorial-ideaEntryTry-gotit').attr('disabled',true)
-        alert("Ready, set, go! Click 'ok' and the timer will start!")
-        $('.ideation-prompt-control').text("Alternative uses for a brick")
+        $('#control-tutorial-ideaEntryTry-gotit').attr('disabled',true);
+        $('.control-tutorial-ideaEntryTry-goback').attr('disabled',true);
+        alert("Ready, set, go! Click 'ok' and the timer will start!");
+        $('.ideation-prompt-control').text("Alternative uses for a brick");
         var startTime = timer.msToTime(fluencyTaskLength)
         logger.trace("Fluency task length is: " + startTime);
+        EventLogger.logFluencyTaskBegin();
         countdown.start(fluencyTaskLength);
     },
     'click .control-tutorial-ideaEntryTry-goback': function() {
@@ -690,27 +695,13 @@ Template.TreatmentTutorialFlow.events({
     
     //ideaEntryTry
     'click #treatment-tutorial-ideaEntryTry-gotit': function() {
-        // $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
-        // $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
-        // // $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
-        // $(".get-task").css({
-        //     border: "10px solid #F5A623",
-        //     "z-index": 60
-        // });
-        // $(".idea-input-box").css({
-        //     border: "none",
-        //     "z-index": 20
-        // });
-        // var height = $(window).height() - 50; //Navbar height=50
-        // $(".general-idea-entry").append(
-        //     "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
-        // );
-        // EventLogger.logTutorialStepComplete(6,tutorialLengthTreatment);
-        $('#treatment-tutorial-ideaEntryTry-gotit').attr('disabled',true)
-        alert("Ready, set, go! Click 'ok' and the timer will start!")
-        $('.ideation-prompt-treatment').text("Alternative uses for a brick")
-        var startTime = timer.msToTime(fluencyTaskLength)
+        $('#treatment-tutorial-ideaEntryTry-gotit').attr('disabled',true);
+        $('.treatment-tutorial-ideaEntryTry-goback').attr('disabled',true);
+        alert("Ready, set, go! Click 'ok' and the timer will start!");
+        $('.ideation-prompt-treatment').text("Alternative uses for a brick");
+        var startTime = timer.msToTime(fluencyTaskLength);
         logger.trace("Fluency task length is: " + startTime);
+        EventLogger.logFluencyTaskBegin();
         countdown.start(fluencyTaskLength);
     },
     'click .treatment-tutorial-ideaEntryTry-goback': function() {

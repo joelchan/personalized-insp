@@ -417,6 +417,18 @@ EventLogger = (function () {
       this.log(type);
       logger.debug(msg);
     },
+    logFluencyTaskBegin: function () {
+      var msg = "User started fluency measure task";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      logger.debug(msg);
+    },
+    logFluencyTaskComplete: function () {
+      var msg = "User finished fluency measure task";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      logger.debug(msg);
+    },
     logTutorialStepRewind: function (current, max) {
       //current is the current step before rewinding
       var msg = "User rewound a tutorial step";

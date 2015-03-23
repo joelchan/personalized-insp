@@ -43,7 +43,11 @@ Template.MturkIdeationPage.rendered = function(){
   logger.debug("checking to show begin ideation modal");
   if (!Session.get("currentParticipant").hasStarted) {
     logger.debug("showing begin ideation modal");
-    $("#exp-begin-modal").modal('show');  
+    // $("#exp-begin-modal").modal('show');  
+    alert("The brainstorm has begun!");
+    EventLogger.logBeginIdeation();
+    Participants.update({_id: Session.get("currentParticipant")._id}, 
+      {$set: {hasStarted: true}});
   }
   //Setup Facilitation push to synthesis listener
   //MyUsers.find({_id: Session.get("currentUser")._id}).observe({
@@ -67,7 +71,11 @@ Template.MturkIdeationPageControl.rendered = function(){
   logger.debug("checking to show begin ideation modal");
   if (!Session.get("currentParticipant").hasStarted) {
     logger.debug("showing begin ideation modal");
-    $("#exp-begin-modal").modal('show');  
+    // $("#exp-begin-modal").modal('show');  
+    alert("The brainstorm has begun!");
+    EventLogger.logBeginIdeation();
+    Participants.update({_id: Session.get("currentParticipant")._id}, 
+      {$set: {hasStarted: true}});
   }
   initializeTimer();
 };

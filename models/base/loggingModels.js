@@ -52,6 +52,8 @@ Meteor.startup(function() {
     EventTypeManager.get("User completed survey");
     EventTypeManager.get("User started a tutorial");
     EventTypeManager.get("User finished a tutorial");
+    EventTypeManager.get("User started fluency measure task");
+    EventTypeManager.get("User finished fluency measure task");
     
     fields = ['taskStepNum', 'taskStepMax'];
     EventTypeManager.get("User finished a tutorial step", fields);
