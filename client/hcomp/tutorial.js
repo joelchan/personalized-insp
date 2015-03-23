@@ -1,14 +1,14 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Tutorial');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
+// Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'debug');
-// Logger.setLevel('Client:Hcomp:Tutorial', 'info');
+Logger.setLevel('Client:Hcomp:Tutorial', 'info');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'warn');
 var myTaskIDs = [];
 var tutorialLengthTreatment = 10;
 var tutorialLengthControl = 7;
-var fluencyTaskLength = 1/12*60000;
+var fluencyTaskLength = 2*60000;
 
 var timer = new Tock({
     callback: function () {
