@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Filterbox');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
+Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
 // Logger.setLevel('Client:Hcomp:Filterbox', 'debug');
-Logger.setLevel('Client:Hcomp:Filterbox', 'info');
+// Logger.setLevel('Client:Hcomp:Filterbox', 'info');
 //Logger.setLevel('Client:Hcomp:Filterbox', 'warn');
 
 
@@ -11,13 +11,13 @@ Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
 	Session.set("searchQuery","");
-	// FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
-	// logger.trace("Creating default ideas filter upon render");
-	// createDefaultIdeasFilter("Ideas Filter");
+	FilterManager.reset("Ideas Filter", Session.get("currentUser"), "ideas");
+	logger.trace("Creating default ideas filter upon render");
+	createDefaultIdeasFilter("Ideas Filter");
 
-	// FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
- //    logger.trace("Creating default filter for ideawordcloud filter");
- //    createDefaultIdeasFilter("IdeaWordCloud Filter");
+	FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
+    logger.trace("Creating default filter for ideawordcloud filter");
+    createDefaultIdeasFilter("IdeaWordCloud Filter");
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 
@@ -223,14 +223,21 @@ createDefaultIdeasFilter = function createDefaultIdeasFilter(ideasFilterName) {
 	// add different default filter if we are on an experiment dashboard
 	var exp = Session.get("currentExp");
 	if (exp) {
-		// get treatment participant userIDs
-		logger.trace("On exp dashboard, filtering for treatment participants only");
-		treatmentIDs = ExperimentManager.getUsersInCond(exp, "Treatment");
-		logger.trace("Found userIDs for the treatment condition: " + JSON.stringify(treatmentIDs));
-		// create filter based on those IDs
-		treatmentIDs.forEach(function(tID) {
-			FilterManager.create(ideasFilterName, Session.get("currentUser"), "ideas", "userID", tID);
-		});
+		logger.debug("On exp dashboard, filtering for treatment participants only");
+        // get treatment participant userIDs
+        var treatmentIDs = ExperimentManager.getUsersInCond(exp, "Treatment");
+		// set dummy filters for edge case of no treatment participants
+        if (treatmentIDs.length < 1) {
+            logger.debug("No treatment participants, setting dummy filter for userID");
+            FilterManager.create(ideasFilterName, Session.get("currentUser"), "ideas", "userID", "dummyStringThatWillNeverMatch");
+        // create filter based on those IDs
+        } else {            
+            logger.debug("There are treatment participants, filtering by treatment participant userIDs");
+            logger.trace("Found userIDs for the treatment condition: " + JSON.stringify(treatmentIDs));
+            treatmentIDs.forEach(function(tID) {
+                FilterManager.create(ideasFilterName, Session.get("currentUser"), "ideas", "userID", tID);
+            });    
+        }
 	}
 }
 
