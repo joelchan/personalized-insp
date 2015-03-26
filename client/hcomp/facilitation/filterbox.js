@@ -93,6 +93,13 @@ Template.HcompFilterBoxIdeaItem.helpers({
   },
 });
 
+Template.HcompFilterBoxIdeaItem.rendered(function() {
+  // Reset sorting filters to nothing  
+  FilterManager.resetSorters("Ideas Filter", 
+      Session.get("currentUser"), 
+      "ideas"
+  );
+});
 Template.HcompFilterBoxIdeaItem.events({
   'click .up-vote': function(e, elm) {
     if (!isInList(Session.get("currentUser")._id, this.votes)) {
