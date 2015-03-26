@@ -12,11 +12,13 @@ Template.HcompFilterbox.rendered = function(){
 	// console.log("rendering");
 	Session.set("searchQuery","");
 	FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "prompt._id", Session.get("currentPrompt")._id);
+
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 }
 
 Template.HcompFilterBoxHeader.rendered = function(){
 	$('.all-ideas-filter-btn').click();
+	FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas","time" , -1,1);
 }
 
 var filterName;
@@ -397,6 +399,104 @@ Template.HcompFilterBoxHeader.events({
 	    }
   	},
 
+  	'change #sortingfields' : function(e,target)
+  	{
+  		var x = $("[id=sortingfields]").val()
+  		var sorterObject  = JSON.parse(x);
+  		var sortingField = sorterObject.field;
+  		var sortingOrder = sorterObject.order;
+
+
+  		FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas",sortingField , sortingOrder,1);
+
+  		//Session.set("searchQuery","");
+  		//getFilteredIdeas("Ideas Filter");
+  	},
+
+
+
+  	'click #sortButtonTime' : function(e,target)
+  	{
+  		var sortingField = "time";
+  		var sortButtonIconTime = $("[id=sortButtonIconTime]");
+  		var sortButtonTime  = $("[id=sortButtonTime]");
+
+  		var sortButtonIconAlpha  = $("[id=sortButtonIconAlpha]");
+  		var sortButtonAlpha  = $("[id=sortButtonAlpha]");
+
+  		/* Changing the alphabatical sorting icon to none */
+  		sortButtonIconAlpha.removeClass("glyphicon-chevron-down").removeClass("glyphicon-chevron-up");
+  		sortButtonAlpha.css("background-color","white");
+
+  		var sortingOrder;
+
+  		if(sortButtonIconTime.hasClass("glyphicon-chevron-down"))
+  		{
+  			sortButtonIconTime.removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");	
+  			sortingOrder = 1;
+  		}
+  		else if(sortButtonIconTime.hasClass("glyphicon-chevron-up"))
+  		{
+  			sortButtonIconTime.removeClass("glyphicon-chevron-up");		
+  			sortButtonTime.css("background-color","white");
+  		}
+  		else{
+
+  			sortButtonIconTime.addClass("glyphicon-chevron-down")
+  			sortButtonTime.css("background-color","rgb(58, 175, 58)");
+  			sortingOrder = -1;
+  		}
+
+  		/* If sorting order is not defined, not doing anything */
+  		if(sortingOrder)
+  		{
+  			FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas",sortingField , sortingOrder,1);
+  		}
+
+  		
+  	},
+
+  	'click #sortButtonAlpha' : function(e,target)
+  	{
+  		var sortingField = "content";
+
+  		var sortButtonIconTime = $("[id=sortButtonIconTime]");
+  		var sortButtonTime  = $("[id=sortButtonTime]");
+
+  		var sortButtonIconAlpha  = $("[id=sortButtonIconAlpha]");
+  		var sortButtonAlpha  = $("[id=sortButtonAlpha]");
+
+  		/* Changing the alphabatical sorting icon to none */
+  		sortButtonIconTime.removeClass("glyphicon-chevron-down").removeClass("glyphicon-chevron-up");
+  		sortButtonTime.css("background-color","white");
+
+  		var sortingOrder;
+
+  		if(sortButtonIconAlpha.hasClass("glyphicon-chevron-down"))
+  		{
+  			sortButtonIconAlpha.removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");	
+  			sortingOrder = 1;
+  		}
+  		else if(sortButtonIconAlpha.hasClass("glyphicon-chevron-up"))
+  		{
+  			sortButtonIconAlpha.removeClass("glyphicon-chevron-up");		
+  			sortButtonAlpha.css("background-color","white");
+  		}
+  		else{
+
+  			sortButtonIconAlpha.addClass("glyphicon-chevron-down")
+  			sortButtonAlpha.css("background-color","rgb(58, 175, 58)");
+  			sortingOrder = -1;
+  		}
+
+  		/* If sorting order is not defined, not doing anything */
+  		if(sortingOrder)
+  		{
+  			FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas",sortingField , sortingOrder,1);
+  		}
+  		
+  	},
+
 	// clear full-text search of idea content
 	'click .search-remove-btn' : function(){
 		Session.set("searchQuery","");
@@ -513,12 +613,18 @@ stringToWords = function stringToWords(str) {
 }
 
 getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
+
+	
 	var filteredIdeas = FilterManager.performQuery(ideasFilterName, 
 		  Session.get("currentUser"), 	
 		  "ideas").fetch();
 
 	// apply search query, if it exists
 	var query = Session.get("searchQuery");
+
+	//Will trigger automatic calc of ideas,sorters not used anywhere in this functions
+	//var sorters = Session.get("sorters");
+
 	var queriedIdeas = [];
 	if (query != "") {
 		queryArr = stringToWords(query);
@@ -538,9 +644,9 @@ getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
 		queriedIdeas = filteredIdeas.slice();
 	}
 
-	var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
+	//var sortedIdeas = queriedIdeas.sort(function(a,b) { return b.time - a.time});
 	// console.log(sortedIdeas);
-	return sortedIdeas;
+	return queriedIdeas;
 }
 
 isLastFilter = function() {

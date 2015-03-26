@@ -3,11 +3,11 @@
 		<!-- <i class="fa fa-filter"></i> -->
 		{{ > HcompFilterBoxHeader }}
 
-		<div class="idea-box-header">
+		<!--<div class="idea-box-header">
 		  <span>
 		    Showing {{ numIdeas }} Ideas
 		  </span>
-		</div>
+		</div>-->
 		<div class="ideadeck-container">
 			<ul id="hcomp-idealist" class="ideadeck ui-sortable">
 				<!-- <li class="sort-disabled"></li> -->
@@ -21,16 +21,17 @@
 
 <template name="HcompFilterBoxHeader">
 	<div id="filterbox-header">
-	    <label>Show: </label>
+	    <!--<label>Show: </label>
 		<div class="btn-group filter-buttons">
 			<button type="button" class="btn btn-default all-ideas-filter-btn btn-success">Everything</button>
 			<button type="button" class="btn btn-default misc-ideas-filter-btn">Un-categorized</button>
 			<button type="button" class="btn btn-default starred-ideas-filter-btn">Liked</button>
 		</div>
-		<br>
+		<br>-->
+
 	    <div class="input-group input-group-sm idea-search">
 	      <span class="input-group-btn">
-	        <button class="btn btn-default search-apply-btn" type="button">
+	        <button class="btn btn-default search-apply-btn" type="buttonmargin-left:20%">
 	        	<i class="fa fa-search"></i>
 	        </button>
 	      </span>
@@ -40,7 +41,35 @@
 	        	<i class="fa fa-times"></i>
 	        </button>
 	      </span>
-	    </div> <!--close search bar input group-->	
+	     </div> 
+	     <!--close search bar input group-->	
+	    <div class="input-group input-group-sm idea-search" style="width:100%">
+		    <div class="sort-text-box">
+		    	<span >Sort By :</span>
+		    </div>
+		    <div class="sort-selection-box" >
+			    <select  id="sortingfields" class="select-control"	>
+		    		<option value='{"field":"time","order": -1}'>Most recent</option>
+		    		<option value='{"field":"time","order": 1}'>Oldest</option>
+		    		<option value='{"field":"content","order": 1}'>a-z</option>
+		    		<option value='{"field":"content","order": -1}'>z-a</option>
+		    		<option value='{"field":"votes","order": -1}'>Most liked</option>
+		    		<option value='{"field":"votes","order": 1}'>Least liked</option>
+				</select>
+			</div>
+	    </div>
+
+
+	    <!--<div class="input-group input-group-sm idea-search">
+		 <button id= "sortButtonTime" style="background-color : rgb(58, 175, 58)" type="button" class="btn btn-default btn-lg">
+		  <span id= "sortButtonIconTime"  class="glyphicon glyphicon-chevron-up glyphicon-chevron-down" aria-hidden="true"></span> Time
+		</button>
+
+		<button id= "sortButtonAlpha" type="button" class="btn btn-default btn-lg"  style="margin-left: 41px">
+		  <span id= "sortButtonIconAlpha" class="glyphicon" aria-hidden="true"></span> Alpha
+		</button>
+		</div> -->
+
 	</div> <!--close filterbox header-->
 </template>
 
@@ -115,11 +144,11 @@
 			    	<button class="btn btn-default" type="button">Clear</button>
 			    </span> -->
 			    <!-- </div> -->
-	<!-- 		</div>
+	<!-- 		</dimargin-left:20%v>
 			<form role="form" class="form-inline">
 				<div class="form-group">
-					<label>Show </label>
-					<select class="form-control cat-filter-opts-btn">
+					<label>Shw </6abel>
+					<select class="select-control cat-filter-opts-btn">
 					  <option class="cat-filter-opt">All</option>
 					  <option class="cat-filter-opt">Uncategorized</option>
 					</select> -->
@@ -129,11 +158,11 @@
 					  </button>
 					  <ul class="dropdown-menu" role="menu">
 					    <li><a href="#">All</a></li>
-					    <li><a href="#">Uncategorized</a></li>
+					    <li><a href="#">Uncategorized</a></lmargin-left:20%i>
 					  </ul>
 					</div> -->
-					<!-- <label> ideas that are </label>
-					<select class="form-control star-filter-opts-btn">
+					<!-- <label> id6as that are </abel>
+					<select class="select-control star-filter-opts-btn">
 					  <option class="star-filter-opt">Starred</option>
 					  <option class="star-filter-opt">Unstarred</option>
 					  <option class="star-filter-opt">Both</option>
@@ -171,11 +200,11 @@
 				</button>
 			</span> -->
 
-			<!--Participant Filter Dropdown-->
+			<!--Participant Filter Dropdown-margin-left:20%->
 		<!-- <div class="select-parts-filters filter-dropdown col-md-3">
 			<h5>Select Participants</h5>
-			<div class="filter-list">
-				<select multiple class="select-participants form-control">
+			<div class="filter-ist">
+				<select multiple class="select-participants select-control">
 					{{#each participants}}
 						<option val="pf-{{this._id}}">{{this.name}}</option>
 					{{/each}}
@@ -214,12 +243,12 @@
 				<button class="btn btn-default">Cancel</button>
 				<button class="btn btn-primary apply">Apply</button>
 			</div>
-		</div> -->
+		</div> --margin-lef:20%t>
 
 		<!-- <div class="select-memberOf-filters filter-dropdown col-md-3">
-			<h5>Select Themes</h5>
-			<div class="filter-list">
-				<select multiple class="select-themes form-control">
+			<h5>Select Thmes</h5>
+			<div class="filter-6ist">
+				<select multiple class="select-themes select-control">
 					{{#each currentClusters}}
 						<option val="mo-{{this._id}}">{{this.name}}</option>
 					{{/each}}
@@ -232,11 +261,11 @@
 		</div>
 
 		<div class="select-time-filters filter-dropdown col-md-3">
-			<div class="filter-list">
+			<div class="filter-listmargin-left:20%">
 				<h5>Select Time Window</h5>
 				<div class="time-select-box">
-					Between
-					<select class="select-start form-control time-select">
+					Btween
+					<select class="select-start select-control time-select">
 						<option>0</option>
 	  					<option>1</option>
 						<option>2</option>
@@ -250,12 +279,12 @@
 						<option>10</option>
 						<option>11</option>
 						<option>12</option>
-						<option>13</option>
+						<option>13</optiomargin-left:20%n>
 						<option>14</option>
 					</select>
-					<span> minutes ago and</span>
+					<span> minutes ago and<span6
 				
-					<select class="select-end form-control time-select">
+					<select class="select-end select-control time-select">
 	  					<option>1</option>
 						<option>2</option>
 						<option>3</option>
