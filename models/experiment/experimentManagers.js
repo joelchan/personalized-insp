@@ -419,14 +419,18 @@ ExperimentManager = (function () {
       return true;
     },
 
-    addExcludeUser: function(exp, userName) {
-      Experiments.update({_id: exp._id}, 
-        {$push: {excludeUsers: userName}});
+    addExcludeUsers: function(expID, userNames) {
+      userNames.forEach(function(userName) {
+        Experiments.update({_id: expID}, 
+          {$push: {excludeUsers: userName}});
+      });
     },
 
-    removeExcludeUser: function(exp, userName) {
-      Experiments.update({_id: exp._id}, 
-        {$pull: {excludeUsers: userName}});
+    removeExcludeUsers: function(expID, userNames) {
+      userNames.forEach(function(userName) {
+        Experiments.update({_id: expID}, 
+          {$pull: {excludeUsers: userName}});
+      });
     },
 
   };

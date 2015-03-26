@@ -84,13 +84,24 @@ Template.CrowdExperiment.helpers({
   },
   excludeUsers: function() {
     return this.excludeUsers;
-  }
+  },
+  numExcluded: function() {
+    if (this.excludeUsers) {
+      return this.excludeUsers.length;
+    } else {
+      return 0;
+    }
+  },
 });
 
 Template.CrowdExperimentExcludeUser.helpers({
   thisID: function() {
-    logger.trace(JSON.stringify(this));
-    var user = MyUsers.findOne({userName: this});
+    // buggy at the moment, not sure why
+    var userName = this;
+    logger.trace("Username to exclude: " + JSON.stringify(userName));
+    var user = MyUsers.findOne({"name": userName});
+    logger.trace(user);
+    // logger.trace("Excluded user: " + JSON.stringify(user));
     return user._id;
   },
 });
@@ -354,18 +365,18 @@ Template.CrowdExperiment.events({
     });
   },
 
-  'click .rm-excl-user': function() {
-    var userName = this;
-    // var expID = this.
-    var expContainer = $(event.target).parents('.exclude-user');
-    var expID = expContainer.attr("id").split("-")[1];
-    var exp = Experiments.findOne({_id: expID});
-    logger.trace("This experiment: " + JSON.stringify(exp));
-    // console.log(expID);
-    // var msg = JSON.stringify(expID);
-    // alert(msg);
-    // logger.trace("The experiment: " + )
-    alert("Remove " + userName + " from excludeUsers in " + expID +"?");
-    ExperimentManager.removeExcludeUser(exp, userName)
-  }
+  // 'click .rm-excl-user': function() {
+  //   var userName = this;
+  //   // var expID = this.
+  //   var expContainer = $(event.target).parents('.exclude-user');
+  //   var expID = expContainer.attr("id").split("-")[1];
+  //   var exp = Experiments.findOne({_id: expID});
+  //   logger.trace("This experiment: " + JSON.stringify(exp));
+  //   // console.log(expID);
+  //   // var msg = JSON.stringify(expID);
+  //   // alert(msg);
+  //   // logger.trace("The experiment: " + )
+  //   alert("Remove " + userName + " from excludeUsers in " + expID +"?");
+  //   ExperimentManager.removeExcludeUser(expID, userName)
+  // }
 });
