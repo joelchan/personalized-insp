@@ -1,10 +1,10 @@
 // Configure logger for Filters
 var logger = new Logger('Managers:Filter');
 // Comment out to use global logging level
-// Logger.setLevel('Managers:Filter', 'trace');
-//Logger.setLevel('Managers:Filter', 'debug');
-Logger.setLevel('Managers:Filter', 'info');
-//Logger.setLevel('Managers:Filter', 'warn');
+Logger.setLevel('Managers:Filter', 'trace');
+// Logger.setLevel('Managers:Filter', 'debug');
+// Logger.setLevel('Managers:Filter', 'info');
+// Logger.setLevel('Managers:Filter', 'warn');
 
 FilterManager = (function () {
   return {
@@ -36,6 +36,7 @@ FilterManager = (function () {
       var otherOps = Filters.find({name: name, 
           user: user._id, 
           collection: col, 
+          type: 'filter',
           field: field,
           op: {'$ne': op}});
       logger.debug("found " + otherOps.count() + " filters with other ops");
@@ -156,6 +157,7 @@ FilterManager = (function () {
       var results = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
       });
       logger.debug("Found " + results.count() + " filters matching");
       return results;
@@ -193,6 +195,7 @@ FilterManager = (function () {
       var userFilters = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
           field: 'userID'
       });
       logger.debug("Found " + userFilters.count() + " matching user filters");
@@ -222,6 +225,7 @@ FilterManager = (function () {
       var clusterFilters = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
           field: 'clusterIDs'
       });
       logger.debug("Found " + clusterFilters.count() + 
@@ -237,6 +241,7 @@ FilterManager = (function () {
       var timeFilters = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
           field: 'time'
       });
       logger.debug("Found " + timeFilters.count() + 
@@ -259,6 +264,7 @@ FilterManager = (function () {
       var typeFilters = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
           field: 'type._id'
       });
       logger.debug("Found " + typeFilters.count() + 
@@ -275,6 +281,7 @@ FilterManager = (function () {
       var filts = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
           field: {$nin: ['userID', 'clusters', 'time', 'type._id']}
       });
       logger.debug("Found " + filts.count() + 
@@ -328,6 +335,7 @@ FilterManager = (function () {
       var results = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
           field: field,
           val: val
       });
@@ -353,6 +361,7 @@ FilterManager = (function () {
           var filts = Filters.find({name: name, 
             user: user._id, 
             collection: col,
+            type: 'filter',
             field: field,
             val: val
           });
@@ -363,6 +372,7 @@ FilterManager = (function () {
           var filts = Filters.find({name: name, 
             user: user._id, 
             collection: col,
+            type: 'filter',
             field: field
           });
           filts.forEach(function(filt) {
@@ -375,6 +385,7 @@ FilterManager = (function () {
         var results = Filters.find({name: name, 
             user: user._id, 
             collection: col,
+            type: 'filter',
             field: field,
             val: val
         });
@@ -382,6 +393,7 @@ FilterManager = (function () {
         var results = Filters.find({name: name, 
               user: user._id, 
               collection: col,
+              type: 'filter',
               field: field
           });
       }
@@ -413,6 +425,7 @@ FilterManager = (function () {
       var results = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
       });
       logger.debug("Found " + results.count() + " filters to remove");
       if (Meteor.isServer) {
@@ -424,7 +437,8 @@ FilterManager = (function () {
         //Can't delete data except by using individual IDs on client
         var filts = Filters.find({name: name, 
           user: user._id, 
-          collection: col
+          collection: col,
+          type: 'filter',
         });
         if (exceptionFilters) {
           filts.forEach(function(filt) {
@@ -441,6 +455,7 @@ FilterManager = (function () {
       results = Filters.find({name: name, 
           user: user._id, 
           collection: col,
+          type: 'filter',
       });
       logger.debug("Found " + results.count() + " filters after remove");
       if (results.count() === 0) 
@@ -626,37 +641,179 @@ FilterManager = (function () {
        * @Return
        *    cursor pointing to list of sorters 
        * ***********************************************************/
-      /*****************   Stub code *******************************/
-      /*****************   End Stub code ***************************/
-      /*****************   Actual Implementation code **************/
-
-
-    var newSorter = new Sorter(name, user, col, field, val, position);
-    //var findObject = new UniqueSorter(name, user, col, field);
-    //var upsert  = { 'upsert' : true };
-    //this.removeSorter(name, user, col, field)
-
-    /* inserts the value of sorter if found, else inserts a new one */
-    newSorter._id = Sorters.insert(newSorter);
-
-    logger.debug("New Sorter: ");
-    logger.debug(newSorter);
-    return true;
+      var newSorter = new Sorter(name, user, col, field, val, position);
+      //var findObject = new UniqueSorter(name, user, col, field);
+      //var upsert  = { 'upsert' : true };
+      //this.removeSorter(name, user, col, field)
+  
+      /* inserts the value of sorter if found, else inserts a new one */
+      newSorter._id = Sorters.insert(newSorter);
+  
+      logger.debug("New Sorter: ");
+      logger.debug(newSorter);
+      return true;
 
     },
 
-    removeSorter : function(name, user, col, field)
-    {
-      var sorter = Sorters.findOne({'name': name, 
-                'user': user, 
-                'collection': col,
-                'field': field
+    removeSorters: function(sorters) {
+      if (hasForEach(sorters)) {
+        ids = getIDs(sorters);
+        //for (var i=0; i<ideas.length; i++) {
+          //ids.push(ideas._id);
+        //} 
+        if (Meteor.isServer) {
+          Sorters.remove({_id: {$in: ids}});
+        } else {
+          ids.forEach(function(id) {
+            Sorters.remove({_id: id});
           });
-
-      if(sorter)
-      {
-        Sorters.remove({ '_id' : sorter._id} );
+        }
+      } else {
+        Sorters.remove({_id: sorters._id});
       }
+    },
+
+    removeSorter: function(name, user, col, field, val) {
+      /**************************************************************
+       * Delete the specific filter matching the given params
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    collection - the colleciton that will be queried
+       *    field - the document field to be operated on (using
+       *        dot notation for document subfields)
+       *    val  - (optional) the value used for comparison with the field
+       *
+       * @Return
+       *    boolean if the filter was successfully removed
+       * ***********************************************************/
+      logger.trace("Beginning remove matching sorters");
+      var results = Sorters.find({name: name, 
+          userID: user._id, 
+          collection: col,
+          type: 'sorter',
+          field: field,
+          val: val
+      });
+      logger.debug("Found " + results.count() + " sorters to remove");
+      if (Meteor.isServer) {
+        if(val){
+          Sorters.remove({name: name, 
+              userID: user._id, 
+              collection: col,
+              field: field,
+              val: val
+          });
+        } else {
+          Sorters.remove({name: name, 
+              userID: user._id, 
+              collection: col,
+              field: field
+          });
+        }
+      } else {
+        //Can't delete data except by using individual IDs on client
+        if(val){ 
+          var sorts = Sorters.find({name: name, 
+            userID: user._id, 
+            collection: col,
+            type: 'sorter',
+            field: field,
+            val: val
+          });
+          sorts.forEach(function(sort) {
+            Sorters.remove({_id: sort._id});
+          });
+        } else {
+          var sorts = Sorters.find({name: name, 
+            userID: user._id, 
+            collection: col,
+            type: 'sorter',
+            field: field
+          });
+          sorts.forEach(function(sort) {
+            Sorters.remove({_id: sort._id});
+          });
+        }
+
+      }
+      if(val){
+        var results = Sorters.find({name: name, 
+            userID: user._id, 
+            collection: col,
+            type: 'sorter',
+            field: field,
+            val: val
+        });
+      } else {
+        var results = Sorters.find({name: name, 
+              userID: user._id, 
+              collection: col,
+              type: 'sorter',
+              field: field
+          });
+      }
+
+      logger.debug("Found " + results.count() + " sorters after remove");
+      if (results.count() === 0) 
+        return true;
+      else
+        return false;
+
+    },
+    resetSorters: function(name, user, col, exceptionSorters) {
+      /**************************************************************
+       * Delete all filters associated with the name, user, and
+       * collection
+       * @Params
+       *    name - An identifier used but the filtering component
+       *    user - the user that is using the query
+       *    collection - the colleciton that will be queried
+       *    exceptionFilters - (optional) list of filters to NOT remove
+       * @Return
+       *    boolean if all the filters was successfully removed
+       * ***********************************************************/
+      logger.trace("Beginning reset all matching sorters");
+      var results = Sorters.find({name: name, 
+          userID: user._id, 
+          collection: col,
+          type: 'sorter',
+      });
+      logger.debug("Found " + results.count() + " sorters to remove");
+      if (Meteor.isServer) {
+        Sorters.remove({name: name, 
+            userID: user._id, 
+            collection: col,
+        });
+      } else {
+        //Can't delete data except by using individual IDs on client
+        var sorts = Sorters.find({name: name, 
+          userID: user._id, 
+          collection: col,
+          type: 'sorter',
+        });
+        if (exceptionSorters) {
+          sorts.forEach(function(sort) {
+            if (!isInList(sort,exceptionSorters,"_id")) {
+              Sorters.remove({_id: sort._id});  
+            }
+          });
+        } else {
+          sorts.forEach(function(sort) {
+            Sorters.remove({_id: sort._id});
+          });
+        }
+      }
+      results = Sorters.find({name: name, 
+          userID: user._id, 
+          collection: col,
+          type: 'sorter',
+      });
+      logger.debug("Found " + results.count() + " sorters after remove");
+      if (results.count() === 0) 
+        return true;
+      else
+        return false;
     },
 
 
@@ -676,8 +833,9 @@ FilterManager = (function () {
       logger.trace("Beginning getSortersList");
       
       var results = Sorters.find({'name': name, 
-          'user': user, 
+          'userID': user._id, 
           'collection' : col,
+          type: 'sorter',
       });
 
       logger.debug("Found " + results.count() + " sorters matching");
@@ -695,23 +853,15 @@ FilterManager = (function () {
     * @Return
     *     sorting query string
     *****************************************************************/
-    var sortArray = sorters.fetch();
-    if(sortArray.length === 0)
-    {
-      return {};
-    }
-
-    var sorterObj = {};
-
-
-    for (var i = sortArray.length - 1; i >= 0; i--) {
-      sorterObj[sortArray[i].field] = sortArray[i].val;
-    }
-
+      var sortArray = sorters.fetch();
+      var sorterObj = {};
+      sorters.forEach(function(sorter) {
+        sorterObj[sorter.field] = sorter.val;
+      });
+      logger.debug("Generating a sort object");
+      logger.trace(sorterObj);
       return { 'sort' : sorterObj };
     },
-
-
 
     performQuery: function(name, user, collection) {
       /**************************************************************
@@ -736,9 +886,8 @@ FilterManager = (function () {
       var sortingQuery = this.getSortingQuery(sorters);
 
       var col = getCollection(collection);
-      return col.find(query);
-      //var result = col.find(query,{'sort' : { 'content' :1 }});
-      //var result = col.find(query,sortingQuery);
+      // return col.find(query);
+      return col.find(query,sortingQuery);
 
       return result;
 

@@ -62,6 +62,7 @@ Router.map(function () {
           Meteor.subscribe('tasks', {promptID: pID}),
           Meteor.subscribe('questions'),
           Meteor.subscribe('assignments', {promptID: pID}),
+          Meteor.subscribe('sorters'),
       ];
     }, 
     onBeforeAction: function() {
@@ -92,6 +93,13 @@ Router.map(function () {
         this.next();
       }
     },
+    action: function(){
+      if(this.ready()) {
+        Session.set("useTimer", true);
+        this.render();
+      } else
+        this.render('loading');
+    },
     onAfterAction: function() {
       if (this.ready()) {
         initRolePage();
@@ -120,6 +128,7 @@ Router.map(function () {
           Meteor.subscribe('tasks', {promptID: pID}),
           Meteor.subscribe('questions'),
           Meteor.subscribe('assignments', {promptID: pID}),
+          Meteor.subscribe('sorters'),
       ];
     }, 
     onBeforeAction: function() {

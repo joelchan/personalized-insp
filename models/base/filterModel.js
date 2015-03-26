@@ -28,6 +28,7 @@ Filter = function (name, user, collection, field, val, op) {
   this.name = name;
   this.user = user._id;
   this.collection = collection;
+  this.type = 'filter';
   this.field = field;
   this.val = val;
   if (op) {
@@ -38,21 +39,22 @@ Filter = function (name, user, collection, field, val, op) {
 };
 
 
-Sorter = function (name, user, collection, field, position,val) {
+Sorter = function (name, user, collection, field, val, position) {
   /******************************************************************
    * Sorter definition with parameters for filtering across a given
    * collection> 
    *
    * @params
    *    name - String describing the filter, useful as a lookup ref
-   *    user - user associated with a given filter
+   *    user - user ID associated with a given filter
    *    collection - string matching the collection name string
    *    field - the field of the document to match
    *    val - could be ascending or desc
    *****************************************************************/
   this.name = name;
-  this.user = user;
+  this.userID = user._id;
   this.collection = collection;
+  this.type = 'sorter';
   this.field = field;
   this.position = position;
 
@@ -62,9 +64,6 @@ Sorter = function (name, user, collection, field, position,val) {
   } else {
     this.val = 1;
   }
-
-
-
 };
 
 
