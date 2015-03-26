@@ -52,23 +52,23 @@
       </div>
     </div> <!-- End prompts tab -->
     <!-- Experiments tab -->
-    <!-- <div role="tabpanel" class="tab-pane" id="expList"> -->
-    <!-- <div class="row hcomp-prompts-page">-->
-    <!-- <center> -->
-    <!-- <button id="new-exp" class="new-exp btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newExpModal"> -->
-    <!-- New Experiment -->
-    <!-- </button>  -->
-    <!-- </center> -->
-    <!-- </div> -->
+    <div role="tabpanel" class="tab-pane" id="expList">
+      <div class="row hcomp-prompts-page">
+        <center>
+          <button id="new-exp" class="new-exp btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newExpModal">
+            New Experiment
+          </button> 
+        </center>
+      </div>
     <!-- End Row -->
 
       
-    <!-- <div class="row hcomp-prompt-list">  -->
-    <!-- {{#each experiments}} -->
-    <!-- {{> CrowdExperiment }} -->
-    <!-- {{/each}} -->
-    <!-- </div> -->
-    <!-- </div> --> <!-- End experiments tab -->
+    <div class="row hcomp-prompt-list"> 
+      {{#each experiments}}
+        {{> CrowdExperiment }}
+      {{/each}}
+    </div>
+  </div>  <!-- End experiments tab -->
     <!-- {{> NewExperimentModal }} -->
   </div> <!-- End tab content container -->
 
@@ -179,6 +179,18 @@
           <strong>Time limit: </strong> {{ timeLimit }}<br/>
           <strong>Target Number of Participants per Condition: </strong> 
             {{ partNumber }}<br/>
+          <strong>Exclude Participants:</strong> {{ numExcluded }}<a class="show-hide" data-toggle="collapse" data-parent="#exp-{{_id}}-exclude-container" href="#exp-{{_id}}-exclude-content"> (Show/Hide)</a><br/>
+              <!-- <div class="row"> -->
+                <div id="exp-{{_id}}-exclude-container">
+                  <div id="exp-{{_id}}-exclude-content" class="collapse exclude-user">
+                    <ol>
+                      {{#each excludeUsers}}
+                        {{ > CrowdExperimentExcludeUser }}
+                      {{/each}}
+                    </ol>
+                    <!-- <textArea id="exclude-for-exp{{_id}}" class="form-control" rows="10" placeholder="Write your ideas here, each on a new line."></textarea> -->
+                  </div>
+                </div>
           <strong>Participant login URL: </strong> 
             <a href="{{ expURL }}">{{ expURL }}</a><br/>
           <!-- <strong>Conditions: </strong><br/> -->
@@ -215,4 +227,9 @@
       </div>
     </div>
   </div>
+</template>
+
+<template name="CrowdExperimentExcludeUser">
+  <!-- <li> {{ this }} (<a href="" class="rm-excl-user">remove</a>)</li> -->
+  <li> {{ this }} </li>
 </template>

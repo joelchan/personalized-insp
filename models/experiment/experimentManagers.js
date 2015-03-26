@@ -417,7 +417,21 @@ ExperimentManager = (function () {
           //}
       //}
       return true;
-    }
+    },
+
+    addExcludeUsers: function(expID, userNames) {
+      userNames.forEach(function(userName) {
+        Experiments.update({_id: expID}, 
+          {$push: {excludeUsers: userName}});
+      });
+    },
+
+    removeExcludeUsers: function(expID, userNames) {
+      userNames.forEach(function(userName) {
+        Experiments.update({_id: expID}, 
+          {$pull: {excludeUsers: userName}});
+      });
+    },
 
   };
 }());

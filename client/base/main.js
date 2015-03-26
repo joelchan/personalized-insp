@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Main');
 // Comment out to use global logging level
-Logger.setLevel('Client:Main', 'trace');
+// Logger.setLevel('Client:Main', 'trace');
 // Logger.setLevel('Client:Main', 'debug');
-// Logger.setLevel('Client:Main', 'info');
+Logger.setLevel('Client:Main', 'info');
 // Logger.setLevel('Client:Main', 'warn');
 
 Template.IdeaGen.helpers({
@@ -92,13 +92,60 @@ decrementTimer = function decrementTimer() {
   if (nextTime > 0) {
     logger.debug("Decrementing timer");
     Meteor.setTimeout(decrementTimer, 60000);
+    // Meteor.setTimeout(decrementTimer, 1000);
   } else {
     logger.info("Exitting current page");
-    Session.set("isDecrementing", false);
+    // Session.set("isDecrementing", false);
     //EventLogger.logEndRole();
     //exitPage();
     
     Router.go(Session.get("nextPage"), Session.get("nextPageParams"));
+  }
+};
+
+decrementFluencyTimer = function decrementFluencyTimer() {
+  /******************************************************************
+  * Decrement the onscreen timer
+  ******************************************************************/
+  var nextTime = Session.get("fluencyTimeLeft") - 1;
+  Session.set("fluencyTimeLeft", nextTime);
+  var time = $('#time').text(nextTime);
+  if (nextTime > 0) {
+    logger.debug("Decrementing fluency timer");
+    logger.trace(this);
+    Meteor.setTimeout(decrementFluencyTimer, 60000);
+    // Meteor.setTimeout(decrementFluencyTimer, 1000);
+    // Session.set("fluencyTimerTimeoutHandler",handler);
+  } else {
+    logger.debug("Grabbing fluency data");
+    var text = $("#baseFluencyInput").val();
+    var answers = text.split("\n");
+    logger.trace("Answers: " + JSON.stringify(answers));
+    var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+    var measureID = FluencyMeasures.insert(measure);
+    if (measureID) {
+      logger.trace("Fluency measure for " + 
+        Session.get("currentParticipant")._id + 
+        ": " + JSON.stringify(measure));
+    } else {
+      logger.debug("Failed to grab the data")
+    }
+
+    logger.info("Exitting current page");
+    // Session.set("fluencyIsDecrementing", false);
+    // Session.set("useFluencyTimer", false);
+    // var handler = Session.get("fluencyTimerTimeoutHandler");
+    // logger.debug("Timeout handler: " + handler);
+    // Meteor.clearTimeout(handler);
+    //EventLogger.logEndRole();
+    //exitPage();
+    
+    var part = Session.get("currentParticipant");
+    var condName = Conditions.findOne({_id: part.conditionID}).description;
+    var routeName = "MturkIdeation" + condName;
+    var promptID = Experiments.findOne({_id: part.experimentID}).promptID;
+    logger.debug("Sending to " + routeName);
+    Router.go(routeName, {'promptID': promptID, 'partID': part._id});
   }
 };
 
