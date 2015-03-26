@@ -420,9 +420,12 @@ ExperimentManager = (function () {
     },
 
     addExcludeUsers: function(expID, userNames) {
+      var currentExclusions = Experiments.findOne({_id: expID}).excludeUsers;
       userNames.forEach(function(userName) {
-        Experiments.update({_id: expID}, 
-          {$push: {excludeUsers: userName}});
+        if (!isInList(userName, currentExclusions)) {
+          Experiments.update({_id: expID}, 
+          {$push: {excludeUsers: userName}});  
+        }
       });
     },
 
