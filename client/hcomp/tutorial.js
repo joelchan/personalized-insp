@@ -8,7 +8,7 @@ Logger.setLevel('Client:Hcomp:Tutorial', 'info');
 var myTaskIDs = [];
 var tutorialLengthTreatment = 10;
 var tutorialLengthControl = 7;
-var fluencyTaskLength = 2*60000;
+var fluencyTaskLength = 1*60000;
 
 var timer = new Tock({
     callback: function () {
@@ -391,7 +391,7 @@ Template.ControlTutorialFlow.events({
         $('.control-tutorial-ideaEntryTry-goback').attr('disabled',true);
         $("#control-tutorial-ideaEntryTry").removeClass("control-tutorial-background");
         alert("Ready, set, go! Click 'ok' and the timer will start!");
-        $('.ideation-prompt-control').text("Alternative uses for a brick");
+        $('.ideation-prompt-control').text("Alternative uses for a bowling pin");
         var startTime = timer.msToTime(fluencyTaskLength)
         logger.trace("Fluency task length is: " + startTime);
         EventLogger.logFluencyTaskBegin();
@@ -702,7 +702,7 @@ Template.TreatmentTutorialFlow.events({
         // $('.treatment-tutorial-background').zIndex(51);
         $("#treatment-tutorial-highlight-ideaEntryTry").remove();
         alert("Ready, set, go! Click 'ok' and the timer will start!");
-        $('.ideation-prompt-treatment').text("Alternative uses for a brick");
+        $('.ideation-prompt-treatment').text("Alternative uses for a bowling pin");
         var startTime = timer.msToTime(fluencyTaskLength);
         logger.trace("Fluency task length is: " + startTime);
         EventLogger.logFluencyTaskBegin();
