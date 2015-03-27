@@ -210,10 +210,34 @@
 <template name="CrowdExperimentCondition">
   <div id="cond-{{_id}}" class="menu-box prompt-panel">
     <div class="row">
-      <div class="col-sm-6 prompt-data">
+      <div class="col-sm-6 exp-cond-data">
         <div class="center-block">
           <strong>{{ desc }}:</strong><br/> 
           {{ numAssigned }} assigned participants, {{numBegan}} started experiment, {{ numCompleted }} completed.<br/>
+          <a class="show-hide" data-toggle="collapse" data-parent="#cond-{{_id}}-partDetails-container" href="#cond-{{_id}}-partDetails-content"> (Show/Hide details)</a><br/>
+          <div id="cond-{{_id}}-partDetails-container">
+            <div id="cond-{{_id}}-partDetails-content" class="collapse">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>UserName</th>
+                    <th>Assigned</th>
+                    <th>Started Tutorial</th>
+                    <th>Started Fluency</th>
+                    <th>Finished Fluency</th>
+                    <th>Started Ideation</th>
+                    <th>Finished Ideation</th>
+                    <th>Exited Early</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each assignedParticipants}}
+                    {{> CondParticipant}}
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
           <div class="progress">
             <div class="progress-bar" role="progressbar" aria-valuenow="{{readyProgress}}" aria-valuemin="0" aria-valuemax="100" style="width:{{readyProgress}}%;">
               {{readyProgress}}% ready
@@ -231,4 +255,17 @@
 <template name="CrowdExperimentExcludeUser">
   <!-- <li> {{ this }} (<a href="" class="rm-excl-user">remove</a>)</li> -->
   <li> {{ this }} </li>
+</template>
+
+<template name="CondParticipant">
+  <tr id="part-{{_id}}" class="{{ status }}">
+    <td>{{ partUserName }}</td>
+    <td>Hello</td>
+    <td>Hello</td>
+    <td>Hello</td>
+    <td>Hello</td>
+    <td>Hello</td>
+    <td>Hello</td>
+    <td>Hello</td>
+  </tr>
 </template>

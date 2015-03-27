@@ -27,6 +27,14 @@
   border-radius: 12px;
 }
 
+.hcomp-prompt-list .prompt-panel .exp-cond-data {
+  min-width: 75px;
+  width: 100%;
+  padding: 10px;
+  border: 3px solid #464646;
+  border-radius: 12px;
+}
+
 .hcomp-prompt-list .prompt-panel .dash-button {
   width: 10%;
   height: 100%;

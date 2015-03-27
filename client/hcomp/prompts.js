@@ -140,6 +140,29 @@ Template.CrowdExperimentCondition.helpers({
     logger.trace("Progress = " + progress);
     return Math.round(progress);
   },
+  assignedParticipants: function() {
+    return Participants.find({conditionID: this._id});
+  },
+});
+
+Template.CondParticipant.helpers({
+  partUserName: function() {
+    var partID = this;
+    logger.trace("Participant: " + JSON.stringify(this));
+    // logger.debug("Calling partUserName for participant " + partID);
+    // var part = Participants.find({"_id": partID}).fetch()[0];
+    // logger.trace("Participants: " + JSON.stringify(Participants.find({}).fetch()));
+    // logger.trace("Participant for condition: " + JSON.stringify(part));
+    // return part.userName;
+    return this.userName;
+  },
+  status: function() {
+    if (Events.findOne({participantID: this._id, description: "User exited study early"})) {
+      return "danger";
+    } else {
+      return "";
+    }
+  }
 });
 
 Template.CrowdBrainstorm.helpers({
