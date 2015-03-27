@@ -180,7 +180,7 @@ Template.CondParticipant.helpers({
   },
   fluencyStart: function() {
     if (this.fluencyStarted) {
-      var msg = "User started a fluency measure task";
+      var msg = "User started fluency measure task";
       var time = Events.findOne({userID: this.userID, description: msg}).time;
       return time.toTimeString().substring(0,9);
     } else {
