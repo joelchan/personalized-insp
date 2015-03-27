@@ -72,7 +72,7 @@
 
 <template name="HcompBigPictureViz">
   <div class="row" id="big-picture-viz">
-      <div class="col-md-2">
+      <div class="col-md-2" width=700>
         {{> HcompOverallStats}}
       </div>
       <div class="col-md-10">
@@ -89,22 +89,21 @@
 
 <!-- 1. Create the tabs themselves  -->
     <ul class="nav nav-tabs" role="tablist">
-      <li class="active"><a href="#buy" role="tab" data-toggle="tab">Force Viz</a></li>
-      <li><a href="#sell" role="tab" data-toggle="tab">Bubble Viz</a></li>
-      <li><a href="#fees" role="tab" data-toggle="tab">Other</a></li>
+      <li class="active"><a href="#bubble" role="tab" data-toggle="tab">Bubble</a></li>
+      <li><a href="#force" role="tab" data-toggle="tab">Force</a></li>
+      <li><a href="#bake" role="tab" data-toggle="tab">Other Force</a></li>
     </ul>
  
     <!-- 2. Create a matching tab pane for each tab. Content goes within these panes -->
     <div class="tab-content">
-      <div class="tab-pane active" id="buy">
-        {{> ForceV }}
-      </div>
-      <div class="tab-pane" id="sell">
+      <div class="tab-pane active" id="bubble">
         {{> HcompOtherViz }}
       </div>
-      <div class="tab-pane" id="fees">
-        <h1>Fees</h1>
-        <p>Big Marketplace is free for buyers. Sellers pay a fee based on...</p>
+      <div class="tab-pane" id="force">
+        {{> ForceV }}
+      </div>
+      <div class="tab-pane" id="bake"> 
+        {{> Other }}
       </div>
     </div>
 </template>
@@ -149,6 +148,10 @@
 
 <template name="ForceV">
   <div id="svgdiv2"></div>
+</template>
+
+<template name="Other">
+  <div id="svgdiv3"></div>
 </template>
 
 <template name="HcompScratchPad">

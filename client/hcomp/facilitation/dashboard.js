@@ -20,6 +20,7 @@ Template.HcompDashboard.rendered = function(){
   //Set height of elements to viewport height
   //Navbar height=50, header up to idealist = 150, clustering interface header=63
   var height = $(window).height() - 75; 
+
   logger.debug("window viewport height = " + height.toString());
   $(".ideas-view").height(height);
   $(".tasks-view").height(height);
@@ -27,6 +28,7 @@ Template.HcompDashboard.rendered = function(){
   //logger.debug(height.toString());
   //logger.debug((height*0.7).toString());
   $("#big-picture-viz").height(height*0.65);
+  $("#big-picture-viz").width(700);
   $("#ideawordcloud").height(height*0.55);
   $("#scratchpad").height(height*0.25);
   var scratchpadHeight = $("#scratchpad").height();
@@ -618,6 +620,8 @@ var force = d3.layout.force()
     .on("tick", tick)
     .start();
 
+
+
 var rem = svg.selectAll("circle")
     .data(nodes, function(d) {return d})
     .exit()
@@ -627,6 +631,7 @@ var rem = svg.selectAll("circle")
 var circle = svg.selectAll("circle")
     .data(nodes)
     .enter().append("circle")
+    .attr("opacity", .2)
     .attr("r", function (d) {return d.radius;})
     .attr("fill", function(d) {if (d.likes==1) {return "green";} 
                                              else {return "red";};})
@@ -646,10 +651,11 @@ var tex = svg.selectAll("text")
       return d.cx-d.radius;
     })
     .attr("y", function (d) {
-      return d.cy;
+      return d.cy+10;
     })
+    //.attr("dx", -5)
     .text(function(d) {return d.title;})
-    .style("font-size", function(d) {return d.radius/2;})
+    .style("font-size", function(d) {return d.radius/3;})
     .style("stroke", function(d) {if (d.likes==1) {return "green";} 
                                              else {return "red";};})
     .call(force.drag);
@@ -662,7 +668,7 @@ function tick(e) {
         return d.x;
     })
         .attr("cy", function (d) {
-        return d.y;
+        return d.y+10;
     });
     tex.each(gravity(.2 * e.alpha))
         .each(collide(.5))
@@ -670,7 +676,7 @@ function tick(e) {
         return d.x-17;
     })
         .attr("y", function (d) {
-        return d.y;
+        return d.y+10;
     });
 }
 
@@ -714,6 +720,7 @@ function collide(alpha) {
 
 
 
+
 Template.HcompOtherViz.rendered = function() {
   //look up Tracker
   var margin = {
@@ -731,6 +738,8 @@ Template.HcompOtherViz.rendered = function() {
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
 
   Deps.autorun(function() {
     //get the new dataset 
@@ -776,6 +785,913 @@ function formatData(rawIdeas) {
 }
 
 
+Template.Other.rendered = function() {
+  var rawIdeas=
+  [
+  {
+    "id":1,
+    "idea":"Godzilla wolrd",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":2,
+    "idea":"Extraterrestrial Conflict on Distant Alien World",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":3,
+    "idea":"Classic Doctor Who: The Giant Robot",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":4,
+    "idea":"moonbase colonization",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":5,
+    "idea":"A giant pair of legs",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":6,
+    "idea":"Gorilla Creature",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":7,
+    "idea":"Giant Vampire",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":8,
+    "idea":"Science Experiment Gone Wrong",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":9,
+    "idea":"Attack of the giant baby",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":10,
+    "idea":"Elemental of some sort - Earth, fire, water?",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":11,
+    "idea":"Golems -- but not made of rocks",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":12,
+    "idea":"Giant Monkey Baby",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":13,
+    "idea":"Angry Reagan",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":14,
+    "idea":"Different people take turns growing and shrinking",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":15,
+    "idea":"Organic/Meat Building Structures",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":16,
+    "idea":"Goo Monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":17,
+    "idea":"startship trooper universe",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":18,
+    "idea":"Shadow Monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":19,
+    "idea":"hulk-like biped monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":20,
+    "idea":"Lovecraftian Horror",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":21,
+    "idea":"Basically Cthulhu",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":22,
+    "idea":"giant baby",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":23,
+    "idea":"a really bad dream",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":24,
+    "idea":"Yeah, Literally a giant chicken",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":25,
+    "idea":"Giant Stone Golem",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":26,
+    "idea":"Mutated Human",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":27,
+    "idea":"Toy worlk",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":28,
+    "idea":"Jack and the Beanstalk",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":29,
+    "idea":"Giant Mecha",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":30,
+    "idea":"Dragon",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":31,
+    "idea":"Food-oriented:  rotten food monster, mutated from broken fridge",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":32,
+    "idea":"Transformers",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":33,
+    "idea":"Demon",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":34,
+    "idea":"porridge factory",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":35,
+    "idea":"Godzilla",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":36,
+    "idea":"Robotic tower",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":37,
+    "idea":"Giant \"young\" monster who just wants to play but doesn't understand that destroying stuff is bad.",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":38,
+    "idea":"Person attacked by fleas",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":39,
+    "idea":"Megacities",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":40,
+    "idea":"Enormous Guy wearing an Oculus",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":41,
+    "idea":"Jack and the Giant Beanstalk or whatever that fairy tale is called",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":42,
+    "idea":"new york city",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":43,
+    "idea":"Giant dragons",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":44,
+    "idea":"The Iron Giant",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":45,
+    "idea":"Kaiju",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":46,
+    "idea":"Dinosaur wolrd",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":47,
+    "idea":"Wind up tin toys",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":48,
+    "idea":"Super Heros Face off with Villainous Machination",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":49,
+    "idea":"small godzillas vs. large human",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":50,
+    "idea":"person wearing a cursed VR mask that makes them grow into a giant.",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":51,
+    "idea":"Grekko Roman Heros Face Mythological Gigabeast",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":52,
+    "idea":"Baby as titan trying to get a toy or food",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":53,
+    "idea":"Candy kingdom, with the titan as a greedy human trying to eat everything",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":54,
+    "idea":"Mouse People Are Attacked by Feral Behemoth Cat",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":55,
+    "idea":"Squirrel protecting his nuts against the ants",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":56,
+    "idea":"Bipedal Biorganic giant monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":57,
+    "idea":"Giant fire creature attacked by fire trucks",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":58,
+    "idea":"Futuristic Space Colony",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":59,
+    "idea":"giant monster standing on weird stilts -- doesn't like getting their actual feet messed up.",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":60,
+    "idea":"Garbage Pail Kid",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":61,
+    "idea":"Giant robot made of washing machines, attacked by characters from Sesame Street",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":62,
+    "idea":"Hostile alien planet",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":63,
+    "idea":"A planet being mined for resources",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":64,
+    "idea":"children's toy trying to attack them",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":65,
+    "idea":"Giant Bug of some sort",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":66,
+    "idea":"Giant Crustaceous Abomination Attacks Stranded Pirate Party",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":67,
+    "idea":"that one sequel to Honey I Shrunk the Kids",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":68,
+    "idea":"mad scientist serum that turns people into abominations",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":69,
+    "idea":"Angry God",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":70,
+    "idea":"Giant robot with hammer hands",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":71,
+    "idea":"Virus trying to convert healthy cells",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":72,
+    "idea":"CRYSTALS EVERYWHERE",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":73,
+    "idea":"scientist trying to create monsters and switch turns ala Rampage",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":74,
+    "idea":"Terminator 2",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":75,
+    "idea":"Giant Plantlife-based construction",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":76,
+    "idea":"Monkeys...all monkeys (looking at you R)",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":77,
+    "idea":"Katamari Damacy -- prince vs. king",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":78,
+    "idea":"WITH BIG PURPLE CORRUPTION",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":79,
+    "idea":"Chimera Creature made up of multiple parts",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":80,
+    "idea":"Summoners and summoing monster like FFX",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":81,
+    "idea":"Trolls -- like in the Troll Hunter movie",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":82,
+    "idea":"Atlas -- he's shrugging and we don't like it!",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":83,
+    "idea":"cartoon villain builds a giant death robot",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":84,
+    "idea":"Vampire Hunters Face Golem \n\nComposed of Thousands of Bodies and Graves",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":85,
+    "idea":"Creature Made out of book pages",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":86,
+    "idea":"Bio-luminescent Creatures",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":87,
+    "idea":"Steampunk titan",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":88,
+    "idea":"A horribly derailed brainstorming session with the titan as a frustrated clusterizer",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":89,
+    "idea":"vine monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":90,
+    "idea":"Alien Siege Machine Attacks the Pentagon",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":91,
+    "idea":"Ice monster trying to get from bottom to top of a mountain before it melts. The villagers try to stop it from getting to the castle at the top",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":92,
+    "idea":"a really bad hallucianation -- BRAINSTORM NO RIGHT SPELLING!",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":93,
+    "idea":"robin hood: men in titans",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":94,
+    "idea":"Ocean?",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":95,
+    "idea":"Will Smith and Friends fight giant mechanized spider",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":96,
+    "idea":"Oversized Bacteria",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":97,
+    "idea":"nanobots attacking a target",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":98,
+    "idea":"The titan can shape shift into multiple forms",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":99,
+    "idea":"small person puppeteering titan",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":100,
+    "idea":"bees / insects attacking invading humans / monsters",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":101,
+    "idea":"Kaiju Assault on Coastal City",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":102,
+    "idea":"Mother Hen",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":103,
+    "idea":"explorers on a planet discover giant creatures while trying to colonize cause urf is gonna die",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":104,
+    "idea":"Guy with really big stilts. Like super big",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":105,
+    "idea":"FIGHTING FOR ITS CHILDREN",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":106,
+    "idea":"Titan is hungry, needs food badly",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":107,
+    "idea":"underwater universe",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":108,
+    "idea":"Plant Creature",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":109,
+    "idea":"FIGHTING FOR GLORY",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":110,
+    "idea":"Ice titant",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":111,
+    "idea":"titan escaping confinement/experimentation",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":112,
+    "idea":"Living Tree",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":113,
+    "idea":"Giant robot trying to steal power from a city",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":114,
+    "idea":"a monster who sees a different, enjoyable world that they like to smash but everyone else just sees destruction",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":115,
+    "idea":"titan retrieving it's young/egg",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":116,
+    "idea":"Huge Native American \n\nBear Spirit is Summoned to Ward off Wild West Frontiersman",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":117,
+    "idea":"Gargamel vs. the Smurfs",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":118,
+    "idea":"Groot",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":119,
+    "idea":"rubber suit-era kaiju",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":120,
+    "idea":"Bowling pin monster -- you kill it, you get a strike...or a spare if your partner dies.",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":121,
+    "idea":"Titan is hunting for treasure",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":122,
+    "idea":"titan can only see auras like heat signatures",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":123,
+    "idea":"Barren Wasteland littered with remains of other titans",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":124,
+    "idea":"Young monster who is afraid of buildings and sees them as scary monsters and wants to smash them but obviously...that is bad...",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":125,
+    "idea":"Sid vs. the Toy Story toys",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":126,
+    "idea":"Dragons!?",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":127,
+    "idea":"Gabe Newell",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":128,
+    "idea":"the non-HMD players are bowling pins and the titan is a bowler trapped in a nightmare where the bowling pins are fighting back",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":129,
+    "idea":"chefs trying to wrangle a meal from giant food",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":130,
+    "idea":"The titan is a... SHARKNADO!",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":131,
+    "idea":"Things fighting the titans using tools/weapons made from the titans",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":132,
+    "idea":"Computer Virus fighting Anti Virus",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":133,
+    "idea":"trogdor the burninator",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":134,
+    "idea":"The titan is various historical figures (Lincoln, Cleopatra, etc.)",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":135,
+    "idea":"Meat monster with every carrying tiny meat grinders and meat tenderizers",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":136,
+    "idea":"Absence -- A void creature (Not lexica void)",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":137,
+    "idea":"Manifestation of SHODAN",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":138,
+    "idea":"burger king trying to feed the people",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":139,
+    "idea":"vegetable monster and everyone is some sort of cow or grass-eating monsters",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":140,
+    "idea":"titan is composed of precious materials and others want to take out",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":141,
+    "idea":"A Building that has come alive",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":142,
+    "idea":"Researcher",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":143,
+    "idea":"hungry hungry hill troll",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":144,
+    "idea":"Titan is smashing is way to freedom",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":145,
+    "idea":"fire breathing titan trying to warm up a cold cold universe",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":146,
+    "idea":"Titan acting in defense of it's giant hideous cute baby titans",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":147,
+    "idea":"a very very very good looking titan",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":148,
+    "idea":"FIGHTING FOR THE ENVIRONMENT",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":149,
+    "idea":"dieselpunk with riveted steel and gunpowder cannons",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":150,
+    "idea":"Abstract Golem Creatures",
+    "categories":[""],
+    "quality":"0"
+  }
+]
+
+    CreateForceDiagram2(GetForceData(rawIdeas));
+}
 
 Template.ForceV.rendered = function() {
 
@@ -786,7 +1702,7 @@ Template.ForceV.rendered = function() {
   var maxDistance = 250;
 
   //size of the svg
-  var width = 500;
+  var width = 700;
   var height = 800;
 
   //makes the svg element
@@ -803,12 +1719,9 @@ Template.ForceV.rendered = function() {
 
     var newData = formatData(rawIdeas)
 
-    //generateIdeaData(); 
-
-    // incomingIdeaData = parseGraph("bb5MupdMxKKk6qgkN");
-
     CreateForceDiagram(GetForceData(newData), svg);
   })
+
 }
 
 function GetForceData(ideaData)
@@ -1768,6 +2681,211 @@ function CreateForceDiagram(forceData, svg)
     })
     .attr("dy", -10)
     .attr("dx", -10);
+
+  });
+}
+
+function CreateForceDiagram2(forceData)
+{
+
+  // global intensity of attraction
+  var charge = -200;
+  // link distance factor used to determine line length;
+  var distanceFactor = 140;
+  var maxDistance = 250;
+
+  //size of the svg
+  var width = 700;
+  var height = 800;
+
+  //makes the svg element
+  var svg = d3.select("#svgdiv3")
+    .attr("width", width)
+    .attr("height", height)
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+
+  //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
+    
+  //ordinal scale in order to color the nodes
+  var colors = d3.scale.category20();
+
+
+
+  //variables for maps and arrays for the nodes and edges of the diagram
+  var indexByName = d3.map(),
+    nameByIndex = d3.map(),
+    nodes = [],
+    edges = [],
+    sizeMax = 0,
+    sizeMin = 0,
+    strengthMax = 0,
+    strengthMin = 0,
+    n = 0;
+
+  //find min and max of the sizes in order to scale them to needed size
+  forceData.nodes.forEach(function(d) 
+  {
+    if(parseInt(d.size) > sizeMax) sizeMax = parseInt(d.size);
+    if(parseInt(d.size) < sizeMin) sizeMin = parseInt(d.size);
+  });
+
+  //scales the sizes to between 10px and 30px
+  var size_scale = d3.scale.linear()
+    .domain([sizeMin, sizeMax])
+    .range([20, 30]);
+
+  //find min and max of the sizes in order to scale them to needed size
+  forceData.edges.forEach(function(d) 
+  {
+    if(parseFloat(d.strength) > strengthMax) strengthMax = parseFloat(d.strength);
+    if(parseFloat(d.strength) < strengthMin) strengthMin = parseFloat(d.strength);
+  });
+
+  //scales the sizes to between 10px and 30px
+  var strength_scale = d3.scale.linear()
+    .domain([strengthMin, strengthMax])
+    .range([1, 25]);
+
+  //goes through all of the data and makes sure that it is mapped in the maps
+  //also puts the source_idea_label and size into the nodes array
+  forceData.nodes.forEach(function(d) 
+  {
+    if (!indexByName.has(d.source_idea_id)) 
+    {
+      nameByIndex.set(n, d.source_idea_id);
+      nodes.push({name: d.source_idea_id, size: size_scale(parseInt(d.size)), text: d.source_idea_label});
+      indexByName.set(d.source_idea_id, n);
+      n++;
+          }
+  });
+
+  //loops through the data array and looks up all the edges and puts them into the edges array
+  for(var x = 0; x < forceData.edges.length; x++) 
+  {
+    var sourceNode = parseInt(indexByName.get(forceData.edges[x].source_idea_id));
+        var targetNode = parseInt(indexByName.get(forceData.edges[x].target_idea_id));
+        var linkStrength = parseInt(strength_scale(forceData.edges[x].strength)); 
+
+        edges.push({source: sourceNode, target: targetNode, strength: linkStrength});
+  }
+
+  //creates the dataset object that contains the arrays of nodes and edges
+  var dataset = { nodes: nodes, edges: edges}; 
+
+  //this sets up the force layout - it needs where the nodes and links are and the size of the space, as well as optional parameters like how long you want the distance between them to be and how much you want the nodes to repel each other
+  var force = d3.layout.force()
+    .nodes(dataset.nodes)
+    .links(dataset.edges)
+    .size([width-90, height-90])
+    //.linkDistance(100)
+    .linkDistance(function(d) 
+    {
+      return 50-d.strength;
+    })
+    .charge(charge)
+    .start();
+
+  //making the svg lines that connect the nodes
+  var edges = svg.selectAll(".link")
+    .data(dataset.edges)
+    .enter()
+    .append("line")
+    .attr("class", "link")
+    .style("stroke", "grey")
+    .style("opacity", function(d) 
+    {
+      return d.strength/15;
+    })
+      .style("stroke-width", function(d) 
+    {
+      return   (1/10)*(Math.round(Math.sqrt(d.strength)));
+    });
+
+   
+  var colors = d3.scale.linear()
+          .domain([0,10])
+          .range(["#edf8b1","#7fcdbb","#2c7fb8"]);
+
+  //making the svg text that are the nodes
+  //choosing colors from the ordinal scale for the text
+  var nods = svg.selectAll(".node")
+    .data(dataset.nodes)
+    .enter()
+    .append("g")
+  
+  var nodes = nods.append("circle")
+                .attr("class", "node")
+                .attr("r", function(d) 
+                { 
+                  return d.size/3; 
+                })
+                .style("fill", function(d, i) 
+                {
+                  //return colors(i);
+                  //return "green";
+                  //var ind = (d.source_idea_id)-1;
+                  //var cat = incomingIdeaData.ind.categories[0]
+                  //return ordColor(cat);
+                  return colors(d.size);
+                })
+                .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
+
+  /*var tex = nods.append("text")
+    .text(function(d) { 
+      return d.text;})
+    .attr("fill", "black")
+    .attr("font-size", "20px");*/
+
+  nodes.append("title")
+    .text(function(d) { return d.text; });
+
+    
+
+  nodes.on("mouseover", function() {d3.select(this).style("stroke","orange").style("stroke-width",1);});
+  nodes.on("mouseout", function() {d3.select(this).style("stroke","none");});
+  //this tells the visualization what to do when time passes
+  //it updates where the nodes and edges should be
+  force.on("tick", function() 
+  {
+    edges.attr("x1", function(d) 
+    { 
+      return d.source.x; 
+    })
+        .attr("y1", function(d) 
+    { 
+          return d.source.y; 
+    })
+        .attr("x2", function(d) 
+    { 
+          return d.target.x; 
+        })
+        .attr("y2", function(d) 
+    { 
+          return d.target.y; 
+        });
+
+    nodes.attr("cx", function(d) 
+    {
+      return d.x; 
+    })
+    .attr("cy", function(d) 
+    { 
+      return d.y; 
+    });
+
+    /*tex.attr("x", function(d) 
+    {
+      return d.x; 
+    })
+    .attr("y", function(d) 
+    { 
+      return d.y; 
+    })
+    .attr("dy", -10)
+    .attr("dx", -10);*/
 
   });
 }
