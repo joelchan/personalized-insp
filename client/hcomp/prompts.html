@@ -221,12 +221,11 @@
                 <thead>
                   <tr>
                     <th>UserName</th>
-                    <th>Assigned</th>
                     <th>Started Tutorial</th>
                     <th>Started Fluency</th>
                     <th>Finished Fluency</th>
+                    <th>Finished Tutorial</th>
                     <th>Started Ideation</th>
-                    <th>Finished Ideation</th>
                     <th>Exited Early</th>
                   </tr>
                 </thead>
@@ -260,12 +259,29 @@
 <template name="CondParticipant">
   <tr id="part-{{_id}}" class="{{ status }}">
     <td>{{ partUserName }}</td>
-    <td>Hello</td> <!--  --> 
-    <td>Hello</td> <!--  -->
-    <td>Hello</td> <!--  -->
-    <td>Hello</td> <!--  -->
-    <td>Hello</td> <!--  -->
-    <td>Hello</td> <!--  -->
-    <td>{{#if exitedEarly}} <span class="glyphicon glyphicon-remove"></span>{{/if}}</td> <!--  -->
+    <td>{{#if tutorialStart}} 
+      <span class="glyphicon glyphicon-ok"></span>
+      {{/if}}
+    </td>
+    <td>{{#if fluencyStart}} 
+      <span class="glyphicon glyphicon-ok"></span>
+      {{/if}}
+    </td>
+    <td>{{#if fluencyEnd}} 
+      <span class="glyphicon glyphicon-ok"></span>
+      {{/if}}
+    </td>
+    <td>{{#if tutorialEnd}} 
+      <span class="glyphicon glyphicon-ok"></span>
+      {{/if}}
+    </td>
+    <td>{{#if ideationStart}} 
+      <span class="glyphicon glyphicon-ok"></span>
+      {{/if}}
+    </td>
+    <td>{{#if exitEarly}} 
+      <span class="glyphicon glyphicon-remove"></span>
+      {{/if}}
+    </td>
   </tr>
 </template>

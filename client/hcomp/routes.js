@@ -237,6 +237,7 @@ Router.map(function () {
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
           var exp = Experiments.findOne({_id: this.params.expID});
+          Session.set("currentExp",exp);
           if (exp) {
             logger.trace("found experiment with id: " + this.params.expID);
             var pID = exp.promptID;

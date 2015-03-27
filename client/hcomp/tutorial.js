@@ -411,7 +411,7 @@ Template.ControlTutorialFlow.events({
         $("#control-tutorial-pleaseWait").removeClass("control-tutorial-background");
         $("#ideator-directions-control").css({border: "none"});
         // Mark the Particiapant as ready to begin the study
-        ExperimentManager.logParticipantReady(Session.get("currentParticipant"));
+        // ExperimentManager.logParticipantReady(Session.get("currentParticipant"));
         EventLogger.logTutorialStepComplete(7,tutorialLengthControl);
         EventLogger.logTutorialComplete();
     },
@@ -474,6 +474,7 @@ Template.TutorialTreatment.rendered = function() {
         Router.go(route, {'promptID': promptID, 'partID': partID});
       },
     });    
+    EventLogger.logTutorialStarted();
     initializeTutorialTimer();
 }
 //Template.TutorialTreatment.events({
@@ -889,7 +890,7 @@ Template.TreatmentTutorialFlow.events({
             "z-index": 20
         });
         // Mark the Participant as ready to begin
-        ExperimentManager.logParticipantReady(Session.get("currentParticipant"));  
+        // ExperimentManager.logParticipantReady(Session.get("currentParticipant"));  
         EventLogger.logTutorialStepComplete(10,tutorialLengthTreatment);
         EventLogger.logTutorialComplete();
     },

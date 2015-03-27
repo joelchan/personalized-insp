@@ -77,7 +77,8 @@ Template.CrowdExperiment.helpers({
     return this.url;
   },
   conditions: function() {
-    return Conditions.find({expID: this._id});
+    return Conditions.find({expID: this._id},
+      {sort: {description: 1}});
   },
   partNumber: function() {
     return this.conditions[0].partNum;
@@ -141,7 +142,8 @@ Template.CrowdExperimentCondition.helpers({
     return Math.round(progress);
   },
   assignedParticipants: function() {
-    return Participants.find({conditionID: this._id});
+    return Participants.find({conditionID: this._id},
+      {sort: {exitedEarly: 1, fluencyStarted: -1, fluencyFinished: -1, isReady: -1}});
   },
 });
 
@@ -157,18 +159,33 @@ Template.CondParticipant.helpers({
     return this.userName;
   },
   status: function() {
-    if (Events.findOne({participantID: this._id, description: "User exited study early"})) {
+    if (this.exitedEarly) {
       return "danger";
+    } else if (this.finishedFluency) {
+      return "warning";
+    } else if (this.isReady) {
+      return "success";
     } else {
       return "";
     }
   },
-  exitedEarly: function() {
-    if (Events.findOne({participantID: this._id, description: "User exited study early"})) {
-      return true;
-    } else {
-      return false;
-    }
+  tutorialStart: function() {
+    return this.tutorialStarted;
+  },
+  fluencyStart: function() {
+    return this.fluencyStarted;
+  },
+  fluencyEnd: function() {
+    return this.fluencyFinished;
+  },
+  tutorialEnd: function() {
+    return this.isReady;
+  },
+  ideationStart: function() {
+    return this.hasStarted;
+  },
+  exitEarly: function() {
+    return this.exitedEarly;
   }
 });
 
