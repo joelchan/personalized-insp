@@ -1670,64 +1670,45 @@ function CreateForceDiagram(forceData)
       return   (1/10)*(Math.round(Math.sqrt(d.strength)));
     });
 
-        /*
-    colorCategories = [""]
-
-    var color = d3.scale.category10();
-
-    var ordColor = d3.scale.ordinal();
-
    
-    ordColor.domain([ "Health and Wellbeing", 
-            "Skillbuilding", 
-            "Emotional support", 
-            "Workflow Improvement",
-          "Family/friends support",
-          "Gamification",
-            "Logging and Performance",
-          "Data/Job tasks",
-          "Communication",
-          "Community/ Support" 
-          ]);
-
-  ordColor.range(["#3182bd", "#6baed6"]);
-
-  */
   var colors = d3.scale.linear()
           .domain([0,10,100])
           .range(["#edf8b1","#7fcdbb","#2c7fb8"]);
 
   //making the svg text that are the nodes
   //choosing colors from the ordinal scale for the text
-  var nodes = svg.selectAll(".node")
+  var nods = svg.selectAll(".node")
     .data(dataset.nodes)
     .enter()
-    .append("circle")
-    .attr("class", "node")
-    .attr("r", function(d) 
-    { 
-      return d.size/3; 
-    })
-    .style("fill", function(d, i) 
-    {
-      //return colors(i);
-      //return "green";
-      //var ind = (d.source_idea_id)-1;
-      //var cat = incomingIdeaData.ind.categories[0]
-      //return ordColor(cat);
-      return colors(d.size);
-    })
-    .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
+    .append("g")
+  
+  var nodes = nods.append("circle")
+                .attr("class", "node")
+                .attr("r", function(d) 
+                { 
+                  return d.size/3; 
+                })
+                .style("fill", function(d, i) 
+                {
+                  //return colors(i);
+                  //return "green";
+                  //var ind = (d.source_idea_id)-1;
+                  //var cat = incomingIdeaData.ind.categories[0]
+                  //return ordColor(cat);
+                  return colors(d.size);
+                })
+                .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
-  nodes.append("title")
-    .text(function(d) { return d.text; });
-
-  nodes.append("text")
-    .attr("class","label")
+  var tex = nods.append("text")
     .text(function(d) { 
       return d.text;})
     .attr("fill", "black")
     .attr("font-size", "20px");
+
+  nodes.append("title")
+    .text(function(d) { return d.text; });
+
+    
 
   nodes.on("mouseover", function() {d3.select(this).style("stroke","orange").style("stroke-width",1);});
   nodes.on("mouseout", function() {d3.select(this).style("stroke","none");});
@@ -1760,5 +1741,17 @@ function CreateForceDiagram(forceData)
     { 
       return d.y; 
     });
+
+    tex.attr("x", function(d) 
+    {
+      return d.x; 
+    })
+    .attr("y", function(d) 
+    { 
+      return d.y; 
+    })
+    .attr("dy", -10)
+    .attr("dx", -10);
+
   });
 }
