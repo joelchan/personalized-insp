@@ -779,16 +779,36 @@ function formatData(rawIdeas) {
 
 Template.ForceV.rendered = function() {
 
-  var rawIdeas = getFilteredIdeas("Ideas Filter");
+  // global intensity of attraction
+  var charge = -200;
+  // link distance factor used to determine line length;
+  var distanceFactor = 140;
+  var maxDistance = 250;
 
-  var newData = formatData(rawIdeas)
+  //size of the svg
+  var width = 500;
+  var height = 800;
 
-  //generateIdeaData(); 
+  //makes the svg element
+  var svg = d3.select("#svgdiv2")
+    .attr("width", width)
+    .attr("height", height)
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
 
-  // incomingIdeaData = parseGraph("bb5MupdMxKKk6qgkN");
+  Deps.autorun(function() {  
 
-  CreateForceDiagram(GetForceData(newData));
+    var rawIdeas = getFilteredIdeas("Ideas Filter");
 
+    var newData = formatData(rawIdeas)
+
+    //generateIdeaData(); 
+
+    // incomingIdeaData = parseGraph("bb5MupdMxKKk6qgkN");
+
+    CreateForceDiagram(GetForceData(newData), svg);
+  })
 }
 
 function GetForceData(ideaData)
@@ -1555,8 +1575,10 @@ function trimForceData(forceData, cutOffValue)
 * Visualization - Force Directed Graph Logic
 ********************************************************************/
 
-function CreateForceDiagram(forceData)
+function CreateForceDiagram(forceData, svg)
 {
+  svg.selectAll("*")
+   .remove();
   // global intensity of attraction
   var charge = -200;
   // link distance factor used to determine line length;
@@ -1565,20 +1587,14 @@ function CreateForceDiagram(forceData)
 
   //size of the svg
   var width = 500;
-  var height = 1000;
+  var height = 800;
 
   //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
     
   //ordinal scale in order to color the nodes
   var colors = d3.scale.category20();
 
-  //makes the svg element
-  var svg = d3.select("#svgdiv2")
-    .attr("width", width)
-    .attr("height", height)
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+
 
   //variables for maps and arrays for the nodes and edges of the diagram
   var indexByName = d3.map(),
@@ -1645,7 +1661,7 @@ function CreateForceDiagram(forceData)
   var force = d3.layout.force()
     .nodes(dataset.nodes)
     .links(dataset.edges)
-    .size([width, height])
+    .size([width-90, height-90])
     //.linkDistance(100)
     .linkDistance(function(d) 
     {
@@ -1672,7 +1688,7 @@ function CreateForceDiagram(forceData)
 
    
   var colors = d3.scale.linear()
-          .domain([0,10,100])
+          .domain([0,10])
           .range(["#edf8b1","#7fcdbb","#2c7fb8"]);
 
   //making the svg text that are the nodes
