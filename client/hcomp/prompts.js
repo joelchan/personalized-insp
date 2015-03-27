@@ -170,28 +170,82 @@ Template.CondParticipant.helpers({
     }
   },
   tutorialStart: function() {
-    return this.tutorialStarted;
+    if (this.tutorialStarted) {
+      var msg = "User started a tutorial";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
   },
   fluencyStart: function() {
-    return this.fluencyStarted;
+    if (this.fluencyStarted) {
+      var msg = "User started a fluency measure task";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
   },
   fluencyEnd: function() {
-    return this.fluencyFinished;
+    // return this.fluencyFinished;
+    if (this.fluencyFinished) {
+      var msg = "User finished fluency measure task";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
   },
   tutorialEnd: function() {
-    return this.isReady;
+    // return this.isReady;
+    if (this.isReady) {
+      var msg = "User finished a tutorial";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
   },
   ideationStart: function() {
-    return this.hasStarted;
+    // return this.hasStarted;
+    if (this.hasStarted) {
+      var msg = "User began ideation";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
   },
   surveyStart: function() {
-    return this.surveyStarted;
+    // return this.surveyStarted;
+    if (this.surveyStarted) {
+      var msg = "User began survey";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
   },
   finishedStudy: function() {
-    return this.hasFinished;
+    // return this.hasFinished;
+    if (this.hasFinished) {
+      var msg = "User submitted survey";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
   },
   exitEarly: function() {
-    return this.exitedEarly;
+    // return this.exitedEarly;
+    if (this.exitedEarly) {
+      var msg = "User exited study early";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
   }
 });
 

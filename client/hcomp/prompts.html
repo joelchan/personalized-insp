@@ -261,7 +261,15 @@
 <template name="CondParticipant">
   <tr id="part-{{_id}}" class="{{ status }}">
     <td>{{ partUserName }}</td>
-    <td>{{#if tutorialStart}} 
+    <td>{{ tutorialStart }}</td>
+    <td>{{ fluencyStart }}</td>
+    <td>{{ fluencyEnd }}</td>
+    <td>{{ tutorialEnd }}</td>
+    <td>{{ ideationStart }}</td>
+    <td>{{ surveyStart }}</td>
+    <td>{{ finishedStudy }}</td>
+    <td>{{ exitEarly }}</td>
+    <!-- <td>{{#if tutorialStart}} 
       <span class="glyphicon glyphicon-ok"></span>
       {{/if}}
     </td>
@@ -292,6 +300,6 @@
     <td>{{#if exitEarly}} 
       <span class="glyphicon glyphicon-remove"></span>
       {{/if}}
-    </td>
+    </td> -->
   </tr>
 </template>
