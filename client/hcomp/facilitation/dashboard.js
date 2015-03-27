@@ -1646,11 +1646,11 @@ function CreateForceDiagram(forceData)
     .nodes(dataset.nodes)
     .links(dataset.edges)
     .size([width, height])
-    .linkDistance(100)
-    //.linkDistance(function(d) 
-    //{
-    //  return maxDistance - (Math.round(Math.sqrt(d.strength)) * distanceFactor);
-    //})
+    //.linkDistance(100)
+    .linkDistance(function(d) 
+    {
+      return 50-d.strength;
+    })
     .charge(charge)
     .start();
 
