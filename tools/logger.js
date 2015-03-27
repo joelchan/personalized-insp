@@ -208,6 +208,11 @@ EventLogger = (function () {
       var msg = "User began survey";
       var type = EventTypeManager.get(msg);
       this.log(type);
+      var part = Session.get("currentParticipant");
+      if (part) {
+        Participants.update({_id: part._id},
+        {$set: {surveyStarted: true}});  
+      }
     },
     logSurveyComplete: function () {
       var msg = "User completed survey";

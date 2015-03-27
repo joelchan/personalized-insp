@@ -184,6 +184,12 @@ Template.CondParticipant.helpers({
   ideationStart: function() {
     return this.hasStarted;
   },
+  surveyStart: function() {
+    return this.surveyStarted;
+  },
+  finishedStudy: function() {
+    return this.hasFinished;
+  },
   exitEarly: function() {
     return this.exitedEarly;
   }

@@ -122,6 +122,8 @@ Participant = function(expID, userID, condID, groupID) {
 
     this.exitedEarly = false;
 
+    this.surveyStarted = false;
+
     //Participants have not finished by default
     this.hasFinished = false;
 };

@@ -217,7 +217,7 @@
           <a class="show-hide" data-toggle="collapse" data-parent="#cond-{{_id}}-partDetails-container" href="#cond-{{_id}}-partDetails-content"> (Show/Hide details)</a><br/>
           <div id="cond-{{_id}}-partDetails-container">
             <div id="cond-{{_id}}-partDetails-content" class="collapse">
-              <table class="table">
+              <table class="table table-condensed">
                 <thead>
                   <tr>
                     <th>UserName</th>
@@ -226,6 +226,8 @@
                     <th>Finished Fluency</th>
                     <th>Finished Tutorial</th>
                     <th>Started Ideation</th>
+                    <th>Started Survey</th>
+                    <th>Finished Study</th>
                     <th>Exited Early</th>
                   </tr>
                 </thead>
@@ -276,6 +278,14 @@
       {{/if}}
     </td>
     <td>{{#if ideationStart}} 
+      <span class="glyphicon glyphicon-ok"></span>
+      {{/if}}
+    </td>
+    <td>{{#if surveyStart}} 
+      <span class="glyphicon glyphicon-ok"></span>
+      {{/if}}
+    </td>
+    <td>{{#if finishedStudy}} 
       <span class="glyphicon glyphicon-ok"></span>
       {{/if}}
     </td>
