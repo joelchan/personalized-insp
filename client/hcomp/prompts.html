@@ -260,12 +260,12 @@
 <template name="CondParticipant">
   <tr id="part-{{_id}}" class="{{ status }}">
     <td>{{ partUserName }}</td>
-    <td>Hello</td>
-    <td>Hello</td>
-    <td>Hello</td>
-    <td>Hello</td>
-    <td>Hello</td>
-    <td>Hello</td>
-    <td>Hello</td>
+    <td>Hello</td> <!--  --> 
+    <td>Hello</td> <!--  -->
+    <td>Hello</td> <!--  -->
+    <td>Hello</td> <!--  -->
+    <td>Hello</td> <!--  -->
+    <td>Hello</td> <!--  -->
+    <td>{{#if exitedEarly}} <span class="glyphicon glyphicon-remove"></span>{{/if}}</td> <!--  -->
   </tr>
 </template>

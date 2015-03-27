@@ -162,6 +162,13 @@ Template.CondParticipant.helpers({
     } else {
       return "";
     }
+  },
+  exitedEarly: function() {
+    if (Events.findOne({participantID: this._id, description: "User exited study early"})) {
+      return true;
+    } else {
+      return false;
+    }
   }
 });
 
