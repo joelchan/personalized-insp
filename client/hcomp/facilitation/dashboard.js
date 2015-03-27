@@ -566,7 +566,9 @@ priorityToNumIdeators = function(priorityNum) {
 Word Bubble Visualization
 *************************/
 
-function drawBubbles() {
+function drawBubbles(cloud, svg) {
+
+svg.selectAll("*").remove();
 
 var margin = {
     top: 120,
@@ -586,7 +588,7 @@ var n = 56,
 
 
 //input the cloudItems, map each item to an object with
-var cloud =  getCloudFromIdeas();
+
 
 var nodes = cloud.map(function (item) {
     var i = Math.floor(Math.random() * m); //color
@@ -614,12 +616,6 @@ var force = d3.layout.force()
     .charge(0)
     .on("tick", tick)
     .start();
-
-var svg = d3.select("#svgdiv").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var rem = svg.selectAll("circle")
     .data(nodes, function(d) {return d})
@@ -718,6 +714,23 @@ function collide(alpha) {
 
 
 Template.HcompOtherViz.rendered = function() {
+  //look up Tracker
+  var margin = {
+    top: 120,
+    right: 0,
+    bottom: 0,
+    left: 0
+    },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+  
+  var svg = d3.select("#svgdiv").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
   Deps.autorun(function() {
     //get the new dataset 
     //var ideas = getFilteredIdeas("Ideas Filter");
@@ -729,7 +742,10 @@ Template.HcompOtherViz.rendered = function() {
     //transition
 
     //exit....remove()
-    drawBubbles();
+    
+    var cloud =  getCloudFromIdeas();
+    console.log("svg is:" + svg);
+    drawBubbles(cloud, svg);
   })
   
 }
@@ -757,6 +773,8 @@ function formatData(rawIdeas) {
 
   return newData;
 }
+
+
 
 Template.ForceV.rendered = function() {
 
