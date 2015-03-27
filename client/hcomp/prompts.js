@@ -161,10 +161,10 @@ Template.CondParticipant.helpers({
   status: function() {
     if (this.exitedEarly) {
       return "danger";
-    } else if (this.finishedFluency) {
-      return "warning";
     } else if (this.isReady) {
       return "success";
+    } else if (this.fluencyFinished) {
+      return "warning";
     } else {
       return "";
     }
