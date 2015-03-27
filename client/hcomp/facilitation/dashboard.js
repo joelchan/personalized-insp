@@ -568,7 +568,8 @@ Word Bubble Visualization
 
 function drawBubbles(cloud, svg) {
 
-svg.selectAll("*").remove();
+svg.selectAll("*")
+    .remove();
 
 var margin = {
     top: 120,
@@ -631,7 +632,7 @@ var circle = svg.selectAll("circle")
                                              else {return "red";};})
     .call(force.drag);
 
-    circle.remove()
+    //circle.remove()
 
 
 console.log("rem:")
@@ -724,7 +725,7 @@ Template.HcompOtherViz.rendered = function() {
     width = 460 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
-  
+
   var svg = d3.select("#svgdiv").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -1563,8 +1564,8 @@ function CreateForceDiagram(forceData)
   var maxDistance = 250;
 
   //size of the svg
-  var width = 800;
-  var height = 600;
+  var width = 500;
+  var height = 1000;
 
   //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
     
@@ -1600,7 +1601,7 @@ function CreateForceDiagram(forceData)
   //scales the sizes to between 10px and 30px
   var size_scale = d3.scale.linear()
     .domain([sizeMin, sizeMax])
-    .range([1, 50]);
+    .range([20, 30]);
 
   //find min and max of the sizes in order to scale them to needed size
   forceData.edges.forEach(function(d) 
