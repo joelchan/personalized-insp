@@ -7,47 +7,16 @@ from sets import Set
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 from os import mkdir, listdir, path
+import sys
 import file_manager
+from db_params import *
+import logging
 
 
-########## MongoHQ databases ##############
-# Need to modify this so that the user and password are stored separately
-ideagenstest = {'url': "kahana.mongohq.com",
-                'port': 10056,
-                'dbName': 'IdeaGensTest',
-                'user': 'sandbox',
-                'pswd': 'protolab1'
-                }
-# user and paswd are incorrect (do not want to commit secure info
-ideagens = {'url': "kahana.mongohq.com",
-            'port': 10075,
-            'dbName': 'IdeaGens',
-            'user': 'experimenter',
-            'pswd': '1#dJ3VYSf8Sn5iE9'
-            }
+logging.basicConfig(format='%(levelname)s:%(message)s',
+                    level=logging.INFO)
 
-chi1 = {'url': "kahana.mongohq.com",
-        'port': 10010,
-        'dbName': 'CHI1',
-        'user': 'proto1',
-        'pswd': 'lTwI9iiTm7'
-        }
-
-fac_exp = {'url': "ds043981.mongolab.com",
-        'port': 43981,
-        'dbName': 'joelcprotolab',
-        'user': 'joelc',
-        'pswd': 'lnC00K=beta{5}'
-        }
-
-# Info for connecting to a local instance of meteor's mongo.
-# Meteor must be running to connect
-local_meteor = {'url': "localhost",
-                'port': 3001,
-                'dbName': 'meteor',
-                'user': '',
-                'pswd': '',
-}
+logger = logging.getLogger("mongodb utility")
 
 
 def get_db(db=None):
@@ -133,6 +102,9 @@ class Data_Utility:
     Utility functions for mass database operations
 
     """
+    # Reference to all db paramters
+    db_params = ALL_DBs
+
     def __init__(self, data_path='data', db_params=ideagens):
         """
         Constructor that sets the data root directory of the utility
@@ -144,6 +116,14 @@ class Data_Utility:
 
         self.db_params = db_params
         self.db = get_db(self.db_params)
+
+    def set_path(self, data_path='data'):
+        """
+        Set the path for read/write of data from db
+
+        """
+        my_path = path.abspath(data_path)
+        self.path = my_path
 
     def dump_db(self, data_dir=None):
         # Ensure data dump directory exists
@@ -166,12 +146,12 @@ class Data_Utility:
         # col_names = [file.split('.json')[0] for file in files]
         existing_cols = self.db.collection_names()
         for file_name in files:
-            file_path = path.join(self.dir_name, file_name)
+            file_path = path.join(self.path, file_name)
             col = file_name.split('.json')[0]
             print "writing to data to collection " + col + \
                 " in db: " + self.db_params['dbName']
             if col != 'users':
-                data = self.decode_json_file(file_path)
+                data = file_manager.decode_json_file(file_path)
                 if col not in existing_cols:
                     print "creating collection: " + col
                     self.db.create_collection(col)
@@ -212,6 +192,28 @@ class Data_Utility:
                 filtered_data.append(rowDict)
             return filtered_data
 
+    def join_data(self, base_data, join_data, base_field, join_fields):
+        """
+        Perform a similar operation to a sql join for 2 sets of data.
+        
+        @Params
+        base_data - list of fields to extend with joined data
+        join_data - dictionary of data, indexed by base_field value
+        base_field - value to use as key in lookup in join_data 
+            dictionary
+        join_fields - list of field data to replace the base_field id
+
+        @Return
+        The modified base_data list of data
+
+        """
+        for data in base_data:
+          extra = join_data[data[base_field]]
+          for field in join_fields:
+            data[field] = extra[field]
+        
+        return base_data
+  
     def get_ideas(self):
         """
         Get a list of all the ideas
@@ -236,9 +238,65 @@ class Data_Utility:
         """
         fields = ['name', ]
         return self.get_data("myUsers", fields)
+    
+    @staticmethod
+    def get_db(db_name):
+        """
+        Allows for db retrieval by name
+
+        """
+        try:
+            return ALL_DBs[db_name]
+        except KeyError:
+            logger.warning("Could not find db with name: " + db_name);
+
+
+def parse_args(args):
+    """
+    Parse arguments passed to the script
+    
+    @params
+      first arg is a database name
+      Each pair of args following is a path and an operation:
+        dump - raw dump all the data in the db to the path given
+        restore - restore data to the db from the files in the path
+        clear - empty the db (ignores the path)
+    
+    """         
+    db_params = Data_Utility.get_db(args[0])
+    logger.debug(db_params)
+    db = None
+    for i in range(len(args[1:])/2):
+        data_path = path.abspath(args[1+2*i])
+        logger.info("db path: " + data_path)
+        operation = args[2+2*i]
+        logger.debug(operation)
+        if db is None:
+            db = Data_Utility(data_path, db_params)
+        else:
+            db.set_path(data_path)
+
+        if operation == 'clear':
+            logger.info("clearing db")
+            db.clear_db()
+        elif operation == 'dump':
+            logger.info("dumping db data to file")
+            db.dump_db()
+        elif operation == 'restore':
+            logger.info("restoring data to db from file")
+            db.restore_db()
 
 
 if __name__ == '__main__':
-    # db = get_db(chi1)
-    util = Data_Utility('data/facPilot', ideagens)
-    util.dump_db()
+    # get_amd_data(sys.argv[1:])
+    if len(sys.argv[1:]) >= 1:
+      # Perform desired db operations based on command line arguments
+      parse_args(sys.argv[1:])
+    else:
+      # Rudimentary script to dump to db as we previously were doing
+      util = Data_Utility('data/facPilot', ALL_DBs['ideagens'])
+      # util.restore_db()
+      # util.clear_db()
+      # util.dumo_db()
+
+
