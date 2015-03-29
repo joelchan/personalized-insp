@@ -3,13 +3,6 @@
 # Author: Steven Dang stevencdang.com
 
 ########## MongoHQ databases ##############
-ALL_DBs = {'ideagens': ideagens,
-             'ideagenstest': ideagenstest,
-             'chi1': chi1,
-             'fac_exp': fac_exp,
-             'local': local_meteor
-          }
-
 # Need to modify this so that the user and password are stored separately
 ideagenstest = {'url': "kahana.mongohq.com",
                 'port': 10056,
@@ -47,3 +40,11 @@ local_meteor = {'url': "localhost",
                 'user': '',
                 'pswd': '',
 }
+
+ALL_DBs = {'ideagens': ideagens,
+             'ideagenstest': ideagenstest,
+             'chi1': chi1,
+             'fac_exp': fac_exp,
+             'local': local_meteor
+          }
+

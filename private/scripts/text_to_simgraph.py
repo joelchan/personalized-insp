@@ -30,7 +30,7 @@ if __name__  == '__main__':
 
     # read data from mongoDB
     # Get Ideas
-    db = mongohq.Data_Utility('data', mongohq.fac_exp)
+    db = mongohq.Data_Utility('data', mongohq.ideagens)
     ideas = db.get_data('ideas')
 
     #### tokenize ####
