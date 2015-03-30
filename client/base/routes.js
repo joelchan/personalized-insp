@@ -8,56 +8,9 @@ Logger.setLevel('Client:Routes', 'info');
 
 //Maps routes to templates
 Router.map(function () {
-  this.route("ChiHome", {
-      path: '/Chi',
-      template: 'LoginPage',
-  });
   this.route("Home", {
       path: '/',
       template: 'HcompLoginPage',
-
-  });
-  this.route('PromptPage', {
-      path: 'Brainstorms/',
-      template: 'PromptPage'
-  });
-  this.route('GroupPage', {
-      path: 'Groups/',
-      template: 'GroupPage'
-  });
-  this.route('RoleSelectPage', {
-      path: 'select/',
-      template: 'RoleSelectPage'
-  });
-  this.route('BeginBrainstormPage', {
-    path: 'BeginBrainstorm/',
-    template: 'BeginBrainstormPage'
-  });
-  this.route('ExpAdminPage', {
-      path: 'ExpAdmin/',
-      template: 'ExpAdminPage'
-  });
-  this.route('Ideation', {
-  	path: 'Ideation/',
-  	template: 'IdeationPage',
-    waitOn: function() {
-      if (Session.get("currentUser")) {
-        return Meteor.subscribe('ideas', 
-          {userID: Session.get("currentUser")._id});
-      } else {
-        return Meteor.subscribe('ideas');
-      }
-    },
-    action: function(){
-      if(this.ready())
-        this.render();
-      else
-        this.render('loading');
-    },
-    onAfterAction: function() {
-      initRolePage();
-    }
-
   });
   this.route('CustomConsentPage', {
       //path: 'ConsentPage/:_id',
@@ -75,10 +28,6 @@ Router.map(function () {
     path: 'FinalizePage/:_id',
     template: 'FinalizePage'
   });
-  // this.route('SurveyPage', {
-  //   path: 'SurveyPage/:_id',
-  //   template: 'SurveyPage'
-  // });
   this.route('IdeationSurvey', {
     path: 'IdeationSurvey/',
     template: 'IdeationSurvey'
@@ -91,91 +40,9 @@ Router.map(function () {
     path: 'FacilitatorSurvey/',
     template: 'FacilitatorSurvey'
   });
-  this.route('Clustering', {
-    onRun: function(){
-      //Session.set("currentUser", MyUsers.findOne({_id: "syn"}));
-      //Session.set("currentFilter",
-        //Filters.findOne({user: MyUsers.findOne({_id: "syn"})}));
-    },
-    waitOn: function(){
-      var group = Session.get("currentGroup");
-      console.log(group['assignments']['Ideator']);
-      var ideatorIDs = getIDs(group['assignments']['Ideator'])
-      var synthIDs = getIDs(group['assignments']['Synthesizer'])
-      return [
-          Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
-          Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
-          Meteor.subscribe('notifications'), 
-          Meteor.subscribe('filters'), 
-          Meteor.subscribe('groups'),
-          ];
-    },
-
-    action: function(){
-      if(this.ready())
-        this.render();
-      else
-        this.render('loading');
-    }, 
-    onAfterAction: function() {
-      initRolePage();
-    }
-  });
-  this.route('Forest', {
-    path: 'Forest/:_id',
-    template: 'Forest',
-  });
-  this.route('Dashboard', {
-    path: 'Dashboard',
-    template: 'Dashboard',
-    onRun: function() {
-      //Session.set("currentUser", MyUsers.findOne({_id: "db"}));
-    },
-    waitOn: function() {
-      var group = Session.get("currentGroup");
-      console.log(group['assignments']['Ideator']);
-      console.log("************************************************");
-      var ideatorIDs = getIDs(group['assignments']['Ideator'])
-      var synthIDs = getIDs(group['assignments']['Synthesizer'])
-      return [
-          Meteor.subscribe('ideas', {userID: {$in: ideatorIDs}}),
-          Meteor.subscribe('clusters', {userID: {$in: synthIDs}}),
-          Meteor.subscribe('events'),
-          Meteor.subscribe('filters'), 
-          Meteor.subscribe('groups')
-      ];
-    }, 
-    onBeforeAction: function() {
-      var sessionPrompt = Session.get("currentPrompt");
-      if (sessionPrompt.length > 0) {
-	      Session.set("sessionLength", sessionPrompt.length);	
-      } else {
-	      Session.set("sessionLength", 30);
-      }
-      this.next();
-    },
-    action: function(){
-      if(this.ready())
-        this.render();
-      else
-        this.render('loading');
-    },
-    onAfterAction: function() {
-      initRolePage();
-    }
-  });
-  this.route('filterbox', {
-    waitOn: function(){
-      return Meteor.subscribe('ideasToProcess');
-    }
-  });
   this.route('NoParticipation', {
     path: 'participation/', 
     template: 'NoParticipationPage',
-  });
-  this.route('TestSummary', {
-    path: 'test', 
-    template: 'TestSummary',
   });
 });
 

@@ -10,20 +10,25 @@ Logger.setLevel('Client:Hcomp:Prompts', 'trace');
  * Return the list of all prompts
  * *****************************************************************/
 Template.CrowdPromptPage.helpers({
+});
+
+Template.PromptsTab.helpers({
   prompts: function() {
     return Prompts.find(
         {userIDs: Session.get("currentUser")._id}, 
         {sort: {time: -1}}
     );
   },
+});
 
+Template.ExperimentsTab.helpers({
   experiments: function() {
     //TODO: make experiments owned by a user
     return Experiments.find({},{sort: {creationTime: -1}}); 
   }
 });
 
-  Template.CrowdPromptPage.rendered = function() {
+Template.CrowdPromptPage.rendered = function() {
   window.scrollTo(0,0);
 }
 
@@ -81,6 +86,13 @@ Template.CrowdExperiment.helpers({
   },
   partNumber: function() {
     return this.conditions[0].partNum;
+  },
+  getData: function() {
+    logger.debug("Data context: " + JSON.stringify(this._id));
+    logger.debug("current user: " + JSON.stringify(Session.get("currentUser")));
+    var result = {'promptID': this._id, 'userID': Session.get("currentUser")._id};
+    logger.debug("Data object: " + JSON.stringify(result));
+    return result;
   },
 });
 
@@ -208,17 +220,8 @@ Template.CrowdBrainstorm.events({
 /********************************************************************
  * Template function returning a boolean if there is a logged in user
  * *****************************************************************/
-Template.CrowdPromptPage.events({
-    'click button.nextPage': function () {
-        //Go to next page
-    },
 
-    'click button.new-bs': function () {
-        //Create Modal for creating a new prompt 
-        //$('#newPromptModal').modal('toggle');
-        
-    },
-
+Template.PromptsTab.events({
     'click button.createPrompt': function () {
       var newQuestion = $("input#prompt-text").val();
       var newTitle = $("input#prompt-title").val();
@@ -241,7 +244,45 @@ Template.CrowdPromptPage.events({
       $("input#prompt-length").val(0);
       
     },
+    'click .dash-button': function () {
+      // Set the current prompt
+      var prompt = Prompts.findOne({'_id': this._id});
+      Session.set("currentPrompt", prompt);
+      var group = Groups.findOne({'_id': this.groupIDs[0]});
+      Session.set("currentGroup", group);
+      var user = Session.get("currentUser");
+      if (prompt) {
+        logger.trace("found current prompt with id: " + prompt._id);
+        Session.set("currentPrompt", prompt);
+        logger.debug("Prompt selected");
+        Router.go('HcompDashboard', 
+            {promptID: prompt._id, userID: user._id});
+      } else {
+        logger.error("couldn't find current prompt with id: " + 
+            prompt._id);
+      }
+    },
+    'click .review-button': function () {
+      // Set the current prompt
+      var prompt = Prompts.findOne({'_id': this._id});
+      Session.set("currentPrompt", prompt);
+      var group = Groups.findOne({'_id': this.groupIDs[0]});
+      Session.set("currentGroup", group);
+      var user = Session.get("currentUser");
+      if (prompt) {
+        logger.trace("found current prompt with id: " + prompt._id);
+        Session.set("currentPrompt", prompt);
+        logger.debug("Prompt selected");
+        Router.go('Visualization', {promptID: prompt._id, userID: user._id});
+      } else {
+        logger.error("couldn't find current prompt with id: " + 
+            prompt._id);
+      }
+    },
 
+});
+
+Template.ExperimentsTab.events({
     'click button.createExp': function () {
       logger.trace("clicked create exp button");
       
@@ -268,26 +309,6 @@ Template.CrowdPromptPage.events({
       $("input#num-parts").val("");
 
     },
-
-    'click .dash-button': function () {
-      // Set the current prompt
-      var prompt = Prompts.findOne({'_id': this._id});
-      Session.set("currentPrompt", prompt);
-      var group = Groups.findOne({'_id': this.groupIDs[0]});
-      Session.set("currentGroup", group);
-      var user = Session.get("currentUser");
-      if (prompt) {
-        logger.trace("found current prompt with id: " + prompt._id);
-        Session.set("currentPrompt", prompt);
-        logger.debug("Prompt selected");
-        Router.go('HcompDashboard', 
-            {promptID: prompt._id, userID: user._id});
-      } else {
-        logger.error("couldn't find current prompt with id: " + 
-            prompt._id);
-      }
-    },
-
     'click .exp-dash-button': function () {
       var exp = Experiments.findOne({_id: this._id});
       Session.set("currentExp", exp);
@@ -321,23 +342,11 @@ Template.CrowdPromptPage.events({
         MyUsers.update({_id: id}, {$set: {'route': routeName}});
       });
     },
+});
+Template.CrowdPromptPage.events({
 
-    'click .review-button': function () {
-      // Set the current prompt
-      var prompt = Prompts.findOne({'_id': this._id});
-      Session.set("currentPrompt", prompt);
-      var group = Groups.findOne({'_id': this.groupIDs[0]});
-      Session.set("currentGroup", group);
-      var user = Session.get("currentUser");
-      if (prompt) {
-        logger.trace("found current prompt with id: " + prompt._id);
-        Session.set("currentPrompt", prompt);
-        logger.debug("Prompt selected");
-        Router.go('Visualization', {promptID: prompt._id, userID: user._id});
-      } else {
-        logger.error("couldn't find current prompt with id: " + 
-            prompt._id);
-      }
-    },
+
+
+
 
 });

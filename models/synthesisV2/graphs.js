@@ -25,9 +25,15 @@ EDGE_TYPES = {
   'graph_link': ['sharedNodeID', 'userNodeID'],
 };
 
-Graph = function(promptID, groupID, userID) {
+Graph = function(promptID, groupID, userID, type) {
   /********************************************************************
   * Graph constructor
+  *
+  * @Params
+  *   promptID - The id of the prompt associated with this graph
+  *   groupID - The id of the group associated with this graph
+  *   userID - The id of the user associated with this graph (if at all)
+  *   type - A string specifying a type for the graph
   *
   * @return {object} Graph object 
   ********************************************************************/
@@ -38,8 +44,16 @@ Graph = function(promptID, groupID, userID) {
   } else {
     this.userID = null;
   }
+  if (type) {
+    this.type = type;
+  } else if(userID) {
+    this.type = "UserGraph";
+  } else {
+    this.type = "SharedGraph";
+  }
   this.nodeIDs = [];
   this.edgeIDs = [];
+
 
 };
 
