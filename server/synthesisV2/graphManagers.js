@@ -27,7 +27,7 @@ Meteor.startup(function() {
       logger.trace("Shared Graph: " + JSON.stringify(sharedGraph));
       if (!sharedGraph) {
         logger.info("No shared graph found.  Initializing new graph");
-        sharedGraph = graphManager.createGraph(prompt._id, groupID, '')
+        sharedGraph = GraphManager.createGraph(prompt._id, groupID, '')
       }
   
       logger.trace("appending ideas to shared graph with id: " + 
@@ -37,7 +37,7 @@ Meteor.startup(function() {
         observe({
           added: function(idea) {
             logger.debug("New Idea added. Adding matching node to graph");
-            graphManager.createIdeaNode(idea, sharedGraph);
+            GraphManager.createIdeaNode(idea, sharedGraph);
         }
       });
     },

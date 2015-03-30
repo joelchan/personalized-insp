@@ -3,7 +3,6 @@ MyCollections =
 {
     "ideas": Ideas,
     "prompts": Prompts,
-    "replayIdeas": ReplayIdeas,
     "myUsers": MyUsers,
     "roles": Roles,
     "groups": Groups,
@@ -11,7 +10,6 @@ MyCollections =
     'clusters': Clusters,
     'filters': Filters,
     'sorters':Sorters,
-    'notifications': Notifications,
     'experiments': Experiments,
     'exp-conditions': Conditions,
     'consents': Consents,

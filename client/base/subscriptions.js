@@ -11,8 +11,6 @@ Meteor.startup(function(){
   * Subscribe to models.js collections
   ************************************************************/
 
-  //Meteor.subscribe("ideas");
-  // Meteor.subscribe("replayIdeas");
   Meteor.subscribe("clusters");
   Meteor.subscribe("prompts");
   Meteor.subscribe("myUsers");
@@ -35,13 +33,8 @@ Meteor.startup(function(){
   /************************************************************
   * Subscribe to loggingModels.js collection
   ************************************************************/
-  //Meteor.subscribe("events");
   Meteor.subscribe("eventTypes");
   Meteor.subscribe("events");
-  /************************************************************
-  * Subscribe to notificationModels.js collection
-  ************************************************************/
-  Meteor.subscribe("notifications");
 
 });
 

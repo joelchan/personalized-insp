@@ -106,7 +106,7 @@ GraphManager = (function() {
         metadata['time'] = idea.time;
         metadata['vote'] = false;
         metadata['numVotes'] = 0;
-        return createGraphNode(graph._id, 'idea', metadata);
+        return this.createGraphNode(graph._id, 'idea', metadata);
       } else {
         logger.debug("Node already exists for this idea and graph");
         return result._id;
@@ -142,7 +142,7 @@ GraphManager = (function() {
       logger.trace("Num matching Ideas: " + ideas.count());
       if (ideas) {
         ideas.forEach(function(idea) {
-          createIdeaNode(idea, graph);
+          this.createIdeaNode(idea, graph);
         });
       }
       //Go through each theme node and attach ideas

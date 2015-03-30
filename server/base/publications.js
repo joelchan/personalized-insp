@@ -14,12 +14,6 @@ Meteor.startup(function(){
 		Meteor.publish("ideas", function(){
 			return Ideas.find();
 		});
-		Meteor.publish("replayIdeas", function(){
-			return ReplayIdeas.find();
-		});
-		Meteor.publish("ideasToProcess", function(){
-			return IdeasToProcess.find();
-		});
 		Meteor.publish("clusters", function(){
 			return Clusters.find();
 		});
@@ -77,8 +71,5 @@ Meteor.startup(function(){
 		/*****************************************************************
 		* Publish notificationModels.js collection
 		******************************************************************/
-		Meteor.publish("notifications", function(){
-			return Notifications.find();
-		});
 	}
 });
