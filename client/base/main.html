@@ -25,7 +25,7 @@
 <!--Template with notification menu tab/handle-->
 <template name="IdeaGen">
   <!-- Navbar -->
-  <div id="header" class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <!--<div id="header" class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-3">
@@ -50,7 +50,31 @@
         </div>
       </div>
     </div>
+  </div>-->
+
+  <div id="lpheader">
+        <h1><a href="index.html" id="logo"><img src="images/ideagenslogopic.png" width="125px"></a></h1>
+        <nav id="nav">
+          <ul>
+            <div class="col-lg-9" id="nav-right" style="width: 100%; margin-top: -5%;">
+              <div class="login" id="login-info">
+                {{#if loggedIn }}
+                  <span class="userName">
+                    <strong>Welcome,</strong> 
+                    {{#if hasAlias }}
+                      {{alias}}
+                    {{ else }}
+                      {{currentUserName}}
+                    {{/if}}
+                  </span>
+                  <button id="submitLogout" class="submitLogout btn-login">Logout</button>
+                {{/if}}
+              </div>
+            </div>
+          </ul>
+        </nav>
   </div>
+
 
 
   <div class="container-fluid" id="ideastorm">
