@@ -16,11 +16,15 @@ Router.map(function () {
       path: 'crowd/Brainstorms/:userID',
       template: 'CrowdPromptPage',
     waitOn: function() {
+      var uid = this.params.userID;
       return [
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers'),
+          Meteor.subscribe('prompts', {userID: uid}),
+          Meteor.subscribe('myUsers', {_id: uid}),
           Meteor.subscribe('groups'),
-          Meteor.subscribe('experiments')
+          Meteor.subscribe('experiments'),
+          Meteor.subscribe('graphs'),
+          Meteor.subscribe('nodes'),
+          Meteor.subscribe('edges'),
       ];
     }, 
     onBeforeAction: function() {
