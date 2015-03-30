@@ -9,7 +9,6 @@ MyCollections =
     "groups": Groups,
     'groupTemplates': GroupTemplates,
     'clusters': Clusters,
-    'ideasToProcess': IdeasToProcess,
     'filters': Filters,
     'sorters':Sorters,
     'notifications': Notifications,
