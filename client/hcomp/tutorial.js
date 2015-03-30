@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Tutorial');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
+Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'debug');
-Logger.setLevel('Client:Hcomp:Tutorial', 'info');
+// Logger.setLevel('Client:Hcomp:Tutorial', 'info');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'warn');
 var myTaskIDs = [];
 var tutorialLengthTreatment = 10;
@@ -92,23 +92,23 @@ Template.TutorialControl.rendered = function() {
     });
     // Setup Experimenter push to ideation listener
     logger.trace("Rendering tutorial control page");
-    MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-      changed: function(newDoc, oldDoc) {
-        logger.info("change to current user detected");
-        logger.trace("oldDoc: " + JSON.stringify(oldDoc));
-        logger.trace("newDoc: " + JSON.stringify(newDoc));
-        // logger.trace(newDoc.route);
-        var route = newDoc.route;
-        logger.debug("Going to page with route: " + route);
-        var partID = Session.get("currentParticipant")._id;
-        var promptID = Session.get("currentPrompt")._id;
-        logger.debug("partID: " + partID);
-        //
-        // TODO grab the fluency measure if we haven't!
-        //
-        Router.go(route, {'promptID': promptID, 'partID': partID});
-      },
-    });    
+    // MyUsers.find({_id: Session.get("currentUser")._id}).observe({
+    //   changed: function(newDoc, oldDoc) {
+    //     logger.info("change to current user detected");
+    //     logger.trace("oldDoc: " + JSON.stringify(oldDoc));
+    //     logger.trace("newDoc: " + JSON.stringify(newDoc));
+    //     // logger.trace(newDoc.route);
+    //     var route = newDoc.route;
+    //     logger.debug("Going to page with route: " + route);
+    //     var partID = Session.get("currentParticipant")._id;
+    //     var promptID = Session.get("currentPrompt")._id;
+    //     logger.debug("partID: " + partID);
+    //     //
+    //     // TODO grab the fluency measure if we haven't!
+    //     //
+    //     Router.go(route, {'promptID': promptID, 'partID': partID});
+    //   },
+    // });    
     initializeTutorialTimer();
     EventLogger.logTutorialStarted();
     Session.set("currentTutorialStep",1);
@@ -427,7 +427,8 @@ Template.ControlTutorialFlow.events({
         $("#control-tutorial-pleaseWait").removeClass("visible-tutorial-control");
         $("#control-tutorial-pleaseWait").addClass("control-tutorial-background");
         $(".tutorial-backdrop").remove();
-        // EventLogger.logTutorialStepComplete(8,tutorialLengthControl);
+        transitionToIdeation();
+        EventLogger.logTutorialStepComplete(8,tutorialLengthControl);
     },
     'click .control-tutorial-pleaseWait-goback': function() {
         $("#control-tutorial-pleaseWait").removeClass("visible-tutorial-control");
@@ -461,19 +462,19 @@ Template.TutorialTreatment.rendered = function() {
       DummyTasks.remove({'_id': task._id});
     });
     // Setup Experimenter push to ideation listener
-    MyUsers.find({_id: Session.get("currentUser")._id}).observe({
-    changed: function(newDoc, oldDoc) {
-        logger.info("change to current user detected");
-        logger.trace("oldDoc: " + JSON.stringify(oldDoc));
-        logger.trace("newDoc: " + JSON.stringify(newDoc));
-        var route = newDoc.route;
-        logger.debug("Going to page with route: " + route);
-        var partID = Session.get("currentParticipant")._id;
-        var promptID = Session.get("currentPrompt")._id;
-        logger.debug("partID: " + partID);
-        Router.go(route, {'promptID': promptID, 'partID': partID});
-      },
-    });    
+    // MyUsers.find({_id: Session.get("currentUser")._id}).observe({
+    // changed: function(newDoc, oldDoc) {
+    //     logger.info("change to current user detected");
+    //     logger.trace("oldDoc: " + JSON.stringify(oldDoc));
+    //     logger.trace("newDoc: " + JSON.stringify(newDoc));
+    //     var route = newDoc.route;
+    //     logger.debug("Going to page with route: " + route);
+    //     var partID = Session.get("currentParticipant")._id;
+    //     var promptID = Session.get("currentPrompt")._id;
+    //     logger.debug("partID: " + partID);
+    //     Router.go(route, {'promptID': promptID, 'partID': partID});
+    //   },
+    // });    
     EventLogger.logTutorialStarted();
     initializeTutorialTimer();
 }
@@ -915,6 +916,7 @@ Template.TreatmentTutorialFlow.events({
         $(".tutorial-backdrop").remove();
         $("#treatment-tutorial-pleaseWait").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-pleaseWait").addClass("treatment-tutorial-background");
+        transitionToIdeation();
         EventLogger.logTutorialStepComplete(11,tutorialLengthTreatment);
     },
     'click .treatment-tutorial-pleaseWait-goback': function() {
@@ -940,4 +942,13 @@ var initializeTutorialTimer = function() {
   }
 }
 
-
+var transitionToIdeation = function() {
+  var part = Session.get("currentParticipant");
+  logger.debug("Updating route for user with id: " + part.userID);
+  var cond = Conditions.findOne({_id: part.conditionID});
+  // var exp = Experiments.findOne({_id: part.experimentID});
+  var routeName = "MturkIdeation" + cond.description;
+  logger.debug("Sending to route: " + routeName);
+  MyUsers.update({_id: part.userID}, {$set: {'route': routeName}});
+  Router.go(routeName, {'promptID': cond.promptID, 'partID': part._id});
+}

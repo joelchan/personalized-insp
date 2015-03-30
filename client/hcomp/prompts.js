@@ -459,17 +459,18 @@ Template.CrowdExperiment.events({
     }
   },
 
+// not used at the moment
   'click .begin-bs': function () {
-    var condName = this.description;
-    logger.trace("Begin brainstorm for " + condName + " condition");
-    var exp = Experiments.findOne({_id: this.expID});
-    var userIDs = ExperimentManager.getUsersInCond(exp, condName);
-    userIDs.forEach(function (id) {
-      logger.debug("Updating route for user with id: " + id);
-      var routeName = "MturkIdeation" + condName;
-      logger.debug("Sending to route: " + routeName)
-      MyUsers.update({_id: id}, {$set: {'route': routeName}});
-    });
+    // var condName = this.description;
+    // logger.trace("Begin brainstorm for " + condName + " condition");
+    // var exp = Experiments.findOne({_id: this.expID});
+    // var userIDs = ExperimentManager.getUsersInCond(exp, condName);
+    // userIDs.forEach(function (id) {
+    //   logger.debug("Updating route for user with id: " + id);
+    //   var routeName = "MturkIdeation" + condName;
+    //   logger.debug("Sending to route: " + routeName)
+    //   MyUsers.update({_id: id}, {$set: {'route': routeName}});
+    // });
   },
 
   // 'click .rm-excl-user': function() {
