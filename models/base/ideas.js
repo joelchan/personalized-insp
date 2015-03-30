@@ -69,10 +69,3 @@ Cluster = function(user, prompt, ideaIDs){
   this.isTrash = false;
 }
 
-root = {
-  _id : "-1",
-  isRoot : true,
-  children : []
-}
-
-

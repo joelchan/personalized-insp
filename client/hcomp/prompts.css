@@ -87,6 +87,22 @@
   right: 0;
 }
 
+.hcomp-prompt-list .prompt-panel .prep-forest {
+  min-width: 75px;
+  width: 10%;
+  height: 100%;
+  background: #3071a9;
+  border-radius: 12px;
+  color: #fff;
+  text-align: center;
+  margin: 0 0 0 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 87%;
+  right: 0;
+}
+
 .hcomp-prompt-list .prompt-panel .prompt {
   margin-top:0px;
 }

@@ -3,6 +3,7 @@
 	border-radius: 5px;
 	background-color: #f5f5f5;
 	margin-left: 0px;
+  padding-left: 0;
 }
 
 .forest #confirmModal, #nameModal {
@@ -20,11 +21,12 @@
 	/*display: none;*/
 }
 
-.forest .idea-item, .donestack, .stack{
+.forest .forest-idea-item, .donestack, .stack{
 	border: solid 1px #ddd;
 	border-radius: 5px;
 	list-style: none;
 	list-style-type: none;
+  margin: 5px 10px;
 }
 
 .forest ul {

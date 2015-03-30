@@ -16,16 +16,15 @@ Router.map(function () {
       path: 'crowd/Brainstorms/:userID',
       template: 'CrowdPromptPage',
     waitOn: function() {
-      //var group = Session.get("currentGroup");
-      //console.log(group['assignments']['Ideator']);
-      //console.log("************************************************");
-      //var ideatorIDs = getIDs(group['assignments']['Ideator'])
-      //var synthIDs = getIDs(group['assignments']['Synthesizer'])
+      var uid = this.params.userID;
       return [
-          Meteor.subscribe('prompts'),
-          Meteor.subscribe('myUsers'),
+          Meteor.subscribe('prompts', {userID: uid}),
+          Meteor.subscribe('myUsers', {_id: uid}),
           Meteor.subscribe('groups'),
-          Meteor.subscribe('experiments')
+          Meteor.subscribe('experiments'),
+          Meteor.subscribe('graphs'),
+          Meteor.subscribe('nodes'),
+          Meteor.subscribe('edges'),
       ];
     }, 
     onBeforeAction: function() {
@@ -47,11 +46,6 @@ Router.map(function () {
       //Session.set("currentUser", MyUsers.findOne({_id: "db"}));
     },
     waitOn: function() {
-      //var group = Session.get("currentGroup");
-      //console.log(group['assignments']['Ideator']);
-      //console.log("************************************************");
-      //var ideatorIDs = getIDs(group['assignments']['Ideator'])
-      //var synthIDs = getIDs(group['assignments']['Synthesizer'])
       var pID = this.params.promptID;
       return [
           Meteor.subscribe('prompts'),

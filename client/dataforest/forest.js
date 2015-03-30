@@ -1,3 +1,13 @@
+// Configure logger for Tools
+var logger = new Logger('Client:DataForest:Forest');
+// Comment out to use global logging level
+Logger.setLevel('Client:DataForest:Forest', 'trace');
+//Logger.setLevel('Client:DataForest:Forest', 'debug');
+//Logger.setLevel('Client:DataForest:Forest', 'info');
+//Logger.setLevel('Client:DataForest:Forest', 'warn');
+
+//Maps routes to templates
+
 //state machine
 	//current step/prompt
 		//1. Create idea node/cluster : IdeaNodeCreation
@@ -49,20 +59,22 @@ var path = [-1]; //tracks path starting from root. Used by back button.
 *********************************************************************/
 Template.Forest.rendered = function(){
 
-	$('ul.newstack').sortable({
-		receive : function(event, ui){
-			var currClusID = createCluster(ui.item); //creates and inserts a new cluster, returns ID
-      Session.set("ideaNode", currClusID); //sets ID as idea node
-
-      //set up UI to add to cluster
-      $('#createnode').slideToggle();
-      $('#buildcluster').slideToggle();
-      $('#clusterlabel').addClass('unnamed');
-      $('#namecluster').val('');
-      ui.item.remove();
-		},
-	});
-
+	//$('ul.newstack').sortable({
+		//receive : function(event, ui){
+      //logger.trace("sortable recieved ui item: ");
+      //var ideaID = $(ui.item[0]).attr('id');
+			//var currClusID = createCluster(ui.item); //creates and inserts a new cluster, returns ID
+      //Session.set("ideaNode", currClusID); //sets ID as idea node
+//
+      ////set up UI to add to cluster
+      //$('#createnode').slideToggle();
+      //$('#buildcluster').slideToggle();
+      //$('#clusterlabel').addClass('unnamed');
+      //$('#namecluster').val('');
+      //ui.item.remove();
+		//},
+	//});
+  
 	$('#idealist').sortable({
 		items: ">*:not(.sort-disabled)",
 		connectWith:'ul.newstack, ul.stack',
@@ -88,76 +100,54 @@ Template.Forest.rendered = function(){
 		},
 	});
 }
+Template.ForestIdea.rendered = function() {
+  $(this).draggable({
+    revert: true,
+    helper: 'clone',
+    appendTo: ".forest",
+    refreshPositions: true,
+    start: function(e, ui) {
+      logger.debug("Began dragging an idea");
+      logger.trace(ui.helper[0]);
+      var width = $(this).css('width');
+      logger.trace(width);
+    },
+  });
+};
+
+Template.ForestCreateCluster.rendered = function() {
+  $(".newstack").droppable({
+    accept: '.forest-idea-item',
+    tolerance: "pointer",
+    drop: function(event, ui) {
+      logger.debug("New idea dropped into IdeaNode");
+      logger.trace(ui.draggable[0]);
+      var myIdeaId = $(ui.draggable[0]).attr('id');
+      var parent = ui.helper.context.parentElement;
+      logger.trace(parent);
+			var currClusID = createCluster(ui.item); //creates and inserts a new cluster, returns ID
+      Session.set("ideaNode", currClusID); //sets ID as idea node
+//
+      ////set up UI to add to cluster
+      //$('#createnode').slideToggle();
+      //$('#buildcluster').slideToggle();
+      //$('#clusterlabel').addClass('unnamed');
+      //$('#namecluster').val('');
+      //ui.item.remove();
+    }
+  });
+};
 
 /********************************************************************
 * Template Helpers
 *********************************************************************/
 Template.Forest.helpers({
-	isClustered : function(){
-    if(this.inCluster){
-     	return false;
-   	} else {
-     	return true;
-    }
-  },
-
-	ideas : function(){
-   	return IdeasToProcess.find();
-  },
-
-  ideaNode : function(){
-  	return Session.get('ideaNode');
-  },
-
-  //return list of ideas contained by idea node
-  ideaNodeIdeas : function(){
-  	var currNodeID = Session.get('ideaNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.ideas;
-		}
-  },
-
-  ideaNodeName : function(){
-  	var currNodeID = Session.get('ideaNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.name;
-		}
-  },
-
-  bestMatchNode : function(){
-  	return Session.get('bestMatchNode');
-  },
-
-  //return list of ideas contained by best match node
-  bestMatchIdeas : function(){
-  	var currNodeID = Session.get('bestMatchNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.ideas;
-		}
-  },
-
-  bestMatchName : function(){
-  	var currNodeID = Session.get('bestMatchNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined && currCluster.name !== undefined){
-      $('#bmname').removeClass('text-danger');
-			return currCluster.name;
-		} else {
-      $('#bmname').addClass('text-danger');
-      return "No Match Picked";
-    }
-  },
-
   myName : function(){
   	var cluster = Clusters.findOne({_id: this.toString()});
   	if(cluster === undefined) 
   		return false;
   	return cluster.name;
   },
-
   bestMatchChildren : function(){
   	var currNodeID = Session.get('bestMatchNode');
   	//console.log(currNodeID);
@@ -169,25 +159,17 @@ Template.Forest.helpers({
   	}
 		return currCluster.children;
   },
-
   clusterIdeas : function(){
   	var cluster = Clusters.findOne({_id: this.toString()});
   	if(cluster === undefined) 
   		return false;
   	return cluster.ideas;
   },
-
   clusterChildren : function(){
   	var cluster = Clusters.findOne(this.toString());
     if(cluster === undefined)
     	return false;
     else return cluster.children;
-  },
-
-  clusterName : function(){
-    var clu = Clusters.findOne({_id: this.toString()});
-    if(clu === undefined) return false
-    return clu.name;
   },
 
   userPrompt : function(){
@@ -205,6 +187,91 @@ Template.Forest.helpers({
   		return true;
   	return false;
   }
+});
+Template.ForestIdeaList.helpers({
+	ideas : function(){
+   	return Ideas.find({promptID: Session.get("currentPrompt")._id});
+  },
+	isClustered : function(){
+    if(this.inCluster){
+     	return false;
+   	} else {
+     	return true;
+    }
+  },
+});
+Template.ForestNodeBuilder.helpers({
+  //return list of ideas contained by idea node
+  ideaNodeIdeas : function(){
+  	var currNodeID = Session.get('ideaNode');
+  	var currCluster = Clusters.findOne({_id: currNodeID});
+		if(currCluster !== undefined){
+			return currCluster.ideas;
+		}
+  },
+  ideaNodeName : function(){
+  	var currNodeID = Session.get('ideaNode');
+  	var currCluster = Clusters.findOne({_id: currNodeID});
+		if(currCluster !== undefined){
+			return currCluster.name;
+		}
+  },
+  ideaNode : function(){
+  	return Session.get('ideaNode');
+  },
+});
+Template.ForestNodeStatus.helpers({
+  ideaNode : function(){
+  	return Session.get('ideaNode');
+  },
+  //return list of ideas contained by idea node
+  ideaNodeIdeas : function(){
+  	var currNodeID = Session.get('ideaNode');
+  	var currCluster = Clusters.findOne({_id: currNodeID});
+		if(currCluster !== undefined){
+			return currCluster.ideas;
+		}
+  },
+  ideaNodeName : function(){
+  	var currNodeID = Session.get('ideaNode');
+  	var currCluster = Clusters.findOne({_id: currNodeID});
+		if(currCluster !== undefined){
+			return currCluster.name;
+		}
+  },
+  clusterChildren : function(){
+  	var cluster = Clusters.findOne(this.toString());
+    if(cluster === undefined)
+    	return false;
+    else return cluster.children;
+  },
+  clusterName : function(){
+    var clu = Clusters.findOne({_id: this.toString()});
+    if(clu === undefined) return false
+    return clu.name;
+  },
+  //return list of ideas contained by best match node
+  bestMatchIdeas : function(){
+  	var currNodeID = Session.get('bestMatchNode');
+  	var currCluster = Clusters.findOne({_id: currNodeID});
+		if(currCluster !== undefined){
+			return currCluster.ideas;
+		}
+  },
+  bestMatchName : function(){
+  	var currNodeID = Session.get('bestMatchNode');
+  	var currCluster = Clusters.findOne({_id: currNodeID});
+		if(currCluster !== undefined && currCluster.name !== undefined){
+      $('#bmname').removeClass('text-danger');
+			return currCluster.name;
+		} else {
+      $('#bmname').addClass('text-danger');
+      return "No Match Picked";
+    }
+  },
+  bestMatchNode : function(){
+  	return Session.get('bestMatchNode');
+  },
 });
 
 /********************************************************************
@@ -397,7 +464,7 @@ Template.Forest.events({
 * Convenience funtions
 *********************************************************************/
 function addToCluster(ideaId, clusterId){
-	var idea = IdeasToProcess.findOne({_id: ideaId});
+	var idea = Ideas.findOne({_id: ideaId});
 	Clusters.update({_id: clusterId}, {$push: {ideas: idea}});
 	updateIdeas(ideaId, true);
 }
@@ -413,7 +480,7 @@ function addChild(nodeID){
 //modified from cluster.js
 function createCluster(item) {
   var ideaId = item.attr('id');
-  var ideas = [IdeasToProcess.findOne({_id: ideaId})];
+  var ideas = [Ideas.findOne({_id: ideaId})];
   var cluster = new Cluster(ideas);
   var id = Clusters.insert(cluster);
   updateIdeas(ideaId, true);
@@ -422,7 +489,7 @@ function createCluster(item) {
 
 //imported from cluster.js
 function updateIdeas(ideaId, inCluster){
-  IdeasToProcess.update({_id: ideaId}, 
+  Ideas.update({_id: ideaId}, 
     {$set:
       {inCluster: inCluster}
   });
@@ -511,10 +578,11 @@ function processIdeaSender(ui, ideaId){
 }
 
 insertIdeasToProc = function(){
-  var idea = new Idea("asdfasdf");
-  IdeasToProcess.insert(idea);
-  IdeasToProcess.insert(idea);
-  IdeasToProcess.insert(idea);
-  IdeasToProcess.insert(idea);
-  IdeasToProcess.insert(idea);
+  var user = Session.get("currentUser");
+  var prompt = Session.get("currentPrompt");
+  IdeaFactory.create("asdf1", user, prompt);
+  IdeaFactory.create("asdf2", user, prompt);
+  IdeaFactory.create("asdf3", user, prompt);
+  IdeaFactory.create("asdf4", user, prompt);
+  IdeaFactory.create("asdf5", user, prompt);
 }

@@ -5,12 +5,33 @@
 <template name="CrowdPromptPage">
   <!-- Nav tabs -->
   <ul class="nav nav-tabs hcomp-prompts-page" role="tablist">
-    <li role="presentation" class="active"><a href="#promptList" aria-controls="promptList" role="tab" data-toggle="tab">Prompts</a></li>
-    <!-- <li role="presentation"><a href="#expList" aria-controls="expList" role="tab" data-toggle="tab">Experiments</a></li> -->
+    <li role="presentation" class="active">
+      <a href="#promptList" aria-controls="promptList" role="tab" data-toggle="tab">
+        Prompts
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#expList" aria-controls="expList" role="tab" data-toggle="tab">
+        Experiments
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#dataProcList" aria-controls="dataProcList" role="tab" data-toggle="tab">
+        Data Processing
+      </a>
+    </li>
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
+    {{> PromptsTab }}
+    {{> ExperimentsTab }}
+    {{> DataProcessingTab }}
+  </div> <!-- End tab content container -->
+
+</template>
+
+<template name="PromptsTab">
     <!-- Prompts tab -->
     <div role="tabpanel" class="tab-pane active" id="promptList">
       <div class="row hcomp-prompts-page">
@@ -21,6 +42,73 @@
         </center>
       </div> <!-- End Row -->
 
+      
+      <div class="row hcomp-prompt-list"> 
+        {{#each prompts}}
+          {{> CrowdBrainstorm }}
+        {{/each}}
+      </div>
+    </div> <!-- End prompts tab -->
+  {{> NewPromptModal }}
+</template>
+
+
+<template name="ExperimentsTab">
+    <!-- Experiments tab -->
+    <div role="tabpanel" class="tab-pane" id="expList">
+      <div class="row hcomp-prompts-page"
+        <center>
+          <button id="new-exp" class="new-exp btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newExpModal">
+            New Experiment
+          </button> 
+        </center>
+      </div>
+      <!-- End Row -->
+      <div class="row hcomp-prompt-list"> 
+        {{#each experiments}}
+          {{> CrowdExperiment }}
+        {{/each}}
+      </div>
+      <!-- End Row -->
+    </div> <!-- End experiments tab -->
+    {{> NewExperimentModal }}
+</template>
+
+<template name="DataProcessingTab">
+  <div role="tabpanel" class="tab-pane" id="dataProcList"> 
+    <div class="row hcomp-prompt-list"> 
+      {{#each dataSets}}
+        {{> DataSummary }}
+      {{/each}}
+    </div>
+  </div> <!-- End experiments tab -->
+</template>
+
+<!---##############################################-->
+<!---DATA PROCESSING TAB SUB-TEMPLATES--> 
+<!---##############################################-->
+<template name='DataSummary'>
+  <div id="graph-{{_id}}" class="menu-box prompt-panel">
+    <div class="row">
+      <div class="col-sm-6 prompt-data">
+        <div class="center-block">
+          <strong>Title:  </strong>
+          {{ title }}<br/>
+          <strong>Prompt: </strong> {{ question }}<br/>
+          <strong>DataForest Clustering URL: </strong> 
+          <a href="{{urlFor route='DataForest' data=getData}}">
+            {{urlFor route='DataForest' data=getData}}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!---##############################################-->
+<!---PROMPTS TAB SUB-TEMPLATES-->
+<!---##############################################-->
+<template name="NewPromptModal">
       <!-- Modal -->
       <div class="modal fade" id="newPromptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -44,39 +132,7 @@
           </div> <!-- End modal content -->
         </div> <!-- End modal dialog -->
       </div> <!-- End modal -->
-      
-      <div class="row hcomp-prompt-list"> 
-        {{#each prompts}}
-          {{> CrowdBrainstorm }}
-        {{/each}}
-      </div>
-    </div> <!-- End prompts tab -->
-    <!-- Experiments tab -->
-    <!-- <div role="tabpanel" class="tab-pane" id="expList"> -->
-    <!-- <div class="row hcomp-prompts-page">-->
-    <!-- <center> -->
-    <!-- <button id="new-exp" class="new-exp btn btn-xlarge2 btn-default btn-primary" data-toggle="modal" data-target="#newExpModal"> -->
-    <!-- New Experiment -->
-    <!-- </button>  -->
-    <!-- </center> -->
-    <!-- </div> -->
-    <!-- End Row -->
-
-      
-    <!-- <div class="row hcomp-prompt-list">  -->
-    <!-- {{#each experiments}} -->
-    <!-- {{> CrowdExperiment }} -->
-    <!-- {{/each}} -->
-    <!-- </div> -->
-    <!-- </div> --> <!-- End experiments tab -->
-    <!-- {{> NewExperimentModal }} -->
-  </div> <!-- End tab content container -->
-
 </template>
-
-<!---##############################################-->
-<!---PROMPTS TAB SUB-TEMPLATES-->
-<!---##############################################-->
 
 <template name="CrowdBrainstorm">
   <div id="prompt-{{_id}}" class="menu-box prompt-panel">
@@ -93,12 +149,12 @@
           <!--<strong>URL: </strong> {{urlFor route='HcompDashboard' data=_id}} <h3>id: {{_id}}</h3> -->
           {{#with promptID}}
             <strong>Crowd Ideator URL: </strong> 
-            <a href="{{formUrl}}{{pathFor route="CrowdLoginPage"}}">
-              {{formUrl}}{{pathFor "CrowdLoginPage"}}
+            <a href="{{urlFor route="CrowdLoginPage"}}">
+              {{urlFor "CrowdLoginPage"}}
             </a><br/>
             <strong>Crowd Clustering URL: </strong> 
-            <a href="{{formUrl}}{{pathFor route="MturkSynthLoginPage"}}">
-              {{formUrl}}{{pathFor "MturkSynthLoginPage"}}
+            <a href="{{urlFor route="MturkSynthLoginPage"}}">
+              {{urlFor "MturkSynthLoginPage"}}
             </a>
           {{/with}}
         </div>
@@ -113,6 +169,11 @@
             <h3 class="center-vertical">Review Ideas</h3>
         </div>
       </a>
+      {{#if isNotPrepped }}
+        <div class="col-sm-2 prep-forest clickable">
+          <h3 class="center-vertical">Prep Data Forest</h3>
+        </div>
+      {{/if}}
       <!-- <a href="">
         <div class="col-sm-2 create-exp-button clickable">
             <h3 class="center-vertical">Create Experiment</h3>
@@ -187,12 +248,12 @@
           {{/each}}
         </div>
       </div>
-    </div>
     <a href="{{formUrl}}{{pathFor route="ExpDashboard" data=getData}}">
       <div class="col-sm-2 exp-dash-button clickable">
         <h3 class="center-vertical">Facilitate Brainstorm</h3>
       </div>
     </a>
+    </div>
   </div>
 </template>
 

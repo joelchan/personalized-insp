@@ -2,9 +2,9 @@
 var logger = new Logger('Models:UserManager');
 // Comment out to use global logging level
 // Logger.setLevel('Models:UserManager', 'trace');
-//Logger.setLevel('Models:UserManager', 'debug');
+// Logger.setLevel('Models:UserManager', 'debug');
 Logger.setLevel('Models:UserManager', 'info');
-//Logger.setLevel('Models:UserManager', 'warn');
+// Logger.setLevel('Models:UserManager', 'warn');
 
 UserFactory  = (function() {
    return {

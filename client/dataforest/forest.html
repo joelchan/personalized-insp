@@ -4,74 +4,18 @@
 		<div class="row">
 			<!--IdeaList and Node Starter-->
 		  <div id="ideas">
-			<div class="col-md-3">
-				<div id="createnode"><h3>Create a New Cluster</h3>
-					<ul class="newstack" id="node-drag-target">
-					Drag idea here to create a new cluster
-					</ul>
-				</div>
-				<h3>Idea List</h3>
-				<ul id="idealist" class="deck">
-					<li class="sort-disabled"></li>
-					{{#each ideas}}
-						{{#if isClustered}}
-						<li id={{_id}} class="idea-item">{{content}}</li>
-						{{/if}}
-					{{/each}}
-				</ul>
-			</div>
-			<!--End-->
-
-			<!--Node Builder-->
-			<div id="buildcluster" class="col-md-3">
-				<h3>Add to Cluster</h3>
-				<ul id={{ideaNode}} class="stack">
-					<div class="form-group">
-						<label class="sort-disabled">Cluster Name:
-							<span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
-						</label>
-						<input type="text" class="clusternodename form-control input-sm sort-disabled" 
-							id="namecluster" placeholder="Name this cluster">
-					</div>
-					{{#each ideaNodeIdeas}}
-						<li id={{_id}} class="idea-item">{{content}}</li>
-					{{/each}}
-				</ul>
-				<button id='finish' class='btn btn-large btn-primary'>Finished</button>
-			</div>
-			<!--End-->
+			  <div class="col-md-3">
+          {{> ForestCreateCluster }}
+          {{> ForestIdeaList }}
+			  </div>
+			  <!--End-->
+  
+			  <!--Node Builder-->
+        {{> ForestNodeBuilder }}
+			  <!--End-->
 		  </div>
-
-			<!--Idea Node and Best Match Node Status-->
-			<div id="nodestatus" class="col-md-6">
-				<h3>Working Nodes</h3>
-				<h4>Node to be Inserted</h4>
-				<ul id={{ideaNode}} class="ideanode donestack">
-					<i class="fa fa-angle-double-down sort-disabled"></i>
-					<label class="sort-disabled">
-						<span class="named sort-disabled">{{ideaNodeName}}</span>
-					</label>
-					{{#each ideaNodeIdeas}}
-						<li id={{_id}} class="idea-item">{{content}}</li>
-					{{/each}}
-					{{#each clusterChildren}}
-						<li id={{this}} class="cluster-item">{{clusterName}}</li>
-					{{/each}}
-				</ul>
-				<h4>Best Match Node</h4>
-				<ul id={{bestMatchNode}} class="bestmatch donestack">
-					<i class="fa fa-angle-double-down sort-disabled"></i>
-					<label class="sort-disabled">
-						<span id="bmname" class="sort-disabled">{{bestMatchName}}</span>
-					</label>
-					{{#each bestMatchIdeas}}
-						<li id={{_id}} class="idea-item">{{content}}</li>
-					{{/each}}
-					{{#each clusterchildren}}
-						<li id={{this}} class="cluster-item">{{clustername}}</li>
-					{{/each}}
-				</ul>
-			</div>
+      
+      {{> ForestNodeStatus }}
 			<!--End-->
 
 			<!--Children of Best Match Node-->
@@ -115,7 +59,86 @@
 		</div>
 	</div>
 	<!--End Container-->
+  {{> ForestNodeName }}
+  {{> ForestConfirm }}
 
+</template>
+
+<template name="ForestCreateCluster">
+	<div id="createnode"><h3>Create a New Cluster</h3>
+		<ul class="newstack" id="node-drag-target">
+	  	Drag idea here to create a new cluster
+		</ul>
+	</div>
+</template>
+
+<template name="ForestIdeaList">
+  <div id="unclustered-ideas">
+	  <h3>Idea List</h3>
+	  <ul id="idealist" class="deck">
+		  <li class="sort-disabled"></li>
+		  {{#each ideas}}
+			  {{#if isClustered}}
+          {{> ForestIdea }}
+			  {{/if}}
+		  {{/each}}
+	  </ul>
+  </div>
+</template>
+
+<template name="ForestNodeBuilder">
+	<div id="buildcluster" class="col-md-3">
+		<h3>Add to Cluster</h3>
+		<ul id={{ideaNode}} class="stack">
+			<div class="form-group">
+				<label class="sort-disabled">Cluster Name:
+					<span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
+				</label>
+				<input type="text" class="clusternodename form-control input-sm sort-disabled" 
+					id="namecluster" placeholder="Name this cluster">
+			</div>
+			{{#each ideaNodeIdeas}}
+        {{> ForestIdea }}
+			{{/each}}
+		</ul>
+		<button id='finish' class='btn btn-large btn-primary'>Finished</button>
+	</div>
+</template>
+
+<template name="ForestNodeStatus">
+	<!--Idea Node and Best Match Node Status-->
+	<div id="nodestatus" class="col-md-6">
+		<h3>Working Nodes</h3>
+		<h4>Node to be Inserted</h4>
+		<ul id={{ideaNode}} class="ideanode donestack">
+			<i class="fa fa-angle-double-down sort-disabled"></i>
+			<label class="sort-disabled">
+				<span class="named sort-disabled">{{ideaNodeName}}</span>
+			</label>
+			{{#each ideaNodeIdeas}}
+				<li id={{_id}} class="idea-item">{{content}}</li>
+			{{/each}}
+			{{#each clusterChildren}}
+				<li id={{this}} class="cluster-item">{{clusterName}}</li>
+			{{/each}}
+		</ul>
+		<h4>Best Match Node</h4>
+		<ul id={{bestMatchNode}} class="bestmatch donestack">
+			<i class="fa fa-angle-double-down sort-disabled"></i>
+			<label class="sort-disabled">
+				<span id="bmname" class="sort-disabled">{{bestMatchName}}</span>
+			</label>
+			{{#each bestMatchIdeas}}
+				<li id={{_id}} class="idea-item">{{content}}</li>
+			{{/each}}
+			{{#each clusterchildren}}
+				<li id={{this}} class="cluster-item">{{clustername}}</li>
+			{{/each}}
+		</ul>
+	</div>
+</template>
+
+<template name="ForestNodeName">
 	<!--Artificial Node Naming Modal-->
 	<div class="modal fade" id="nameModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     	<div class="modal-dialog">
@@ -142,7 +165,9 @@
   		</div>
 	</div>
 	<!--End-->
+</template>
 
+<template name="ForestConfirm">
 	<!--Confirm Action Modal-->
 	<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     	<div class="modal-dialog">
@@ -161,4 +186,10 @@
     		</div>
   		</div>
 	</div>
+</template>
+
+<template name="ForestIdea">
+	<li id={{_id}} class="forest-idea-item">{{content}}</li>
+</template>
+<template name="ForestIdeaNode">
 </template>
