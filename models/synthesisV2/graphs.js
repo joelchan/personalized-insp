@@ -25,6 +25,11 @@ EDGE_TYPES = {
   'graph_link': ['sharedNodeID', 'userNodeID'],
 };
 
+/* list of known graph types thus far */
+GRAPH_TYPES = [
+  'user_graph', 'shared_graph', 'pre_forest', 'data_forest'
+];
+
 Graph = function(promptID, groupID, userID, type) {
   /********************************************************************
   * Graph constructor

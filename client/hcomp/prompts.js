@@ -28,6 +28,25 @@ Template.ExperimentsTab.helpers({
   }
 });
 
+Template.DataProcessingTab.helpers({
+  dataSets: function() {
+    //return all the datasets for which there is a preprocessed forest
+    //done
+    var graphs = Graphs.find({type: 'pre_forest'});
+    var results = []
+    graphs.forEach(function(graph) {
+      var result = graph;
+      var prompt = Prompts.findOne({_id: graph.promptID}); 
+      result['title'] = prompt.title;
+      result['question'] = prompt.question;
+      result['userID'] = Session.get('currentUser')._id;
+      results.push(result)
+    });
+    logger.trace(JSON.stringify(results));
+    return results;
+  },
+});
+
 Template.CrowdPromptPage.rendered = function() {
   window.scrollTo(0,0);
 }
@@ -85,13 +104,17 @@ Template.CrowdExperiment.helpers({
     return Conditions.find({expID: this._id});
   },
   partNumber: function() {
-    return this.conditions[0].partNum;
+    if (this.conditions[0].partNum) {
+      return this.conditions[0].partNum;
+    } else {
+      return 0;
+    }
   },
   getData: function() {
     logger.debug("Data context: " + JSON.stringify(this._id));
     logger.debug("current user: " + JSON.stringify(Session.get("currentUser")));
     var result = {'promptID': this._id, 'userID': Session.get("currentUser")._id};
-    logger.debug("Data object: " + JSON.stringify(result));
+    logger.debug("Data object2 " + JSON.stringify(result));
     return result;
   },
 });

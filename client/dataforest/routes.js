@@ -7,9 +7,11 @@ Logger.setLevel('Client:Routes', 'trace');
 //Logger.setLevel('Client:Routes', 'warn');
 
 //Maps routes to templates
+//Router.route('Forest', {
 Router.route('Forest/:promptID/:userID', {
   name: 'DataForest',
   template: 'Forest',
+  path: 'Forest/:promptID/:userID',
   subscriptions: function() {
 
   },
