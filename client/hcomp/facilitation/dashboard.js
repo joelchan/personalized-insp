@@ -1707,11 +1707,24 @@ Template.ForceV.rendered = function() {
 
   //makes the svg element
   var svg = d3.select("#svgdiv2")
-    .attr("width", width)
-    .attr("height", height)
     .append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("pointer-events", "all")
+    .append('svg:g')
+    .call(d3.behavior.zoom().on("zoom", redraw))
+    .append('svg:g');
+  
+ 
+  svg.append('svg:rect')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', 'rgba(1,1,1,0)')
+ 
+  function redraw() {
+      console.log("here", d3.event.translate, d3.event.scale);
+      svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")"); } 
+
 
   Deps.autorun(function() {  
 
@@ -1719,7 +1732,7 @@ Template.ForceV.rendered = function() {
 
     var newData = formatData(rawIdeas)
 
-    CreateForceDiagram(GetForceData(newData), svg);
+    CreateForceDiagram(GetForceData(newData), svg, width, height);
   })
 
 }
@@ -2488,7 +2501,7 @@ function trimForceData(forceData, cutOffValue)
 * Visualization - Force Directed Graph Logic
 ********************************************************************/
 
-function CreateForceDiagram(forceData, svg)
+function CreateForceDiagram(forceData, svg, w, h)
 {
   svg.selectAll("*")
    .remove();
@@ -2499,7 +2512,7 @@ function CreateForceDiagram(forceData, svg)
   var maxDistance = 250;
 
   //size of the svg
-  var width = 500;
+  var width = w-200;
   var height = 800;
 
   //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
@@ -2695,13 +2708,11 @@ function CreateForceDiagram2(forceData)
   var maxDistance = 250;
 
   //size of the svg
-  var width = 700;
-  var height = 800;
+  var width = 600;
+  var height = 600;
 
   //makes the svg element
   var svg = d3.select("#svgdiv3")
-    .attr("width", width)
-    .attr("height", height)
     .append("svg")
     .attr("width", width)
     .attr("height", height);
@@ -2779,12 +2790,13 @@ function CreateForceDiagram2(forceData)
   var force = d3.layout.force()
     .nodes(dataset.nodes)
     .links(dataset.edges)
-    .size([width-90, height-90])
+    .size([width-100, height-100])
     //.linkDistance(100)
     .linkDistance(function(d) 
     {
-      return 50-d.strength;
+      return 20-d.strength;
     })
+    .gravity(.05)
     .charge(charge)
     .start();
 
@@ -2797,7 +2809,7 @@ function CreateForceDiagram2(forceData)
     .style("stroke", "grey")
     .style("opacity", function(d) 
     {
-      return d.strength/15;
+      return d.strength/7;
     })
       .style("stroke-width", function(d) 
     {
@@ -2833,11 +2845,13 @@ function CreateForceDiagram2(forceData)
                 })
                 .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
-  /*var tex = nods.append("text")
-    .text(function(d) { 
-      return d.text;})
+  var tex = nods.append("text")
+    .text(function(d,i) { 
+      if (i%20===0) {return d.text;}
+      else {return " ";}
+    })
     .attr("fill", "black")
-    .attr("font-size", "20px");*/
+    .attr("font-size", "20px");
 
   nodes.append("title")
     .text(function(d) { return d.text; });
@@ -2870,22 +2884,27 @@ function CreateForceDiagram2(forceData)
     nodes.attr("cx", function(d) 
     {
       return d.x; 
+      //return d.x = Math.max(6, Math.min(width - 6, d.x));
     })
     .attr("cy", function(d) 
     { 
       return d.y; 
+      //return d.y = Math.max(6, Math.min(height - 6, d.y));
     });
 
-    /*tex.attr("x", function(d) 
+    tex.attr("x", function(d) 
     {
       return d.x; 
+      //return d.x = Math.max(6, Math.min(width - 6, d.x));
     })
     .attr("y", function(d) 
     { 
-      return d.y; 
+      return d.y;
+      //return d.y = Math.max(6, Math.min(height - 6, d.y)); 
     })
     .attr("dy", -10)
-    .attr("dx", -10);*/
+    .attr("dx", -10);
+
 
   });
 }
