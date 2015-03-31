@@ -574,20 +574,20 @@ svg.selectAll("*")
     .remove();
 
 var margin = {
-    top: 120,
+    top: 10,
     right: 0,
-    bottom: 0,
+    bottom: 14,
     left: 0
     },
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    width = 700,
+    height = 800;
 
 var n = 56,
     m = 1,
     padding = 16,
     radius = d3.scale.sqrt().range([0, 25]),
     color = d3.scale.category10().domain(d3.range(m)),
-    x = d3.scale.ordinal().domain(d3.range(m)).rangePoints([0, width], 1);
+    x = d3.scale.ordinal().domain(d3.range(m)).rangePoints([0, width/2], 1);
 
 
 //input the cloudItems, map each item to an object with
@@ -600,7 +600,7 @@ var nodes = cloud.map(function (item) {
         radius: radius(item.count),
         color: color(i),
         cx: x(i),
-        cy: height / 3,
+        cy: height / 9,
         title: item.word,
         likes: item.likes
     };
@@ -614,7 +614,7 @@ console.log(nodes);
 
 var force = d3.layout.force()
     .nodes(nodes)
-    .size([width, height])
+    .size([width/2, height])
     .gravity(0)
     .charge(0)
     .on("tick", tick)
@@ -665,10 +665,12 @@ function tick(e) {
     circle.each(gravity(.1 * e.alpha))
         .each(collide(.5))
         .attr("cx", function (d) {
-        return d.x;
+        //return d.x;
+        return d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
     })
         .attr("cy", function (d) {
-        return d.y+10;
+        //return d.y+10;
+        return d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
     });
     tex.each(gravity(.2 * e.alpha))
         .each(collide(.5))
@@ -679,6 +681,18 @@ function tick(e) {
         return d.y+10;
     });
 }
+/*
+   nodes.attr("cx", function(d) 
+    {
+      return d.x; 
+      //return d.x = Math.max(6, Math.min(width - 6, d.x));
+    })
+    .attr("cy", function(d) 
+    { 
+      return d.y; 
+      //return d.y = Math.max(6, Math.min(height - 6, d.y));
+    });
+*/
 
 // Move nodes toward cluster focus.
 function gravity(alpha) {
@@ -737,8 +751,14 @@ Template.HcompOtherViz.rendered = function() {
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .call(d3.behavior.zoom().on("zoom", redrawB))
+    .append('svg:g');
+  
+  function redrawB() {
+      console.log("here", d3.event.translate, d3.event.scale);
+      svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")"); } 
 
+ 
 
 
   Deps.autorun(function() {
