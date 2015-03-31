@@ -59,6 +59,63 @@ Template.HcompDashboard.rendered = function(){
   FilterManager.reset("Tasks Filter", Session.get("currentUser"), "tasks");
   FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "promptID", Session.get("currentPrompt")._id);
   FilterManager.create("Tasks Filter", Session.get("currentUser"), "tasks", "groupID", Session.get("currentExp").groupID);
+
+  var exp = Session.get("currentExp");
+  var group = Session.get("currentGroup");
+  if (exp) {
+    Participants.find({experimentID: exp._id}).observe({
+      // added: function(user) {
+      changed: function(partNewState, partOldState) {
+        logger.trace("Old participant state: " + JSON.stringify(partOldState));
+        logger.trace("New participant state: " + JSON.stringify(partNewState));
+
+        if (!partOldState.hasStarted && partNewState.hasStarted) {
+          logger.info("new participant began ideation");
+          logger.trace("new participatn: " + JSON.stringify(partNewState));
+          
+          var update = false;
+          var cond = Conditions.findOne({_id: partNewState.conditionID});
+          if (cond.description == "Treatment") {
+            update = true;
+          } else {
+            logger.debug("Not a treatment participant, not updating inspirations");
+          }
+           
+          if (update) {
+            logger.debug("Updating all inspirations");
+            var tasks = Tasks.find({groupID: group._id}).fetch();
+            tasks.forEach(function(task) {
+              var oldNum = task.num;
+              var newNum = priorityToNumIdeators(task.priority);
+              logger.debug("Updating numideators from " + oldNum + " to " + newNum);
+              logger.debug("Updating task with id: " + task._id);
+              Tasks.update({ _id: task._id },
+                            {$set: {num: newNum}});
+            });  
+          }
+        }
+      },
+    });    
+  } else {
+    MyUsers.find({groupID: group._id}).observe({
+      // added: function(user) {
+      added: function(user) {
+        logger.trace("Added new user to group: " + JSON.stringify(user));
+        logger.debug("Updating all inspirations");
+        var tasks = Tasks.find({groupID: group._id}).fetch();
+        tasks.forEach(function(task) {
+          var oldNum = task.num;
+          var newNum = priorityToNumIdeators(task.priority);
+          logger.debug("Updating numideators from " + oldNum + " to " + newNum);
+          logger.debug("Updating task with id: " + task._id);
+          Tasks.update({ _id: task._id },
+                        {$set: {num: newNum}});
+        });  
+      },
+    });    
+  }
+
+  
   
 };
 
