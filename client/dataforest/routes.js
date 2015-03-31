@@ -11,7 +11,6 @@ Logger.setLevel('Client:Routes', 'trace');
 Router.route('Forest/:promptID/:userID', {
   name: 'DataForest',
   template: 'Forest',
-  path: 'Forest/:promptID/:userID',
   subscriptions: function() {
 
   },
@@ -21,6 +20,7 @@ Router.route('Forest/:promptID/:userID', {
       Meteor.subscribe('graphs', {promptID: pID}),
       Meteor.subscribe('edges', {promptID: pID}),
       Meteor.subscribe('nodes', {promptID: pID}),
+      Meteor.subscribe('ideas', {promptID: pID}),
     ];
   },
   onBeforeAction: function() {
@@ -51,7 +51,23 @@ Router.route('Forest/:promptID/:userID', {
   },
   onRun: function() {
     logger.debug("One-time Run on route load");
+    if(this.ready()) {
+      logger.debug("Rendering page");
+      this.render();
+    } else {
+      logger.debug("Rendering loading");
+      this.render('loading');
+    }
   },
+  //action: function() {
+    //if(this.ready()) {
+      //logger.debug("Rendering page");
+      //this.render();
+    //} else {
+      //logger.debug("Rendering loading");
+      //this.render('loading');
+    //}
+  //},
   onAfterAction: function() {
     logger.debug("After Action");
   },

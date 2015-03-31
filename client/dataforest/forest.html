@@ -79,7 +79,7 @@
 		  <li class="sort-disabled"></li>
 		  {{#each ideas}}
 			  {{#if isClustered}}
-			  <li id={{_id}} class="idea-item">{{content}}</li>
+          {{> ForestIdea }}
 			  {{/if}}
 		  {{/each}}
 	  </ul>
@@ -98,7 +98,7 @@
 					id="namecluster" placeholder="Name this cluster">
 			</div>
 			{{#each ideaNodeIdeas}}
-				<li id={{_id}} class="idea-item">{{content}}</li>
+        {{> ForestIdea }}
 			{{/each}}
 		</ul>
 		<button id='finish' class='btn btn-large btn-primary'>Finished</button>
@@ -186,4 +186,10 @@
     		</div>
   		</div>
 	</div>
+</template>
+
+<template name="ForestIdea">
+	<li id={{_id}} class="forest-idea-item">{{content}}</li>
+</template>
+<template name="ForestIdeaNode">
 </template>

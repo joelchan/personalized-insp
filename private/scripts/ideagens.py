@@ -11,6 +11,25 @@ logging.basicConfig(format='%(levelname)s:%(message)s',
                     level=logging.DEBUG)
 
 
+def list_to_dict(docs):
+    """
+    Convert a list of mongo documents with an _id field to a dictionary
+    indexed by the _id field
+
+    """
+    results = {}
+    for doc in docs:
+        results[doc['_id']] = doc
+    return results
+
+def get_ids(docs):
+    """
+    Grab _id field from set of docs and return a list
+
+    """
+    return [doc['_id'] for doc in docs]
+
+
 class Db_Manager:
     """
     A class for performing typical data processing operations on
@@ -73,8 +92,6 @@ class Db_Manager:
             logging.debug(login_events.count())
             events.extend(login_events)
         return events
-
-
 
 
 if __name__ == '__main__':

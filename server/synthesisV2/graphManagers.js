@@ -25,7 +25,7 @@ Meteor.methods({
      * Create a graph node
      * **********************************************************/
     logger.debug("Creating new Graph Node");
-    var node = graphManager.createGraphNode(graphID, type, metadata);
+    var node = GraphManager.createGraphNode(graphID, type, metadata);
     return node._id;
   },
   graphCreateEdge: function(type, sourceID, targetID, metadata) {
@@ -51,7 +51,7 @@ Meteor.methods({
         data[fields[i]] = node[fields[i]];
       }
       //Create copy of node in target graph
-      var copy = graphManager.createGraphNode(targetGraphID, node.type, data);
+      var copy = GraphManager.createGraphNode(targetGraphID, node.type, data);
       //Create copy edge
       if (!Edges.findOne({$and: [{nodeIDs: node._id},
           {nodeIDs: copy._id}]})) {
@@ -94,7 +94,7 @@ Meteor.methods({
       metadata['time'] = idea.time;
       metadata['vote'] = false;
       metadata['numVotes'] = 0;
-      return graphManager.createGraphNode(graphID, 'idea', metadata);
+      return GraphManager.createGraphNode(graphID, 'idea', metadata);
     } else {
       logger.debug("Node already exists for this idea and graph");
       return result._id;
@@ -116,7 +116,7 @@ Meteor.methods({
     metadata['position'] = {top: jitterTop , left: jitterLeft};
     metadata['isCollapsed'] = false; //used only for clustering interface
     logger.trace(metadata);
-    return graphManager.createGraphNode(graphID, 'theme', metadata);
+    return GraphManager.createGraphNode(graphID, 'theme', metadata);
   },
   graphLinkChild: function(parentGraphID, parentID, childID, metadata) {
     logger.debug("Creating a new parent-child graph edge");
@@ -173,11 +173,11 @@ Meteor.methods({
   },
   graphNaiveUnion: function(graphID, userID, groupID) {
     logger.debug("Naive Union");
-    graphManager.graphUnion(graphID, userID, groupID);
+    GraphManager.graphUnion(graphID, userID, groupID);
   },
   graphUpdateIdeaVotes: function(nodeID) {
-    return graphManager.updateVotes(nodeID);
-  }
+    return GraphManager.updateVotes(nodeID);
+  },
 
     
 });

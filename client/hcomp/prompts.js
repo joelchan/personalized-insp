@@ -25,7 +25,7 @@ Template.ExperimentsTab.helpers({
   experiments: function() {
     //TODO: make experiments owned by a user
     return Experiments.find({},{sort: {creationTime: -1}}); 
-  }
+  },
 });
 
 Template.DataProcessingTab.helpers({
@@ -45,6 +45,11 @@ Template.DataProcessingTab.helpers({
     logger.trace(JSON.stringify(results));
     return results;
   },
+});
+
+Template.DataSummary.helpers({
+});
+Template.DataSummary.events({
 });
 
 Template.CrowdPromptPage.rendered = function() {
@@ -117,6 +122,9 @@ Template.CrowdExperiment.helpers({
     logger.debug("Data object2 " + JSON.stringify(result));
     return result;
   },
+});
+
+Template.CrowdExperiment.events({
 });
 
 Template.CrowdExperimentCondition.helpers({
@@ -224,6 +232,18 @@ Template.CrowdBrainstorm.helpers({
   promptID: function() {
     return {promptID: this._id};
   },
+  isNotPrepped: function() {
+    logger.trace("**********************************************");
+    logger.trace("isNotPrepped");
+    logger.trace(this);
+    var prompt = Prompts.findOne({_id: this._id})
+    logger.trace(prompt)
+    if (typeof this['forestGraphID'] === 'undefined') {
+      return true;
+    } else {
+      return false;      
+    }
+  },
 });
 
 Template.CrowdBrainstorm.events({
@@ -238,6 +258,17 @@ Template.CrowdBrainstorm.events({
     //Router.go("HcompResultsPage", 
       //{promptID: this._id, userID: Session.get("currentUser")});
   //},
+  'click .prep-forest': function () {
+    logger.debug("Prepping db for dataforest analysis");
+    logger.debug(this);
+    var prompt = this;
+    var group = Groups.findOne({_id: prompt.groupIDs[0]});
+    var user = Session.get("currentUser");
+    var type = "data_forest";
+    graphID = GraphManager.createGraph(prompt, group, user, type);
+    Prompts.update({_id: prompt._id}, {$set: {forestGraphID: graphID}});
+
+  },
 });
 
 /********************************************************************

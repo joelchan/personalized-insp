@@ -169,6 +169,11 @@
             <h3 class="center-vertical">Review Ideas</h3>
         </div>
       </a>
+      {{#if isNotPrepped }}
+        <div class="col-sm-2 prep-forest clickable">
+          <h3 class="center-vertical">Prep Data Forest</h3>
+        </div>
+      {{/if}}
       <!-- <a href="">
         <div class="col-sm-2 create-exp-button clickable">
             <h3 class="center-vertical">Create Experiment</h3>
@@ -243,12 +248,12 @@
           {{/each}}
         </div>
       </div>
-    </div>
     <a href="{{formUrl}}{{pathFor route="ExpDashboard" data=getData}}">
       <div class="col-sm-2 exp-dash-button clickable">
         <h3 class="center-vertical">Facilitate Brainstorm</h3>
       </div>
     </a>
+    </div>
   </div>
 </template>
 

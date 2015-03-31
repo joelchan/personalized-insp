@@ -3,8 +3,6 @@
 #
 # Author: Joel Chan joelchan.me
 
-import nltk
-import sys
 import itertools as it
 # import numpy as np
 import networkx as nx
@@ -15,6 +13,7 @@ import nlp
 from gensim import corpora, models, similarities, matutils
 # from operator import itemgetter
 from py_correlation_clustering import solver
+import ideagens
 
 """
 Output should be:
@@ -23,7 +22,8 @@ A networkx graph G, composed of
     E (a list of edges)
 """
 
-if __name__  == '__main__':
+
+if __name__ == '__main__':
     # passWord = sys.argv[1]
     THRESHOLD = 0.5
 
@@ -31,7 +31,16 @@ if __name__  == '__main__':
     # read data from mongoDB
     # Get Ideas
     db = mongohq.Data_Utility('data', mongohq.ideagens)
-    ideas = db.get_data('ideas')
+    prompts = db.get_data('prompts', None,
+                          {'forestGraphID': {'$exists': 'True'}})
+    promptIDs = [p['_id'] for p in prompts]
+    print prompts.count()
+    print "*******************************************************"
+    print promptIDs
+    ideas = db.get_data('ideas', None, {'promptID': {'$in': promptIDs}})
+    print len(ideas)
+    print ideas[1:3]
+    idea_dict = ideagens.list_to_dict(ideas)
 
     #### tokenize ####
     # get stopwords

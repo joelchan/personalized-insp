@@ -12,8 +12,18 @@ Logger.setLevel('Model:SynthesisV2:GraphManagers', 'trace');
 /*****************************************************************
  *    Helper Functions
  * ***************************************************************/
-graphManager = (function() {
+GraphManager = (function() {
   return {
+
+    createGraph: function(prompt, group, user, type) {
+      /*************************************************************
+      * Create a graph
+      * **********************************************************/
+      console.log("Creating new Graph");
+      var graph = new Graph(prompt._id, group._id, user._id, type);
+      graph._id = Graphs.insert(graph);
+      return graph._id;
+    },
 
     createGraphNode: function(graphID, type, metadata) {
       var g = Graphs.findOne({_id: graphID});
@@ -21,6 +31,14 @@ graphManager = (function() {
       node._id = Nodes.insert(node);
       Graphs.update({_id: graphID}, {$push: {nodeIDs: node._id}});
       return node;
+    },
+
+    createEdge: function(type, source, target, metadata) {
+      logger.debug("Creating new Graph edge");
+      var edge = new GraphEdge(type, 
+          source.promptID, source._id, target._id, metadata);
+      edge._id = Edges.insert(edge);
+      return edge._id;
     },
    
     updateVotes: function (nodeID) {
@@ -37,6 +55,23 @@ graphManager = (function() {
           {multi: true}
       );
       return count;
+    },
+
+    initiatePreforest: function(prompt) {
+      //Check if preforest graph already exists
+      var g = Graphs.find({type: 'data_forest', promptID: prompt._id})
+      if (g.count() == 0) {
+        GraphManager.
+        Prompts.update({_id: prompt._id}, 
+            {$set: {startedForest: true}}
+        );
+         
+      } else {
+        logger.warn("Prompt has probably already been processed");
+        Prompts.update({_id: prompt._id}, 
+            {$set: {startedForest: true}}
+        );
+      }
     },
    
     getLinkedNodes: function (nodeID) {
