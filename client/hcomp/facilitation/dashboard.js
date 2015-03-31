@@ -1710,21 +1710,17 @@ Template.ForceV.rendered = function() {
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-    .attr("pointer-events", "all")
+    //.attr("pointer-events", "all")
     .append('svg:g')
     .call(d3.behavior.zoom().on("zoom", redraw))
     .append('svg:g');
   
  
-  svg.append('svg:rect')
-      .attr('width', width)
-      .attr('height', height)
-      .attr('fill', 'rgba(1,1,1,0)')
- 
   function redraw() {
       console.log("here", d3.event.translate, d3.event.scale);
       svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")"); } 
 
+ 
 
   Deps.autorun(function() {  
 
