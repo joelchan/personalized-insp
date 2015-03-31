@@ -2620,31 +2620,49 @@ function CreateForceDiagram(forceData, svg, w, h)
     .enter()
     .append("g")
   
+  var ws = d3.scale.linear()
+            .domain([0, 7])
+            .range([10, 1])
+
+  var wsc = d3.scale.linear()
+            .domain([0, 5, 10])
+            .range(["orange", "white", "steelblue"])
+
+  var wst = d3.scale.linear()
+            .domain([0, 7])
+            .range([1, 0])
+
   var nodes = nods.append("circle")
                 .attr("class", "node")
                 .attr("r", function(d) 
                 { 
-                  return d.size/3; 
+                  return ws(d.weight); //d.size/3; 
                 })
-                .style("fill", function(d, i) 
+                .style("opacity", function(d, i) 
                 {
                   //return colors(i);
                   //return "green";
                   //var ind = (d.source_idea_id)-1;
                   //var cat = incomingIdeaData.ind.categories[0]
                   //return ordColor(cat);
-                  return colors(d.size);
+                  if (d.text=="Nothing") {return 0;}
+                  else {return colors(d.size);}
                 })
+                .style("stroke-width", function(d,i) { return ws(d.weight);})
+                .style("fill", function(d,i) {return wsc(d.weight);})
                 .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
   var tex = nods.append("text")
     .text(function(d) { 
-      return d.text;})
-    .attr("fill", "black")
+      if (d.text=="Nothing") {return ""}
+      else {return d.text;};})
+    //.attr("fill", function(d,i) {return wsc(d.weight);})
+    .style("opacity", function(d,i){return wst(d.weight)})
     .attr("font-size", "20px");
 
   nodes.append("title")
-    .text(function(d) { return d.text; });
+    .text(function(d) { if (d.text=="Nothing") {return ""}
+                        else {return d.text; };})
 
     
 
@@ -2789,9 +2807,9 @@ function CreateForceDiagram2(forceData)
     .size([width-100, height-100])
     //.linkDistance(100)
     .linkDistance(function(d) 
-    {
-      return 20-d.strength;
-    })
+      {
+        return 20-d.strength;
+      })
     .gravity(.05)
     .charge(charge)
     .start();
