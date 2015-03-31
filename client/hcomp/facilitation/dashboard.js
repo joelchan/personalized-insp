@@ -600,7 +600,7 @@ var nodes = cloud.map(function (item) {
         radius: radius(item.count),
         color: color(i),
         cx: x(i),
-        cy: height / 9,
+        cy: height / 5,
         title: item.word,
         likes: item.likes
     };
@@ -627,14 +627,16 @@ var rem = svg.selectAll("circle")
     .exit()
     .style("fill", "grey");
 
+var rgscale = d3.scale.linear()
+              .domain([0,1])
+              .range(["red", "green"]);
 
 var circle = svg.selectAll("circle")
     .data(nodes)
     .enter().append("circle")
-    .attr("opacity", .2)
+    .attr("opacity", function(d) {if (d.title=="") {return 0} else {return .2}})
     .attr("r", function (d) {return d.radius;})
-    .attr("fill", function(d) {if (d.likes==1) {return "green";} 
-                                             else {return "red";};})
+    .attr("fill", function(d) {return rgscale(d.likes);})
     .call(force.drag);
 
     //circle.remove()
@@ -648,16 +650,17 @@ var tex = svg.selectAll("text")
     .data(nodes)
     .enter().append("text")
     .attr("x", function (d) {
-      return d.cx-d.radius;
+      return d.cx;
     })
     .attr("y", function (d) {
-      return d.cy+10;
+      return d.cy;
     })
     //.attr("dx", -5)
     .text(function(d) {return d.title;})
     .style("font-size", function(d) {return d.radius/3;})
-    .style("stroke", function(d) {if (d.likes==1) {return "green";} 
+    .style("fill", function(d) {if (d.likes==1) {return "green";} 
                                              else {return "red";};})
+    .style("stroke-width", .1)
     .call(force.drag);
 
 
@@ -675,10 +678,10 @@ function tick(e) {
     tex.each(gravity(.2 * e.alpha))
         .each(collide(.5))
         .attr("x", function (d) {
-        return d.x-17;
+        return d.x-(d.radius/2);
     })
         .attr("y", function (d) {
-        return d.y+10;
+        return d.y ;
     });
 }
 /*
