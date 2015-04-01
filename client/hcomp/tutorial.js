@@ -1,14 +1,81 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Tutorial');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
+// Logger.setLevel('Client:Hcomp:Tutorial', 'trace');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'debug');
-// Logger.setLevel('Client:Hcomp:Tutorial', 'info');
+Logger.setLevel('Client:Hcomp:Tutorial', 'info');
 //Logger.setLevel('Client:Hcomp:Tutorial', 'warn');
 var myTaskIDs = [];
 var tutorialLengthTreatment = 10;
 var tutorialLengthControl = 7;
-    
+var fluencyTaskLength = 1*60000;
+
+var timer = new Tock({
+    callback: function () {
+        $('#clockface').text(timer.msToTime(timer.lap()));
+    }
+});
+
+var countdown = Tock({
+    countdown: true,
+    interval: 1000,
+    callback: function () {
+        // console.log(countdown.lap() / 1000);
+        $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
+    },
+    complete: function () {
+        alert("Time's up!");
+        logger.debug("Grabbing fluency data");
+        var answers = DummyIdeas.find(
+                        {userID: Session.get("currentUser")._id,
+                        'prompt._id': Session.get("currentPrompt")._id}).fetch();
+        logger.trace("Answers: " + JSON.stringify(answers));
+        var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+        var measureID = FluencyMeasures.insert(measure);
+        if (measureID) {
+          logger.trace("Fluency measure for " + 
+            Session.get("currentParticipant")._id + 
+            ": " + JSON.stringify(measure));
+        } else {
+          logger.debug("Failed to grab the data")
+        }        
+        var part = Session.get("currentParticipant");
+        var condName = Conditions.findOne({_id: part.conditionID}).description;
+        EventLogger.logFluencyTaskComplete();
+        
+        if (condName == "Control") {
+          $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
+          $("#control-tutorial-directions").addClass("visible-tutorial-control");
+          $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
+          $("#ideator-directions-control").css({border: "10px solid #F5A623"});
+          $("#directions-content").removeClass("collapse");
+          $("#directions-content").addClass("collapse in");
+          $('#control-tutorial-ideaEntryTry-gotit').attr('disabled',false);
+          $('.control-tutorial-ideaEntryTry-goback').attr('disabled',false);
+          EventLogger.logTutorialStepComplete(6,tutorialLengthControl); 
+        } else {
+          $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
+          $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
+          $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
+          $(".get-task").css({
+              border: "10px solid #F5A623",
+              "z-index": 60
+          });
+          $(".idea-input-box").css({
+              border: "none",
+              "z-index": 20
+          });
+          var height = $(window).height() - 50; //Navbar height=50
+          $(".general-idea-entry").append(
+              "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
+          );
+          $('#treatment-tutorial-ideaEntryTry-gotit').attr('disabled',false);
+          $('.treatment-tutorial-ideaEntryTry-goback').attr('disabled',false);
+          EventLogger.logTutorialStepComplete(6,tutorialLengthTreatment);
+        }
+    }
+});
+
 //CONTROL TUTORIAL
 Template.TutorialControl.rendered = function() {
     $(".tutorial-page-control").append(
@@ -23,7 +90,7 @@ Template.TutorialControl.rendered = function() {
     ideas.forEach(function(idea) {
       DummyIdeas.remove({'_id': idea._id});
     });
-    // Setup Facilitation push to synthesis listener
+    // Setup Experimenter push to ideation listener
     logger.trace("Rendering tutorial control page");
     MyUsers.find({_id: Session.get("currentUser")._id}).observe({
       changed: function(newDoc, oldDoc) {
@@ -36,9 +103,13 @@ Template.TutorialControl.rendered = function() {
         var partID = Session.get("currentParticipant")._id;
         var promptID = Session.get("currentPrompt")._id;
         logger.debug("partID: " + partID);
+        //
+        // TODO grab the fluency measure if we haven't!
+        //
         Router.go(route, {'promptID': promptID, 'partID': partID});
       },
     });    
+    initializeTutorialTimer();
     EventLogger.logTutorialStarted();
     Session.set("currentTutorialStep",1);
 }
@@ -155,13 +226,13 @@ Template.MturkIdeaEntryBoxTutorial.rendered = function(){
 Template.MturkIdeaEntryBoxTutorial.events({
     
   'click .submit-idea': function (e, target) {    
-    if ($("#control-tutorial-ideaEntryTry-gotit").length) {
-      document.getElementById("control-tutorial-ideaEntryTry-gotit").disabled = false;
-    }
+    // if ($("#control-tutorial-ideaEntryTry-gotit").length) {
+    //   document.getElementById("control-tutorial-ideaEntryTry-gotit").disabled = false;
+    // }
     
-    if ($("#treatment-tutorial-ideaEntryTry-gotit").length) {
-      document.getElementById("treatment-tutorial-ideaEntryTry-gotit").disabled = false;
-    }
+    // if ($("#treatment-tutorial-ideaEntryTry-gotit").length) {
+    //   document.getElementById("treatment-tutorial-ideaEntryTry-gotit").disabled = false;
+    // }
     if ($("#treatment-tutorial-inspirationCardTry-gotit").length) {
       document.getElementById("treatment-tutorial-inspirationCardTry-gotit").disabled = false;
     }
@@ -290,7 +361,7 @@ Template.ControlTutorialFlow.events({
     'click .control-tutorial-ideaEntry-gotit': function() {
         $("#control-tutorial-ideaEntry").removeClass("visible-tutorial-control");
         $("#control-tutorial-ideaEntryTry").addClass("visible-tutorial-control");
-        $("#control-tutorial-ideaEntryTry").removeClass("control-tutorial-background");
+        // $("#control-tutorial-ideaEntryTry").removeClass("control-tutorial-background");
         $(".idea-input-box").css({border: "none"});
         EventLogger.logTutorialStepComplete(5,tutorialLengthControl);
     },
@@ -309,13 +380,22 @@ Template.ControlTutorialFlow.events({
     },
     //ideaEntryTry
     'click #control-tutorial-ideaEntryTry-gotit': function() {
-        $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
-        $("#control-tutorial-directions").addClass("visible-tutorial-control");
-        $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
-        $("#ideator-directions-control").css({border: "10px solid #F5A623"});
-        $("#directions-content").removeClass("collapse");
-        $("#directions-content").addClass("collapse in");
-        EventLogger.logTutorialStepComplete(6,tutorialLengthControl);
+        // $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
+        // $("#control-tutorial-directions").addClass("visible-tutorial-control");
+        // $("#control-tutorial-ideaEntryTry").addClass("control-tutorial-background");
+        // $("#ideator-directions-control").css({border: "10px solid #F5A623"});
+        // $("#directions-content").removeClass("collapse");
+        // $("#directions-content").addClass("collapse in");
+        // EventLogger.logTutorialStepComplete(6,tutorialLengthControl);
+        $('#control-tutorial-ideaEntryTry-gotit').attr('disabled',true);
+        $('.control-tutorial-ideaEntryTry-goback').attr('disabled',true);
+        $("#control-tutorial-ideaEntryTry").removeClass("control-tutorial-background");
+        alert("Ready, set, go! Click 'ok' and the timer will start!");
+        $('.ideation-prompt-control').text("Alternative uses for a bowling pin");
+        var startTime = timer.msToTime(fluencyTaskLength)
+        logger.trace("Fluency task length is: " + startTime);
+        EventLogger.logFluencyTaskBegin();
+        countdown.start(fluencyTaskLength);
     },
     'click .control-tutorial-ideaEntryTry-goback': function() {
         $("#control-tutorial-ideaEntryTry").removeClass("visible-tutorial-control");
@@ -380,7 +460,7 @@ Template.TutorialTreatment.rendered = function() {
       logger.debug("removing task with id: " + task._id);
       DummyTasks.remove({'_id': task._id});
     });
-    // Setup Facilitation push to synthesis listener
+    // Setup Experimenter push to ideation listener
     MyUsers.find({_id: Session.get("currentUser")._id}).observe({
     changed: function(newDoc, oldDoc) {
         logger.info("change to current user detected");
@@ -392,8 +472,9 @@ Template.TutorialTreatment.rendered = function() {
         var promptID = Session.get("currentPrompt")._id;
         logger.debug("partID: " + partID);
         Router.go(route, {'promptID': promptID, 'partID': partID});
-    },
-  });    
+      },
+    });    
+    initializeTutorialTimer();
 }
 //Template.TutorialTreatment.events({
     //'click button.nextPage': function () {
@@ -593,7 +674,7 @@ Template.TreatmentTutorialFlow.events({
     'click .treatment-tutorial-ideaEntry-gotit': function() {
         $("#treatment-tutorial-ideaEntry").removeClass("visible-tutorial-treatment");
         $("#treatment-tutorial-ideaEntryTry").addClass("visible-tutorial-treatment");
-//        $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
+        // $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
         $(".idea-input-box").css({border: "none"});
         $(".general-idea-entry .tutorial-backdrop").remove();
         EventLogger.logTutorialStepComplete(5,tutorialLengthTreatment);
@@ -615,22 +696,17 @@ Template.TreatmentTutorialFlow.events({
     
     //ideaEntryTry
     'click #treatment-tutorial-ideaEntryTry-gotit': function() {
-        $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
-        $("#treatment-tutorial-inspireMe").addClass("visible-tutorial-treatment");
-//        $("#treatment-tutorial-ideaEntryTry").addClass("treatment-tutorial-background");
-        $(".get-task").css({
-            border: "10px solid #F5A623",
-            "z-index": 60
-        });
-        $(".idea-input-box").css({
-            border: "none",
-            "z-index": 20
-        });
-        var height = $(window).height() - 50; //Navbar height=50
-        $(".general-idea-entry").append(
-            "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
-        );
-        EventLogger.logTutorialStepComplete(6,tutorialLengthTreatment);
+        $('#treatment-tutorial-ideaEntryTry-gotit').attr('disabled',true);
+        $('.treatment-tutorial-ideaEntryTry-goback').attr('disabled',true);
+        // $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
+        // $('.treatment-tutorial-background').zIndex(51);
+        $("#treatment-tutorial-highlight-ideaEntryTry").remove();
+        alert("Ready, set, go! Click 'ok' and the timer will start!");
+        $('.ideation-prompt-treatment').text("Alternative uses for a bowling pin");
+        var startTime = timer.msToTime(fluencyTaskLength);
+        logger.trace("Fluency task length is: " + startTime);
+        EventLogger.logFluencyTaskBegin();
+        countdown.start(fluencyTaskLength);
     },
     'click .treatment-tutorial-ideaEntryTry-goback': function() {
         $("#treatment-tutorial-ideaEntryTry").removeClass("visible-tutorial-treatment");
@@ -647,6 +723,10 @@ Template.TreatmentTutorialFlow.events({
         var height = $(window).height() - 50; //Navbar height=50
         $(".general-idea-entry").append(
             "<div class='tutorial-backdrop' style='height: " + height + "px;'></div>"
+        );
+        // $('.treatment-tutorial-background').zIndex("auto");
+        $("#treatment-tutorial-ideaEntryTry").append(
+          "<div id='treatment-tutorial-highlight-ideaEntryTry' class='treatment-tutorial-highlight-container'><div class='treatment-tutorial-highlight'></div></div>"
         );
         logger.trace("IDEA ENTRY TRY");
         EventLogger.logTutorialStepRewind(6,tutorialLengthTreatment);
@@ -850,7 +930,13 @@ Template.TreatmentTutorialFlow.events({
     },
 });
 
-
-
+var initializeTutorialTimer = function() {
+  if ($('.timer').length == 0) {
+    Blaze.render(Template.TockTimer, $('#nav-right')[0]);
+    countdown.stop();
+  } else {
+    countdown.stop();
+  }
+}
 
 

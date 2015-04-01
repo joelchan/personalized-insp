@@ -8,9 +8,9 @@ Logger.setLevel('info');
 // Configure logger for event logging 
 var logger = new Logger('Tools:Logging');
 // Comment out to use global logging level
-Logger.setLevel('Tools:Logging', 'trace');
+// Logger.setLevel('Tools:Logging', 'trace');
 //Logger.setLevel('Tools:Logging', 'debug');
-// Logger.setLevel('Tools:Logging', 'info');
+Logger.setLevel('Tools:Logging', 'info');
 //Logger.setLevel('Tools:Logging', 'warn');
 
 EventLogger = (function () {
@@ -413,6 +413,18 @@ EventLogger = (function () {
     },
     logTutorialComplete: function () {
       var msg = "User finished a tutorial";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      logger.debug(msg);
+    },
+    logFluencyTaskBegin: function () {
+      var msg = "User started fluency measure task";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      logger.debug(msg);
+    },
+    logFluencyTaskComplete: function () {
+      var msg = "User finished fluency measure task";
       var type = EventTypeManager.get(msg);
       this.log(type);
       logger.debug(msg);

@@ -241,6 +241,18 @@
           <strong>Time limit: </strong> {{ timeLimit }}<br/>
           <strong>Target Number of Participants per Condition: </strong> 
             {{ partNumber }}<br/>
+          <strong>Exclude Participants:</strong> {{ numExcluded }}<a class="show-hide" data-toggle="collapse" data-parent="#exp-{{_id}}-exclude-container" href="#exp-{{_id}}-exclude-content"> (Show/Hide)</a><br/>
+              <!-- <div class="row"> -->
+                <div id="exp-{{_id}}-exclude-container">
+                  <div id="exp-{{_id}}-exclude-content" class="collapse exclude-user">
+                    <ol>
+                      {{#each excludeUsers}}
+                        {{ > CrowdExperimentExcludeUser }}
+                      {{/each}}
+                    </ol>
+                    <!-- <textArea id="exclude-for-exp{{_id}}" class="form-control" rows="10" placeholder="Write your ideas here, each on a new line."></textarea> -->
+                  </div>
+                </div>
           <strong>Participant login URL: </strong> 
             <a href="{{ expURL }}">{{ expURL }}</a><br/>
           <!-- <strong>Conditions: </strong><br/> -->
@@ -277,4 +289,9 @@
       </div>
     </div>
   </div>
+</template>
+
+<template name="CrowdExperimentExcludeUser">
+  <!-- <li> {{ this }} (<a href="" class="rm-excl-user">remove</a>)</li> -->
+  <li> {{ this }} </li>
 </template>

@@ -75,32 +75,32 @@ Router.configure({
   }
 });
 
-var initRolePage = function() {
-  if ($('.exitStudy').length == 0) {
-    var exitStudyBtn = UI.render(Template.ExitStudy);
-    UI.insert(exitStudyBtn, $('.login')[0]);
-  }
-  //Add event handler for the exit study button
-  $('.exitStudy').click(function() {
-    logger.info("exiting study early");
-    EventLogger.logExitStudy();
-    EventLogger.logEndRole();
-    exitPage();
-  });
-  //Add timer
-  var prompt = Session.get("currentPrompt");
-  if (prompt.length > 0) {
-    if ($('.timer').length == 0) {
-      Session.set("hasTimer", true);
-      var timerTemplate = UI.render(Template.Timer);
-      UI.insert(timerTemplate, $('#nav-right')[0]);
-      //Setup timer for decrementing onscreen timer with 17 minute timeout
-      Session.set("timeLeft", prompt.length + 1);
-      $('#time').text(prompt.length);
-      Meteor.setTimeout(decrementTimer, 60000);
-    }
-  }
-}
+// var initRolePage = function() {
+//   if ($('.exitStudy').length == 0) {
+//     var exitStudyBtn = UI.render(Template.ExitStudy);
+//     UI.insert(exitStudyBtn, $('.login')[0]);
+//   }
+//   //Add event handler for the exit study button
+//   $('.exitStudy').click(function() {
+//     logger.info("exiting study early");
+//     EventLogger.logExitStudy();
+//     EventLogger.logEndRole();
+//     exitPage();
+//   });
+//   //Add timer
+//   var prompt = Session.get("currentPrompt");
+//   if (prompt.length > 0) {
+//     if ($('.timer').length == 0) {
+//       Session.set("hasTimer", true);
+//       var timerTemplate = UI.render(Template.Timer);
+//       UI.insert(timerTemplate, $('#nav-right')[0]);
+//       //Setup timer for decrementing onscreen timer with 17 minute timeout
+//       Session.set("timeLeft", prompt.length + 1);
+//       $('#time').text(prompt.length);
+//       Meteor.setTimeout(decrementTimer, 60000);
+//     }
+//   }
+// }
 
 setNextPage = function (routeName, routeParams) {
   Session.set("nextPage", routeName);

@@ -124,9 +124,28 @@ Template.CrowdExperiment.helpers({
     logger.debug("Data object2 " + JSON.stringify(result));
     return result;
   },
+  excludeUsers: function() {
+    return this.excludeUsers;
+  },
+  numExcluded: function() {
+    if (this.excludeUsers) {
+      return this.excludeUsers.length;
+    } else {
+      return 0;
+    }
+  },
 });
 
-Template.CrowdExperiment.events({
+Template.CrowdExperimentExcludeUser.helpers({
+  thisID: function() {
+    // buggy at the moment, not sure why
+    var userName = this;
+    logger.trace("Username to exclude: " + JSON.stringify(userName));
+    var user = MyUsers.findOne({"name": userName});
+    logger.trace(user);
+    // logger.trace("Excluded user: " + JSON.stringify(user));
+    return user._id;
+  },
 });
 
 Template.CrowdExperimentCondition.helpers({
@@ -365,45 +384,74 @@ Template.ExperimentsTab.events({
       $("input#num-parts").val("");
 
     },
-
-    'click .exp-dash-button': function () {
-      var exp = Experiments.findOne({_id: this._id});
-      Session.set("currentExp", exp);
-      var user = Session.get("currentUser");
-      if (exp) {
-        logger.trace("found current exp with id: " + this._id);
-        var prompt = Prompts.findOne({'_id': exp.promptID});
-        Session.set("currentPrompt", prompt);
-        var group = Groups.findOne({'_id': prompt.groupIDs[0]});
-        Session.set("currentGroup", group);
-        logger.debug("Prompt selected");
-        Router.go('ExpDashboard', 
-            {promptID: prompt._id, 
-              userID: user._id,
-              expID: exp._id});
-      } else {
-        logger.warn("couldn't find current exp with id: " + 
-            this._id);
-      }
-    },
-
-    'click .begin-bs': function () {
-      var condName = this.description;
-      logger.trace("Begin brainstorm for " + condName + " condition");
-      var exp = Experiments.findOne({_id: this.expID});
-      var userIDs = ExperimentManager.getUsersInCond(exp, condName);
-      userIDs.forEach(function (id) {
-        logger.debug("Updating route for user with id: " + id);
-        var routeName = "MturkIdeation" + condName;
-        logger.debug("Sending to route: " + routeName)
-        MyUsers.update({_id: id}, {$set: {'route': routeName}});
-      });
-    },
 });
 Template.CrowdPromptPage.events({
+    'click .review-button': function () {
+      // Set the current prompt
+      var prompt = Prompts.findOne({'_id': this._id});
+      Session.set("currentPrompt", prompt);
+      var group = Groups.findOne({'_id': this.groupIDs[0]});
+      Session.set("currentGroup", group);
+      var user = Session.get("currentUser");
+      if (prompt) {
+        logger.trace("found current prompt with id: " + prompt._id);
+        Session.set("currentPrompt", prompt);
+        logger.debug("Prompt selected");
+        Router.go('Visualization', {promptID: prompt._id, userID: user._id});
+      } else {
+        logger.error("couldn't find current prompt with id: " + 
+            prompt._id);
+      }
+    },
+});
 
+Template.CrowdExperiment.events({
+  // 'click .exp-dash-button': function () {
+    // var exp = Experiments.findOne({_id: this._id});
+    // Session.set("currentExp", exp);
+    // var user = Session.get("currentUser");
+    // if (exp) {
+      // logger.trace("found current exp with id: " + this._id);
+      // var prompt = Prompts.findOne({'_id': exp.promptID});
+      // Session.set("currentPrompt", prompt);
+      // var group = Groups.findOne({'_id': prompt.groupIDs[0]});
+      // Session.set("currentGroup", group);
+      // logger.debug("Prompt selected");
+      // Router.go('ExpDashboard', 
+          // {promptID: prompt._id, 
+            // userID: user._id,
+            // expID: exp._id});
+    // } else {
+      // logger.warn("couldn't find current exp with id: " + 
+          // this._id);
+    // }
+  // },
 
+  'click .begin-bs': function () {
+    var condName = this.description;
+    logger.trace("Begin brainstorm for " + condName + " condition");
+    var exp = Experiments.findOne({_id: this.expID});
+    var userIDs = ExperimentManager.getUsersInCond(exp, condName);
+    userIDs.forEach(function (id) {
+      logger.debug("Updating route for user with id: " + id);
+      var routeName = "MturkIdeation" + condName;
+      logger.debug("Sending to route: " + routeName)
+      MyUsers.update({_id: id}, {$set: {'route': routeName}});
+    });
+  },
 
-
-
+  // 'click .rm-excl-user': function() {
+  //   var userName = this;
+  //   // var expID = this.
+  //   var expContainer = $(event.target).parents('.exclude-user');
+  //   var expID = expContainer.attr("id").split("-")[1];
+  //   var exp = Experiments.findOne({_id: expID});
+  //   logger.trace("This experiment: " + JSON.stringify(exp));
+  //   // console.log(expID);
+  //   // var msg = JSON.stringify(expID);
+  //   // alert(msg);
+  //   // logger.trace("The experiment: " + )
+  //   alert("Remove " + userName + " from excludeUsers in " + expID +"?");
+  //   ExperimentManager.removeExcludeUser(expID, userName)
+  // }
 });

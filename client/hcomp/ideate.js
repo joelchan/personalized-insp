@@ -6,6 +6,31 @@ Logger.setLevel('Client:Hcomp:Ideate', 'trace');
 // Logger.setLevel('Client:Hcomp:Ideate', 'info');
 // Logger.setLevel('Client:Hcomp:Ideate', 'warn');
 
+var timer = new Tock({
+    callback: function () {
+        $('#clockface').text(timer.msToTime(timer.lap()));
+    }
+});
+
+var countdown = Tock({
+    countdown: true,
+    interval: 1000,
+    callback: function () {
+        // logger.debug(countdown.lap() / 1000);
+        $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
+    },
+    complete: function () {
+        // console.log('end');
+        alert("Time's up!");
+        
+        logger.info("Exitting current page");
+        
+        Router.go("SurveyPage", {
+              'partID': Session.get("currentParticipant")._id
+            });
+    }
+});
+
 Template.MturkIdeationPage.rendered = function(){
   EventLogger.logEnterIdeation(); 
   //Hide logout
@@ -19,7 +44,11 @@ Template.MturkIdeationPage.rendered = function(){
   if (Session.get("currentExp")) {
     if (!Session.get("currentParticipant").hasStarted) {
       logger.debug("showing begin ideation modal");
-      $("#exp-begin-modal").modal('show');  
+      // $("#exp-begin-modal").modal('show');  
+      alert("The brainstorm has begun!");
+      EventLogger.logBeginIdeation();
+      Participants.update({_id: Session.get("currentParticipant")._id}, 
+        {$set: {hasStarted: true}});
     }
   }
   //Setup Facilitation push to synthesis listener
@@ -36,6 +65,7 @@ Template.MturkIdeationPage.rendered = function(){
         //Router.go(route, {'promptID': promptID, 'userID': userID}); 
     //},
   //});
+  initializeTimer();
 };
 
 Template.MturkIdeationPageControl.rendered = function(){
@@ -43,8 +73,13 @@ Template.MturkIdeationPageControl.rendered = function(){
   logger.debug("checking to show begin ideation modal");
   if (!Session.get("currentParticipant").hasStarted) {
     logger.debug("showing begin ideation modal");
-    $("#exp-begin-modal").modal('show');  
+    // $("#exp-begin-modal").modal('show');  
+    alert("The brainstorm has begun!");
+    EventLogger.logBeginIdeation();
+    Participants.update({_id: Session.get("currentParticipant")._id}, 
+      {$set: {hasStarted: true}});
   }
+  initializeTimer();
 };
 
 Template.MturkIdeationPageControl.helpers({
@@ -331,3 +366,17 @@ Template.ExperimentBeginModal.events({
       {$set: {hasStarted: true}});
   },
 });
+
+var initializeTimer = function() {
+  var prompt = Session.get("currentPrompt");
+  if ($('.timer').length == 0 && prompt.length > 0) {
+    logger.info("using a timer");
+    // Session.set("hasTimer",true);
+    Blaze.render(Template.TockTimer, $('#nav-right')[0]);
+    var promptLength = prompt.length*60000;
+    countdown.start(promptLength);
+  } else if (prompt.length > 0) {
+    var promptLength = prompt.length*60000;
+    countdown.start(promptLength);
+  }
+}
