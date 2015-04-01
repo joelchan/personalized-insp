@@ -288,7 +288,7 @@ Template.CondParticipant.helpers({
     } else {
       return "";
     }
-  }
+  },
 });
 
 Template.CrowdBrainstorm.helpers({
@@ -361,9 +361,6 @@ Template.CrowdBrainstorm.helpers({
     return {promptID: this._id};
   },
   isNotPrepped: function() {
-    logger.trace("**********************************************");
-    logger.trace("isNotPrepped");
-    logger.trace(this);
     var prompt = Prompts.findOne({_id: this._id})
     logger.trace(prompt)
     if (typeof this['forestGraphID'] === 'undefined') {

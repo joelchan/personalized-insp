@@ -1,8 +1,8 @@
 .login {
-  padding-top: 12px;
+  /* padding-top: 12px; */
+  margin: 10px;
   text-align: right;
   display: inline-block;
-
 }
 
 .line {
@@ -104,3 +104,7 @@ body {
     position: absolute;
 }
 
+.timer {
+  display: inline-block;
+  margin: 18px 10px;
+}
