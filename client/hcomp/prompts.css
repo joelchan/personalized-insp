@@ -1,7 +1,63 @@
-#new-bs {
+.prompts-page .clickable {
+    cursor: pointer;
+}
+
+.prompts-page .clickable:hover {
+    background: #efefef;
+}
+
+.prompts-page .input-label {
+  display: inline-block;
+}
+
+.prompts-page .modal {
+  top: 20%;
+  position: fixed;
+}
+
+.prompts-page .modal-box {
+  width: 100%;
+  overflow: scroll;
+  padding-bottom: 0px;
+  padding-left: 10px;
+}
+
+.prompts-page .modal-number-input {
+  padding-left: 10px;
+}
+
+.prompts-page  .modal-body {
+  max-height: 100%;
+}
+
+.prompts-page .modal-footer {
+  padding: 0;
+  height: 60px;
+}
+
+.prompts-page .modal-footer button {
+  margin-top: 12px;
+  margin-right: 15px;
+  width: 100px;
+}
+
+.prompts-page #prompt-text {
+  min-height: 100px;
+}
+
+.prompts-page #prompt-title {
+  height: 30px;
+}
+
+.prompts-page #new-bs {
   margin-bottom: 50px;
 }
-.login-box {
+
+.prompts-page .btn-label {
+  color: #FFF;
+}
+
+.prompts-page .login-box {
   margin: 20px 0 30px;
 }
 
@@ -107,11 +163,3 @@
   margin-top:0px;
 }
 
-#newExpModal {
-  height: 100%;
-}
-
-.exp-prompt-list {
-  max-height: 250px;
-  overflow:scroll;
-}

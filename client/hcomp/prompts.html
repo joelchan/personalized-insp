@@ -3,31 +3,33 @@
 <!---##############################################-->
 
 <template name="CrowdPromptPage">
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs hcomp-prompts-page" role="tablist">
-    <li role="presentation" class="active">
-      <a href="#promptList" aria-controls="promptList" role="tab" data-toggle="tab">
-        Prompts
-      </a>
-    </li>
-    <li role="presentation">
-      <a href="#expList" aria-controls="expList" role="tab" data-toggle="tab">
-        Experiments
-      </a>
-    </li>
-    <li role="presentation">
-      <a href="#dataProcList" aria-controls="dataProcList" role="tab" data-toggle="tab">
-        Data Processing
-      </a>
-    </li>
-  </ul>
-
-  <!-- Tab panes -->
-  <div class="tab-content">
-    {{> PromptsTab }}
-    {{> ExperimentsTab }}
-    {{> DataProcessingTab }}
-  </div> <!-- End tab content container -->
+  <div class="prompts-page">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs hcomp-prompts-page" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#promptList" aria-controls="promptList" role="tab" data-toggle="tab">
+          Prompts
+        </a>
+      </li>
+      <li role="presentation">
+        <a href="#expList" aria-controls="expList" role="tab" data-toggle="tab">
+          Experiments
+        </a>
+      </li>
+      <li role="presentation">
+        <a href="#dataProcList" aria-controls="dataProcList" role="tab" data-toggle="tab">
+          Data Processing
+        </a>
+      </li>
+    </ul>
+  
+    <!-- Tab panes -->
+    <div class="tab-content">
+      {{> PromptsTab }}
+      {{> ExperimentsTab }}
+      {{> DataProcessingTab }}
+    </div> <!-- End tab content container -->
+  </div>
 
 </template>
 
@@ -161,17 +163,17 @@
       </div>
       <a href="{{formUrl}}{{pathFor route="HcompDashboard" data=getData}}">
         <div class="col-sm-2 dash-button clickable">
-          <h3 class="center-vertical">View Brainstorm Progress</h3>
+          <h3 class="btn-label center-vertical">View Brainstorm Progress</h3>
         </div>
       </a>
       <a href="{{formUrl}}{{pathFor route="Visualization" data=getData}}">
         <div class="col-sm-2 review-button clickable">
-            <h3 class="center-vertical">Review Ideas</h3>
+            <h3 class="btn-label center-vertical">Review Ideas</h3>
         </div>
       </a>
       {{#if isNotPrepped }}
         <div class="col-sm-2 prep-forest clickable">
-          <h3 class="center-vertical">Prep Data Forest</h3>
+          <h3 class="btn-label center-vertical">Prep Data Forest</h3>
         </div>
       {{/if}}
       <!-- <a href="">
@@ -186,7 +188,6 @@
 <!---##############################################-->
 <!---EXPERIMENTS TAB SUB-TEMPLATES-->
 <!---##############################################-->
-
 <template name="NewExperimentModal">
   <!-- Large modal -->
   <div class="modal fade" id="newExpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -208,7 +209,7 @@
             {{/each}}
           </div>
 
-          <h5>Target number of participants per condition</h5>
+          <h5 class="input-label">Target number of participants per condition</h5>
           <input type="number" id="num-parts" class="modal-number-input" placeholder="participants">
 
         </div>
@@ -248,9 +249,9 @@
           {{/each}}
         </div>
       </div>
-    <a href="{{formUrl}}{{pathFor route="ExpDashboard" data=getData}}">
-      <div class="col-sm-2 exp-dash-button clickable">
-        <h3 class="center-vertical">Facilitate Brainstorm</h3>
+    <a href="{{urlFor route="ExpDashboard" data=getData}}">
+      <div class="col-sm-2 dash-button clickable">
+        <h3 class="btn-label center-vertical">Facilitate Brainstorm</h3>
       </div>
     </a>
     </div>

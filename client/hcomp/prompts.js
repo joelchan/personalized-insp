@@ -118,7 +118,9 @@ Template.CrowdExperiment.helpers({
   getData: function() {
     logger.debug("Data context: " + JSON.stringify(this._id));
     logger.debug("current user: " + JSON.stringify(Session.get("currentUser")));
-    var result = {'promptID': this._id, 'userID': Session.get("currentUser")._id};
+    var result = {'promptID': this.promptID, 
+        'userID': Session.get("currentUser")._id,
+        'expID': this._id};
     logger.debug("Data object2 " + JSON.stringify(result));
     return result;
   },
