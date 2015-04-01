@@ -19,6 +19,35 @@ Template.HcompFilterbox.rendered = function(){
     logger.trace("Creating default filter for ideawordcloud filter");
     createDefaultIdeasFilter("IdeaWordCloud Filter");
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
+
+    var exp = Session.get("currentExp");
+    if (exp) {
+      Participants.find({experimentID: exp._id}).observe({
+        // added: function(user) {
+        changed: function(partNewState, partOldState) {
+          logger.trace("Old participant state: " + JSON.stringify(partOldState));
+          logger.trace("New participant state: " + JSON.stringify(partNewState));
+
+          if (!partOldState.hasStarted && partNewState.hasStarted) {
+            logger.info("new participant began ideation");
+            logger.trace("new participant: " + JSON.stringify(partNewState));
+            
+            var update = false;
+            var cond = Conditions.findOne({_id: partNewState.conditionID});
+            if (cond.description == "Treatment") {
+              update = true;
+            } else {
+              logger.debug("Not a treatment participant, not updating inspirations");
+            }
+             
+            if (update) {
+              logger.debug("Updating participant ideas filter");
+              FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", partNewState.userID);
+            }
+          }
+        },
+      });    
+    }
 }
 
 Template.HcompFilterBoxHeader.rendered = function(){
