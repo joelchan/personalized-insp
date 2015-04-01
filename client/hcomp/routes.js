@@ -178,13 +178,12 @@ Router.map(function () {
     }
   });
   this.route('CrowdLoginPage', {
-    path: '/crowd/Ideate/Login/:promptID',
+    path: '/crowd/Ideation/Login/:promptID',
     template: 'MturkLoginPage',
     waitOn: function() {
       return [
         Meteor.subscribe('prompts', this.params.promptID)
       ];
-
     },
     onBeforeAction: function() {
       console.log("before action");
