@@ -1018,10 +1018,10 @@ function CreateForceDiagram(forceData)
 		.nodes(dataset.nodes)
 		.links(dataset.edges)
 		.size([width, height])
-		.linkDistance(function(d) 
-		{
-			return maxDistance - (Math.round(Math.sqrt(d.strength)) * distanceFactor);
-		})
+		//.linkDistance(function(d) 
+		//{
+		//	return maxDistance - (Math.round(Math.sqrt(d.strength)) * distanceFactor);
+		//})
 		.charge(charge)
 		.start();
 
@@ -1031,15 +1031,19 @@ function CreateForceDiagram(forceData)
 		.enter()
 		.append("line")
 		.attr("class", "link")
-		.style("stroke", "black")
+		.style("stroke", "grey")
 		.style("opacity", function(d) 
 		{
-			return 0.3;
+			return d.strength/10;
 		})
     		.style("stroke-width", function(d) 
 		{
-			return Math.round(Math.sqrt(d.strength));
+			return   (1/10)*(Math.round(Math.sqrt(d.strength)));
 		});
+
+   	var colors = d3.scale.linear()
+					.domain([0,10,100])
+					.range(["#edf8b1","#7fcdbb","#2c7fb8"]);
 
 	//making the svg text that are the nodes
 	//choosing colors from the ordinal scale for the text
@@ -1054,12 +1058,23 @@ function CreateForceDiagram(forceData)
 		})
 		.style("fill", function(d, i) 
 		{
-			return colors(i);
+			return colors(d.size);
 		})
 		.call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
 	nodes.append("title")
 		.text(function(d) { return d.text; });
+
+	nodes.append("text")
+		.attr("class","label")
+		.text(function(d) { 
+			return d.text;})
+		.attr("fill", "black")
+		.attr("font-size", "20px");
+
+	nodes.on("mouseover", function() {d3.select(this).style("stroke","orange").style("stroke-width",1);});
+	nodes.on("mouseout", function() {d3.select(this).style("stroke","none");});
+	
 
 	//this tells the visualization what to do when time passes
 	//it updates where the nodes and edges should be

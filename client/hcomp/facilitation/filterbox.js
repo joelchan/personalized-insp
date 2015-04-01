@@ -56,6 +56,7 @@ Template.HcompFilterBoxHeader.rendered = function(){
 }
 
 var filterName;
+
 Template.HcompFilterbox.helpers({
 	setFilterName : function(name){
 		filterName = name + "IdeasFilter";
@@ -388,6 +389,7 @@ createDefaultIdeasFilter = function createDefaultIdeasFilter(ideasFilterName) {
 	}
 }
 
+//This is the information to feed to visualization
 getFilteredIdeas = function getFilteredIdeas(ideasFilterName) {
 	logger.trace("Getting filtered ideas");
 	var filteredIdeas = FilterManager.performQuery(ideasFilterName, 

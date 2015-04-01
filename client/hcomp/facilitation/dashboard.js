@@ -20,6 +20,7 @@ Template.HcompDashboard.rendered = function(){
   //Set height of elements to viewport height
   //Navbar height=50, header up to idealist = 150, clustering interface header=63
   var height = $(window).height() - 75; 
+
   logger.debug("window viewport height = " + height.toString());
   $(".ideas-view").height(height);
   $(".tasks-view").height(height);
@@ -27,6 +28,7 @@ Template.HcompDashboard.rendered = function(){
   //logger.debug(height.toString());
   //logger.debug((height*0.7).toString());
   $("#big-picture-viz").height(height*0.65);
+  $("#big-picture-viz").width(700);
   $("#ideawordcloud").height(height*0.55);
   $("#scratchpad").height(height*0.25);
   var scratchpadHeight = $("#scratchpad").height();
@@ -143,143 +145,10 @@ Template.HcompBeginSynthesis.events({
   // },
 });
 
-Template.HcompOtherViz.rendered = function() {
-
-var margin = {
-    top: 120,
-    right: 0,
-    bottom: 0,
-    left: 0
-},
-width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-var n = 56,
-    m = 1,
-    padding = 16,
-    radius = d3.scale.sqrt().range([0, 25]),
-    color = d3.scale.category10().domain(d3.range(m)),
-    x = d3.scale.ordinal().domain(d3.range(m)).rangePoints([0, width], 1);
-
-
-//input the cloudItems, map each item to an object with
-
-var cloud = getCloudFromIdeas();
-
-var nodes = cloud.map(function (item) {
-    var i = Math.floor(Math.random() * m); //color
-       // v = (i + 1) / m * -Math.log(Math.random()); //value
-    return {
-        radius: radius(item.count),
-        color: color(i),
-        cx: x(i),
-        cy: height / 3,
-        title: item.word,
-        likes: item.likes
-    };
-
-});
 
 
 
-console.log("nodes are:");
-console.log(nodes);
 
-var force = d3.layout.force()
-    .nodes(nodes)
-    .size([width, height])
-    .gravity(0)
-    .charge(0)
-    .on("tick", tick)
-    .start();
-
-var svg = d3.select("#svgdiv").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var circle = svg.selectAll("circle")
-    .data(nodes)
-    .enter().append("circle")
-    .attr("r", function (d) {
-    return d.radius;
-})
-    .attr("fill", function(d) {if (d.likes==1) {return "green";} 
-                                             else {return "red";};})
-
-    .call(force.drag);
-
-var tex = svg.selectAll("text")
-    .data(nodes)
-    .enter().append("text")
-    .attr("x", function (d) {
-      return d.cx-d.radius;
-    })
-    .attr("y", function (d) {
-      return d.cy;
-    })
-    .text(function(d) {return d.title;})
-    .style("font-size", function(d) {return d.radius/2;})
-    .call(force.drag);
-
-
-function tick(e) {
-    circle.each(gravity(.1 * e.alpha))
-        .each(collide(.5))
-        .attr("cx", function (d) {
-        return d.x;
-    })
-        .attr("cy", function (d) {
-        return d.y;
-    });
-    tex.each(gravity(.2 * e.alpha))
-        .each(collide(.5))
-        .attr("x", function (d) {
-        return d.x-17;
-    })
-        .attr("y", function (d) {
-        return d.y;
-    });
-}
-
-// Move nodes toward cluster focus.
-function gravity(alpha) {
-    return function (d) {
-        d.y += (d.cy - d.y) * alpha /2;
-        d.x += (d.cx - d.x) * alpha /2;
-    };
-}
-
-// Resolve collisions between nodes.
-function collide(alpha) {
-    var quadtree = d3.geom.quadtree(nodes);
-    return function (d) {
-        var r = d.radius + radius.domain()[1] + padding,
-            nx1 = d.x - r,
-            nx2 = d.x + r,
-            ny1 = d.y - r,
-            ny2 = d.y + r;
-        quadtree.visit(function (quad, x1, y1, x2, y2) {
-            if (quad.point && (quad.point !== d)) {
-                var x = d.x - quad.point.x,
-                    y = d.y - quad.point.y,
-                    l = Math.sqrt(x * x + y * y),
-                    r = d.radius + quad.point.radius + (d.color !== quad.point.color) * padding;
-                if (l < r) {
-                    l = (l - r) / l * alpha;
-                    d.x -= x *= l;
-                    d.y -= y *= l;
-                    quad.point.x += x;
-                    quad.point.y += y;
-                }
-            }
-            return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-        });
-    };
-}
-
-};
 
 
 ///********************************************************************
@@ -333,7 +202,7 @@ Template.HcompOverallStats.helpers({
 Template.HcompIdeaWordCloud.helpers({
     ideas : function() {
         // console.log("calling ideas for HcompIdeaWordCloud");
-        cursor = getCloudFromIdeas();
+        cursor = getFilteredIdeas("Ideas Filter"); //getCloudFromIdeas();
         return cursor;
     },
     getFontSize : function() {
@@ -699,8 +568,6 @@ function getCloudFromIdeas() {
   var ideas = FilterManager.performQuery("IdeaWordCloud Filter", 
       Session.get("currentUser"),   
       "ideas").fetch();
-  // logger.trace("Found ideas for word cloud: " + JSON.stringify(ideas));
-  // console.log(ideas);
 	var cloud = [];
 	for (var i = 0; i < ideas.length; i++) {
 		var idea = ideas[i].content;
@@ -781,4 +648,2330 @@ priorityToNumIdeators = function(priorityNum) {
   }
 
   return ideatorsVal;
+}
+
+/************************
+Word Bubble Visualization
+*************************/
+
+function drawBubbles(cloud, svg) {
+
+svg.selectAll("*")
+    .remove();
+
+var margin = {
+    top: 120,
+    right: 0,
+    bottom: 0,
+    left: 0
+    },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var n = 56,
+    m = 1,
+    padding = 16,
+    radius = d3.scale.sqrt().range([0, 25]),
+    color = d3.scale.category10().domain(d3.range(m)),
+    x = d3.scale.ordinal().domain(d3.range(m)).rangePoints([0, width], 1);
+
+
+//input the cloudItems, map each item to an object with
+
+
+var nodes = cloud.map(function (item) {
+    var i = Math.floor(Math.random() * m); //color
+       // v = (i + 1) / m * -Math.log(Math.random()); //value
+    return {
+        radius: radius(item.count),
+        color: color(i),
+        cx: x(i),
+        cy: height / 3,
+        title: item.word,
+        likes: item.likes
+    };
+
+});
+
+
+
+console.log("nodes are:");
+console.log(nodes);
+
+var force = d3.layout.force()
+    .nodes(nodes)
+    .size([width, height])
+    .gravity(0)
+    .charge(0)
+    .on("tick", tick)
+    .start();
+
+
+
+var rem = svg.selectAll("circle")
+    .data(nodes, function(d) {return d})
+    .exit()
+    .style("fill", "grey");
+
+
+var circle = svg.selectAll("circle")
+    .data(nodes)
+    .enter().append("circle")
+    .attr("opacity", .2)
+    .attr("r", function (d) {return d.radius;})
+    .attr("fill", function(d) {if (d.likes==1) {return "green";} 
+                                             else {return "red";};})
+    .call(force.drag);
+
+    //circle.remove()
+
+
+console.log("rem:")
+console.log(rem[0])
+
+
+var tex = svg.selectAll("text")
+    .data(nodes)
+    .enter().append("text")
+    .attr("x", function (d) {
+      return d.cx-d.radius;
+    })
+    .attr("y", function (d) {
+      return d.cy+10;
+    })
+    //.attr("dx", -5)
+    .text(function(d) {return d.title;})
+    .style("font-size", function(d) {return d.radius/3;})
+    .style("stroke", function(d) {if (d.likes==1) {return "green";} 
+                                             else {return "red";};})
+    .call(force.drag);
+
+
+function tick(e) {
+    circle.each(gravity(.1 * e.alpha))
+        .each(collide(.5))
+        .attr("cx", function (d) {
+        return d.x;
+    })
+        .attr("cy", function (d) {
+        return d.y+10;
+    });
+    tex.each(gravity(.2 * e.alpha))
+        .each(collide(.5))
+        .attr("x", function (d) {
+        return d.x-17;
+    })
+        .attr("y", function (d) {
+        return d.y+10;
+    });
+}
+
+// Move nodes toward cluster focus.
+function gravity(alpha) {
+    return function (d) {
+        d.y += (d.cy - d.y) * alpha /2;
+        d.x += (d.cx - d.x) * alpha /2;
+    };
+}
+
+// Resolve collisions between nodes.
+function collide(alpha) {
+    var quadtree = d3.geom.quadtree(nodes);
+    return function (d) {
+        var r = d.radius + radius.domain()[1] + padding,
+            nx1 = d.x - r,
+            nx2 = d.x + r,
+            ny1 = d.y - r,
+            ny2 = d.y + r;
+        quadtree.visit(function (quad, x1, y1, x2, y2) {
+            if (quad.point && (quad.point !== d)) {
+                var x = d.x - quad.point.x,
+                    y = d.y - quad.point.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = d.radius + quad.point.radius + (d.color !== quad.point.color) * padding;
+                if (l < r) {
+                    l = (l - r) / l * alpha;
+                    d.x -= x *= l;
+                    d.y -= y *= l;
+                    quad.point.x += x;
+                    quad.point.y += y;
+                }
+            }
+            return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+        });
+    };
+}
+
+}
+
+
+
+
+Template.HcompOtherViz.rendered = function() {
+  //look up Tracker
+  var margin = {
+    top: 120,
+    right: 0,
+    bottom: 0,
+    left: 0
+    },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+
+  var svg = d3.select("#svgdiv").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+  Deps.autorun(function() {
+    //get the new dataset 
+    //var ideas = getFilteredIdeas("Ideas Filter");
+
+    //selectAll svg elements that correspond, then bind the relevant data to it
+
+    //enter
+
+    //transition
+
+    //exit....remove()
+    
+    var cloud =  getCloudFromIdeas();
+    console.log("svg is:" + svg);
+    drawBubbles(cloud, svg);
+  })
+  
+}
+
+function formatData(rawIdeas) {
+
+  //takes a list of objects creates list of objects 
+    // {id:i , idea:content, categories:[], quality:votes.length}
+
+  var newData = [];
+
+  for (var i = 0; i < rawIdeas.length; i++) {
+    var id = i+1
+    var idea = rawIdeas[i].content
+    var quality = rawIdeas[i].votes.length
+
+    var obj = {"id":1, "idea":" ", "categories":[" "], "quality":0 }
+
+    obj.id = id
+    obj.idea = idea 
+    obj.quality = quality 
+
+    newData.push(obj);
+  }
+
+  return newData;
+}
+
+
+Template.Other.rendered = function() {
+  var rawIdeas=
+  [
+  {
+    "id":1,
+    "idea":"Godzilla wolrd",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":2,
+    "idea":"Extraterrestrial Conflict on Distant Alien World",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":3,
+    "idea":"Classic Doctor Who: The Giant Robot",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":4,
+    "idea":"moonbase colonization",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":5,
+    "idea":"A giant pair of legs",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":6,
+    "idea":"Gorilla Creature",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":7,
+    "idea":"Giant Vampire",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":8,
+    "idea":"Science Experiment Gone Wrong",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":9,
+    "idea":"Attack of the giant baby",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":10,
+    "idea":"Elemental of some sort - Earth, fire, water?",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":11,
+    "idea":"Golems -- but not made of rocks",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":12,
+    "idea":"Giant Monkey Baby",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":13,
+    "idea":"Angry Reagan",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":14,
+    "idea":"Different people take turns growing and shrinking",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":15,
+    "idea":"Organic/Meat Building Structures",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":16,
+    "idea":"Goo Monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":17,
+    "idea":"startship trooper universe",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":18,
+    "idea":"Shadow Monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":19,
+    "idea":"hulk-like biped monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":20,
+    "idea":"Lovecraftian Horror",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":21,
+    "idea":"Basically Cthulhu",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":22,
+    "idea":"giant baby",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":23,
+    "idea":"a really bad dream",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":24,
+    "idea":"Yeah, Literally a giant chicken",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":25,
+    "idea":"Giant Stone Golem",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":26,
+    "idea":"Mutated Human",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":27,
+    "idea":"Toy worlk",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":28,
+    "idea":"Jack and the Beanstalk",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":29,
+    "idea":"Giant Mecha",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":30,
+    "idea":"Dragon",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":31,
+    "idea":"Food-oriented:  rotten food monster, mutated from broken fridge",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":32,
+    "idea":"Transformers",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":33,
+    "idea":"Demon",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":34,
+    "idea":"porridge factory",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":35,
+    "idea":"Godzilla",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":36,
+    "idea":"Robotic tower",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":37,
+    "idea":"Giant \"young\" monster who just wants to play but doesn't understand that destroying stuff is bad.",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":38,
+    "idea":"Person attacked by fleas",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":39,
+    "idea":"Megacities",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":40,
+    "idea":"Enormous Guy wearing an Oculus",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":41,
+    "idea":"Jack and the Giant Beanstalk or whatever that fairy tale is called",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":42,
+    "idea":"new york city",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":43,
+    "idea":"Giant dragons",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":44,
+    "idea":"The Iron Giant",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":45,
+    "idea":"Kaiju",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":46,
+    "idea":"Dinosaur wolrd",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":47,
+    "idea":"Wind up tin toys",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":48,
+    "idea":"Super Heros Face off with Villainous Machination",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":49,
+    "idea":"small godzillas vs. large human",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":50,
+    "idea":"person wearing a cursed VR mask that makes them grow into a giant.",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":51,
+    "idea":"Grekko Roman Heros Face Mythological Gigabeast",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":52,
+    "idea":"Baby as titan trying to get a toy or food",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":53,
+    "idea":"Candy kingdom, with the titan as a greedy human trying to eat everything",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":54,
+    "idea":"Mouse People Are Attacked by Feral Behemoth Cat",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":55,
+    "idea":"Squirrel protecting his nuts against the ants",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":56,
+    "idea":"Bipedal Biorganic giant monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":57,
+    "idea":"Giant fire creature attacked by fire trucks",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":58,
+    "idea":"Futuristic Space Colony",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":59,
+    "idea":"giant monster standing on weird stilts -- doesn't like getting their actual feet messed up.",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":60,
+    "idea":"Garbage Pail Kid",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":61,
+    "idea":"Giant robot made of washing machines, attacked by characters from Sesame Street",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":62,
+    "idea":"Hostile alien planet",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":63,
+    "idea":"A planet being mined for resources",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":64,
+    "idea":"children's toy trying to attack them",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":65,
+    "idea":"Giant Bug of some sort",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":66,
+    "idea":"Giant Crustaceous Abomination Attacks Stranded Pirate Party",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":67,
+    "idea":"that one sequel to Honey I Shrunk the Kids",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":68,
+    "idea":"mad scientist serum that turns people into abominations",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":69,
+    "idea":"Angry God",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":70,
+    "idea":"Giant robot with hammer hands",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":71,
+    "idea":"Virus trying to convert healthy cells",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":72,
+    "idea":"CRYSTALS EVERYWHERE",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":73,
+    "idea":"scientist trying to create monsters and switch turns ala Rampage",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":74,
+    "idea":"Terminator 2",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":75,
+    "idea":"Giant Plantlife-based construction",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":76,
+    "idea":"Monkeys...all monkeys (looking at you R)",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":77,
+    "idea":"Katamari Damacy -- prince vs. king",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":78,
+    "idea":"WITH BIG PURPLE CORRUPTION",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":79,
+    "idea":"Chimera Creature made up of multiple parts",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":80,
+    "idea":"Summoners and summoing monster like FFX",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":81,
+    "idea":"Trolls -- like in the Troll Hunter movie",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":82,
+    "idea":"Atlas -- he's shrugging and we don't like it!",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":83,
+    "idea":"cartoon villain builds a giant death robot",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":84,
+    "idea":"Vampire Hunters Face Golem \n\nComposed of Thousands of Bodies and Graves",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":85,
+    "idea":"Creature Made out of book pages",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":86,
+    "idea":"Bio-luminescent Creatures",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":87,
+    "idea":"Steampunk titan",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":88,
+    "idea":"A horribly derailed brainstorming session with the titan as a frustrated clusterizer",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":89,
+    "idea":"vine monster",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":90,
+    "idea":"Alien Siege Machine Attacks the Pentagon",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":91,
+    "idea":"Ice monster trying to get from bottom to top of a mountain before it melts. The villagers try to stop it from getting to the castle at the top",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":92,
+    "idea":"a really bad hallucianation -- BRAINSTORM NO RIGHT SPELLING!",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":93,
+    "idea":"robin hood: men in titans",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":94,
+    "idea":"Ocean?",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":95,
+    "idea":"Will Smith and Friends fight giant mechanized spider",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":96,
+    "idea":"Oversized Bacteria",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":97,
+    "idea":"nanobots attacking a target",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":98,
+    "idea":"The titan can shape shift into multiple forms",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":99,
+    "idea":"small person puppeteering titan",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":100,
+    "idea":"bees / insects attacking invading humans / monsters",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":101,
+    "idea":"Kaiju Assault on Coastal City",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":102,
+    "idea":"Mother Hen",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":103,
+    "idea":"explorers on a planet discover giant creatures while trying to colonize cause urf is gonna die",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":104,
+    "idea":"Guy with really big stilts. Like super big",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":105,
+    "idea":"FIGHTING FOR ITS CHILDREN",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":106,
+    "idea":"Titan is hungry, needs food badly",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":107,
+    "idea":"underwater universe",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":108,
+    "idea":"Plant Creature",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":109,
+    "idea":"FIGHTING FOR GLORY",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":110,
+    "idea":"Ice titant",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":111,
+    "idea":"titan escaping confinement/experimentation",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":112,
+    "idea":"Living Tree",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":113,
+    "idea":"Giant robot trying to steal power from a city",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":114,
+    "idea":"a monster who sees a different, enjoyable world that they like to smash but everyone else just sees destruction",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":115,
+    "idea":"titan retrieving it's young/egg",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":116,
+    "idea":"Huge Native American \n\nBear Spirit is Summoned to Ward off Wild West Frontiersman",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":117,
+    "idea":"Gargamel vs. the Smurfs",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":118,
+    "idea":"Groot",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":119,
+    "idea":"rubber suit-era kaiju",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":120,
+    "idea":"Bowling pin monster -- you kill it, you get a strike...or a spare if your partner dies.",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":121,
+    "idea":"Titan is hunting for treasure",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":122,
+    "idea":"titan can only see auras like heat signatures",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":123,
+    "idea":"Barren Wasteland littered with remains of other titans",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":124,
+    "idea":"Young monster who is afraid of buildings and sees them as scary monsters and wants to smash them but obviously...that is bad...",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":125,
+    "idea":"Sid vs. the Toy Story toys",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":126,
+    "idea":"Dragons!?",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":127,
+    "idea":"Gabe Newell",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":128,
+    "idea":"the non-HMD players are bowling pins and the titan is a bowler trapped in a nightmare where the bowling pins are fighting back",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":129,
+    "idea":"chefs trying to wrangle a meal from giant food",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":130,
+    "idea":"The titan is a... SHARKNADO!",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":131,
+    "idea":"Things fighting the titans using tools/weapons made from the titans",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":132,
+    "idea":"Computer Virus fighting Anti Virus",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":133,
+    "idea":"trogdor the burninator",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":134,
+    "idea":"The titan is various historical figures (Lincoln, Cleopatra, etc.)",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":135,
+    "idea":"Meat monster with every carrying tiny meat grinders and meat tenderizers",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":136,
+    "idea":"Absence -- A void creature (Not lexica void)",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":137,
+    "idea":"Manifestation of SHODAN",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":138,
+    "idea":"burger king trying to feed the people",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":139,
+    "idea":"vegetable monster and everyone is some sort of cow or grass-eating monsters",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":140,
+    "idea":"titan is composed of precious materials and others want to take out",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":141,
+    "idea":"A Building that has come alive",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":142,
+    "idea":"Researcher",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":143,
+    "idea":"hungry hungry hill troll",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":144,
+    "idea":"Titan is smashing is way to freedom",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":145,
+    "idea":"fire breathing titan trying to warm up a cold cold universe",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":146,
+    "idea":"Titan acting in defense of it's giant hideous cute baby titans",
+    "categories":[""],
+    "quality":"1"
+  },
+  {
+    "id":147,
+    "idea":"a very very very good looking titan",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":148,
+    "idea":"FIGHTING FOR THE ENVIRONMENT",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":149,
+    "idea":"dieselpunk with riveted steel and gunpowder cannons",
+    "categories":[""],
+    "quality":"0"
+  },
+  {
+    "id":150,
+    "idea":"Abstract Golem Creatures",
+    "categories":[""],
+    "quality":"0"
+  }
+]
+
+    CreateForceDiagram2(GetForceData(rawIdeas));
+}
+
+Template.ForceV.rendered = function() {
+
+  // global intensity of attraction
+  var charge = -200;
+  // link distance factor used to determine line length;
+  var distanceFactor = 140;
+  var maxDistance = 250;
+
+  //size of the svg
+  var width = 700;
+  var height = 800;
+
+  //makes the svg element
+  var svg = d3.select("#svgdiv2")
+    .attr("width", width)
+    .attr("height", height)
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  Deps.autorun(function() {  
+
+    var rawIdeas = getFilteredIdeas("Ideas Filter");
+
+    var newData = formatData(rawIdeas)
+
+    CreateForceDiagram(GetForceData(newData), svg);
+  })
+
+}
+
+function GetForceData(ideaData)
+{
+  // Get Category Affinity Matrix
+  var categoryAffinity = getCategoryAffinity(ideaData);
+
+  // Get Term Affinity Matrix
+  var termAffinity = getTermAffinity(ideaData);
+
+  // Get Combined Affinity Matrix
+  var combinedAffinity = getCombinedAffinity(categoryAffinity, termAffinity)
+
+  //var forceData = createForceData(categoryAffinity, ideaData);
+  //var forceData = createForceData(termAffinity, ideaData);
+  var forceData = createForceData(termAffinity, ideaData);
+
+  return forceData;
+}
+
+/********************************************************************
+* Visualization - Create Graph Data Logic
+********************************************************************/
+
+
+function generateIdeaData()
+{
+  createGraph();
+  
+}
+
+function createGraph()
+{
+  var promptID = 0;
+  var groupID = 0;
+  var userID = 0;
+  Meteor.call('graphCreate', promptID, groupID, userID, function (error, result)  
+  {
+    var graphId = result;
+    //var graph = Graphs.findOne({'_id': graphId});
+    populateGraph(graphId);
+  });
+}
+
+function populateGraph(graphId)
+{
+  var metadata = {};
+  metadata['name'] = "Action"
+  Meteor.call('graphCreateThemeNode', graphId, metadata, function (error, result)   
+  {
+    var themeNodeId = result._id;
+    createAndLinkChild(graphId, themeNodeId);
+  });
+
+}
+
+function createAndLinkChild(graphId, themeNodeId)
+{
+  var idea = Ideas.findOne();
+  var ideaId = idea._id;
+  var metaData = {'themeId': themeNodeId};
+  Meteor.call('graphCreateIdeaNode', graphId, ideaId, metaData, function (error, result)  
+  {
+    var ideaNodeID = result._id;
+    var ideaNode = Nodes.findOne({'graphID': graphId,'_id': ideaNodeID});
+    var themeNodeId = ideaNode.themeId;
+    Meteor.call('graphLinkChild', themeNodeId, ideaNodeID, {});
+  });
+}
+
+
+/********************************************************************
+* Visualization - Parse Graph Logic
+********************************************************************/
+
+
+function parseGraph(graphId)
+{
+  var ideaData = [];
+  // Get Graph
+  var graph = Graphs.findOne({'_id': graphId});
+  // Get Idea Nodes
+  var ideaNodes = getIdeaNodes(graph);
+  for(var i = 0; i < ideaNodes.length; i++)
+  { 
+    var ideaNode = ideaNodes[i];
+    var ideaNodeID = ideaNode._id;
+    var ideaNodeContent = ideaNode.content;
+    var ideaNodeVote = ideaNode.vote;
+    if(ideaNodeVote == false)
+    {
+      ideaNodeVote = 1;
+    }
+    var ideaNodeThemes = getIdeaNodeThemes(ideaNodeID, graphId);
+    var ideaDataItem = createIdeaDataItem(ideaNodeID, ideaNodeContent, ideaNodeThemes, ideaNodeVote);
+    
+    ideaData.push(ideaDataItem);
+  } 
+
+  return ideaData;
+}
+
+function getIdeaNodes(graph)
+{
+  var ideaNodes = [];
+  for(var i = 0; i < graph.nodeIDs.length; i++)
+  {
+    var nodeId = graph.nodeIDs[i];
+    var node = Nodes.findOne({'graphID': graph._id,'_id': nodeId});
+    
+    if(node.type == 'idea')
+    {
+      ideaNodes.push(node);
+    }
+
+  }
+
+  //Nodes.find({'graphID': graphId,'type': 'idea'});
+  
+  return ideaNodes;
+}
+
+function getIdeaNodeThemes(ideaNodeID, graphId)
+{
+  var ideaNodeThemes = [];
+  // Get parent-child edges with this node as a child
+  var parentChildEdges = Edges.find({'type': 'parent_child', 'childID': ideaNodeID}).fetch();
+  // Get parent nodes (themes)
+  for(var i = 0; i < parentChildEdges.length; i++)
+  {
+    var themeId = parentChildEdges[i].parentID;
+    var themeNode = Nodes.findOne({'graphID': graphId,'_id': themeId});
+
+    // Used for category membership, we could also use the id to allow duplicate names for different themes
+    var themeName = themeNode.name;
+    ideaNodeThemes.push(themeName);
+  }
+  return ideaNodeThemes;
+}
+
+function createIdeaDataItem(id, idea, categories, quality)
+{
+  var ideaDataItem = {'id': id, 'idea': idea, 'categories': categories, 'quality': quality};
+  return ideaDataItem;
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+//  this.nodeIDs = [];
+//  this.edgeIDs = [];
+// Meteor.call('graphCreate', prompt, group, user);
+// Meteor.call('graphCreateNode', graph, metadata);
+// graphCreateThemeNode: function(graphID, metadata)
+// graphCreateIdeaNode: function(graphID, ideaID, metadata)
+// graphCreateEdge: function(type, sourceID, targetID, metadata)
+// graphCreateNode: function(graphID, type, metadata)
+//  graphCreate: function(promptID, groupID, userID)
+//   graphLinkChild: function(parentID, childID, metadata)
+
+/********************************************************************
+* Visualization - Helper Function Logic
+********************************************************************/
+function getMetaData(ideaData)
+{
+  //Find all categories and ideaKeys present in data
+  var ideaKeys = [];
+  var categories = [];
+  for(var i = 0; i < ideaData.length; i++)
+  {
+    var ideaKey = ideaData[i].id;
+    ideaKeys[ideaKeys.length] = ideaKey;
+    var ideaCategories = ideaData[i].categories;
+    for(var j = 0; j < ideaCategories.length; j++)
+    {
+      var category = ideaCategories[j];
+      if(categories.indexOf(category) == -1)
+      {
+        categories[categories.length] = category;
+      }
+    }
+    
+
+  }
+  categories.sort();
+  var metaData = {"ideaKeys": ideaKeys, "categories": categories};
+  
+  return metaData;
+}
+
+
+/********************************************************************
+* Visualization - Term Affinity (tf-idf weighting) Logic
+********************************************************************/
+
+function getTermAffinity(ideaData)
+{
+  //Find all ideaKeys present in data
+  var metaData = getMetaData(ideaData)
+  var ideaKeys = metaData.ideaKeys;
+
+  // Corpus = Collection of all documents
+  // Document = One unit of textual data (for example, webpages, ideas, or blog posts)
+  // Term = One word from a document that is not a stop word
+  var corpus = {"terms":[], "documents": []};
+  corpus = populateCorpus(corpus, ideaData)
+
+  //Create raw empty matrix
+  var rawEmptyMatrix = createEmptyMatrix(ideaKeys.length, corpus.terms.length);
+
+
+  // Create Term Weight Matrix
+  var termWeightMatrix = createTermMatrix(ideaKeys, corpus.terms, rawEmptyMatrix);
+
+  // Populate Term Weight Matrix
+  termWeightMatrix = populateTermMatrix(corpus, termWeightMatrix);
+  
+  //Normalize Term Weight Matrix
+  var normalizedTermWeightMatrix = normalizeMatrix(termWeightMatrix, termWeightMatrix.terms.length);
+
+  //Create pair-wise afinity matrix for Term weights
+  var rawAffinityMatrix = populatePairwiseAffinityMatrix(termWeightMatrix, normalizedTermWeightMatrix);
+
+  var termAffinityMatrix = createTermAffinityMatrix(ideaKeys, rawAffinityMatrix);
+  return termAffinityMatrix;
+}
+
+function createTermMatrix(ideaKeys, terms, rawEmptyMatrix)
+{
+  // Create Term Weight Matrix
+  var termWeightMatrix = 
+  {
+    "type": "Term_Weighting",
+    "ideaKeys": ideaKeys,
+    "terms": terms,
+    "matrix": rawEmptyMatrix
+  }
+  return termWeightMatrix;
+}
+
+function populateTermMatrix(corpus, termWeightMatrix)
+{
+  var corpusInverseDocumentFrequencies = getCorpusInverseDocumentFrequencies(corpus);
+  
+  var documentTermFrequencies = getDocumentTermFrequencies(corpus);
+
+  var tfIdfWeighting = getTermFrequencyInverseDocumentFrequencies(corpusInverseDocumentFrequencies, documentTermFrequencies);
+  
+  // Populate Term Weight Matrix
+  for(var i = 0; i < termWeightMatrix.ideaKeys.length; i++)
+  {
+    var ideaKey = termWeightMatrix.ideaKeys[i];
+    var tfIdfDocument = getTfIdfDocument(ideaKey, tfIdfWeighting);
+    for(var j = 0; j < termWeightMatrix.terms.length; j++)
+    {
+      var term = termWeightMatrix.terms[j].term;
+      var termWeight = getTermWeight(term, tfIdfDocument);
+      termWeightMatrix.matrix[i][j] = termWeight;
+    }
+  }
+  return termWeightMatrix;
+}
+
+function createTermAffinityMatrix(ideaKeys, rawAffinityMatrix)
+{
+  // Create Term Affinity Matrix
+  var termAffinityMatrix = 
+  {
+    "type": "Term_Similarity",
+    "ideaKeys": ideaKeys,
+    "matrix": rawAffinityMatrix
+  }
+  return termAffinityMatrix;
+}
+
+
+
+/********************************************************************
+* Visualization - Term Affinity (tf-idf weighting) Logic
+********************************************************************/
+function getTermWeight(term, tfIdfDocument)
+{
+  for(var i = 0; i < tfIdfDocument.terms.length; i++)
+  {
+    var tfIdfTerm = tfIdfDocument.terms[i];
+    if(tfIdfTerm.term == term)
+    {
+      return tfIdfTerm.tfIdf;
+    }
+    else
+    {
+      continue;
+    }
+  }
+  return 0.0;
+}
+
+function getTfIdfDocument(ideaKey, tfIdfWeighting)
+{
+  for(var i = 0; i < tfIdfWeighting.length; i++)
+  {
+    var tfIdfDocument = tfIdfWeighting[i];
+    if(tfIdfDocument.id == ideaKey)
+    {
+      return tfIdfDocument;
+    }
+    else
+    {
+      continue;
+    }
+  }
+}
+
+function getDocumentTerms(ideaText)
+{
+  var terms = [];
+  var words = ideaText.split(" ");
+  for (var j = 0; j < words.length; j++) 
+  {
+    // Get Word
+    var word = words[j]
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\s]|_/g, "")
+            .replace(/\s{2,}/g," ");
+    
+    var containsWord = Boolean(false);
+    
+    // Increase term count for terms in list of document terms
+    for (var k = 0; k < terms.length; k++) 
+    {
+      if (terms[k].term == word) 
+      {
+        terms[k].count = terms[k].count + 1;
+        containsWord = Boolean(true);
+      }
+    }
+
+    // Add words that are not in terms or in stopwords to document
+    if(containsWord == false && stopWords.words.indexOf(word) == -1) 
+    {
+      var term = {'term': word, 'count': 1};
+      terms.push(term);
+    }
+  } 
+  return terms;
+}
+
+function getCorpusTerms(corpus)
+{
+  for(var i = 0; i < corpus.documents.length; i++)
+  {
+    var document = corpus.documents[i];
+    for(var j = 0; j < document.terms.length; j++)
+    {
+      var term = document.terms[j].term;
+      
+      var containsTerm = Boolean(false);
+    
+      // Increase term count for terms in list of corpus terms
+      for (var k = 0; k < corpus.terms.length; k++) 
+      {
+        if (corpus.terms[k].term == term) 
+        {
+          corpus.terms[k].count = corpus.terms[k].count + 1;
+          containsTerm = Boolean(true);
+        }
+      }
+
+      // Add words that are not in terms or in stopwords to document
+      if(containsTerm == false) 
+      {
+        var corpusTerm = {'term': term, 'count': 1};
+        corpus.terms.push(corpusTerm);
+      }
+    }
+  }
+  return corpus;
+}
+
+function populateCorpus(corpus, ideaData)
+{
+  for (var i = 0; i < ideaData.length; i++) 
+  {
+    var ideaText = ideaData[i].idea;
+    var document = {"id": ideaData[i].id, "terms": []};
+    document.terms = getDocumentTerms(ideaText);
+    corpus.documents.push(document);
+  }
+  corpus = getCorpusTerms(corpus);
+  return corpus;
+}
+
+function getCorpusInverseDocumentFrequencies(corpus)
+{
+  var idfTerms = [];
+  for(var i = 0; i < corpus.terms.length; i++)
+  {
+    
+    var numberOfDocuments = corpus.documents.length;
+    // Document frequency = Number of documents that contain the term
+    var documentFrequency = corpus.terms[i].count;
+    // Inverse Document Frequency = Number of Documents / Document Frequency
+    var inverseDocumentFrequency = numberOfDocuments / documentFrequency;
+    // Dampened Inverse Document Frequency = Log 10(Inverse Document Frequency)
+    var dampenedInverseDocumentFrequency = Math.log10(inverseDocumentFrequency);
+    var idfTerm = {'term': corpus.terms[i].term, 'idf': dampenedInverseDocumentFrequency};
+
+    idfTerms.push(idfTerm);
+  }
+  return idfTerms;
+}
+
+function getDocumentTermFrequencies(corpus)
+{
+  var tfDocuments = [];
+  for(var i = 0; i < corpus.documents.length; i++)
+  {
+    var document = corpus.documents[i];
+    var tfDocument = {"id": document.id, "terms": []};
+    for(var j = 0; j < document.terms.length; j++)
+    {
+      var term = document.terms[j];
+      // Term frequency = Number of times the term appears in this document
+      var termFrequency = term.count;
+      // Scaled Term Frequency = 1 + Log 10(Term Frequency)
+      var scaledTermFrequency = 1 + Math.log10(termFrequency);
+      var tfTerm ={'term': term.term, 'tf': scaledTermFrequency};
+      tfDocument.terms.push(tfTerm);
+    }
+    tfDocuments.push(tfDocument)
+    
+  }
+  return tfDocuments;
+}
+
+function getTermFrequencyInverseDocumentFrequencies(idfTerms, tfDocuments)
+{
+  var tfIdfDocuments = [];
+
+  for(var i = 0; i < tfDocuments.length; i++)
+  {
+    var tfDocument = tfDocuments[i];
+    var tfIdfDocument = {"id": tfDocument.id, "terms": []};
+    for(var j = 0; j < tfDocument.terms.length; j++)
+    {
+      var tfTerm = tfDocument.terms[j];
+      // Scaled Term Frequency = 1 + Log 10(Term Frequency)
+      var scaledTermFrequency = tfTerm.tf;
+      // Dampened Inverse Document Frequency = Log 10(Inverse Document Frequency)
+      var dampenedInverseDocumentFrequency = getInverseDocumentFrequency(tfTerm.term, idfTerms)
+      // Term Frequency - Inverse Document Frequency = (Term Frequency * Inverse Document Frequency)
+      var termFrequencyInverseDocumentFrequency = (scaledTermFrequency * dampenedInverseDocumentFrequency);
+      var tfIdfTerm ={'term': tfTerm.term, 'tfIdf': termFrequencyInverseDocumentFrequency};
+      tfIdfDocument.terms.push(tfIdfTerm);
+    }
+    tfIdfDocuments.push(tfIdfDocument)
+  }
+
+  return tfIdfDocuments;
+}
+
+function getInverseDocumentFrequency(term, idfTerms)
+{
+  var inverseDocumentFrequency = 0;
+  for(var i = 0; i < idfTerms.length; i++)
+  {
+    var idfTerm = idfTerms[i].term;
+    var idfWeight = idfTerms[i].idf;
+    if(term == idfTerm)
+    {
+      inverseDocumentFrequency = idfWeight;
+      break;
+    }
+  }
+  return inverseDocumentFrequency;
+}
+
+
+/********************************************************************
+* Visualization - Category Affinity (category membership) Logic
+********************************************************************/
+
+function getCategoryAffinity(ideaData)
+{
+  //Find all categories and ideaKeys present in data
+  var metaData = getMetaData(ideaData)
+  var ideaKeys = metaData.ideaKeys;
+  var categories = metaData.categories;
+
+  //Create raw empty matrix
+  var rawEmptyMatrix = createEmptyMatrix(ideaKeys.length, categories.length);
+
+  // Create Category Weight Matrix
+  var categoryWeightMatrix = createCategoryMatrix(ideaKeys, categories, rawEmptyMatrix);
+
+  // Populate Category Weight Matrix
+  categoryWeightMatrix = populateCategoryMatrix(ideaData, categoryWeightMatrix);
+  
+  //Normalize Category Weight Matrix
+  var normalizedCategoryWeightMatrix = normalizeMatrix(categoryWeightMatrix, categoryWeightMatrix.categories.length);
+
+  //Create pair-wise afinity matrix for category membership
+  var rawAffinityMatrix = populatePairwiseAffinityMatrix(categoryWeightMatrix, normalizedCategoryWeightMatrix);
+
+  var categoryAffinityMatrix = createCategoryAffinityMatrix(ideaKeys, rawAffinityMatrix);
+  return categoryAffinityMatrix;
+}
+
+function createCategoryMatrix(ideaKeys, categories, rawEmptyMatrix)
+{
+  // Create Category Weight Matrix
+  var categoryWeightMatrix = 
+  {
+    "type": "Category_Weighting",
+    "ideaKeys": ideaKeys,
+    "categories": categories,
+    "matrix": rawEmptyMatrix
+  }
+  return categoryWeightMatrix;
+}
+
+function createCategoryAffinityMatrix(ideaKeys, rawAffinityMatrix)
+{
+  // Create Category Affinity Matrix
+  var categoryAffinityMatrix = 
+  {
+    "type": "Category_Similarity",
+    "ideaKeys": ideaKeys,
+    "matrix": rawAffinityMatrix
+  }
+  return categoryAffinityMatrix;
+}
+
+function populateCategoryMatrix(ideaData, categoryWeightMatrix)
+{
+  // Populate Category Weight Matrix
+  for(var i = 0; i < ideaData.length; i++)
+  {
+    var ideaCategories = ideaData[i].categories;
+    for(var j = 0; j < ideaCategories.length; j++)
+    {
+      var category = ideaCategories[j];
+      var categoryIndex = categoryWeightMatrix.categories.indexOf(category);
+      categoryWeightMatrix.matrix[i][categoryIndex] = 1;
+    }
+  }
+  return categoryWeightMatrix;
+
+}
+
+/********************************************************************
+* Visualization - Combine Term and Category Affinity Matrices Logic
+********************************************************************/
+function getCombinedAffinity(categoryAffinity, termAffinity)
+{
+  var combinedAffinity = createCombinedAffinityMatrix(categoryAffinity);
+  for(var i = 0; i < combinedAffinity.ideaKeys.length; i++)
+  {
+    for(var j = 0; j < combinedAffinity.ideaKeys.length; j++)
+    {
+      var categoryDampeningFactor = getAverageSimilarity(termAffinity.matrix);
+      var dampenedCategoryWeight = categoryDampeningFactor * categoryAffinity.matrix[i][j];
+      combinedAffinity.matrix[i][j] = dampenedCategoryWeight + termAffinity.matrix[i][j];
+    }
+  }
+  //var normalizedCombinedAffinity = normalizeMatrix(combinedAffinity, combinedAffinity.ideaKeys.length);
+  //combinedAffinity.matrix = normalizedCombinedAffinity
+  return combinedAffinity;
+}
+
+function createCombinedAffinityMatrix(affinityMatrix)
+{
+  // Create Combined Affinity Matrix
+  var rawAffinityMatrix = createEmptyMatrix(affinityMatrix.ideaKeys.length, affinityMatrix.ideaKeys.length);
+  var combinedAffinityMatrix = 
+  {
+    "type": "Combined_Similarity",
+    "ideaKeys": affinityMatrix.ideaKeys,
+    "matrix": rawAffinityMatrix
+  }
+  return combinedAffinityMatrix;
+}
+
+function getAverageSimilarity(matrix)
+{
+  // We are dropping 0s and 1s to get the average similarity
+  var totalValue = 0;
+  var totalCount = 0;
+  for(var i = 0; i < matrix.length; i++)
+  {
+    for(var j = 0; j < matrix[i].length; j++)
+    {
+      var value = matrix[i][j];
+      if(value > 0 && value < 1)
+      {
+        totalCount += 1;
+        totalValue += value;
+      }
+    }
+  }
+  var averageSimilarity = totalValue / totalCount;
+  return averageSimilarity;
+}
+
+
+/********************************************************************
+* Visualization - General Matrix Logic
+********************************************************************/
+
+function createEmptyMatrix(rowCount, columnCount)
+{
+  //Create raw empty matrix
+  var rawEmptyMatrix = new Array(rowCount);
+  for(var i = 0; i < rowCount; i++)
+  {
+    rawEmptyMatrix[i] = new Array(columnCount);
+    for(var j = 0; j < columnCount; j++)
+    {
+      rawEmptyMatrix[i][j] = 0;
+    }
+  }
+  return rawEmptyMatrix;
+}
+
+function normalizeMatrix(weightMatrix, columnCount)
+{
+  //Normalize Weight Matrix
+  var ideaCount = weightMatrix.ideaKeys.length;
+  var normalizedweightMatrix = createEmptyMatrix(ideaCount, columnCount);
+
+  for(var i = 0; i < ideaCount; i++)
+  {
+    //Get Normalization Factor (Square Root of Sum of Squares)
+    var normalizationFactor = 0;
+    var sumOfSquares = 0; 
+    for(var j = 0; j < columnCount; j++)
+    {
+      var rawWeight = weightMatrix.matrix[i][j];
+      sumOfSquares += (rawWeight * rawWeight);
+    }
+    normalizationFactor = Math.sqrt(sumOfSquares);
+
+    //Normalize Weight Matrix
+    for(var j = 0; j < columnCount; j++)
+    {
+      var rawWeight = weightMatrix.matrix[i][j];
+      var normalizedWeight = rawWeight/normalizationFactor;
+      normalizedweightMatrix[i][j] = normalizedWeight;
+    }
+  }
+  return normalizedweightMatrix;
+}
+
+function populatePairwiseAffinityMatrix(weightMatrix, normalizedWeightMatrix)
+{
+  var ideaCount = weightMatrix.ideaKeys.length;
+  //Create pair-wise afinity matrix
+  var pairwiseAffinityMatrix = createEmptyMatrix(ideaCount, ideaCount);
+
+  //Populate pair-wise afinity matrix
+  for(var i = 0; i < ideaCount; i++)
+  {
+    var currentIdeaId = weightMatrix.ideaKeys[i];
+    var currentIdeaVector = normalizedWeightMatrix[i];
+    for(var j = 0; j < ideaCount; j++)
+    {
+      var targetIdeaId = weightMatrix.ideaKeys[j];
+      var targetIdeaVector = normalizedWeightMatrix[j];
+      if(currentIdeaId == targetIdeaId)
+      {
+        pairwiseAffinityMatrix[i][j] = 1;
+        continue;
+      }
+      
+      var cosineSimilarity = 0;
+      //Get cosine similarity (Normalized Dot Product)
+      for(var k = 0; k < currentIdeaVector.length; k++)
+      {
+        cosineSimilarity += currentIdeaVector[k] * targetIdeaVector[k];
+      }
+      pairwiseAffinityMatrix[i][j] = cosineSimilarity;
+    
+    }
+  }
+  return pairwiseAffinityMatrix;
+}
+
+/********************************************************************
+* Visualization - Force Data (category and term affinity) Logic
+********************************************************************/
+
+function createGraphNode(sourceLabel, sourceId, nodeSize)
+{
+  var graphNode = 
+  {    
+    "source_idea_label": sourceLabel,    
+    "source_idea_id": sourceId,   
+    "size": nodeSize  
+  };
+  return graphNode;
+}
+
+function createGraphEdge(sourceId, targetId, linkStrength)
+{
+  var graphEdge = 
+  {      
+    "source_idea_id": sourceId,    
+    "target_idea_id": targetId,       
+    "strength": linkStrength  
+  };
+  return graphEdge;
+}
+
+function createForceData(affinityMatrix, ideaData)
+{
+  var totalLinkStrengh = 0;
+  var totalLinkCount = 0;
+  var forceData = {"nodes": [], "edges": []};
+  for(var i = 0; i < ideaData.length; i++)
+  {
+    var sourceLabel = ideaData[i].idea;
+    var sourceId = ideaData[i].id;
+    var nodeSize = ideaData[i].quality;
+
+    var graphNode = createGraphNode(sourceLabel, sourceId, nodeSize);
+    forceData.nodes.push(graphNode);
+
+    var affinityVector = affinityMatrix.matrix[i];
+    for(var j = 0; j < affinityVector.length; j++)
+    {
+      var targetId = affinityMatrix.ideaKeys[j];
+      var linkStrength = affinityVector[j];
+      if(linkStrength > 0 && targetId != sourceId)
+      {
+        totalLinkCount += 1;
+        totalLinkStrengh += linkStrength;
+        var graphEdge = createGraphEdge(sourceId, targetId, linkStrength);
+        forceData.edges.push(graphEdge);
+      }
+    }
+  }
+  var linkAverageStrength = totalLinkStrengh / totalLinkCount;
+  
+  forceData = trimForceData(forceData, linkAverageStrength);
+  
+  return forceData;
+}
+
+function trimForceData(forceData, cutOffValue)
+{
+  for(var i = 0; i < forceData.edges.length; i++)
+  {
+    var edge = forceData.edges[i];
+    if(edge.strength < cutOffValue)
+    {
+      forceData.edges.splice(i, 1);
+    }
+  }
+  return forceData;
+}
+
+
+/********************************************************************
+* Visualization - Force Directed Graph Logic
+********************************************************************/
+
+function CreateForceDiagram(forceData, svg)
+{
+  svg.selectAll("*")
+   .remove();
+  // global intensity of attraction
+  var charge = -200;
+  // link distance factor used to determine line length;
+  var distanceFactor = 140;
+  var maxDistance = 250;
+
+  //size of the svg
+  var width = 500;
+  var height = 800;
+
+  //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
+    
+  //ordinal scale in order to color the nodes
+  var colors = d3.scale.category20();
+
+
+
+  //variables for maps and arrays for the nodes and edges of the diagram
+  var indexByName = d3.map(),
+    nameByIndex = d3.map(),
+    nodes = [],
+    edges = [],
+    sizeMax = 0,
+    sizeMin = 0,
+    strengthMax = 0,
+    strengthMin = 0,
+    n = 0;
+
+  //find min and max of the sizes in order to scale them to needed size
+  forceData.nodes.forEach(function(d) 
+  {
+    if(parseInt(d.size) > sizeMax) sizeMax = parseInt(d.size);
+    if(parseInt(d.size) < sizeMin) sizeMin = parseInt(d.size);
+  });
+
+  //scales the sizes to between 10px and 30px
+  var size_scale = d3.scale.linear()
+    .domain([sizeMin, sizeMax])
+    .range([20, 30]);
+
+  //find min and max of the sizes in order to scale them to needed size
+  forceData.edges.forEach(function(d) 
+  {
+    if(parseFloat(d.strength) > strengthMax) strengthMax = parseFloat(d.strength);
+    if(parseFloat(d.strength) < strengthMin) strengthMin = parseFloat(d.strength);
+  });
+
+  //scales the sizes to between 10px and 30px
+  var strength_scale = d3.scale.linear()
+    .domain([strengthMin, strengthMax])
+    .range([1, 25]);
+
+  //goes through all of the data and makes sure that it is mapped in the maps
+  //also puts the source_idea_label and size into the nodes array
+  forceData.nodes.forEach(function(d) 
+  {
+    if (!indexByName.has(d.source_idea_id)) 
+    {
+      nameByIndex.set(n, d.source_idea_id);
+      nodes.push({name: d.source_idea_id, size: size_scale(parseInt(d.size)), text: d.source_idea_label});
+      indexByName.set(d.source_idea_id, n);
+      n++;
+          }
+  });
+
+  //loops through the data array and looks up all the edges and puts them into the edges array
+  for(var x = 0; x < forceData.edges.length; x++) 
+  {
+    var sourceNode = parseInt(indexByName.get(forceData.edges[x].source_idea_id));
+        var targetNode = parseInt(indexByName.get(forceData.edges[x].target_idea_id));
+        var linkStrength = parseInt(strength_scale(forceData.edges[x].strength)); 
+
+        edges.push({source: sourceNode, target: targetNode, strength: linkStrength});
+  }
+
+  //creates the dataset object that contains the arrays of nodes and edges
+  var dataset = { nodes: nodes, edges: edges}; 
+
+  //this sets up the force layout - it needs where the nodes and links are and the size of the space, as well as optional parameters like how long you want the distance between them to be and how much you want the nodes to repel each other
+  var force = d3.layout.force()
+    .nodes(dataset.nodes)
+    .links(dataset.edges)
+    .size([width-90, height-90])
+    //.linkDistance(100)
+    .linkDistance(function(d) 
+    {
+      return 50-d.strength;
+    })
+    .charge(charge)
+    .start();
+
+  //making the svg lines that connect the nodes
+  var edges = svg.selectAll(".link")
+    .data(dataset.edges)
+    .enter()
+    .append("line")
+    .attr("class", "link")
+    .style("stroke", "grey")
+    .style("opacity", function(d) 
+    {
+      return d.strength/10;
+    })
+      .style("stroke-width", function(d) 
+    {
+      return   (1/10)*(Math.round(Math.sqrt(d.strength)));
+    });
+
+   
+  var colors = d3.scale.linear()
+          .domain([0,10])
+          .range(["#edf8b1","#7fcdbb","#2c7fb8"]);
+
+  //making the svg text that are the nodes
+  //choosing colors from the ordinal scale for the text
+  var nods = svg.selectAll(".node")
+    .data(dataset.nodes)
+    .enter()
+    .append("g")
+  
+  var nodes = nods.append("circle")
+                .attr("class", "node")
+                .attr("r", function(d) 
+                { 
+                  return d.size/3; 
+                })
+                .style("fill", function(d, i) 
+                {
+                  //return colors(i);
+                  //return "green";
+                  //var ind = (d.source_idea_id)-1;
+                  //var cat = incomingIdeaData.ind.categories[0]
+                  //return ordColor(cat);
+                  return colors(d.size);
+                })
+                .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
+
+  var tex = nods.append("text")
+    .text(function(d) { 
+      return d.text;})
+    .attr("fill", "black")
+    .attr("font-size", "20px");
+
+  nodes.append("title")
+    .text(function(d) { return d.text; });
+
+    
+
+  nodes.on("mouseover", function() {d3.select(this).style("stroke","orange").style("stroke-width",1);});
+  nodes.on("mouseout", function() {d3.select(this).style("stroke","none");});
+  //this tells the visualization what to do when time passes
+  //it updates where the nodes and edges should be
+  force.on("tick", function() 
+  {
+    edges.attr("x1", function(d) 
+    { 
+      return d.source.x; 
+    })
+        .attr("y1", function(d) 
+    { 
+          return d.source.y; 
+    })
+        .attr("x2", function(d) 
+    { 
+          return d.target.x; 
+        })
+        .attr("y2", function(d) 
+    { 
+          return d.target.y; 
+        });
+
+    nodes.attr("cx", function(d) 
+    {
+      return d.x; 
+    })
+    .attr("cy", function(d) 
+    { 
+      return d.y; 
+    });
+
+    tex.attr("x", function(d) 
+    {
+      return d.x; 
+    })
+    .attr("y", function(d) 
+    { 
+      return d.y; 
+    })
+    .attr("dy", -10)
+    .attr("dx", -10);
+
+  });
+}
+
+function CreateForceDiagram2(forceData)
+{
+
+  // global intensity of attraction
+  var charge = -200;
+  // link distance factor used to determine line length;
+  var distanceFactor = 140;
+  var maxDistance = 250;
+
+  //size of the svg
+  var width = 700;
+  var height = 800;
+
+  //makes the svg element
+  var svg = d3.select("#svgdiv3")
+    .attr("width", width)
+    .attr("height", height)
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+
+  //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
+    
+  //ordinal scale in order to color the nodes
+  var colors = d3.scale.category20();
+
+
+
+  //variables for maps and arrays for the nodes and edges of the diagram
+  var indexByName = d3.map(),
+    nameByIndex = d3.map(),
+    nodes = [],
+    edges = [],
+    sizeMax = 0,
+    sizeMin = 0,
+    strengthMax = 0,
+    strengthMin = 0,
+    n = 0;
+
+  //find min and max of the sizes in order to scale them to needed size
+  forceData.nodes.forEach(function(d) 
+  {
+    if(parseInt(d.size) > sizeMax) sizeMax = parseInt(d.size);
+    if(parseInt(d.size) < sizeMin) sizeMin = parseInt(d.size);
+  });
+
+  //scales the sizes to between 10px and 30px
+  var size_scale = d3.scale.linear()
+    .domain([sizeMin, sizeMax])
+    .range([20, 30]);
+
+  //find min and max of the sizes in order to scale them to needed size
+  forceData.edges.forEach(function(d) 
+  {
+    if(parseFloat(d.strength) > strengthMax) strengthMax = parseFloat(d.strength);
+    if(parseFloat(d.strength) < strengthMin) strengthMin = parseFloat(d.strength);
+  });
+
+  //scales the sizes to between 10px and 30px
+  var strength_scale = d3.scale.linear()
+    .domain([strengthMin, strengthMax])
+    .range([1, 25]);
+
+  //goes through all of the data and makes sure that it is mapped in the maps
+  //also puts the source_idea_label and size into the nodes array
+  forceData.nodes.forEach(function(d) 
+  {
+    if (!indexByName.has(d.source_idea_id)) 
+    {
+      nameByIndex.set(n, d.source_idea_id);
+      nodes.push({name: d.source_idea_id, size: size_scale(parseInt(d.size)), text: d.source_idea_label});
+      indexByName.set(d.source_idea_id, n);
+      n++;
+          }
+  });
+
+  //loops through the data array and looks up all the edges and puts them into the edges array
+  for(var x = 0; x < forceData.edges.length; x++) 
+  {
+    var sourceNode = parseInt(indexByName.get(forceData.edges[x].source_idea_id));
+        var targetNode = parseInt(indexByName.get(forceData.edges[x].target_idea_id));
+        var linkStrength = parseInt(strength_scale(forceData.edges[x].strength)); 
+
+        edges.push({source: sourceNode, target: targetNode, strength: linkStrength});
+  }
+
+  //creates the dataset object that contains the arrays of nodes and edges
+  var dataset = { nodes: nodes, edges: edges}; 
+
+  //this sets up the force layout - it needs where the nodes and links are and the size of the space, as well as optional parameters like how long you want the distance between them to be and how much you want the nodes to repel each other
+  var force = d3.layout.force()
+    .nodes(dataset.nodes)
+    .links(dataset.edges)
+    .size([width-90, height-90])
+    //.linkDistance(100)
+    .linkDistance(function(d) 
+    {
+      return 50-d.strength;
+    })
+    .charge(charge)
+    .start();
+
+  //making the svg lines that connect the nodes
+  var edges = svg.selectAll(".link")
+    .data(dataset.edges)
+    .enter()
+    .append("line")
+    .attr("class", "link")
+    .style("stroke", "grey")
+    .style("opacity", function(d) 
+    {
+      return d.strength/15;
+    })
+      .style("stroke-width", function(d) 
+    {
+      return   (1/10)*(Math.round(Math.sqrt(d.strength)));
+    });
+
+   
+  var colors = d3.scale.linear()
+          .domain([0,10])
+          .range(["#edf8b1","#7fcdbb","#2c7fb8"]);
+
+  //making the svg text that are the nodes
+  //choosing colors from the ordinal scale for the text
+  var nods = svg.selectAll(".node")
+    .data(dataset.nodes)
+    .enter()
+    .append("g")
+  
+  var nodes = nods.append("circle")
+                .attr("class", "node")
+                .attr("r", function(d) 
+                { 
+                  return d.size/3; 
+                })
+                .style("fill", function(d, i) 
+                {
+                  //return colors(i);
+                  //return "green";
+                  //var ind = (d.source_idea_id)-1;
+                  //var cat = incomingIdeaData.ind.categories[0]
+                  //return ordColor(cat);
+                  return colors(d.size);
+                })
+                .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
+
+  /*var tex = nods.append("text")
+    .text(function(d) { 
+      return d.text;})
+    .attr("fill", "black")
+    .attr("font-size", "20px");*/
+
+  nodes.append("title")
+    .text(function(d) { return d.text; });
+
+    
+
+  nodes.on("mouseover", function() {d3.select(this).style("stroke","orange").style("stroke-width",1);});
+  nodes.on("mouseout", function() {d3.select(this).style("stroke","none");});
+  //this tells the visualization what to do when time passes
+  //it updates where the nodes and edges should be
+  force.on("tick", function() 
+  {
+    edges.attr("x1", function(d) 
+    { 
+      return d.source.x; 
+    })
+        .attr("y1", function(d) 
+    { 
+          return d.source.y; 
+    })
+        .attr("x2", function(d) 
+    { 
+          return d.target.x; 
+        })
+        .attr("y2", function(d) 
+    { 
+          return d.target.y; 
+        });
+
+    nodes.attr("cx", function(d) 
+    {
+      return d.x; 
+    })
+    .attr("cy", function(d) 
+    { 
+      return d.y; 
+    });
+
+    /*tex.attr("x", function(d) 
+    {
+      return d.x; 
+    })
+    .attr("y", function(d) 
+    { 
+      return d.y; 
+    })
+    .attr("dy", -10)
+    .attr("dx", -10);*/
+
+  });
 }
