@@ -660,20 +660,20 @@ svg.selectAll("*")
     .remove();
 
 var margin = {
-    top: 120,
+    top: 10,
     right: 0,
-    bottom: 0,
+    bottom: 14,
     left: 0
     },
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    width = 700,
+    height = 800;
 
 var n = 56,
     m = 1,
     padding = 16,
     radius = d3.scale.sqrt().range([0, 25]),
     color = d3.scale.category10().domain(d3.range(m)),
-    x = d3.scale.ordinal().domain(d3.range(m)).rangePoints([0, width], 1);
+    x = d3.scale.ordinal().domain(d3.range(m)).rangePoints([0, width/2], 1);
 
 
 //input the cloudItems, map each item to an object with
@@ -686,7 +686,7 @@ var nodes = cloud.map(function (item) {
         radius: radius(item.count),
         color: color(i),
         cx: x(i),
-        cy: height / 3,
+        cy: height / 5,
         title: item.word,
         likes: item.likes
     };
@@ -700,7 +700,7 @@ console.log(nodes);
 
 var force = d3.layout.force()
     .nodes(nodes)
-    .size([width, height])
+    .size([width/2, height])
     .gravity(0)
     .charge(0)
     .on("tick", tick)
@@ -713,14 +713,16 @@ var rem = svg.selectAll("circle")
     .exit()
     .style("fill", "grey");
 
+var rgscale = d3.scale.linear()
+              .domain([0,1])
+              .range(["red", "green"]);
 
 var circle = svg.selectAll("circle")
     .data(nodes)
     .enter().append("circle")
-    .attr("opacity", .2)
+    .attr("opacity", function(d) {if (d.title=="") {return 0} else {return .2}})
     .attr("r", function (d) {return d.radius;})
-    .attr("fill", function(d) {if (d.likes==1) {return "green";} 
-                                             else {return "red";};})
+    .attr("fill", function(d) {return rgscale(d.likes);})
     .call(force.drag);
 
     //circle.remove()
@@ -734,16 +736,17 @@ var tex = svg.selectAll("text")
     .data(nodes)
     .enter().append("text")
     .attr("x", function (d) {
-      return d.cx-d.radius;
+      return d.cx;
     })
     .attr("y", function (d) {
-      return d.cy+10;
+      return d.cy;
     })
     //.attr("dx", -5)
     .text(function(d) {return d.title;})
     .style("font-size", function(d) {return d.radius/3;})
-    .style("stroke", function(d) {if (d.likes==1) {return "green";} 
+    .style("fill", function(d) {if (d.likes==1) {return "green";} 
                                              else {return "red";};})
+    .style("stroke-width", .1)
     .call(force.drag);
 
 
@@ -751,20 +754,34 @@ function tick(e) {
     circle.each(gravity(.1 * e.alpha))
         .each(collide(.5))
         .attr("cx", function (d) {
-        return d.x;
+        //return d.x;
+        return d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
     })
         .attr("cy", function (d) {
-        return d.y+10;
+        //return d.y+10;
+        return d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
     });
     tex.each(gravity(.2 * e.alpha))
         .each(collide(.5))
         .attr("x", function (d) {
-        return d.x-17;
+        return d.x-(d.radius/2);
     })
         .attr("y", function (d) {
-        return d.y+10;
+        return d.y ;
     });
 }
+/*
+   nodes.attr("cx", function(d) 
+    {
+      return d.x; 
+      //return d.x = Math.max(6, Math.min(width - 6, d.x));
+    })
+    .attr("cy", function(d) 
+    { 
+      return d.y; 
+      //return d.y = Math.max(6, Math.min(height - 6, d.y));
+    });
+*/
 
 // Move nodes toward cluster focus.
 function gravity(alpha) {
@@ -823,8 +840,14 @@ Template.HcompOtherViz.rendered = function() {
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .call(d3.behavior.zoom().on("zoom", redrawB))
+    .append('svg:g');
+  
+  function redrawB() {
+      console.log("here", d3.event.translate, d3.event.scale);
+      svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")"); } 
 
+ 
 
 
   Deps.autorun(function() {
@@ -1793,11 +1816,20 @@ Template.ForceV.rendered = function() {
 
   //makes the svg element
   var svg = d3.select("#svgdiv2")
-    .attr("width", width)
-    .attr("height", height)
     .append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    //.attr("pointer-events", "all")
+    .append('svg:g')
+    .call(d3.behavior.zoom().on("zoom", redraw))
+    .append('svg:g');
+  
+ 
+  function redraw() {
+      console.log("here", d3.event.translate, d3.event.scale);
+      svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")"); } 
+
+ 
 
   Deps.autorun(function() {  
 
@@ -1805,7 +1837,7 @@ Template.ForceV.rendered = function() {
 
     var newData = formatData(rawIdeas)
 
-    CreateForceDiagram(GetForceData(newData), svg);
+    CreateForceDiagram(GetForceData(newData), svg, width, height);
   })
 
 }
@@ -2574,7 +2606,7 @@ function trimForceData(forceData, cutOffValue)
 * Visualization - Force Directed Graph Logic
 ********************************************************************/
 
-function CreateForceDiagram(forceData, svg)
+function CreateForceDiagram(forceData, svg, w, h)
 {
   svg.selectAll("*")
    .remove();
@@ -2585,7 +2617,7 @@ function CreateForceDiagram(forceData, svg)
   var maxDistance = 250;
 
   //size of the svg
-  var width = 500;
+  var width = w-200;
   var height = 800;
 
   //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
@@ -2697,31 +2729,49 @@ function CreateForceDiagram(forceData, svg)
     .enter()
     .append("g")
   
+  var ws = d3.scale.linear()
+            .domain([0, 7])
+            .range([10, 1])
+
+  var wsc = d3.scale.linear()
+            .domain([0, 5, 10])
+            .range(["orange", "white", "steelblue"])
+
+  var wst = d3.scale.linear()
+            .domain([0, 7])
+            .range([1, 0])
+
   var nodes = nods.append("circle")
                 .attr("class", "node")
                 .attr("r", function(d) 
                 { 
-                  return d.size/3; 
+                  return ws(d.weight); //d.size/3; 
                 })
-                .style("fill", function(d, i) 
+                .style("opacity", function(d, i) 
                 {
                   //return colors(i);
                   //return "green";
                   //var ind = (d.source_idea_id)-1;
                   //var cat = incomingIdeaData.ind.categories[0]
                   //return ordColor(cat);
-                  return colors(d.size);
+                  if (d.text=="Nothing") {return 0;}
+                  else {return colors(d.size);}
                 })
+                .style("stroke-width", function(d,i) { return ws(d.weight);})
+                .style("fill", function(d,i) {return wsc(d.weight);})
                 .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
   var tex = nods.append("text")
     .text(function(d) { 
-      return d.text;})
-    .attr("fill", "black")
+      if (d.text=="Nothing") {return ""}
+      else {return d.text;};})
+    //.attr("fill", function(d,i) {return wsc(d.weight);})
+    .style("opacity", function(d,i){return wst(d.weight)})
     .attr("font-size", "20px");
 
   nodes.append("title")
-    .text(function(d) { return d.text; });
+    .text(function(d) { if (d.text=="Nothing") {return ""}
+                        else {return d.text; };})
 
     
 
@@ -2781,13 +2831,11 @@ function CreateForceDiagram2(forceData)
   var maxDistance = 250;
 
   //size of the svg
-  var width = 700;
-  var height = 800;
+  var width = 600;
+  var height = 600;
 
   //makes the svg element
   var svg = d3.select("#svgdiv3")
-    .attr("width", width)
-    .attr("height", height)
     .append("svg")
     .attr("width", width)
     .attr("height", height);
@@ -2865,12 +2913,13 @@ function CreateForceDiagram2(forceData)
   var force = d3.layout.force()
     .nodes(dataset.nodes)
     .links(dataset.edges)
-    .size([width-90, height-90])
+    .size([width-100, height-100])
     //.linkDistance(100)
     .linkDistance(function(d) 
-    {
-      return 50-d.strength;
-    })
+      {
+        return 20-d.strength;
+      })
+    .gravity(.05)
     .charge(charge)
     .start();
 
@@ -2883,7 +2932,7 @@ function CreateForceDiagram2(forceData)
     .style("stroke", "grey")
     .style("opacity", function(d) 
     {
-      return d.strength/15;
+      return d.strength/7;
     })
       .style("stroke-width", function(d) 
     {
@@ -2919,11 +2968,13 @@ function CreateForceDiagram2(forceData)
                 })
                 .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
-  /*var tex = nods.append("text")
-    .text(function(d) { 
-      return d.text;})
+  var tex = nods.append("text")
+    .text(function(d,i) { 
+      if (i%20===0) {return d.text;}
+      else {return " ";}
+    })
     .attr("fill", "black")
-    .attr("font-size", "20px");*/
+    .attr("font-size", "20px");
 
   nodes.append("title")
     .text(function(d) { return d.text; });
@@ -2956,22 +3007,27 @@ function CreateForceDiagram2(forceData)
     nodes.attr("cx", function(d) 
     {
       return d.x; 
+      //return d.x = Math.max(6, Math.min(width - 6, d.x));
     })
     .attr("cy", function(d) 
     { 
       return d.y; 
+      //return d.y = Math.max(6, Math.min(height - 6, d.y));
     });
 
-    /*tex.attr("x", function(d) 
+    tex.attr("x", function(d) 
     {
       return d.x; 
+      //return d.x = Math.max(6, Math.min(width - 6, d.x));
     })
     .attr("y", function(d) 
     { 
-      return d.y; 
+      return d.y;
+      //return d.y = Math.max(6, Math.min(height - 6, d.y)); 
     })
     .attr("dy", -10)
-    .attr("dx", -10);*/
+    .attr("dx", -10);
+
 
   });
 }
