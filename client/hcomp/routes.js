@@ -96,7 +96,7 @@ Router.map(function () {
     },
     onAfterAction: function() {
       if (this.ready()) {
-        initRolePage();
+        //initRolePage();
       }
     }
   });
@@ -173,7 +173,7 @@ Router.map(function () {
     },
     onAfterAction: function() {
       if (this.ready()) {
-        initRolePage();
+        //initRolePage();
       }
     }
   });
@@ -427,7 +427,7 @@ Router.map(function () {
     onAfterAction: function() {
         //Session.set("nextPage", "MturkIdeation");
         if (this.ready()) {
-          initRolePage();
+          //initRolePage();
           insertExitStudy();
         }
     },
@@ -695,7 +695,7 @@ this.route('ExpBaselineFluency', {
             userID: Session.get("currentUser")._id
           }
         );
-        initRolePage();
+        //initRolePage();
       }
     }
 
