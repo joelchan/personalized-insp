@@ -88,19 +88,6 @@ EventLogger = (function () {
       var type = EventTypeManager.get(msg);
       this.log(type);
     },
-   
-    logDenyParticipation: function() {
-      var msg = "User was denied participation in experiment";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-    },
-   
-    logConsent: function () {
-      var msg = "User consented to experiment";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-    },
-
     logBeginRole: function() {
       var role = Session.get("currentRole");
       var prompt = Session.get("currentPrompt");
@@ -110,16 +97,6 @@ EventLogger = (function () {
           'role': role.title
       };
       this.log(type, data);
-    },
-    logBeginIdeation: function() {
-      var msg = "User began ideation";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-    },
-    logEnterIdeation: function() {
-      var msg = "User entered ideation";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
     },
     logEndRole: function() {
       var role = Session.get("currentRole");
@@ -131,7 +108,19 @@ EventLogger = (function () {
       };
       this.log(type, data);
     },
-
+    /** Experiment Events**/
+    logConsent: function () {
+      var msg = "User consented to experiment";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
+    logDenyParticipation: function() {
+      var msg = "User was denied participation in experiment";
+      var type = EventTypeManager.get(msg);
+      var exp = Session.get("currentExperiment")
+      var data = {'expID': exp._id, 'expDescr': exp.description}
+      this.log(type, data);
+    },
     logExitStudy: function() {
       var msg = "User exited study early";
       var prompt = Session.get("currentPrompt");
@@ -141,8 +130,95 @@ EventLogger = (function () {
           'role': role.title
       };
       this.log(type, data);
+      var part = Session.get("currentParticipant");
+      Participants.update({_id: part._id},
+        {$set: {exitedEarly: true}});
     },
-  
+    logTutorialStarted: function () {
+      var msg = "User started a tutorial";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      var part = Session.get("currentParticipant");
+      Participants.update({_id: part._id},
+        {$set: {tutorialStarted: true}});
+    },
+    logTutorialStepRewind: function (current, max) {
+      //current is the current step before rewinding
+      var msg = "User rewound a tutorial step";
+      var type = EventTypeManager.get(msg);
+      var data = {"currentTaskStepNum": current, 
+        "taskStepMax": max
+      };
+      this.log(type, data);
+      if (current < max) {
+        Session.set("currentTutorialStep",current);  
+      }
+    },
+    logTutorialStepComplete: function (num, max) {
+      var msg = "User finished a tutorial step";
+      var type = EventTypeManager.get(msg);
+      var data = {"taskStepNum": num, "taskStepMax": max};
+      this.log(type, data);
+      logger.debug("Finished tutorial step " + num + " of " + max);
+      if (num < max) {
+        Session.set("currentTutorialStep",num+1);
+      }
+    },
+    logFluencyTaskBegin: function () {
+      var msg = "User started fluency measure task";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      // logger.debug(msg);
+      var part = Session.get("currentParticipant");
+      Participants.update({_id: part._id},
+        {$set: {fluencyStarted: true}});
+    },
+    logFluencyTaskComplete: function () {
+      var msg = "User finished fluency measure task";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      // logger.debug(msg);
+      var part = Session.get("currentParticipant");
+      Participants.update({_id: part._id},
+        {$set: {fluencyFinished: true}});
+    },
+    logTutorialComplete: function () {
+      var msg = "User finished a tutorial";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      logger.debug(msg);
+      ExperimentManager.logParticipantReady(Session.get("currentParticipant"));  
+    },
+    logEnterIdeation: function() {
+      var msg = "User entered ideation";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
+    logBeginIdeation: function() {
+      var msg = "User began ideation";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      var part = Session.get("currentParticipant");
+      if (part) {
+        Participants.update({_id: part._id},
+        {$set: {hasStarted: true}});  
+      }
+    },
+    logSurveyBegan: function () {
+      var msg = "User began survey";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+      var part = Session.get("currentParticipant");
+      if (part) {
+        Participants.update({_id: part._id},
+        {$set: {surveyStarted: true}});  
+      }
+    },
+    logSurveyComplete: function () {
+      var msg = "User completed survey";
+      var type = EventTypeManager.get(msg);
+      this.log(type);
+    },
     logSubmittedSurvey: function(response) {
       var msg = "User submitted survey";
       var exp = Session.get("currentExp");
@@ -395,61 +471,6 @@ EventLogger = (function () {
           'state': state,
       };
       this.log(type, data);
-    },
-    logSurveyBegan: function () {
-      var msg = "User began survey";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-    },
-    logSurveyComplete: function () {
-      var msg = "User completed survey";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-    },
-    logTutorialStarted: function () {
-      var msg = "User started a tutorial";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-    },
-    logTutorialComplete: function () {
-      var msg = "User finished a tutorial";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-      logger.debug(msg);
-    },
-    logFluencyTaskBegin: function () {
-      var msg = "User started fluency measure task";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-      logger.debug(msg);
-    },
-    logFluencyTaskComplete: function () {
-      var msg = "User finished fluency measure task";
-      var type = EventTypeManager.get(msg);
-      this.log(type);
-      logger.debug(msg);
-    },
-    logTutorialStepRewind: function (current, max) {
-      //current is the current step before rewinding
-      var msg = "User rewound a tutorial step";
-      var type = EventTypeManager.get(msg);
-      var data = {"currentTaskStepNum": current, 
-        "taskStepMax": max
-      };
-      this.log(type, data);
-      if (current < max) {
-        Session.set("currentTutorialStep",current);  
-      }
-    },
-    logTutorialStepComplete: function (num, max) {
-      var msg = "User finished a tutorial step";
-      var type = EventTypeManager.get(msg);
-      var data = {"taskStepNum": num, "taskStepMax": max};
-      this.log(type, data);
-      logger.debug("Finished tutorial step " + num + " of " + max);
-      if (num < max) {
-        Session.set("currentTutorialStep",num+1);
-      }
     },
     logRequestInspiration: function (prompt) {
       var msg = "User requested an inspiration";

@@ -106,7 +106,8 @@ Template.CrowdExperiment.helpers({
     return this.url;
   },
   conditions: function() {
-    return Conditions.find({expID: this._id});
+    return Conditions.find({expID: this._id},
+      {sort: {description: 1}});
   },
   partNumber: function() {
     if (this.conditions[0].partNum) {
@@ -182,6 +183,112 @@ Template.CrowdExperimentCondition.helpers({
     logger.trace("Progress = " + progress);
     return Math.round(progress);
   },
+  assignedParticipants: function() {
+    return Participants.find({conditionID: this._id},
+      {sort: {exitedEarly: 1, fluencyStarted: -1, fluencyFinished: -1, isReady: -1}});
+  },
+});
+
+Template.CondParticipant.helpers({
+  partUserName: function() {
+    var partID = this;
+    logger.trace("Participant: " + JSON.stringify(this));
+    // logger.debug("Calling partUserName for participant " + partID);
+    // var part = Participants.find({"_id": partID}).fetch()[0];
+    // logger.trace("Participants: " + JSON.stringify(Participants.find({}).fetch()));
+    // logger.trace("Participant for condition: " + JSON.stringify(part));
+    // return part.userName;
+    return this.userName;
+  },
+  status: function() {
+    if (this.exitedEarly) {
+      return "danger";
+    } else if (this.isReady) {
+      return "success";
+    } else if (this.fluencyFinished) {
+      return "warning";
+    } else {
+      return "";
+    }
+  },
+  tutorialStart: function() {
+    if (this.tutorialStarted) {
+      var msg = "User started a tutorial";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
+  },
+  fluencyStart: function() {
+    if (this.fluencyStarted) {
+      var msg = "User started fluency measure task";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
+  },
+  fluencyEnd: function() {
+    // return this.fluencyFinished;
+    if (this.fluencyFinished) {
+      var msg = "User finished fluency measure task";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
+  },
+  tutorialEnd: function() {
+    // return this.isReady;
+    if (this.isReady) {
+      var msg = "User finished a tutorial";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
+  },
+  ideationStart: function() {
+    // return this.hasStarted;
+    if (this.hasStarted) {
+      var msg = "User began ideation";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
+  },
+  surveyStart: function() {
+    // return this.surveyStarted;
+    if (this.surveyStarted) {
+      var msg = "User began survey";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
+  },
+  finishedStudy: function() {
+    // return this.hasFinished;
+    if (this.hasFinished) {
+      var msg = "User submitted survey";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
+  },
+  exitEarly: function() {
+    // return this.exitedEarly;
+    if (this.exitedEarly) {
+      var msg = "User exited study early";
+      var time = Events.findOne({userID: this.userID, description: msg}).time;
+      return time.toTimeString().substring(0,9);
+    } else {
+      return "";
+    }
+  }
 });
 
 Template.CrowdBrainstorm.helpers({
@@ -427,17 +534,18 @@ Template.CrowdExperiment.events({
     // }
   // },
 
+// not used at the moment
   'click .begin-bs': function () {
-    var condName = this.description;
-    logger.trace("Begin brainstorm for " + condName + " condition");
-    var exp = Experiments.findOne({_id: this.expID});
-    var userIDs = ExperimentManager.getUsersInCond(exp, condName);
-    userIDs.forEach(function (id) {
-      logger.debug("Updating route for user with id: " + id);
-      var routeName = "MturkIdeation" + condName;
-      logger.debug("Sending to route: " + routeName)
-      MyUsers.update({_id: id}, {$set: {'route': routeName}});
-    });
+    // var condName = this.description;
+    // logger.trace("Begin brainstorm for " + condName + " condition");
+    // var exp = Experiments.findOne({_id: this.expID});
+    // var userIDs = ExperimentManager.getUsersInCond(exp, condName);
+    // userIDs.forEach(function (id) {
+    //   logger.debug("Updating route for user with id: " + id);
+    //   var routeName = "MturkIdeation" + condName;
+    //   logger.debug("Sending to route: " + routeName)
+    //   MyUsers.update({_id: id}, {$set: {'route': routeName}});
+    // });
   },
 
   // 'click .rm-excl-user': function() {

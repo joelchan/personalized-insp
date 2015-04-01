@@ -109,10 +109,20 @@ Participant = function(expID, userID, condID, groupID) {
     // this.verifyCode = this.userID.hashCode();
     // don't need verify code anymore because we are using legiontools
     
+    this.tutorialStarted = false;
+
+    this.fluencyStarted = false;
+
+    this.fluencyFinished = false;
+
     //Participants are not ready to begin by default
     this.isReady = false;
 
     this.hasStarted = false;
+
+    this.exitedEarly = false;
+
+    this.surveyStarted = false;
 
     //Participants have not finished by default
     this.hasFinished = false;

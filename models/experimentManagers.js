@@ -1,9 +1,9 @@
 // Configure logger for ExperimentManager
 var logger = new Logger('Managers:Experiment');
 // Comment out to use global logging level
-// Logger.setLevel('Managers:Experiment', 'trace');
+Logger.setLevel('Managers:Experiment', 'trace');
 //Logger.setLevel('Managers:Experiment', 'debug');
-Logger.setLevel('Managers:Experiment', 'info');
+// Logger.setLevel('Managers:Experiment', 'info');
 // Logger.setLevel('Managers:Experiment', 'warn');
 
 ExperimentManager = (function () {
@@ -396,6 +396,7 @@ ExperimentManager = (function () {
       //checks if user is on list of prohibitied users
       for (var i=0; i<exp.excludeUsers.length; i++) {
         if (exp.excludeUsers[i] == userName) {
+            EventLogger.logDenyParticipation();
             return false;
         }
       }
@@ -420,9 +421,12 @@ ExperimentManager = (function () {
     },
 
     addExcludeUsers: function(expID, userNames) {
+      var currentExclusions = Experiments.findOne({_id: expID}).excludeUsers;
       userNames.forEach(function(userName) {
-        Experiments.update({_id: expID}, 
-          {$push: {excludeUsers: userName}});
+        if (!isInList(userName, currentExclusions)) {
+          Experiments.update({_id: expID}, 
+          {$push: {excludeUsers: userName}});  
+        }
       });
     },
 
