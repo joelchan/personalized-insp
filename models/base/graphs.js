@@ -13,9 +13,10 @@ Edges = new Mongo.Collection("edges");
 
 /* list of minimum required fields for a given node type */
 NODE_TYPES = {
-  'ideas': ['ideaID', 'content', 'time', 'vote', 'numVotes'],
+  'idea': ['ideaID', 'content', 'time', 'vote', 'numVotes'],
   'theme': ['name', 'time', 'isTrash', 'isMerged', 
       'position', 'isCollapsed'],
+  'forest_precluster': ['num_ideas', 'idea_node_ids']
 };
 
 /* list of minimum required fields for a given edge type */
@@ -23,6 +24,7 @@ EDGE_TYPES = {
   'parent_child': ['parentID', 'childID'],
   'merged': ['sourceID', 'targetID'],
   'graph_link': ['sharedNodeID', 'userNodeID'],
+  'similarity': ['cos'],
 };
 
 /* list of known graph types thus far */
@@ -30,7 +32,7 @@ GRAPH_TYPES = [
   'user_graph', 'shared_graph', 'pre_forest', 'data_forest'
 ];
 
-Graph = function(promptID, groupID, userID, type) {
+Graph = function(promptID, groupID, userID, type, data) {
   /********************************************************************
   * Graph constructor
   *
@@ -55,6 +57,13 @@ Graph = function(promptID, groupID, userID, type) {
     this.type = "UserGraph";
   } else {
     this.type = "SharedGraph";
+  }
+  if (data) {
+    // Add metadata fields if any are given
+    var fields = Object.keys(data);
+    for (var i=0; i<fields.length; i++) {
+      this[fields[i]] = data[fields[i]];
+    }
   }
   this.nodeIDs = [];
   this.edgeIDs = [];

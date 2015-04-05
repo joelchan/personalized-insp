@@ -32,7 +32,7 @@ Template.DataProcessingTab.helpers({
   dataSets: function() {
     //return all the datasets for which there is a preprocessed forest
     //done
-    var graphs = Graphs.find({type: 'pre_forest'});
+    var graphs = Graphs.find({type: 'data_forest', is_processed: true});
     var results = []
     graphs.forEach(function(graph) {
       var result = graph;
@@ -390,9 +390,9 @@ Template.CrowdBrainstorm.events({
     var group = Groups.findOne({_id: prompt.groupIDs[0]});
     var user = Session.get("currentUser");
     var type = "data_forest";
-    graphID = GraphManager.createGraph(prompt, group, user, type);
+    var data = {is_processed: false};
+    graphID = GraphManager.createGraph(prompt, group, user, type, data);
     Prompts.update({_id: prompt._id}, {$set: {forestGraphID: graphID}});
-
   },
 });
 

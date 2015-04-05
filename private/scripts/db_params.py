@@ -11,6 +11,13 @@ ideagenstest = {'url': "kahana.mongohq.com",
                 'pswd': 'protolab1'
                 }
 # user and paswd are incorrect (do not want to commit secure info
+ideagensscd = {'url': "ds045031.mongolab.com",
+            'port': 45031,
+            'dbName': 'ideagensscd',
+            'user': 'heroku',
+            'pswd': 'j4!g#RV$nAr5&FBq$BK$',
+            }
+
 ideagens = {'url': "kahana.mongohq.com",
             'port': 10075,
             'dbName': 'IdeaGens',
@@ -45,6 +52,7 @@ ALL_DBs = {'ideagens': ideagens,
              'ideagenstest': ideagenstest,
              'chi1': chi1,
              'fac_exp': fac_exp,
-             'local': local_meteor
+             'local': local_meteor,
+             'ideagensscd': ideagensscd,
           }
 

@@ -213,7 +213,42 @@ class Data_Utility:
             data[field] = extra[field]
         
         return base_data
-  
+
+    def insert(self, col, docs):
+        """
+        Perform insert or bulk insert of documents given
+
+        @params
+            col - the collection to insert documents
+            docs - a single or list of documents to insert into the db
+
+        @return
+            docs with updated ids
+            
+        """
+        for doc in docs:
+            d = doc.__dict__
+            # for key in d.keys():
+                # print key + ": " + d[key]
+        try:
+            if docs:
+                data = [doc.__dict__ for doc in docs]
+                results = self.db[col].insert(data, continue_on_error=True)
+                return results
+        except DuplicateKeyError:
+            print "Attempted insert of document with duplicate key"
+        else:
+            print "success"
+             
+    def update(self, col, sel, update):
+        """
+        Update the documents in the specified collection according to
+        the given selector and update statement
+
+        """
+        results = self.db[col].update(sel, update)
+        return results
+     
     def get_ideas(self):
         """
         Get a list of all the ideas
@@ -294,9 +329,9 @@ if __name__ == '__main__':
       parse_args(sys.argv[1:])
     else:
       # Rudimentary script to dump to db as we previously were doing
-      util = Data_Utility('data/facPilot', ALL_DBs['ideagens'])
-      # util.restore_db()
-      # util.clear_db()
-      # util.dumo_db()
+      util = Data_Utility('data/amd3-2', ALL_DBs['ideagensscd'])
+      util.clear_db()
+      util.restore_db()
+      # util.dump_db()
 
 
