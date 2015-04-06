@@ -234,7 +234,9 @@
 #treatment-tutorial-inspireMeTry-gotit:disabled {
     background-color: #979797;
 }
-
+#treatment-tutorial-inspirationCardTry-gotit {
+    height: 2em;
+}
 #treatment-tutorial-inspirationCardTry-gotit:enabled {
     background-color: #7ED321;
 }
