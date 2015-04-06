@@ -47,11 +47,15 @@ Template.DataProcessingTab.helpers({
   },
 });
 
-Template.DataSummary.helpers({
-});
-Template.DataSummary.events({
-});
-
+/********************************************************************
+ * Prompts tab helpers and events
+ * *****************************************************************/
+/********************************************************************
+ * Experiments tab helpers and events
+ * *****************************************************************/
+/********************************************************************
+ * Data Processing tab helpers and events
+ * *****************************************************************/
 Template.CrowdPromptPage.rendered = function() {
   window.scrollTo(0,0);
 }

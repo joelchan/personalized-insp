@@ -7,6 +7,7 @@ import itertools as it
 # import numpy as np
 import networkx as nx
 import mongohq
+import db_params
 import nlp
 # from nltk.stem.snowball import SnowballStemmer
 # from nltk.corpus import wordnet as wn
@@ -30,7 +31,7 @@ if __name__ == '__main__':
 
     # read data from mongoDB
     # Get Ideas
-    db = mongohq.Data_Utility('data', mongohq.ideagensscd)
+    db = mongohq.Data_Utility('data', db_params.local_meteor)
     prompts = db.get_data('prompts', None,
                           {'forestGraphID': {'$exists': 'True'}})
     for prompt in prompts:
@@ -44,8 +45,8 @@ if __name__ == '__main__':
         idea_dict = dict([(idea['_id'], idea) for idea in ideas])
 
         # Create a node for every idea in the data forest graph
-        idea_nodes = [Node(graphID, promptID, 'idea', 
-                        {'ideaID': idea['_id'], 
+        idea_nodes = [Node(graphID, promptID, 'idea',
+                        {'ideaID': idea['_id'],
                         'content': idea['content']})
                     for idea in ideas]
         result = db.insert('nodes', idea_nodes);
@@ -54,19 +55,19 @@ if __name__ == '__main__':
 
         idea_node_dict = dict([(getattr(node,'ideaID'), node) for node in idea_nodes])
         node_dict = dict([(getattr(node,'_id'), node) for node in idea_nodes])
-                  
+
         #### tokenize ####
         # get stopwords
         stopWords = nlp.get_stopwords()
         # get bag of words
         data, expandedText = nlp.bag_of_words(ideas, stopWords);
-   
+
         # prepare dictionary
         dictionary = corpora.Dictionary(expandedText)
-   
+
         # convert tokenized documents to a corpus of vectors
         corpus = [dictionary.doc2bow(text) for text in expandedText]
-   
+
         # convert raw vectors to tfidf vectors
         tfidf = models.TfidfModel(corpus) #initialize model
         corpus_tfidf = tfidf[corpus] #apply tfidf model to whole corpus
@@ -76,11 +77,11 @@ if __name__ == '__main__':
         else:
 	        dim = len(data) # default to 300
         lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=dim) #create the space
-   
+
         # output the matrix V so we can use it to get pairwise cosines
         # https://github.com/piskvorky/gensim/wiki/Recipes-&-FAQ#q3-how-do-you-calculate-the-matrix-v-in-lsi-space
         vMatrix = matutils.corpus2dense(lsi[corpus_tfidf],len(lsi.projection.s)).T / lsi.projection.s
-   
+
         # generate pairs
         indices = [i for i in xrange(len(data))]
         pairs = [p for p in it.combinations(indices,2)]
@@ -94,14 +95,14 @@ if __name__ == '__main__':
             # print node1
             # print node2
             sim = nlp.cosine(pair[0],pair[1],vMatrix)
-            sim_edges.append(Edge(promptID, node1, node2, 
+            sim_edges.append(Edge(promptID, node1, node2,
                 {'type': 'similarity', 'cos': sim}))
             sims.append(sim)
             # print sim
             if sim > THRESHOLD:
                 edges.append((node1,node2))
 
-        # Insert similarity weights into graph as special edges 
+        # Insert similarity weights into graph as special edges
         test_edges = db.get_data("edges", None, {})
         print "number of edges before insert: " + str(test_edges.count())
         result = db.insert('edges', sim_edges);
@@ -114,19 +115,19 @@ if __name__ == '__main__':
         # turn into networkx graph
         ################################
         G = nx.Graph()
-   
+
         #nodes = [d['id'] for d in data]
         G.add_edges_from(edges)
         print "nodes: %d" % G.number_of_nodes()
         print "edges: %d" % G.number_of_edges()
-   
+
         solve = solver(G)
         clusters = solver.run(solve)
         print "***********************************************"
         print clusters[:3]
-        
+
         # Create cluster parent nodes
-        cluster_nodes = [Node(graphID, promptID, 'forest_precluster', 
+        cluster_nodes = [Node(graphID, promptID, 'forest_precluster',
             {'num_ideas': len(cluster), 'idea_node_ids': list(cluster)})
             for cluster in clusters]
         test_nodes = db.get_data("nodes", None, {})
@@ -142,7 +143,7 @@ if __name__ == '__main__':
         c_edges = []
         for node in cluster_nodes:
             nodeID = getattr(node, '_id')
-            c_edges.extend([Edge(promptID, nodeID, childID, 
+            c_edges.extend([Edge(promptID, nodeID, childID,
                 {'type': 'parent_child'})
                 for childID in node.idea_node_ids])
         test_edges = db.get_data("edges", None, {})
@@ -150,7 +151,7 @@ if __name__ == '__main__':
         db.insert('edges', c_edges)
         test_edges = db.get_data("edges", None, {})
         print "number of edges after insert: " + str(test_edges.count())
-               
-               
+
+
         # Update prompt as processed
-        db.update('prompts', {'_id': promptID}, {'$set': {'is_processed': True}}) 
+        db.update('graphs', {'_id': graphID}, {'$set': {'is_processed': True}})
