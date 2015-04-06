@@ -48,7 +48,7 @@ class Node:
     def __init__(self, graphID, promptID, data_type, data=None):
         self.graphID = graphID
         self.promptID = promptID
-        self.data_type = data_type
+        self.type = data_type
         if data is not None:
             for key in data.keys():
                 setattr(self, key, data[key])

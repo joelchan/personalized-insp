@@ -195,11 +195,11 @@ class Data_Utility:
     def join_data(self, base_data, join_data, base_field, join_fields):
         """
         Perform a similar operation to a sql join for 2 sets of data.
-        
+
         @Params
         base_data - list of fields to extend with joined data
         join_data - dictionary of data, indexed by base_field value
-        base_field - value to use as key in lookup in join_data 
+        base_field - value to use as key in lookup in join_data
             dictionary
         join_fields - list of field data to replace the base_field id
 
@@ -211,7 +211,7 @@ class Data_Utility:
           extra = join_data[data[base_field]]
           for field in join_fields:
             data[field] = extra[field]
-        
+
         return base_data
 
     def insert(self, col, docs):
@@ -224,7 +224,7 @@ class Data_Utility:
 
         @return
             docs with updated ids
-            
+
         """
         for doc in docs:
             d = doc.__dict__
@@ -233,13 +233,14 @@ class Data_Utility:
         try:
             if docs:
                 data = [doc.__dict__ for doc in docs]
-                results = self.db[col].insert(data, continue_on_error=True)
+                results = self.db[col].insert(data,
+                                              continue_on_error=True)
                 return results
         except DuplicateKeyError:
             print "Attempted insert of document with duplicate key"
         else:
             print "success"
-             
+
     def update(self, col, sel, update):
         """
         Update the documents in the specified collection according to
@@ -248,7 +249,7 @@ class Data_Utility:
         """
         results = self.db[col].update(sel, update)
         return results
-     
+
     def get_ideas(self):
         """
         Get a list of all the ideas
@@ -273,7 +274,7 @@ class Data_Utility:
         """
         fields = ['name', ]
         return self.get_data("myUsers", fields)
-    
+
     @staticmethod
     def get_db(db_name):
         """
@@ -289,15 +290,15 @@ class Data_Utility:
 def parse_args(args):
     """
     Parse arguments passed to the script
-    
+
     @params
       first arg is a database name
       Each pair of args following is a path and an operation:
         dump - raw dump all the data in the db to the path given
         restore - restore data to the db from the files in the path
         clear - empty the db (ignores the path)
-    
-    """         
+
+    """
     db_params = Data_Utility.get_db(args[0])
     logger.debug(db_params)
     db = None

@@ -45,13 +45,14 @@ if __name__ == '__main__':
         idea_dict = dict([(idea['_id'], idea) for idea in ideas])
 
         # Create a node for every idea in the data forest graph
-        idea_nodes = [Node(graphID, promptID, 'idea',
+        idea_nodes = [Node(graphID, promptID, 'forest_idea',
                         {'ideaID': idea['_id'],
                         'content': idea['content']})
                     for idea in ideas]
         result = db.insert('nodes', idea_nodes);
         for id, node in zip(result, idea_nodes):
             setattr(node, '_id', id)
+
 
         idea_node_dict = dict([(getattr(node,'ideaID'), node) for node in idea_nodes])
         node_dict = dict([(getattr(node,'_id'), node) for node in idea_nodes])
@@ -60,7 +61,7 @@ if __name__ == '__main__':
         # get stopwords
         stopWords = nlp.get_stopwords()
         # get bag of words
-        data, expandedText = nlp.bag_of_words(ideas, stopWords);
+        data, expandedText = nlp.bag_of_words([n.__dict__ for n in idea_nodes], stopWords);
 
         # prepare dictionary
         dictionary = corpora.Dictionary(expandedText)
@@ -128,8 +129,10 @@ if __name__ == '__main__':
 
         # Create cluster parent nodes
         cluster_nodes = [Node(graphID, promptID, 'forest_precluster',
-            {'num_ideas': len(cluster), 'idea_node_ids': list(cluster)})
+            {'num_ideas': len(cluster),
+             'idea_node_ids': [id for id in cluster]})
             for cluster in clusters]
+        print cluster_nodes[1].idea_node_ids
         test_nodes = db.get_data("nodes", None, {})
         print "number of nodes before insert: " + str(test_nodes.count())
         print "number of nodes to insert: " + str(len(cluster_nodes))

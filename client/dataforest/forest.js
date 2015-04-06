@@ -142,6 +142,9 @@ Template.ForestCreateCluster.rendered = function() {
 * Template Helpers
 *********************************************************************/
 Template.Forest.helpers({
+  prompt: function() {
+    return Session.get("currentPrompt").question;
+  },
   myName : function(){
   	var cluster = Clusters.findOne({_id: this.toString()});
   	if(cluster === undefined) 
@@ -189,8 +192,24 @@ Template.Forest.helpers({
   }
 });
 Template.ForestIdeaList.helpers({
-	ideas : function(){
-   	return Ideas.find({promptID: Session.get("currentPrompt")._id});
+	ideaClusters : function(){
+    var nodes =  Nodes.find({
+        promptID: Session.get("currentPrompt")._id, 
+        type: 'forest_precluster'
+    }).fetch()
+    var clusteredIDs = []
+    for (var i=0; i<nodes.length; i++) {
+      clusteredIDs = clusteredIDs.concat(nodes[i]['idea_node_ids']);
+    }
+    var otherNodes = Nodes.find({
+        promptID: Session.get("currentPrompt")._id, 
+        type: 'forest_idea',
+        _id: {$nin: clusteredIDs}},
+        {fields: {_id: 1}}
+    ).fetch()
+    nodes = nodes.concat({idea_node_ids: _.pluck(otherNodes, '_id')
+    });
+    return nodes
   },
 	isClustered : function(){
     if(this.inCluster){
@@ -199,6 +218,15 @@ Template.ForestIdeaList.helpers({
      	return true;
     }
   },
+});
+
+Template.PreforestIdeaCluster.helpers({
+  ideas: function() {
+    logger.trace("Preforest idea node list: " + JSON.stringify(this.idea_node_ids));
+    var nodes =  Nodes.find({_id: {$in: this.idea_node_ids}});
+    logger.debug("Current node has " + nodes.count() + " unclustered ideas") 
+    return nodes
+  }, 
 });
 Template.ForestNodeBuilder.helpers({
   //return list of ideas contained by idea node

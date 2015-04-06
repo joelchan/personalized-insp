@@ -16,7 +16,8 @@ NODE_TYPES = {
   'idea': ['ideaID', 'content', 'time', 'vote', 'numVotes'],
   'theme': ['name', 'time', 'isTrash', 'isMerged', 
       'position', 'isCollapsed'],
-  'forest_precluster': ['num_ideas', 'idea_node_ids']
+  'forest_precluster': ['num_ideas', 'idea_node_ids'],
+  'forest_idea': ['ideaID', 'content']
 };
 
 /* list of minimum required fields for a given edge type */

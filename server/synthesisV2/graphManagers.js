@@ -36,8 +36,8 @@ Meteor.startup(function() {
       Ideas.find({_id: {$nin: ideaNodeIDs}, 'promptID': prompt._id}).
         observe({
           added: function(idea) {
-            logger.debug("New Idea added. Adding matching node to graph");
-            GraphManager.createIdeaNode(idea, sharedGraph);
+            //logger.debug("New Idea added. Adding matching node to graph");
+            //GraphManager.createIdeaNode(idea, sharedGraph);
         }
       });
     },

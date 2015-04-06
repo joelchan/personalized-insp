@@ -1,5 +1,5 @@
 <template name="Forest">
-	<h1 class="page-header" id="clusterprompt">Alternate uses for a whatchamacallit</h1>
+<h1 class="page-header" id="clusterprompt">{{ prompt }}</h1>
 	<div class="container-fluid forest">
 		<div class="row">
 			<!--IdeaList and Node Starter-->
@@ -77,13 +77,17 @@
 	  <h3>Idea List</h3>
 	  <ul id="idealist" class="deck">
 		  <li class="sort-disabled"></li>
-		  {{#each ideas}}
-			  {{#if isClustered}}
-          {{> ForestIdea }}
-			  {{/if}}
+		  {{#each ideaClusters}}
+        {{> PreforestIdeaCluster }}
 		  {{/each}}
 	  </ul>
   </div>
+</template>
+
+<template name="PreforestIdeaCluster">
+  {{#each ideas}}
+    {{> ForestIdea }} 
+  {{/each}}
 </template>
 
 <template name="ForestNodeBuilder">
@@ -191,5 +195,6 @@
 <template name="ForestIdea">
 	<li id={{_id}} class="forest-idea-item">{{content}}</li>
 </template>
+
 <template name="ForestIdeaNode">
 </template>
