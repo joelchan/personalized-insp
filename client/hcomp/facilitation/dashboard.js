@@ -99,6 +99,9 @@ Template.HcompDashboard.rendered = function(){
               Tasks.update({ _id: task._id },
                             {$set: {num: newNum}});
             });  
+            logger.debug("Updating idea word cloud filter");
+            FilterManager.create("IdeaWordCloud Filter", 
+              Session.get("currentUser"), "ideas", "userID", partNewState.userID);
           }
         }
       },
