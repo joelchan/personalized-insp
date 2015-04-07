@@ -188,7 +188,7 @@ Template.HcompOverallStats.helpers({
       var participants = Conditions.findOne({expID: exp._id, description: "Treatment"}).assignedParts;
       participants.forEach(function(pID) {
         var part = Participants.findOne({_id: pID});
-        if (part.hasStarted) {
+        if (part.hasStarted && !part.hasFinished && !part.exitedEarly) {
           numIdeators += 1;
         }
       });
