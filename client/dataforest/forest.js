@@ -100,7 +100,7 @@ Template.Forest.rendered = function(){
 		},
 	});
 }
-Template.ForestIdea.rendered = function() {
+Template.ForestIdea.onRendered(function() {
   $(this).draggable({
     revert: true,
     helper: 'clone',
@@ -113,7 +113,13 @@ Template.ForestIdea.rendered = function() {
       logger.trace(width);
     },
   });
-};
+  // Set the ID according to the _id of the node
+  var id = "#" + this.data['_id']['_str']
+  this.$(".forest-idea-item").attr("id", this.data['_id']['_str']);
+  //logger.trace(this.$(".forest-idea-item"))
+  $(id).data("node", this.data);
+
+});
 
 Template.ForestCreateCluster.rendered = function() {
   $(".newstack").droppable({
@@ -121,19 +127,26 @@ Template.ForestCreateCluster.rendered = function() {
     tolerance: "pointer",
     drop: function(event, ui) {
       logger.debug("New idea dropped into IdeaNode");
+      //logger.trace(JSON.stringify(this));
       logger.trace(ui.draggable[0]);
+      logger.trace($(ui.draggable[0]).data("node"));
       var myIdeaId = $(ui.draggable[0]).attr('id');
+      logger.debug("Recieved idea with nodeID: " + myIdeaId);
+      var node = $("#" + myIdeaId).data("node");
+      logger.trace(JSON.stringify(node));
+      //var nodes = Nodes.find({'_id': data['_id']})
+      //logger.debug("matching nodes: " + nodes.count());
       var parent = ui.helper.context.parentElement;
       logger.trace(parent);
-			var currClusID = createCluster(ui.item); //creates and inserts a new cluster, returns ID
-      Session.set("ideaNode", currClusID); //sets ID as idea node
+			var currCluster = ForestManager.createIdeaNode([node,]) //creates and inserts a new cluster, returns ID
+      Session.set("ideaNode", currCluster); //sets ID as idea node
 //
       ////set up UI to add to cluster
-      //$('#createnode').slideToggle();
-      //$('#buildcluster').slideToggle();
-      //$('#clusterlabel').addClass('unnamed');
-      //$('#namecluster').val('');
-      //ui.item.remove();
+      $('#createnode').slideToggle();
+      $('#buildcluster').slideToggle();
+      $('#clusterlabel').addClass('unnamed');
+      $('#namecluster').val('');
+      ui.item.remove();
     }
   });
 };
@@ -223,7 +236,10 @@ Template.ForestIdeaList.helpers({
 Template.PreforestIdeaCluster.helpers({
   ideas: function() {
     logger.trace("Preforest idea node list: " + JSON.stringify(this.idea_node_ids));
-    var nodes =  Nodes.find({_id: {$in: this.idea_node_ids}});
+    var nodes =  Nodes.find({
+          _id: {$in: this.idea_node_ids},
+          is_clustered: false
+    });
     logger.debug("Current node has " + nodes.count() + " unclustered ideas") 
     return nodes
   }, 

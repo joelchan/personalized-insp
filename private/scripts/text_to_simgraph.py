@@ -47,7 +47,8 @@ if __name__ == '__main__':
         # Create a node for every idea in the data forest graph
         idea_nodes = [Node(graphID, promptID, 'forest_idea',
                         {'ideaID': idea['_id'],
-                        'content': idea['content']})
+                        'content': idea['content'],
+                        'is_clustered': False})
                     for idea in ideas]
         result = db.insert('nodes', idea_nodes);
         for id, node in zip(result, idea_nodes):
