@@ -25,33 +25,41 @@ Template.HcompDashboard.rendered = function(){
   $(".ideas-view").height(height);
   $(".tasks-view").height(height);
   $(".notes-view").height(height);
+  $(".overall-stats").height(height*0.1);
+  $(".vizes").height(height*0.9
+                      -4); // clearfixes
+  var vizesHeight = $('.vizes').height();
   //logger.debug(height.toString());
   //logger.debug((height*0.7).toString());
-  $("#big-picture-viz").height(height*0.65);
-  $("#big-picture-viz").width(700);
-  $("#ideawordcloud").height(height*0.55);
-  $("#scratchpad").height(height*0.25);
-  var scratchpadHeight = $("#scratchpad").height();
+  // $("#big-picture-viz").height(height*0.65);
+  // $("#big-picture-viz").width(700);
+  $("#ideawordcloud").height(vizesHeight
+                              -$('.viz-tabs').height());
+  var wordCloudHeight = $("#ideawordcloud").height();
+  $(".scratchpad-form").height(wordCloudHeight);
+  // var scratchpadHeight = $("#scratchpad").height();
   // console.log("Scratchpad height:" + scratchpadHeight);
   // $(".scratchpad-form").height(height*0.38);
-  $(".scratchpad-form").height(scratchpadHeight*0.8);
+  // $(".scratchpad-form").height(scratchpadHeight*0.8);
 
   // var filterboxContainerHeight = $('.Hcomp-filterbox-container').height();
   var promptHeaderHeight = $('.ideas-view h1').height();
   var filterboxHeaderHeight = $('#filterbox-header').height();
-  var ideaboxHeaderHeight = $('.idea-box-header').height();
+  // var ideaboxHeaderHeight = $('.idea-box-header').height();
   $('.ideadeck-container').height(height
                                   -promptHeaderHeight
                                   -filterboxHeaderHeight
-                                  -ideaboxHeaderHeight
-                                  -40); // promptheader margin-top/bottom (30) + ideas number header margin-top (10)
+                                  // -ideaboxHeaderHeight
+                                  -30); // promptheader margin-top/bottom (30)
 
-  var facActionsHeight = $('.fac-actions').height();
-  var inspirationsHeaderHeight = $('.tasks-view h1').height();
+  // var facActionsHeight = $('.fac-actions').height();
+  var createTaskHeight = $('#create-task-container').height();
+  var inspirationsHeaderHeight = $('.task-list-header').height();
   $('#task-card-list').height(height
-                              -facActionsHeight
+                              // -facActionsHeight
+                              -createTaskHeight
                               -inspirationsHeaderHeight
-                              -80); // padding-top/bottom for fac-actions (30) + margin-top/bottom for inspirations header (30) + padding-top/bottom for task-card list
+                              -2); // clearfixes
 
   Session.set("idealistFilters", filters);
   Session.set("selectedParts", []);
@@ -99,6 +107,9 @@ Template.HcompDashboard.rendered = function(){
               Tasks.update({ _id: task._id },
                             {$set: {num: newNum}});
             });  
+            logger.debug("Updating idea word cloud filter");
+            FilterManager.create("IdeaWordCloud Filter", 
+              Session.get("currentUser"), "ideas", "userID", partNewState.userID);
           }
         }
       },
@@ -197,12 +208,35 @@ Template.HcompOverallStats.helpers({
       return userIDs.length;
     }
   },
+
+  numIdeatorsActive : function(){
+    var userIDs;
+    var exp = Session.get("currentExp");
+    if (exp) {
+      var numIdeators = 0;
+      var participants = Conditions.findOne({expID: exp._id, description: "Treatment"}).assignedParts;
+      participants.forEach(function(pID) {
+        var part = Participants.findOne({_id: pID});
+        if (part.hasStarted && !part.hasFinished && !part.exitedEarly) {
+          numIdeators += 1;
+        }
+      });
+      return numIdeators;
+    } else {
+      var groupID = Session.get("currentPrompt").groupIDs[0];
+      var group = Groups.findOne({_id: groupID});
+      userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+      return userIDs.length;
+    }
+  },
+
 });
 
 Template.HcompIdeaWordCloud.helpers({
     ideas : function() {
         // console.log("calling ideas for HcompIdeaWordCloud");
-        cursor = getFilteredIdeas("Ideas Filter"); //getCloudFromIdeas();
+        // cursor = getFilteredIdeas("Ideas Filter"); //getCloudFromIdeas();
+        cursor = getCloudFromIdeas();
         return cursor;
     },
     getFontSize : function() {
@@ -592,7 +626,8 @@ function getCloudFromIdeas() {
             // console.log(stopWords.words)
 			if(containsWord == false 
         && stopWords.words.indexOf(word) == -1
-        && promptStopWords.indexOf(word) == -1) {
+        && promptStopWords.indexOf(word) == -1
+        && word != "") {
 				// console.log(stopWords);
         cloudItem.word = word;
 				cloudItem.count += 1;

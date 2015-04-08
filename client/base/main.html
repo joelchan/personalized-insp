@@ -11,6 +11,8 @@
 </head>
 
 <body>
+<script src="salvattore.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </body>
 
 <template name="loading">
@@ -24,7 +26,7 @@
 <template name="IdeaGen">
   <!-- Navbar -->
   <div id="lpheader">
-        <h1><a href="/" id="logo"><img src="/images/ideagenslogopic.png" width="125px"></a></h1>
+        <h1><img src="/images/ideagenslogopic.png" width="125px"></h1>
         <nav id="nav">
           <ul>
             <div class="col-lg-9" id="nav-right" style="width: 100%; margin-top: -5%;">
@@ -38,23 +40,17 @@
                       {{currentUserName}}
                     {{/if}}
                   </span>
-                  <button id="submitLogout" class="submitLogout btn-login">Logout</button>
-                {{/if}}
-              </div>
+                  {{/if}}
+                </div>
             </div>
           </ul>
         </nav>
-  </div>
+    </div>
+
 
   <div class="container-fluid" id="ideastorm">
     {{> yield}}
   </div> <!-- /container -->
-</template>
-
-<template name="Timer">
-  <div class="timer">
-    <span id="time">15</span><span> minutes remaining</span>
-  </div> 
 </template>
 
 <template name="TockTimer">
