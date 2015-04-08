@@ -90,15 +90,15 @@ Template.Forest.rendered = function(){
     }
 	});
 
-	$('ul.stack').sortable({
-		items: ">*:not(.sort-disabled)",
-		connectWith: '#idealist',
-		receive : function(event, ui){
-			var ideaId = $(ui.item).attr('id');
-			var clusterId = $(this).attr('id');
-			addToCluster(ideaId, clusterId);
-		},
-	});
+	//$('ul.stack').sortable({
+		//items: ">*:not(.sort-disabled)",
+		//connectWith: '#idealist',
+		//receive : function(event, ui){
+			//var ideaId = $(ui.item).attr('id');
+			//var clusterId = $(this).attr('id');
+			//addToCluster(ideaId, clusterId);
+		//},
+	//});
 }
 Template.ForestIdea.onRendered(function() {
   $(this).draggable({
@@ -146,7 +146,7 @@ Template.ForestCreateCluster.rendered = function() {
       $('#buildcluster').slideToggle();
       $('#clusterlabel').addClass('unnamed');
       $('#namecluster').val('');
-      ui.item.remove();
+      //ui.item.remove();
     }
   });
 };
@@ -244,24 +244,41 @@ Template.PreforestIdeaCluster.helpers({
     return nodes
   }, 
 });
+Template.ForestNodeBuilder.onRendered(function() {
+  $("#buildcluster .form-group").droppable({
+    accept: '.forest-idea-item',
+    tolerance: "pointer",
+    drop: function(event, ui) {
+      var myIdeaId = $(ui.draggable[0]).attr('id');
+      logger.debug("Recieved idea with nodeID: " + myIdeaId);
+      var instance = $("#" + myIdeaId).data("node");
+      logger.trace(JSON.stringify(instance));
+      var currNode = Session.get("ideaNode");
+      ForestManager.groupIdeas([instance,], currNode);
+    }
+
+  });
+});
 Template.ForestNodeBuilder.helpers({
   //return list of ideas contained by idea node
   ideaNodeIdeas : function(){
-  	var currNodeID = Session.get('ideaNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.ideas;
-		}
+    //Current idea node being built
+  	var currNode = Session.get('ideaNode');
+    //Get the list of children nodes 
+    var childEdges = Edges.find({sourceID: currNode['_id']});
+    logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
+    var childIDs = getValsFromField(childEdges, 'targetID');
+    var children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+    logger.trace("Found children nodes: " + JSON.stringify(children));
+    return children;
   },
   ideaNodeName : function(){
-  	var currNodeID = Session.get('ideaNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.name;
-		}
+  	var currNode = Session.get('ideaNode');
+  	var currCluster = Nodes.findOne({_id: currNode['_id']});
+    return Session.get('ideaNode'['label']);
   },
   ideaNode : function(){
-  	return Session.get('ideaNode');
+  	return Session.get('ideaNode')['_id'];
   },
 });
 Template.ForestNodeStatus.helpers({

@@ -4,6 +4,7 @@
 	background-color: #f5f5f5;
 	margin-left: 0px;
   padding-left: 0;
+  padding: 0 5px;
 }
 
 .forest #confirmModal, #nameModal {
@@ -21,17 +22,19 @@
 	/*display: none;*/
 }
 
-.forest .forest-idea-item, .donestack, .stack{
+.forest .forest-idea-item {
 	border: solid 1px #ddd;
 	border-radius: 5px;
 	list-style: none;
 	list-style-type: none;
-  margin: 5px 10px;
+  margin: 5px 0px;
 }
 
 .forest ul {
 	list-style: none;
 	list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 .forest li.ui-sortable-helper{
@@ -52,8 +55,6 @@
 }
 
 .forest .clusternodename{
-	width: 242px;
-	margin: 5px;
 }
 
 label, .fa{
@@ -70,8 +71,9 @@ label, .fa{
 	overflow: auto;
 }
 
-#nodestatus, #generalize, #buildcluster{
+.forest #nodestatus, #generalize, #buildcluster{
 	display:none;
+  padding: 5px;
 }
 
 #nomatch{

@@ -93,18 +93,18 @@
 <template name="ForestNodeBuilder">
 	<div id="buildcluster" class="col-md-3">
 		<h3>Add to Cluster</h3>
-		<ul id={{ideaNode}} class="stack">
-			<div class="form-group">
-				<label class="sort-disabled">Cluster Name:
-					<span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
-				</label>
-				<input type="text" class="clusternodename form-control input-sm sort-disabled" 
-					id="namecluster" placeholder="Name this cluster">
-			</div>
-			{{#each ideaNodeIdeas}}
-        {{> ForestIdea }}
-			{{/each}}
-		</ul>
+		<div class="form-group">
+			<label class="sort-disabled">Cluster Name:
+			  <span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
+			</label>
+			<input type="text" class="clusternodename form-control input-sm sort-disabled" 
+				id="namecluster" placeholder="Name this cluster">
+		  <ul id={{ideaNode}} class="stack">
+			  {{#each ideaNodeIdeas}}
+          {{> ForestIdea }}
+			  {{/each}}
+		  </ul>
+		</div>
 		<button id='finish' class='btn btn-large btn-primary'>Finished</button>
 	</div>
 </template>
