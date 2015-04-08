@@ -2800,9 +2800,17 @@ function CreateForceDiagram(forceData, svg, w, h)
   console.log("max weight:")
   console.log(maxw)
   
+  var sizes = dataset.nodes.map(function(node) {return node.size})
+  var maxs = Math.max.apply(undefined, sizes)
+
+
   var ws = d3.scale.linear()
             .domain([0, maxw])
             .range([10, 1])
+
+  var sizescale = d3.scale.linear()
+                    .domain([0, maxs])
+                    .range([1,10])
 
   var wsc = d3.scale.linear()
             .domain([0, 5, 10])
@@ -2820,7 +2828,7 @@ function CreateForceDiagram(forceData, svg, w, h)
                 .attr("class", "node")
                 .attr("r", function(d) 
                 { 
-                  return ws(d.weight); //d.size/3; 
+                  return sizescale(d.size);  
                 })
                 .style("opacity", function(d, i) 
                 {
