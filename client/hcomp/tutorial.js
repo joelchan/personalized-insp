@@ -679,6 +679,7 @@ Template.TreatmentTutorialFlow.events({
         // $("#treatment-tutorial-ideaEntryTry").removeClass("treatment-tutorial-background");
         $(".idea-input-box").css({border: "none"});
         $(".general-idea-entry .tutorial-backdrop").remove();
+        $("#treatment-tutorial-highlight-ideaEntryTry").remove();
         EventLogger.logTutorialStepComplete(5,tutorialLengthTreatment);
     },
     'click .treatment-tutorial-ideaEntry-goback': function() {
