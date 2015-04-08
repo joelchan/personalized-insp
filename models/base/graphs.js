@@ -18,7 +18,8 @@ NODE_TYPES = {
       'position', 'isCollapsed'],
   'forest_precluster': ['num_ideas', 'idea_node_ids'],
   'forest_idea': ['ideaID', 'content', 'is_clustered'],
-  'forest_leaf': ['label', 'idea_node_ids']
+  'forest_leaf': ['label', 'idea_node_ids'],
+  'root': ['promptID'],
 };
 
 /* list of minimum required fields for a given edge type */
@@ -27,6 +28,7 @@ EDGE_TYPES = {
   'merged': ['sourceID', 'targetID'],
   'graph_link': ['sharedNodeID', 'userNodeID'],
   'similarity': ['cos'],
+  'same_ideas': ['sourceID', 'targetID'],
 };
 
 /* list of known graph types thus far */

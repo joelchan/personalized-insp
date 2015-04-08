@@ -7,6 +7,14 @@
   padding: 0 5px;
 }
 
+.forest #unclustered-ideas{
+  margin: 15px 0;
+}
+
+.forest .form-group {
+  margin-bottom: 10px;
+}
+
 .forest #confirmModal, #nameModal {
   top: 15%;
   left: 50%;
@@ -28,6 +36,15 @@
 	list-style: none;
 	list-style-type: none;
   margin: 5px 0px;
+}
+
+.forest .forest-idea-placeholder {
+	border: dashed 1px #ddd;
+	border-radius: 5px;
+	list-style: none;
+	list-style-type: none;
+  margin: 5px 0px;
+  padding: 15px 5px;
 }
 
 .forest ul {
@@ -72,7 +89,6 @@ label, .fa{
 }
 
 .forest #nodestatus, #generalize, #buildcluster{
-	display:none;
   padding: 5px;
 }
 

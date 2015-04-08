@@ -9,6 +9,21 @@ Logger.setLevel('Model:Managers:ForestManager', 'trace');
 
 ForestManager = (function() {
   return {
+    initForest: function(prompt) {
+      var group = Groups.findOne({_id: prompt.groupIDs[0]});
+      var user = Session.get("currentUser");
+      var type = "data_forest";
+      var data = {is_processed: false};
+      graphID = GraphManager.createGraph(
+          prompt, group, user, type, data
+      );
+      Prompts.update(
+        {_id: prompt._id}, 
+        {$set: {forestGraphID: graphID}}
+      );
+      //Setup root node of the forest
+      GraphManager.createGraphNode(graphID, 'root');
+    },
     createIdeaNode: function(ideas) {
       /**************************************************************
        * Create a idea node which acts as a representation of 
@@ -32,7 +47,7 @@ ForestManager = (function() {
       /*************************************************************
        * Connect the idea instances to the idea node in the forest
        ************************************************************/ 
-      var type = "parent_child";
+      var type = "same_ideas";
       var ideaIDs = [];
       for (var i=0; i<ideas.length; i++) {
         GraphManager.createEdge(type, idea_node, ideas[i], data);
@@ -46,6 +61,31 @@ ForestManager = (function() {
         }
       }
     },
+    getInstanceIdeas: function(node) {
+      /*************************************************************
+       * Get children ideas of a given idea node
+       *************************************************************/
+      var childEdges = Edges.find({type: "same_ideas",
+        sourceID: node['_id']});
+      logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
+      var childIDs = getValsFromField(childEdges, 'targetID');
+      var children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+      logger.trace("Found children nodes: " + JSON.stringify(children));
+      return children;
+    },
+    getNodeChildren: function(node) {
+      /*************************************************************
+       * Get children nodes of a given idea node
+       *************************************************************/
+      var childEdges = Edges.find({type: "parent_child",
+        sourceID: node['_id']});
+      logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
+      var childIDs = getValsFromField(childEdges, 'targetID');
+      var children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+      logger.trace("Found children nodes: " + JSON.stringify(children));
+      return children;
+    },
+
   };
 }());
 
