@@ -116,12 +116,22 @@
 
 .hcomp-dashboard #big-picture-viz {
   /*height:60%;*/
-  padding:15px;
+  /*padding:15px;*/
   /*overflow:auto;*/
+  width:100%;
+}
+
+.hcomp-dashboard .vizes {
+  width:100%;
 }
 
 .hcomp-dashboard #ideawordcloud {
   overflow:auto;
+  width:100%;
+}
+
+.hcomp-dashboard .overall-stats {
+  padding-top: 10px;
 }
 
 .hcomp-dashboard .stat {
