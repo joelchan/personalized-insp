@@ -51,12 +51,14 @@ Template.HcompDashboard.rendered = function(){
                                   // -ideaboxHeaderHeight
                                   -30); // promptheader margin-top/bottom (30)
 
-  var facActionsHeight = $('.fac-actions').height();
-  var inspirationsHeaderHeight = $('.tasks-view h1').height();
+  // var facActionsHeight = $('.fac-actions').height();
+  var createTaskHeight = $('#create-task-container').height();
+  var inspirationsHeaderHeight = $('.task-list-header').height();
   $('#task-card-list').height(height
-                              -facActionsHeight
+                              // -facActionsHeight
+                              -createTaskHeight
                               -inspirationsHeaderHeight
-                              -80); // padding-top/bottom for fac-actions (30) + margin-top/bottom for inspirations header (30) + padding-top/bottom for task-card list
+                              -2); // clearfixes
 
   Session.set("idealistFilters", filters);
   Session.set("selectedParts", []);

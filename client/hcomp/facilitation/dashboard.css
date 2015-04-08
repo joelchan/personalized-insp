@@ -128,6 +128,8 @@
 .hcomp-dashboard #ideawordcloud {
   overflow:auto;
   width:100%;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .hcomp-dashboard .overall-stats {
@@ -167,6 +169,7 @@
 .hcomp-dashboard #task-card-list {
   background-color: #f5f5f5;
   padding:10px;
+  padding-top:0px;
   overflow:auto;
 }
 
@@ -175,7 +178,8 @@
   font-size:20px;
   font-weight:bold;
   text-align:center;
-  margin-top:10px;
+  /*margin-top:10px;*/
+  /*padding-top:5px;*/
   margin-bottom: 0px;
   margin-left: -15px;
   margin-right: -15px;
@@ -189,7 +193,7 @@
 }
 
 .hcomp-dashboard #CreateTask {
-  border: solid black 1px;
+  /*border: solid black 1px;*/
 /*  padding: 15px 15px 0px 15px;*/
 }
 
@@ -212,7 +216,7 @@
 }
 
 .hcomp-dashboard .task-main-options {
-  padding-top:10px;
+  padding-top:5px;
   font-size:12px;
   vertical-align: center;
 }
@@ -243,8 +247,11 @@
 .hcomp-dashboard #task-create-cancel, .hcomp-dashboard .task-update-cancel {
   /*margin-left:15px;*/
   /*margin-right:5px;*/
-    background-color: #F3F3F3;
+    /*background-color: #F3F3F3;*/
+    background-color: white;
     color: black;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .hcomp-dashboard .task-card-main {
@@ -324,9 +331,10 @@
 }
 
 .hcomp-dashboard #CreateTask {
-  border: solid 1px #ddd;
-  background-color: white;
-    margin-top: 10px;
+  /*border: solid 1px #ddd;*/
+  /*background-color: white;*/
+  background-color: #f5f5f5;
+    /*margin-top: 10px;*/
     padding: 5px;
 /*
   margin: 10px 0px;
@@ -401,7 +409,9 @@
 }
 .hcomp-dashboard #CreateTask #task-create {
     background-color: rgb(102,164,74);
-    color: black;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .hcomp-dashboard .gamechangestar, .modal .gamechangestar{
