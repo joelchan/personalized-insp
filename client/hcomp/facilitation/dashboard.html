@@ -99,7 +99,7 @@
       <li class="active"><a href="#wordcloud" role="tab" data-toggle="tab">WordCloud</a></li>
       <!-- <li class="active"><a href="#bubble" role="tab" data-toggle="tab">Bubble</a></li> -->
       <li><a href="#force" role="tab" data-toggle="tab">Force</a></li>
-
+      <li><a href="#scratchpad" role="tab" data-toggle="tab">Scratchpad</a></li>
       <!--<li><a href="#bake" role="tab" data-toggle="tab">Other Force</a></li>-->
     </ul>
  
@@ -112,9 +112,11 @@
         {{> HcompOtherViz }}
       </div> -->
       <div class="tab-pane" id="force">
-        <!-- {{> ForceV }} -->
+        {{> ForceV }}
       </div>
-      
+      <div class="tab-pane" id="scratchpad">
+        {{ > HcompScratchPad }}
+      </div>
      <!-- <div class="tab-pane" id="bake"> 
         {{> Other }}
       </div>-->

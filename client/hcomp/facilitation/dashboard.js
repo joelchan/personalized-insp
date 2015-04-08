@@ -35,7 +35,8 @@ Template.HcompDashboard.rendered = function(){
   // $("#big-picture-viz").width(700);
   $("#ideawordcloud").height(vizesHeight
                               -$('.viz-tabs').height());
-  // $("#scratchpad").height(height*0.25);
+  var wordCloudHeight = $("#ideawordcloud").height();
+  $(".scratchpad-form").height(wordCloudHeight);
   // var scratchpadHeight = $("#scratchpad").height();
   // console.log("Scratchpad height:" + scratchpadHeight);
   // $(".scratchpad-form").height(height*0.38);
