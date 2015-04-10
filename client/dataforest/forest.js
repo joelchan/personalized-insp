@@ -265,9 +265,10 @@ Template.ForestNodeBuilder.events({
   		return false;
   	} else { 
   		//if current node has no children, insert idea node under current
-  	  var node = Nodes.findOne({_id: Session.get("ideaNode")['_id']});
+  	  var compareNode = Nodes.findOne({_id: Session.get("ideaNode")['_id']});
       var currNode = Session.get("currentNode");
-  		if(ForestManager.getNodeChildren(currNode).count() == 0) {
+  		if(ForestManager.getNodeChildren(currNode).length == 0) {
+        ForestManager.insertToTree(currNode, compareNode);
         $("#buildcluster").remove();
   		} else { //else continue to next state
   			Session.set("currentState", States.BESTMATCH);

@@ -61,6 +61,10 @@ ForestManager = (function() {
         }
       }
     },
+    insertToTree: function(parent, child) {
+      var type = "parent_child";
+      GraphManager.createEdge(type, parent, child); 
+    },
     getInstanceIdeas: function(node) {
       /*************************************************************
        * Get children ideas of a given idea node
