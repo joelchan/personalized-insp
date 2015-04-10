@@ -15,7 +15,7 @@
 			<!--End-->
 
       {{> ForestBestMatch }}
-      {{> ForestGeneralize }}
+      <!-- {{> ForestGeneralize }} -->
       <!-- </div> -->
 	</div>
 	<!--End Container-->
@@ -30,19 +30,20 @@
 		<h3>{{userPrompt}}</h3>
 		{{#each bestMatchChildren}}
 			<ul class="donestack " id={{this}}>
-				<i class="fa fa-angle-double-down sort-disabled"></i>
-				<label class="sort-disabled">{{myName}}</label>
+        <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
+        <h3>Title:</h3>
+        <label class="sort-disabled">{{myName}}</label>
 				{{#each clusterIdeas}}
 					<li id={{_id}} class="idea-item">{{content}}</li>
 				{{/each}}
 				{{#each clusterChildren}}
 					<li id={{this}} class="cluster-item">{{clusterName}}</li>
 				{{/each}}
-				</ul>
+			</ul>
 		{{/each}}
 		{{#if isBestMatch}}
-			<button id="bmback" class='btn btn-large btn-default'>Back</button>
-			<a href="#" id="nomatch" class='btn btn-large btn-primary' data-toggle="modal" data-target="#confirmModal">No Good Matches</a>
+			<div id="bmback" class='btn btn-large btn-default'>Back</div>
+			<div id="nomatch" class='btn btn-large btn-primary' data-toggle="modal" data-target="#confirmModal">No Good Matches</div>
 		{{/if}}
 	</div>
 	<!--End-->
@@ -116,34 +117,44 @@
 <template name="ForestNodeStatus">
 	<!--Idea Node and Best Match Node Status-->
 	<div id="nodestatus" class="col-md-6">
-		<h3>Working Nodes</h3>
+		<h2>Working Nodes</h2>
 		<h4>Node to be Inserted</h4>
-		<ul id={{ideaNode}} class="ideanode donestack">
-			<i class="fa fa-angle-double-down sort-disabled"></i>
-			<label class="sort-disabled">
-				<span class="named sort-disabled">{{ideaNodeName}}</span>
-			</label>
-			{{#each ideaNodeIdeas}}
-				<li id={{_id}} class="idea-item">{{content}}</li>
-			{{/each}}
-			{{#each clusterChildren}}
-				<li id={{this}} class="cluster-item">{{clusterName}}</li>
-			{{/each}}
-		</ul>
-		<h4>Best Match Node</h4>
-		<ul id={{bestMatchNode}} class="bestmatch donestack">
-			<i class="fa fa-angle-double-down sort-disabled"></i>
-			<label class="sort-disabled">
-				<span id="bmname" class="sort-disabled">{{bestMatchName}}</span>
-			</label>
-			{{#each bestMatchIdeas}}
-				<li id={{_id}} class="idea-item">{{content}}</li>
-			{{/each}}
-			{{#each clusterchildren}}
-				<li id={{this}} class="cluster-item">{{clustername}}</li>
-			{{/each}}
-		</ul>
-	</div>
+    {{#with ideaNode}}
+      {{> ForestIdeaNode }}
+    {{/with }}
+    <h4>Possible matches:</h4>
+    <div class="stack">
+    {{#each clusterChildren }}
+      {{> ForestIdeaNode }}
+    {{/each }}
+    </div>
+      <!-- <h4>End of block</h4> -->
+      <!-- <ul id={{ideaNode}} class="ideanode donestack"> -->
+      <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
+      <!-- <label class="sort-disabled"> -->
+      <!-- <span class="named sort-disabled">{{ideaNodeName}}</span> -->
+      <!-- </label> -->
+      <!-- {{#each ideaNodeIdeas}} -->
+      <!-- {{> ForestIdea }} -->
+      <!-- {{/each}} -->
+      <!-- </ul> -->
+      <!-- <h4>Best Match Node</h4> -->
+      <!-- <ul id={{bestMatchNode}} class="bestmatch donestack"> -->
+      <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
+      <!-- <label class="sort-disabled"> -->
+      <!-- <span id="bmname" class="sort-disabled">{{bestMatchName}}</span> -->
+      <!-- </label> -->
+      <!-- {{#each clusterChildren}} -->
+      <!-- {{> ForestIdeaNode }} -->
+      <!-- {{/each}} -->
+      <!-- {{#each bestMatchIdeas}} -->
+      <!-- <li id={{_id}} class="idea-item">{{content}}</li> -->
+      <!-- {{/each}} -->
+      <!-- {{#each clusterchildren}} -->
+      <!-- <li id={{this}} class="cluster-item">{{clustername}}</li> -->
+      <!-- {{/each}} -->
+      <!-- </ul> -->
+  </div>
 </template>
 
 <template name="ForestNodeName">
@@ -201,4 +212,15 @@
 </template>
 
 <template name="ForestIdeaNode">
+  <div id="{{ _id }}" class="forest-idea-node">
+    <div class="forest-node-label">
+      <i class="fa fa-angle-double-down sort-disabled"></i>
+      <h3>{{ label }}</h3>
+    </div>
+    <ul class="indent" id="list-{{ _id }}">
+      {{#each childNode }}
+        {{> ForestIdea }}
+      {{/each}}
+    </ul>
+  </div>
 </template>

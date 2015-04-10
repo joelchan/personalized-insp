@@ -108,3 +108,15 @@ body {
   display: inline-block;
   margin: 18px 10px;
 }
+
+h3 {
+  display: inline-block;
+}
+
+.indent {
+  margin-left: 15px;
+}
+
+.icon-wrapper {
+  display: inline-block
+}
