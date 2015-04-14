@@ -1879,7 +1879,7 @@ Template.ForceV.rendered = function() {
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-    //.attr("pointer-events", "all")
+    .attr("pointer-events", "all")
     .append('svg:g')
     .call(d3.behavior.zoom().on("zoom", redraw))
     .append('svg:g');
@@ -1897,6 +1897,8 @@ Template.ForceV.rendered = function() {
     var rawIdeas = getFilteredIdeas("Ideas Filter");
 
     var newData = formatData(rawIdeas)
+
+
 
     CreateForceDiagram(GetForceData(newData), svg, width, height);
   })
@@ -2667,26 +2669,7 @@ function trimForceData(forceData, cutOffValue)
 * Visualization - Force Directed Graph Logic
 ********************************************************************/
 
-function CreateForceDiagram(forceData, svg, w, h)
-{
-  svg.selectAll("*")
-   .remove();
-  // global intensity of attraction
-  var charge = -200;
-  // link distance factor used to determine line length;
-  var distanceFactor = 140;
-  var maxDistance = 250;
-
-  //size of the svg
-  var width = w-200;
-  var height = h;
-
-  //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
-    
-  //ordinal scale in order to color the nodes
-  var colors = d3.scale.category20();
-
-
+function processData(forceData){
 
   //variables for maps and arrays for the nodes and edges of the diagram
   var indexByName = d3.map(),
@@ -2749,7 +2732,31 @@ function CreateForceDiagram(forceData, svg, w, h)
   //creates the dataset object that contains the arrays of nodes and edges
   var dataset = { nodes: nodes, edges: edges}; 
 
+  return dataset;
 
+
+}
+
+function CreateForceDiagram(forceData, svg, w, h)
+{
+  //svg.selectAll("*")
+   //.remove();
+  // global intensity of attraction
+  var charge = -200;
+  // link distance factor used to determine line length;
+  var distanceFactor = 140;
+  var maxDistance = 250;
+
+  //size of the svg
+  var width = w-200;
+  var height = h;
+
+  //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
+    
+  //ordinal scale in order to color the nodes
+  var colors = d3.scale.category20();
+  
+  var dataset = processData(forceData);
 
   //this sets up the force layout - it needs where the nodes and links are and the size of the space, as well as optional parameters like how long you want the distance between them to be and how much you want the nodes to repel each other
   var force = d3.layout.force()
@@ -2763,7 +2770,6 @@ function CreateForceDiagram(forceData, svg, w, h)
     })
     .charge(charge)
     .start();
-
 
 
   //making the svg lines that connect the nodes
