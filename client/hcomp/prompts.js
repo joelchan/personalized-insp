@@ -158,13 +158,14 @@ Template.CrowdBrainstorm.events({
   'click .prep-forest': function () {
     logger.debug("Prepping db for dataforest analysis");
     logger.debug(this);
-    var prompt = this;
-    var group = Groups.findOne({_id: prompt.groupIDs[0]});
-    var user = Session.get("currentUser");
-    var type = "data_forest";
-    var data = {is_processed: false};
-    graphID = GraphManager.createGraph(prompt, group, user, type, data);
-    Prompts.update({_id: prompt._id}, {$set: {forestGraphID: graphID}});
+    ForestManager.initForest(this);
+    //var prompt = this;
+    //var group = Groups.findOne({_id: prompt.groupIDs[0]});
+    //var user = Session.get("currentUser");
+    //var type = "data_forest";
+    //var data = {is_processed: false};
+    //graphID = GraphManager.createGraph(prompt, group, user, type, data);
+    //Prompts.update({_id: prompt._id}, {$set: {forestGraphID: graphID}});
   },
 });
 

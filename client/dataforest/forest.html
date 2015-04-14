@@ -1,67 +1,71 @@
 <template name="Forest">
 <h1 class="page-header" id="clusterprompt">{{ prompt }}</h1>
-	<div class="container-fluid forest">
-		<div class="row">
+	<div id="forest" class="row forest">
+    <!-- <div id="class="row"> -->
 			<!--IdeaList and Node Starter-->
-		  <div id="ideas">
-			  <div class="col-md-3">
+		  <div id="ideas" class="col-md-3">
           {{> ForestCreateCluster }}
           {{> ForestIdeaList }}
-			  </div>
-			  <!--End-->
-  
 			  <!--Node Builder-->
-        {{> ForestNodeBuilder }}
+        <!-- {{> ForestNodeBuilder }} -->
 			  <!--End-->
 		  </div>
       
-      {{> ForestNodeStatus }}
+        <!-- {{> ForestNodeStatus }} -->
 			<!--End-->
 
-			<!--Children of Best Match Node-->
-			<div id="tree" class="col-md-6">
-				<h3>{{userPrompt}}</h3>
-				{{#each bestMatchChildren}}
-					<ul class="donestack " id={{this}}>
-						<i class="fa fa-angle-double-down sort-disabled"></i>
-						<label class="sort-disabled">{{myName}}</label>
-						{{#each clusterIdeas}}
-							<li id={{_id}} class="idea-item">{{content}}</li>
-						{{/each}}
-						{{#each clusterChildren}}
-							<li id={{this}} class="cluster-item">{{clusterName}}</li>
-						{{/each}}
-						</ul>
-				{{/each}}
-				{{#if isBestMatch}}
-					<button id="bmback" class='btn btn-large btn-default'>Back</button>
-					<a href="#" id="nomatch" class='btn btn-large btn-primary' data-toggle="modal" data-target="#confirmModal">No Good Matches</a>
-				{{/if}}
-			</div>
-			<!--End-->
-
-			<!--Generalization Option Buttons-->
-			<div id="generalize" class="col-md-6">
-				<h3>{{userPrompt}}</h3>
-				<a href="#" id="both" class='btn btn-large btn-primary' 
-					data-toggle="modal" data-target="#confirmModal">Merge</a>
-				<p>If both nodes generalize each other, click 'Merge'. This creates one node out of the idea node and the best match node at the location of the best match node. The new name will be [Name of Best Match]+[Name of Node to be Inserted].</p>
-				<a href="#" id="neither" class='btn btn-large btn-primary'
-					data-toggle="modal" data-target="#nameModal">Create Artificial Node</a>
-				<p>If the nodes are related, but neither generalizes the other, click 'Create Artificial Node'. This will become the parent of both nodes, and you will be asked to provide a name that captures the missing semantic content</p>
-				<button id="ideanode" class='btn btn-large btn-primary'>Idea node is parent</button>
-				<p>If the idea node is more general than the best match node, click 'Idea Node is Parent'. This sets the idea node as the parent of the best match node.</p>
-				<button id="bestnode" class='btn btn-large btn-primary'>Best Match Node is Parent</button>
-				<p>If the idea node is more general than the best match node, click 'Best Match Node is Parent'. This sets the the best match node as the parent of the idea node.</p>
-				<button id="genback" class='btn btn-large btn-default'>Back</button>
-			</div>
-			<!--End-->
-		</div>
+      {{> ForestBestMatch }}
+      <!-- {{> ForestGeneralize }} -->
+      <!-- </div> -->
 	</div>
 	<!--End Container-->
   {{> ForestNodeName }}
   {{> ForestConfirm }}
 
+</template>
+
+<template name="ForestBestMatch">
+	<!--Children of Best Match Node-->
+	<div id="tree" class="col-md-6">
+		<h3>{{userPrompt}}</h3>
+		{{#each bestMatchChildren}}
+			<ul class="donestack " id={{this}}>
+        <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
+        <h3>Title:</h3>
+        <label class="sort-disabled">{{myName}}</label>
+				{{#each clusterIdeas}}
+					<li id={{_id}} class="idea-item">{{content}}</li>
+				{{/each}}
+				{{#each clusterChildren}}
+					<li id={{this}} class="cluster-item">{{clusterName}}</li>
+				{{/each}}
+			</ul>
+		{{/each}}
+		{{#if isBestMatch}}
+			<div id="bmback" class='btn btn-large btn-default'>Back</div>
+			<div id="nomatch" class='btn btn-large btn-primary' data-toggle="modal" data-target="#confirmModal">No Good Matches</div>
+		{{/if}}
+	</div>
+	<!--End-->
+</template>
+
+<template name="ForestGeneralize">
+	<!--Generalization Option Buttons-->
+	<div id="generalize" class="col-md-6">
+		<h3>{{userPrompt}}</h3>
+		<a href="#" id="both" class='btn btn-large btn-primary' 
+			data-toggle="modal" data-target="#confirmModal">Merge</a>
+		<p>If both nodes generalize each other, click 'Merge'. This creates one node out of the idea node and the best match node at the location of the best match node. The new name will be [Name of Best Match]+[Name of Node to be Inserted].</p>
+		<a href="#" id="neither" class='btn btn-large btn-primary'
+			data-toggle="modal" data-target="#nameModal">Create Artificial Node</a>
+		<p>If the nodes are related, but neither generalizes the other, click 'Create Artificial Node'. This will become the parent of both nodes, and you will be asked to provide a name that captures the missing semantic content</p>
+		<button id="ideanode" class='btn btn-large btn-primary'>Idea node is parent</button>
+		<p>If the idea node is more general than the best match node, click 'Idea Node is Parent'. This sets the idea node as the parent of the best match node.</p>
+		<button id="bestnode" class='btn btn-large btn-primary'>Best Match Node is Parent</button>
+		<p>If the idea node is more general than the best match node, click 'Best Match Node is Parent'. This sets the the best match node as the parent of the idea node.</p>
+		<button id="genback" class='btn btn-large btn-default'>Back</button>
+	</div>
+	<!--End-->
 </template>
 
 <template name="ForestCreateCluster">
@@ -93,18 +97,19 @@
 <template name="ForestNodeBuilder">
 	<div id="buildcluster" class="col-md-3">
 		<h3>Add to Cluster</h3>
-		<ul id={{ideaNode}} class="stack">
-			<div class="form-group">
-				<label class="sort-disabled">Cluster Name:
-					<span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
-				</label>
-				<input type="text" class="clusternodename form-control input-sm sort-disabled" 
-					id="namecluster" placeholder="Name this cluster">
-			</div>
-			{{#each ideaNodeIdeas}}
-        {{> ForestIdea }}
-			{{/each}}
-		</ul>
+    <div id={{ideaNode}} class="form-group">
+			<label class="sort-disabled">Cluster Name:
+			  <span id="clusterlabel" class="sort-disabled">{{ideaNodeName}}</span>
+			</label>
+			<input type="text" class="clusternodename form-control input-sm sort-disabled" 
+				id="namecluster" placeholder="Name this cluster">
+		  <ul id={{ideaNode}} class="stack">
+			  {{#each ideaNodeIdeas}}
+          {{> ForestIdea }}
+			  {{/each}}
+        <li class="forest-idea-placeholder">Insert other ideas here</li>
+		  </ul>
+		</div>
 		<button id='finish' class='btn btn-large btn-primary'>Finished</button>
 	</div>
 </template>
@@ -112,34 +117,44 @@
 <template name="ForestNodeStatus">
 	<!--Idea Node and Best Match Node Status-->
 	<div id="nodestatus" class="col-md-6">
-		<h3>Working Nodes</h3>
+		<h2>Working Nodes</h2>
 		<h4>Node to be Inserted</h4>
-		<ul id={{ideaNode}} class="ideanode donestack">
-			<i class="fa fa-angle-double-down sort-disabled"></i>
-			<label class="sort-disabled">
-				<span class="named sort-disabled">{{ideaNodeName}}</span>
-			</label>
-			{{#each ideaNodeIdeas}}
-				<li id={{_id}} class="idea-item">{{content}}</li>
-			{{/each}}
-			{{#each clusterChildren}}
-				<li id={{this}} class="cluster-item">{{clusterName}}</li>
-			{{/each}}
-		</ul>
-		<h4>Best Match Node</h4>
-		<ul id={{bestMatchNode}} class="bestmatch donestack">
-			<i class="fa fa-angle-double-down sort-disabled"></i>
-			<label class="sort-disabled">
-				<span id="bmname" class="sort-disabled">{{bestMatchName}}</span>
-			</label>
-			{{#each bestMatchIdeas}}
-				<li id={{_id}} class="idea-item">{{content}}</li>
-			{{/each}}
-			{{#each clusterchildren}}
-				<li id={{this}} class="cluster-item">{{clustername}}</li>
-			{{/each}}
-		</ul>
-	</div>
+    {{#with ideaNode}}
+      {{> ForestIdeaNode }}
+    {{/with }}
+    <h4>Possible matches:</h4>
+    <div class="stack">
+    {{#each clusterChildren }}
+      {{> ForestIdeaNode }}
+    {{/each }}
+    </div>
+      <!-- <h4>End of block</h4> -->
+      <!-- <ul id={{ideaNode}} class="ideanode donestack"> -->
+      <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
+      <!-- <label class="sort-disabled"> -->
+      <!-- <span class="named sort-disabled">{{ideaNodeName}}</span> -->
+      <!-- </label> -->
+      <!-- {{#each ideaNodeIdeas}} -->
+      <!-- {{> ForestIdea }} -->
+      <!-- {{/each}} -->
+      <!-- </ul> -->
+      <!-- <h4>Best Match Node</h4> -->
+      <!-- <ul id={{bestMatchNode}} class="bestmatch donestack"> -->
+      <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
+      <!-- <label class="sort-disabled"> -->
+      <!-- <span id="bmname" class="sort-disabled">{{bestMatchName}}</span> -->
+      <!-- </label> -->
+      <!-- {{#each clusterChildren}} -->
+      <!-- {{> ForestIdeaNode }} -->
+      <!-- {{/each}} -->
+      <!-- {{#each bestMatchIdeas}} -->
+      <!-- <li id={{_id}} class="idea-item">{{content}}</li> -->
+      <!-- {{/each}} -->
+      <!-- {{#each clusterchildren}} -->
+      <!-- <li id={{this}} class="cluster-item">{{clustername}}</li> -->
+      <!-- {{/each}} -->
+      <!-- </ul> -->
+  </div>
 </template>
 
 <template name="ForestNodeName">
@@ -197,4 +212,15 @@
 </template>
 
 <template name="ForestIdeaNode">
+  <div id="{{ _id }}" class="forest-idea-node">
+    <div class="forest-node-label">
+      <i class="fa fa-angle-double-down sort-disabled"></i>
+      <h3>{{ label }}</h3>
+    </div>
+    <ul class="indent" id="list-{{ _id }}">
+      {{#each childNode }}
+        {{> ForestIdea }}
+      {{/each}}
+    </ul>
+  </div>
 </template>

@@ -46,11 +46,11 @@ var States = {
 }
 Object.freeze(States);
 
-Session.set("currentNode", "-1"); 
-Session.set("ideaNode", "0"); //node to be inserted
-Session.set("bestMatchNode", "-1"); //node most similar to node being inserted
-Session.set("currentState", States.NODECREATION);
-Session.set("swapped", false);
+//Session.set("currentNode", "-1"); 
+//Session.set("ideaNode", "0"); //node to be inserted
+//Session.set("bestMatchNode", "-1"); //node most similar to node being inserted
+//Session.set("currentState", States.NODECREATION);
+//Session.set("swapped", false);
 var path = [-1]; //tracks path starting from root. Used by back button.
 
 
@@ -89,16 +89,23 @@ Template.Forest.rendered = function(){
       updateIdeas(myIdeaId, false);
     }
 	});
+  var prompt = Session.get("currentPrompt");
+  var root = Nodes.findOne({type: 'root', promptID: prompt['_id']});
+  Session.set("currentNode", root);
+  Session.set("ideaNode", "0"); //node to be inserted
+  Session.set("bestMatchNode", "-1"); //node most similar to node being inserted
+  Session.set("currentState", States.NODECREATION);
+  Session.set("swapped", false);
 
-	$('ul.stack').sortable({
-		items: ">*:not(.sort-disabled)",
-		connectWith: '#idealist',
-		receive : function(event, ui){
-			var ideaId = $(ui.item).attr('id');
-			var clusterId = $(this).attr('id');
-			addToCluster(ideaId, clusterId);
-		},
-	});
+	//$('ul.stack').sortable({
+		//items: ">*:not(.sort-disabled)",
+		//connectWith: '#idealist',
+		//receive : function(event, ui){
+			//var ideaId = $(ui.item).attr('id');
+			//var clusterId = $(this).attr('id');
+			//addToCluster(ideaId, clusterId);
+		//},
+	//});
 }
 Template.ForestIdea.onRendered(function() {
   $(this).draggable({
@@ -140,13 +147,14 @@ Template.ForestCreateCluster.rendered = function() {
       logger.trace(parent);
 			var currCluster = ForestManager.createIdeaNode([node,]) //creates and inserts a new cluster, returns ID
       Session.set("ideaNode", currCluster); //sets ID as idea node
-//
-      ////set up UI to add to cluster
-      $('#createnode').slideToggle();
-      $('#buildcluster').slideToggle();
-      $('#clusterlabel').addClass('unnamed');
-      $('#namecluster').val('');
-      ui.item.remove();
+      
+      Blaze.renderWithData(
+          Template.ForestNodeBuilder, 
+          currCluster,
+          $("#forest")[0],
+          $("#tree")[0]
+      );
+      $("#createnode").remove()
     }
   });
 };
@@ -158,51 +166,11 @@ Template.Forest.helpers({
   prompt: function() {
     return Session.get("currentPrompt").question;
   },
-  myName : function(){
-  	var cluster = Clusters.findOne({_id: this.toString()});
-  	if(cluster === undefined) 
-  		return false;
-  	return cluster.name;
-  },
-  bestMatchChildren : function(){
-  	var currNodeID = Session.get('bestMatchNode');
-  	//console.log(currNodeID);
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-  	//console.log(currCluster);
-  	if(currCluster === undefined){ 
-  		//console.log("best match children undefined");
-  		return false;
-  	}
-		return currCluster.children;
-  },
-  clusterIdeas : function(){
-  	var cluster = Clusters.findOne({_id: this.toString()});
-  	if(cluster === undefined) 
-  		return false;
-  	return cluster.ideas;
-  },
-  clusterChildren : function(){
-  	var cluster = Clusters.findOne(this.toString());
-    if(cluster === undefined)
-    	return false;
-    else return cluster.children;
-  },
-
-  userPrompt : function(){
-  	return Session.get("currentState").prompt;
-  },
-
-  isBestMatch : function(){
-  	if(Session.get("currentState").val === 1)
-  		return true;
-  	return false;
-  },
-
-  isGeneralize : function(){
-  	if(Session.get("currentState").val === 2)
-  		return true;
-  	return false;
-  }
+  //isGeneralize : function(){
+  	//if(Session.get("currentState").val === 2)
+  		//return true;
+  	//return false;
+  //}
 });
 Template.ForestIdeaList.helpers({
 	ideaClusters : function(){
@@ -244,56 +212,106 @@ Template.PreforestIdeaCluster.helpers({
     return nodes
   }, 
 });
+Template.ForestNodeBuilder.onRendered(function() {
+  $("#buildcluster .form-group").droppable({
+    accept: '.forest-idea-item',
+    tolerance: "pointer",
+    drop: function(event, ui) {
+      var myIdeaId = $(ui.draggable[0]).attr('id');
+      logger.debug("Recieved idea with nodeID: " + myIdeaId);
+      var instance = $("#" + myIdeaId).data("node");
+      logger.trace(JSON.stringify(instance));
+      var currNode = Session.get("ideaNode");
+      ForestManager.groupIdeas([instance,], currNode);
+    }
+
+  });
+  logger.debug("Setting data for new idea node" + JSON.stringify(Session.get("ideaNode")));
+  $("#buildcluster .form-group").data("node", Session.get("ideaNode"));
+});
+
 Template.ForestNodeBuilder.helpers({
   //return list of ideas contained by idea node
   ideaNodeIdeas : function(){
-  	var currNodeID = Session.get('ideaNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.ideas;
-		}
+    return ForestManager.getInstanceIdeas(Session.get('ideaNode'));
   },
   ideaNodeName : function(){
-  	var currNodeID = Session.get('ideaNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.name;
-		}
+  	var currNode = Session.get('ideaNode');
+  	var currCluster = Nodes.findOne({_id: currNode['_id']});
+    return Session.get('ideaNode'['label']);
   },
   ideaNode : function(){
-  	return Session.get('ideaNode');
+  	return Session.get('ideaNode')['_id'];
   },
 });
+
+Template.ForestNodeBuilder.events({
+  //update cluster name as user types
+	'keyup #namecluster' : function(event, template){
+    logger.trace("Updating label of idea node");
+    logger.trace(event);
+    logger.trace($(event.target).parent().attr("id"));
+    var name = $(event.target).val();
+    logger.trace("Updating node to label: " + name);
+    var node = $(event.target).parent().data("node");
+    logger.trace(node);
+    Nodes.update({_id: node['_id']}, {$set: {label: name}});
+  },
+  //click Finish
+  'click button#finish' : function(){
+    var label = $("#namecluster").val();
+    //make sure a name has been provided
+  	if(label === undefined || label === "") { 
+  		alert("Please name cluster");
+  		return false;
+  	} else { 
+  		//if current node has no children, insert idea node under current
+  	  var compareNode = Nodes.findOne({_id: Session.get("ideaNode")['_id']});
+      var currNode = Session.get("currentNode");
+  		if(ForestManager.getNodeChildren(currNode).length == 0) {
+        ForestManager.insertToTree(currNode, compareNode);
+        $("#buildcluster").remove();
+  		} else { //else continue to next state
+  			Session.set("currentState", States.BESTMATCH);
+  			$('#ideas').hide(function(){
+          Blaze.renderWithData(
+              Template.ForestNodeStatus, 
+              currNode,
+              $("#forest")[0],
+              $("#tree")[0]
+          );
+  			});
+        $("#buildcluster").remove();
+  		}
+  	}
+  },
+});
+
 Template.ForestNodeStatus.helpers({
   ideaNode : function(){
-  	return Session.get('ideaNode');
+  	return Nodes.findOne({_id: Session.get('ideaNode')._id});
   },
   //return list of ideas contained by idea node
   ideaNodeIdeas : function(){
-  	var currNodeID = Session.get('ideaNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.ideas;
-		}
+    return ForestManager.getInstanceIdeas(Session.get('ideaNode'))
   },
   ideaNodeName : function(){
-  	var currNodeID = Session.get('ideaNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.name;
-		}
+  	var currNode = Session.get('ideaNode');
+  	var currCluster = Nodes.findOne({_id: currNode._id});
+    return currCluster.label
   },
   clusterChildren : function(){
-  	var cluster = Clusters.findOne(this.toString());
-    if(cluster === undefined)
-    	return false;
-    else return cluster.children;
+    logger.debug("children of current cluster: " + JSON.stringify(this));
+    return ForestManager.getNodeChildren(this)
   },
-  clusterName : function(){
-    var clu = Clusters.findOne({_id: this.toString()});
-    if(clu === undefined) return false
-    return clu.name;
-  },
+  //clusterName : function(){
+    //var node = Nodes.findOne({_id: this._id});
+    //if (node.label) {
+      //return node.label
+    //} else {
+      //return false
+    //}
+  //},
   //return list of ideas contained by best match node
   bestMatchIdeas : function(){
   	var currNodeID = Session.get('bestMatchNode');
@@ -318,40 +336,101 @@ Template.ForestNodeStatus.helpers({
   },
 });
 
+Template.ForestBestMatch.helpers({
+  userPrompt : function(){
+    if (Session.get("currentState") == undefined) {
+      return States.NODECREATION.prompt;
+    } else {
+  	  return Session.get("currentState").prompt;
+    }
+  },
+  myName : function(){
+  	var cluster = Clusters.findOne({_id: this.toString()});
+  	if(cluster === undefined) 
+  		return false;
+  	return cluster.name;
+  },
+  clusterIdeas : function(){
+  	var cluster = Clusters.findOne({_id: this.toString()});
+  	if(cluster === undefined) 
+  		return false;
+  	return cluster.ideas;
+  },
+  clusterChildren : function(){
+  	var cluster = Clusters.findOne(this.toString());
+    if(cluster === undefined)
+    	return false;
+    else return cluster.children;
+  },
+  isBestMatch : function(){
+  	if(Session.get("currentState").val === 1)
+  		return true;
+  	return false;
+  },
+  bestMatchChildren : function(){
+  	var currNodeID = Session.get('bestMatchNode');
+  	//console.log(currNodeID);
+  	var currCluster = Clusters.findOne({_id: currNodeID});
+  	//console.log(currCluster);
+  	if(currCluster === undefined){ 
+  		//console.log("best match children undefined");
+  		return false;
+  	}
+		return currCluster.children;
+  },
+});
+
+Template.ForestGeneralize.helpers({
+  userPrompt : function(){
+    if (Session.get("currentState") == undefined) {
+      return States.NODECREATION.prompt;
+    } else {
+  	  return Session.get("currentState").prompt;
+    }
+  },
+  myName : function(){
+  	var cluster = Clusters.findOne({_id: this.toString()});
+  	if(cluster === undefined) 
+  		return false;
+  	return cluster.name;
+  },
+  clusterIdeas : function(){
+  	var cluster = Clusters.findOne({_id: this.toString()});
+  	if(cluster === undefined) 
+  		return false;
+  	return cluster.ideas;
+  },
+  clusterChildren : function(){
+  	var cluster = Clusters.findOne(this.toString());
+    if(cluster === undefined)
+    	return false;
+    else return cluster.children;
+  },
+  isBestMatch : function(){
+  	if(Session.get("currentState").val === 1)
+  		return true;
+  	return false;
+  },
+});
+
+Template.ForestIdeaNode.onRendered(function() {
+  logger.trace("Rendering idea node: ");
+  logger.trace(this);
+  var id = this.data['_id'];
+  $("#" + id).data("node", this.data);
+});
+
+Template.ForestIdeaNode.helpers({
+  childNode: function() {
+    return ForestManager.getInstanceIdeas(this);
+  },
+});
+
 /********************************************************************
 * Template Events
 *********************************************************************/
 Template.Forest.events({
-  //update cluster name as user types
-	'keyup #namecluster' : function(event, template){
-    var $myCluster = $(event.target).parent().parent();
-    $myCluster.children().children().children('span').removeClass("unnamed");
 
-    Clusters.update({_id:$myCluster.attr('id')},
-      {$set: {name: $(event.target).val()}
-    });
-  },
-
-  //click Finish
-  'click button#finish' : function(){
-  	var cluster = Clusters.findOne({_id: Session.get("ideaNode")});
-  	if(cluster.name === undefined || cluster.name ==="" 
-        || cluster.name ==="Not named yet"){ //make sure a name has been provided
-  		alert("Please name cluster");
-  		return false;
-  	} else { //if current node has no children, insert idea node under current
-  		var currNodeID = Session.get("currentNode");
-  		if(Clusters.findOne({_id: currNodeID}).children.length === 0){
-  			addChild(currNodeID);
-  			exitDo(); //go back to start of idea node creation
-  		} else { //else continue to next state
-  			Session.set("currentState", States.BESTMATCH);
-  			$('#ideas').hide(function(){
-  				$('#nodestatus').show('slow');
-  			});
-  		}
-  	}
-  },
 
   //click No Good Matches
   'click a#nomatch' : function(){
@@ -389,8 +468,11 @@ Template.Forest.events({
   	} else {
   		//move to next state
   		$('#tree').hide(function(){
-  			$('#generalize').show('slow');
-  			});
+        Blaze.render(
+          Template.ForestGeneralize,
+          $("#forest")[0]
+        )
+  		});
   		Session.set("currentState", States.GENERALIZE);
   	}
   },
@@ -457,9 +539,8 @@ Template.Forest.events({
   	swapNodes();
   	Session.set("currentNode", Session.get("bestMatchNode"));
   	Session.set("currentState", States.BESTMATCH);
-  	$('#generalize').hide(function(){
-  			$('#tree').slideToggle();
-  		});
+    $('#generalize').remove()
+  	$('#tree').slideToggle();
   	Session.set("swapped", true);
   },
 
@@ -467,9 +548,8 @@ Template.Forest.events({
   'click button#bestnode' : function(){
   	Session.set("currentNode", Session.get("bestMatchNode"));
   	Session.set("currentState", States.BESTMATCH);
-  	$('#generalize').hide(function(){
-  			$('#tree').slideToggle();
-  		});
+    $('#generalize').remove();
+  	$('#tree').slideToggle();
   },
 
   //go back while in generalization stage of traversal
@@ -478,9 +558,8 @@ Template.Forest.events({
   	path.pop();
   	console.log(path);
   	Session.set("bestMatchNode", path[path.length-1].toString());
-  	$('#generalize').hide(function(){
-  			$('#tree').slideToggle();
-  		});
+    $('#generalize').remove();
+  	$('#tree').slideToggle();
   },
 
   //go back while in best match stage of traversal
@@ -493,16 +572,67 @@ Template.Forest.events({
   	if(path.length > 1){
   		Session.set("currentState", States.GENERALIZE);
   		$('#tree').hide(function(){
-  			$('#generalize').slideToggle();
-  			});
+        Blaze.render(
+          Template.ForestGeneralize,
+          $('#forest')[0]
+        )
+  		});
   	} else {
   		Session.set("currentState", States.NODECREATION);
-  		$('#nodestatus').hide(function(){
-  				$('#ideas').slideToggle();
-  			});
+      $('#nodestatus').remove()
+  		$('#ideas').slideToggle();
   	}
-  }
+  },
 });
+
+Template.ForestIdeaNode.events({
+  
+  'dblclick .forest-idea-node' : function(event){
+    /* select best match */
+    logger.debug("double clicked on a cluster");
+    logger.trace(this)
+    logger.trace(event.currentTarget)
+  	//don't do anyhting if not in best match state
+  	if(Session.get("currentState").val !== 1) {
+      logger.debug("not looking for best match, so ignoreing");
+  		return false;
+    }
+    var id = '#' + this['_id']
+    var parent = $(id).parent()
+    logger.trace(parent)
+    if ($(parent).hasClass("stack")) {
+      logger.debug("clicked on selectable cluster");
+      $(".selected-node").not(id).toggleClass("selected-node");
+      $(id).toggleClass("selected-node");
+      Session.set("bestMatchNode", this);
+    } else {
+      logger.debug("clicked on non-selectable cluster");
+    }
+  	path.push(this.toString());
+		/* //if current node has no children, add idea node as child of current node, exit do */
+  	/* if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0){ */
+  		/* addChild(this.toString()); */
+  		/* exitDo(); */
+  	/* } else { */
+  		/* //move to next state */
+  		/* $('#tree').hide(function(){ */
+        /* Blaze.render( */
+          /* Template.ForestGeneralize, */
+          /* $("#forest")[0] */
+        /* ) */
+  		/* }); */
+  		/* Session.set("currentState", States.GENERALIZE); */
+  	/* } */
+  },
+
+  'click .forest-idea-node .fa': function(event) {
+    logger.debug("Clicked on collapse/expand of idea list");
+    var id = '#list-' + this['_id'];
+    logger.debug("looking at cluster with id: " + id);
+    $(id).collapse('toggle'); 
+  },
+});
+
 
 /********************************************************************
 * Convenience funtions
@@ -587,7 +717,7 @@ function exitDo(){
 	}
 
   $('#nameWarning').empty();
-	$('#buildcluster').slideToggle();
+	//$('#buildcluster').slideToggle();
 	$('#createnode').slideToggle();
 	Session.set("currentNode", "-1");
 	Session.set("ideaNode", "0");
@@ -617,16 +747,7 @@ function processIdeaSender(ui, ideaId){
   if(ideasLength === 0){
     Clusters.remove(senderId);
     $('#createnode').slideToggle();
-    $('#buildcluster').slideToggle();
+    //$('#buildcluster').slideToggle();
   }
 }
 
-insertIdeasToProc = function(){
-  var user = Session.get("currentUser");
-  var prompt = Session.get("currentPrompt");
-  IdeaFactory.create("asdf1", user, prompt);
-  IdeaFactory.create("asdf2", user, prompt);
-  IdeaFactory.create("asdf3", user, prompt);
-  IdeaFactory.create("asdf4", user, prompt);
-  IdeaFactory.create("asdf5", user, prompt);
-}
