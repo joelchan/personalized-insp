@@ -9,7 +9,8 @@
 from os import path
 # import sys
 import file_manager
-# from db_params import *
+from db_params import *
+from mongohq import Data_Utility
 import logging
 from ideagens import Node, Edge
 
@@ -42,40 +43,56 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
 
     """
     # Parse data into ideagens structs
-    if filt is not None:
-        instances = []
-        leafs = {}
-        for i in raw_ideas:
-             if filt(i):
-                instances.append(Node(promptID, graphID, 'forest_idea',
-                    {'parentID': i.id, 'content': i.content, 
-                    'is_clustered': True}))
-                # Create idea nodes as they are encountered
-                if i.nodeID not in leafs:
-                    leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
-                            {_id: i.nodeID, label: '', idea_node_ids: []})
+    instances = []
+    leafs = {}
+    for i in raw_ideas:
+        instances.append(Node(promptID, graphID, 'forest_idea',
+            {'parentID': i.nodeID, 'content': i.content, 
+            'is_clustered': True}))
+        # Create idea nodes as they are encountered
+        if i.nodeID not in leafs:
+            leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
+                    {'_id': i.nodeID, 'label': '', 
+                    'idea_node_ids': []})
+    # print "instances: \n" 
+    # for i in instances:
+        # print i
+    # print "leaves:"
+    # for l in leafs:
+        # print l  
 
-        instanceIDs = db.insert("nodes", instances)
-        instance_dict = {}
-        for ID, i in zip(instanceIDs, instances):
-            i._id = ID
-            instance_dict[ID] = i
-        leafs_list = leafs.values()
-        leafIDs = db.insert("nodes", leafs)
-        # Create edges or branches for the ree
-        
-        edges = []
-        for node in idea_nodes:
-            edges.append(Edge(promptID, node.parent, node.id,
-            {type: 'parent_child'}))
-                    
-            
+    instanceIDs = db.insert("nodes", instances)
+    instance_dict = {}
+    for ID, i in zip(instanceIDs, instances):
+        i._id = ID
+        instance_dict[ID] = i
+    # print "instances after insert:"
+    # for l in instances:
+        # print l
+        # print l._id
+    leafs_list = leafs.values()
+    # print "leafs list:" 
+    # for l in leafs_list:
+        # print l
+    leafIDs = db.insert("nodes", leafs_list)
+    # print "leafs list after insert:"
+    # for l in leafs_list:
+        # print l
+        # print l._id
+    
+    # Create edges connecting idea nodes in the forest
+    branches = [Edge(promptID, node.parent, node.id,
+                {'type': 'parent_child'})
+                for node in idea_nodes]
 
+    # Create edges connecting idea intances to nodes
+    clusters = [Edge(promptID, idea.parentID, idea._id,
+                {'type': 'same_idea'})
+                for idea in instances]
+    
+    db.insert("edges", branches) 
+    db.insert("edges", clusters)
             
-    else:
-        insert_ideas = [Node(promptID, graphID, 'forest_idea',
-            {'ideaID': i.id, 'content': i.content, 'is_clustered': True}) \
-            for i in ideas (i)]
     
 
 class Idea:
@@ -111,5 +128,11 @@ class TreeNode:
 
 if __name__ == '__main__':
   print "importing Mike Terry's data forest data"
-  ideas, edges = read_raw_data()
+  db = Data_Utility('data/mikeTerry', ALL_DBs['ideagensscd'])
+  db.clear_db()
+  promptID = 1
+  graphID = 1
+  ideas, nodes = read_raw_data()
+  insert_to_db(db, promptID, graphID, ideas, nodes)
+
 

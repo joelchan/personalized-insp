@@ -15,6 +15,7 @@ from gensim import corpora, models, similarities, matutils
 # from operator import itemgetter
 from py_correlation_clustering import solver
 from ideagens import Node, Edge, list_to_dict
+import dataforest
 
 """
 Output should be:
@@ -38,6 +39,8 @@ if __name__ == '__main__':
         print "Preprocessing prompt with question: " + prompt['question']
         graphID = prompt['forestGraphID']
         promptID = prompt['_id']
+        forest_ideas, forest_nodes = dataforest.read_raw_data()
+        dataforest.insert_to_db(db, promptID, graphID, forest_ideas, forest_nodes)
         ideas = db.get_data('ideas', None, {'promptID': prompt['_id']})
         # fetch all ideas given the db cursor
         ideas = [idea for idea in ideas]

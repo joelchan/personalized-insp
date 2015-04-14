@@ -39,6 +39,10 @@ class Edge:
             for key in data.keys():
                 setattr(self, key, data[key])
 
+    def __str__(self):
+        return "Edge with promptID: " + str(self.promptID) + \
+            " sourceID: " + str(self.sourceID) + \
+            " targetID: " + str(self.targetID)
 
 class Node:
     """
@@ -52,6 +56,11 @@ class Node:
         if data is not None:
             for key in data.keys():
                 setattr(self, key, data[key])
+
+    def __str__(self):
+        return "Node with graphID: " + str(self.graphID) + \
+            " promptID: " + str(self.promptID) + \
+            " type: " + str(self.type)
 
 
 class Db_Manager:
