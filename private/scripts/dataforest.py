@@ -22,6 +22,12 @@ RAW_FILES = {
     'tree': 'MikeTerry_trees.csv'
     }
 
+PROMPTS = {'turk': "<p>Mechanical Turk currently lacks a dedicated mobile app for performing HITs on smartphones (iPhone, Androids, etc.) or tablets (e.g., the iPad).</p>      <p>Brainstorm 20 features for a mobile app to Mechanical Turk that would improve the worker's experience when performing HITs on mobile devices. Be as specific as possible in your responses.</p>",
+  'iPod': "<p>Many people have old iPods or MP3 players that they no longer use. Please brainstorm 5 uses for old iPods/MP3 players. Assume that the devices' batteries no longer work, though they can be powered via external power sources. Also be aware that devices may <em>not</em> have displays. Be as specific as possible in your descriptions.</p>",
+  'charity': "<p>The Electronic Frontier Foundation (EFF) is a nonprofit whose goal is to protect individual rights with respect to digital and online technologies. For example, the EFF has initiated a lawsuit against the US government to limit the degree to which the US surveils its citizens via secret NSA programs. If you are unfamiliar with the EFF and its goals, read about it on its website (<a href=\"https://www.eff.org\" target=\"_new\">https://www.eff.org</a>) or via other online sources (such as Wikipedia).</p>      <p>Brainstorm 20 <em>new</em> ways the EFF can raise funds and simultaneously increase awareness. Your ideas <em>must be different from their current methods</em>, which include donation pages, merchandise, web badges and banners, affiliate programs with Amazon and eBay, and donating things such as airmiles, cars, or stocks. See the full list of their current methods here: <a href=\"https://www.eff.org/helpout\" target=\"_new\">https://www.eff.org/helpout</a>. Be as specific as possible in your responses.</p>",
+  'forgot_name': "<p>Imagine you are in a social setting and you have forgotten the name of somebody you know. Brainstorm 75 ways you could learn their name without directly asking them. Be as specific as possible in your descriptions.</p>"
+}
+
 def read_raw_data():
     """
     Read in the raw data from the mike terry csv files
@@ -46,21 +52,24 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
     instances = []
     leafs = {}
     for i in raw_ideas:
-        instances.append(Node(promptID, graphID, 'forest_idea',
-            {'parentID': i.nodeID, 'content': i.content, 
-            'is_clustered': True}))
-        # Create idea nodes as they are encountered
-        if i.nodeID not in leafs:
-            leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
-                    {'_id': i.nodeID, 'label': '', 
-                    'idea_node_ids': []})
+        # Filter for only ideas in relevant prompt
+        # Hard-coded for now
+        if i.promptID is 'forgot_name':
+            instances.append(Node(promptID, graphID, 'forest_idea',
+                {'parentID': i.nodeID, 'content': i.content, 
+                'is_clustered': True}))
+            # Create idea nodes as they are encountered
+            if i.nodeID not in leafs:
+                leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
+                        {'_id': i.nodeID, 'label': '', 
+                        'idea_node_ids': []})
     # print "instances: \n" 
     # for i in instances:
         # print i
     # print "leaves:"
     # for l in leafs:
         # print l  
-
+    # Insert Idea instances into graph and add _id fields from result
     instanceIDs = db.insert("nodes", instances)
     instance_dict = {}
     for ID, i in zip(instanceIDs, instances):
@@ -83,7 +92,12 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
     # Create edges connecting idea nodes in the forest
     branches = [Edge(promptID, node.parent, node.id,
                 {'type': 'parent_child'})
-                for node in idea_nodes]
+                for node in idea_nodes
+                if node.parent in leafs]
+    branches.extend([Edge(promptID, node.parent, node.id,
+                {'type': 'parent_child'})
+                for node in idea_nodes
+                if node.parent == -1 and node.id in leafs])
 
     # Create edges connecting idea intances to nodes
     clusters = [Edge(promptID, idea.parentID, idea._id,
