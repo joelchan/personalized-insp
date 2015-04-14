@@ -5,7 +5,8 @@
 import logging
 import pandas as pd
 import json
-from os import mkdir, listdir, path
+import csv
+from os import mkdir, listdir, path, walk
 
 
 logging.basicConfig(format='%(levelname)s:%(message)s',
@@ -22,6 +23,35 @@ def trim_ext(file_name):
 
     """
     return file_name[:file_name.rindex('.')]
+
+
+def crawl_for_files(dir_path, filt=None):
+    """
+    Crawl a given directory for files that meet the given criteria
+    defined by filt
+
+    """
+    for root, dirs, files in walk(dir_path):
+        file_names = [path.join(root, file_name) for file_name in files] 
+        for name in file_names:
+            if filt is not None:
+                if filt(name):
+                    yield name
+            else:
+                yield name
+
+
+def import_from_csv(file_path, processor):
+    """
+    Import data from csv file where each line is processed with given
+    processor function
+
+    """
+    csvfile = open(file_path, 'rU')
+    reader = csv.DictReader(csvfile)
+    result = [processor(row) for row in reader]
+    csvfile.close()
+    return result
 
 
 def write_json_to_file(data='', dir_path='data', file_name='default'):

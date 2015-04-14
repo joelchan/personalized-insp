@@ -235,6 +235,7 @@ class Data_Utility:
                 data = [doc.__dict__ for doc in docs]
                 results = self.db[col].insert(data,
                                               continue_on_error=True)
+
                 return results
         except DuplicateKeyError:
             print "Attempted insert of document with duplicate key"
