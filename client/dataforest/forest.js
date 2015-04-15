@@ -152,7 +152,7 @@ Template.ForestCreateCluster.rendered = function() {
           Template.ForestNodeBuilder, 
           currCluster,
           $("#forest")[0],
-          $("#tree")[0]
+          $("#tree-viz")[0]
       );
       $("#createnode").remove()
     }
@@ -278,7 +278,7 @@ Template.ForestNodeBuilder.events({
               Template.ForestNodeStatus, 
               currNode,
               $("#forest")[0],
-              $("#tree")[0]
+              $("#tree-viz")[0]
           );
   			});
         $("#buildcluster").remove();
@@ -410,6 +410,25 @@ Template.ForestGeneralize.helpers({
   	if(Session.get("currentState").val === 1)
   		return true;
   	return false;
+  },
+});
+
+Template.ForestViz.helpers({
+  rootNode: function() {
+    return Nodes.findOne({type: 'root', 
+        promptID: Session.get("currentPrompt")._id});
+  },
+  childNodes: function() {
+    return ForestManager.getNodeChildren(this, {'label': 1});
+  },
+});
+
+Template.ForestTree.helpers({
+  name: function() {
+   return ForestManager.getNodeName(this);
+  },
+  childNodes: function() {
+    return ForestManager.getNodeChildren(this, {'label': 1});
   },
 });
 
@@ -609,8 +628,9 @@ Template.ForestIdeaNode.events({
       logger.debug("clicked on non-selectable cluster");
     }
   	path.push(this.toString());
-		/* //if current node has no children, add idea node as child of current node, exit do */
-  	/* if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0){ */
+		//if current node has no children, add idea node as child of current node, exit do
+  	if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0) {
+      logger.debug("Adding idea node to child of current")
   		/* addChild(this.toString()); */
   		/* exitDo(); */
   	/* } else { */
@@ -622,7 +642,7 @@ Template.ForestIdeaNode.events({
         /* ) */
   		/* }); */
   		/* Session.set("currentState", States.GENERALIZE); */
-  	/* } */
+  	}
   },
 
   'click .forest-idea-node .fa': function(event) {
@@ -637,12 +657,6 @@ Template.ForestIdeaNode.events({
 /********************************************************************
 * Convenience funtions
 *********************************************************************/
-function addToCluster(ideaId, clusterId){
-	var idea = Ideas.findOne({_id: ideaId});
-	Clusters.update({_id: clusterId}, {$push: {ideas: idea}});
-	updateIdeas(ideaId, true);
-}
-
 function addChild(nodeID){
 	Clusters.update({_id: nodeID}, 
   	{$addToSet: 

@@ -13,8 +13,10 @@
       
         <!-- {{> ForestNodeStatus }} -->
 			<!--End-->
-
-      {{> ForestBestMatch }}
+      <div class="col-md-6">
+        {{> ForestViz }}
+      </div>
+      <!-- {{> ForestBestMatch }} -->
       <!-- {{> ForestGeneralize }} -->
       <!-- </div> -->
 	</div>
@@ -22,6 +24,34 @@
   {{> ForestNodeName }}
   {{> ForestConfirm }}
 
+</template>
+
+<template name="ForestViz">
+<div id="tree-viz">
+  <div class="forest-tree">
+    {{#with rootNode}}
+      <ul class="indent" id="list-{{ _id }}">
+        {{#each childNodes }}
+          {{> ForestTree }}
+        {{/each}}
+      </ul>
+    {{/with}}
+  </div>
+</div>
+</template>
+
+<template name="ForestTree">
+<div class="forest-tree">
+  <div class="forest-node-label">
+    <i class="fa fa-angle-double-down sort-disabled"></i>
+    <h3>{{ name }}</h3>
+  </div>
+  <ul class="indent" id="list-{{ _id }}">
+    {{#each childNodes }}
+      {{> ForestTree }}
+    {{/each}}
+  </ul>
+</div>
 </template>
 
 <template name="ForestBestMatch">
