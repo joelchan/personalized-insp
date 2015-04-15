@@ -15,6 +15,7 @@ from gensim import corpora, models, similarities, matutils
 # from operator import itemgetter
 from py_correlation_clustering import solver
 from ideagens import Node, Edge, list_to_dict
+from bson.objectid import ObjectId
 import dataforest
 
 """
@@ -40,7 +41,7 @@ if __name__ == '__main__':
         graphID = prompt['forestGraphID']
         promptID = prompt['_id']
         forest_ideas, forest_nodes = dataforest.read_raw_data()
-        dataforest.insert_to_db(db, promptID, graphID, forest_ideas, forest_nodes)
+        dataforest.insert_to_db(db, promptID, graphID, forest_ideas[:5500], forest_nodes[:1500])
         ideas = db.get_data('ideas', None, {'promptID': prompt['_id']})
         # fetch all ideas given the db cursor
         ideas = [idea for idea in ideas]
@@ -49,13 +50,14 @@ if __name__ == '__main__':
 
         # Create a node for every idea in the data forest graph
         idea_nodes = [Node(graphID, promptID, 'forest_idea',
-                        {'ideaID': idea['_id'],
+                        {'_id': str(ObjectId()),
+                        'ideaID': idea['_id'],
                         'content': idea['content'],
                         'is_clustered': False})
                     for idea in ideas]
         result = db.insert('nodes', idea_nodes);
-        for id, node in zip(result, idea_nodes):
-            setattr(node, '_id', id)
+        # for id, node in zip(result, idea_nodes):
+            # setattr(node, '_id', id)
 
 
         idea_node_dict = dict([(getattr(node,'ideaID'), node) for node in idea_nodes])
@@ -101,7 +103,9 @@ if __name__ == '__main__':
             # print node2
             sim = nlp.cosine(pair[0],pair[1],vMatrix)
             sim_edges.append(Edge(promptID, node1, node2,
-                {'type': 'similarity', 'cos': sim}))
+                                  {'_id': str(ObjectId()),
+                                   'type': 'similarity',
+                                   'cos': sim}))
             sims.append(sim)
             # print sim
             if sim > THRESHOLD:
@@ -113,8 +117,8 @@ if __name__ == '__main__':
         result = db.insert('edges', sim_edges);
         test_edges = db.get_data("edges", None, {})
         print "number of edges after insert: " + str(test_edges.count())
-        for id, edge in zip(result, sim_edges):
-            setattr(edge, '_id', id)
+        # for id, edge in zip(result, sim_edges):
+            # setattr(edge, '_id', id)
 
         ################################
         # turn into networkx graph
@@ -133,9 +137,10 @@ if __name__ == '__main__':
 
         # Create cluster parent nodes
         cluster_nodes = [Node(graphID, promptID, 'forest_precluster',
-            {'num_ideas': len(cluster),
-             'idea_node_ids': [id for id in cluster]})
-            for cluster in clusters]
+                              {'_id': str(ObjectId()),
+                               'num_ideas': len(cluster),
+                               'idea_node_ids': [id for id in cluster]})
+                         for cluster in clusters]
         print cluster_nodes[1].idea_node_ids
         test_nodes = db.get_data("nodes", None, {})
         print "number of nodes before insert: " + str(test_nodes.count())
@@ -144,14 +149,15 @@ if __name__ == '__main__':
         test_nodes = db.get_data("nodes", None, {})
         print "number of nodes after insert: " + str(test_nodes.count())
         print "number of clusters originall returned: " + str(len(clusters))
-        for id, node in zip(result, cluster_nodes):
-            setattr(node, '_id', id)
+        # for id, node in zip(result, cluster_nodes):
+            # setattr(node, '_id', id)
         # Create edges for each cluster
         c_edges = []
         for node in cluster_nodes:
             nodeID = getattr(node, '_id')
             c_edges.extend([Edge(promptID, nodeID, childID,
-                {'type': 'parent_child'})
+                                 {'_id': str(ObjectId()),
+                                  'type': 'parent_child'})
                 for childID in node.idea_node_ids])
         test_edges = db.get_data("edges", None, {})
         print "number of edges before insert: " + str(test_edges.count())

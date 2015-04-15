@@ -94,6 +94,7 @@ def get_mongodb(dbUrl, dbPort, dbName, dbUser=None, dbPswd=None):
 default_collections = [
     'system.indexes',
     'system.users',
+    'meteor_accounts_loginServiceConfiguration',
 ]
 
 
@@ -174,13 +175,13 @@ class Data_Utility:
             # Remove all docs from collection
             self.db[col].remove()
 
-    def get_data(self, collection, fields=None, filters=None):
+    def get_data(self, collection, fields=None, filters=None, sorters=None):
         """
         Get a list of documents from the db collection for specified
         fields only. fields is list of field names for each document.
 
         """
-        data = self.db[collection].find(filters)
+        data = self.db[collection].find(filters, sort=sorters)
         if fields is None:
             return data
         else:
@@ -226,8 +227,8 @@ class Data_Utility:
             docs with updated ids
 
         """
-        for doc in docs:
-            d = doc.__dict__
+        # for doc in docs:
+            # d = doc.__dict__
             # for key in d.keys():
                 # print key + ": " + d[key]
         try:
@@ -235,12 +236,11 @@ class Data_Utility:
                 data = [doc.__dict__ for doc in docs]
                 results = self.db[col].insert(data,
                                               continue_on_error=True)
-
                 return results
         except DuplicateKeyError:
             print "Attempted insert of document with duplicate key"
         else:
-            print "success"
+            print "Error while inserting into collection"
 
     def update(self, col, sel, update):
         """

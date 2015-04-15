@@ -419,6 +419,7 @@ Template.ForestViz.helpers({
         promptID: Session.get("currentPrompt")._id});
   },
   childNodes: function() {
+    logger.trace("Forest Viz childNodes: " + JSON.stringify(this));
     return ForestManager.getNodeChildren(this, {'label': 1});
   },
 });
