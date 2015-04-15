@@ -41,7 +41,7 @@ if __name__ == '__main__':
         graphID = prompt['forestGraphID']
         promptID = prompt['_id']
         forest_ideas, forest_nodes = dataforest.read_raw_data()
-        dataforest.insert_to_db(db, promptID, graphID, forest_ideas[:5500], forest_nodes[:1500])
+        dataforest.insert_to_db(db, promptID, graphID, forest_ideas, forest_nodes)
         ideas = db.get_data('ideas', None, {'promptID': prompt['_id']})
         # fetch all ideas given the db cursor
         ideas = [idea for idea in ideas]

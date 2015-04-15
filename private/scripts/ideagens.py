@@ -40,7 +40,7 @@ class Edge:
                 setattr(self, key, data[key])
 
     def __str__(self):
-        result = "Edge with promptID: "
+        result = "Edge with: "
         attrs = self.__dict__
         for key in attrs.keys():
             result += str(key) + ": " + str(attrs[key]) + " "
@@ -62,7 +62,7 @@ class Node:
                 setattr(self, key, data[key])
 
     def __str__(self):
-        result = "Node with graphID: "
+        result = "Node with: "
         attrs = self.__dict__
         for key in attrs.keys():
             result += str(key) + ": " + str(attrs[key]) + " "
