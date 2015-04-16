@@ -40,7 +40,7 @@ var States = {
 	NODECREATION: {val: 0, name: "IdeaNodeCreation", 
 		prompt: "Subtree Roots"},
 	BESTMATCH: {val: 1, name: "FindBestMatch", 
-		prompt: "Double click on the best match among the current nodes" },
+		prompt: "Select most similar node to the node to be inserted (or select no node if none match)"},
 	GENERALIZE: {val: 2, name: "Generalization", 
 		prompt: "Do the nodes generalize each other in any way?"}
 }
@@ -121,8 +121,8 @@ Template.ForestIdea.onRendered(function() {
     },
   });
   // Set the ID according to the _id of the node
-  var id = "#" + this.data['_id']['_str']
-  this.$(".forest-idea-item").attr("id", this.data['_id']['_str']);
+  var id = "#" + this.data['_id']
+  this.$(".forest-idea-item").attr("id", this.data['_id']);
   //logger.trace(this.$(".forest-idea-item"))
   $(id).data("node", this.data);
 
@@ -145,8 +145,10 @@ Template.ForestCreateCluster.rendered = function() {
       //logger.debug("matching nodes: " + nodes.count());
       var parent = ui.helper.context.parentElement;
       logger.trace(parent);
-			var currCluster = ForestManager.createIdeaNode([node,]) //creates and inserts a new cluster, returns ID
-      Session.set("ideaNode", currCluster); //sets ID as idea node
+      //creates and inserts a new cluster, returns ID
+			var currCluster = ForestManager.createIdeaNode([node,]) 
+      //sets ID as idea node
+      Session.set("ideaNode", currCluster); 
       
       Blaze.renderWithData(
           Template.ForestNodeBuilder, 
@@ -222,7 +224,7 @@ Template.ForestNodeBuilder.onRendered(function() {
       var instance = $("#" + myIdeaId).data("node");
       logger.trace(JSON.stringify(instance));
       var currNode = Session.get("ideaNode");
-      ForestManager.groupIdeas([instance,], currNode);
+      ForestManager.groupIdeas([instance], currNode);
     }
 
   });
@@ -233,6 +235,7 @@ Template.ForestNodeBuilder.onRendered(function() {
 Template.ForestNodeBuilder.helpers({
   //return list of ideas contained by idea node
   ideaNodeIdeas : function(){
+    logger.trace("Node Builder current idea node: " + JSON.stringify(this));
     return ForestManager.getInstanceIdeas(Session.get('ideaNode'));
   },
   ideaNodeName : function(){
@@ -267,9 +270,15 @@ Template.ForestNodeBuilder.events({
   	} else { 
   		//if current node has no children, insert idea node under current
   	  var compareNode = Nodes.findOne({_id: Session.get("ideaNode")['_id']});
-      var currNode = Session.get("currentNode");
+      var currNode = Nodes.findOne({_id: Session.get("currentNode")._id});
   		if(ForestManager.getNodeChildren(currNode).length == 0) {
         ForestManager.insertToTree(currNode, compareNode);
+        //Return to initial state
+        Blaze.render(
+            Template.ForestCreateCluster,
+            $("#ideas")[0],
+            $("#unclustered-ideas")[0]
+        );
         $("#buildcluster").remove();
   		} else { //else continue to next state
   			Session.set("currentState", States.BESTMATCH);
@@ -280,7 +289,13 @@ Template.ForestNodeBuilder.events({
               $("#forest")[0],
               $("#tree-viz")[0]
           );
+          Blaze.render(
+              Template.ForestBestMatch,
+              $("#forest")[0],
+              $("#tree-viz")[0]
+          );
   			});
+        
         $("#buildcluster").remove();
   		}
   	}
@@ -313,52 +328,78 @@ Template.ForestNodeStatus.helpers({
     //}
   //},
   //return list of ideas contained by best match node
-  bestMatchIdeas : function(){
-  	var currNodeID = Session.get('bestMatchNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined){
-			return currCluster.ideas;
-		}
-  },
-  bestMatchName : function(){
-  	var currNodeID = Session.get('bestMatchNode');
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-		if(currCluster !== undefined && currCluster.name !== undefined){
-      $('#bmname').removeClass('text-danger');
-			return currCluster.name;
-		} else {
-      $('#bmname').addClass('text-danger');
-      return "No Match Picked";
-    }
-  },
-  bestMatchNode : function(){
-  	return Session.get('bestMatchNode');
-  },
+  //bestMatchIdeas : function(){
+  	//var currNodeID = Session.get('bestMatchNode');
+  	//var currCluster = Clusters.findOne({_id: currNodeID});
+		//if(currCluster !== undefined){
+			//return currCluster.ideas;
+		//}
+  //},
+  //bestMatchName : function(){
+  	//var currNodeID = Session.get('bestMatchNode');
+  	//var currCluster = Clusters.findOne({_id: currNodeID});
+		//if(currCluster !== undefined && currCluster.name !== undefined){
+      //$('#bmname').removeClass('text-danger');
+			//return currCluster.name;
+		//} else {
+      //$('#bmname').addClass('text-danger');
+      //return "No Match Picked";
+    //}
+  //},
+  //bestMatchNode : function(){
+  	//return Session.get('bestMatchNode');
+  //},
 });
 
 Template.ForestNodeStatus.events({
+  'click .forest-idea-node' : function(event){
+    logger.debug("clicked on a cluster");
+    logger.trace(this)
+    logger.trace(event.currentTarget)
+    logger.trace(event);
+    var id = '#' + this['_id']
+    var parent = $(id).parent()
+    var target = $(event.target)
+    logger.trace(parent)
+    if ($(parent).hasClass("stack") && !$(event.target).hasClass("fa")) {
+      logger.debug("clicked on selectable cluster");
+      if ($(id).hasClass("selected-node")) {
+        $(id).toggleClass("selected-node");
+        Session.set("bestMatchNode", null);
+      } else {
+        //Clear all selected clusters
+        $(".selected-node").not(id).toggleClass("selected-node");
+        //Mark clicked cluster as selected
+        $(id).toggleClass("selected-node");
+        //Set selected cluster node as the current best match
+        Session.set("bestMatchNode", this);
+      }
+    } else {
+      logger.debug("clicked on non-selectable cluster");
+    }
+  },
   'dblclick .forest-idea-node' : function(event){
     /* select best match */
     logger.debug("double clicked on a cluster");
     logger.trace(this)
     logger.trace(event.currentTarget)
   	//don't do anyhting if not in best match state
-  	if(Session.get("currentState").val !== 1) {
-      logger.debug("not looking for best match, so ignoreing");
-  		return false;
-    }
-    var id = '#' + this['_id']
-    var parent = $(id).parent()
-    logger.trace(parent)
-    if ($(parent).hasClass("stack")) {
-      logger.debug("clicked on selectable cluster");
-      $(".selected-node").not(id).toggleClass("selected-node");
-      $(id).toggleClass("selected-node");
-      Session.set("bestMatchNode", this);
-    } else {
-      logger.debug("clicked on non-selectable cluster");
-    }
-  	path.push(this.toString());
+  	//if(Session.get("currentState").val !== 1) {
+      //logger.debug("not looking for best match, so ignoreing");
+  		//return false;
+    //}
+    //var id = '#' + this['_id']
+    //var parent = $(id).parent()
+    //logger.trace(parent)
+    //if ($(parent).hasClass("stack")) {
+      //logger.debug("clicked on selectable cluster");
+      //$(".selected-node").not(id).toggleClass("selected-node");
+      //$(id).toggleClass("selected-node");
+      //Session.set("bestMatchNode", this);
+    //} else {
+      //logger.debug("clicked on non-selectable cluster");
+    //}
+  	//path.push(this.toString());
 		/* //if current node has no children, add idea node as child of current node, exit do */
   	/* if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0){ */
   		/* addChild(this.toString()); */
@@ -421,6 +462,14 @@ Template.ForestBestMatch.helpers({
   },
 });
 
+Template.ForestBestMatch.events({
+  'click #nextStep': function (event) {
+    logger.debug("Clicked to continue to next step");
+  },
+  'click #bmback': function (event) {
+    logger.debug("Clicked to rewind to previous step");
+  },
+});
 Template.ForestGeneralize.helpers({
   userPrompt : function(){
     if (Session.get("currentState") == undefined) {
@@ -456,21 +505,29 @@ Template.ForestGeneralize.helpers({
 
 Template.ForestViz.helpers({
   rootNode: function() {
-    return Nodes.findOne({type: 'root', 
+    var root = Nodes.findOne({type: 'root', 
         promptID: Session.get("currentPrompt")._id});
+    logger.trace("Forest Viz root: " + JSON.stringify(root));
+    return root
   },
   childNodes: function() {
-    logger.trace("Forest Viz childNodes: " + JSON.stringify(this));
-    return ForestManager.getNodeChildren(this, {'label': 1});
+    var children = ForestManager.getNodeChildren(this, {'label': 1});
+    logger.trace("Forest Viz children of root: " + 
+        JSON.stringify(children));
+    return children
   },
 });
 
 Template.ForestTree.helpers({
   name: function() {
-   return ForestManager.getNodeName(this);
+    var name = ForestManager.getNodeName(this); 
+    logger.trace("Forest tree name: " + name);
+    return name
   },
   childNodes: function() {
-    return ForestManager.getNodeChildren(this, {'label': 1});
+    var children = ForestManager.getNodeChildren(this, {'label': 1});
+    logger.trace("Forest tree children: " + JSON.stringify(children));
+    return children
   },
 });
 

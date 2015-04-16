@@ -3,7 +3,7 @@
 	<div id="forest" class="row forest">
     <!-- <div id="class="row"> -->
 			<!--IdeaList and Node Starter-->
-		  <div id="ideas" class="col-md-3">
+		  <div id="ideas" class="col-md-4">
           {{> ForestCreateCluster }}
           {{> ForestIdeaList }}
 			  <!--Node Builder-->
@@ -13,9 +13,7 @@
       
         <!-- {{> ForestNodeStatus }} -->
 			<!--End-->
-      <div class="col-md-6">
-        {{> ForestViz }}
-      </div>
+      {{> ForestViz }}
       <!-- {{> ForestBestMatch }} -->
       <!-- {{> ForestGeneralize }} -->
       <!-- </div> -->
@@ -27,7 +25,8 @@
 </template>
 
 <template name="ForestViz">
-<div id="tree-viz">
+<div id="tree-viz" class="col-md-4 pull-right">
+	<h3>Idea Forest</h3>
   <div class="forest-tree">
     {{#with rootNode}}
       <ul class="indent" id="list-{{ _id }}">
@@ -56,24 +55,26 @@
 
 <template name="ForestBestMatch">
 	<!--Children of Best Match Node-->
-	<div id="tree" class="col-md-6">
+	<div id="tree" class="col-md-4">
 		<h3>{{userPrompt}}</h3>
-		{{#each bestMatchChildren}}
-			<ul class="donestack " id={{this}}>
-        <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
-        <h3>Title:</h3>
-        <label class="sort-disabled">{{myName}}</label>
-				{{#each clusterIdeas}}
-					<li id={{_id}} class="idea-item">{{content}}</li>
-				{{/each}}
-				{{#each clusterChildren}}
-					<li id={{this}} class="cluster-item">{{clusterName}}</li>
-				{{/each}}
-			</ul>
-		{{/each}}
+    <!-- {{#each bestMatchChildren}} -->
+    <!-- <ul class="donestack " id={{this}}> -->
+    <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
+    <!-- <h3>Title:</h3> -->
+    <!-- <label class="sort-disabled">{{myName}}</label> -->
+    <!-- {{#each clusterIdeas}} -->
+    <!-- <li id={{_id}} class="idea-item">{{content}}</li> -->
+    <!-- {{/each}} -->
+    <!-- {{#each clusterChildren}} -->
+    <!-- <li id={{this}} class="cluster-item">{{clusterName}}</li> -->
+    <!-- {{/each}} -->
+    <!-- </ul> -->
+    <!-- {{/each}} -->
 		{{#if isBestMatch}}
-			<div id="bmback" class='btn btn-large btn-default'>Back</div>
-			<div id="nomatch" class='btn btn-large btn-primary' data-toggle="modal" data-target="#confirmModal">No Good Matches</div>
+      <div>
+			  <div id="bmback" class='btn btn-large btn-default'>Back</div>
+			  <div id="nextStep" class='btn btn-large btn-primary'>Continue</div>
+      </div>
 		{{/if}}
 	</div>
 	<!--End-->
@@ -81,7 +82,7 @@
 
 <template name="ForestGeneralize">
 	<!--Generalization Option Buttons-->
-	<div id="generalize" class="col-md-6">
+	<div id="generalize" class="col-md-4">
 		<h3>{{userPrompt}}</h3>
 		<a href="#" id="both" class='btn btn-large btn-primary' 
 			data-toggle="modal" data-target="#confirmModal">Merge</a>
@@ -125,7 +126,7 @@
 </template>
 
 <template name="ForestNodeBuilder">
-	<div id="buildcluster" class="col-md-3">
+	<div id="buildcluster" class="col-md-4">
 		<h3>Add to Cluster</h3>
     <div id={{ideaNode}} class="form-group">
 			<label class="sort-disabled">Cluster Name:
@@ -146,13 +147,13 @@
 
 <template name="ForestNodeStatus">
 	<!--Idea Node and Best Match Node Status-->
-	<div id="nodestatus" class="col-md-6">
+	<div id="nodestatus" class="col-md-4">
 		<h2>Working Nodes</h2>
 		<h4>Node to be Inserted</h4>
     {{#with ideaNode}}
       {{> ForestIdeaNode }}
     {{/with }}
-    <h4>Possible matches:</h4>
+    <h4>Select Best Possible matches (or none):</h4>
     <div class="stack">
     {{#each clusterChildren }}
       {{> ForestIdeaNode }}

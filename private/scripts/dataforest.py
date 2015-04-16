@@ -107,19 +107,8 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
                 leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
                         {'_id': i.nodeID, 'label': '',
                         'idea_node_ids': []})
-    # print "instances: \n"
-    # for i in instances:
-        # i._id = str(ObjectId())
-        # print i
-    # instances[0]._id = 1
-    # print instances[0]
-    # instances[1]._id = 2
-    # print instances[1]
-    # print leafs
-    # print "leaves:"
-    # for l in leafs:
-        # print l
-    # Insert Idea instances into graph and add _id fields from result
+
+                        # Insert Idea instances into graph and add _id fields from result
     print "number of instances to insert: " + str(len(instances))
     instanceIDs = db.insert("nodes", instances)
     print "# of instances: " + str(len(instances))
@@ -128,19 +117,8 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
     for ID, i in zip(instanceIDs, instances):
         # i._id = ID
         instance_dict[ID] = i
-    # print "instances after insert:"
-    # for l in instances:
-        # print l
-        # print l._id
     leafs_list = leafs.values()
-    # print "leafs list:"
-    # for l in leafs_list:
-        # print l
     leafIDs = db.insert("nodes", leafs_list)
-    # print "leafs list after insert:"
-    # for l in leafs_list:
-        # print l
-        # print l._id
 
     # Create edges connecting idea nodes in the forest
     branches = [Edge(promptID, node.parent, node.id,
@@ -164,8 +142,7 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
                      {'_id': str(ObjectId()),
                       'type': 'same_idea'})
                 for idea in instances]
-    # for b in branches[:2000]:
-        # print b
+
     db.insert("edges", branches)
     db.insert("edges", clusters)
 

@@ -40,8 +40,8 @@ if __name__ == '__main__':
         print "Preprocessing prompt with question: " + prompt['question']
         graphID = prompt['forestGraphID']
         promptID = prompt['_id']
-        forest_ideas, forest_nodes = dataforest.read_raw_data()
-        dataforest.insert_to_db(db, promptID, graphID, forest_ideas, forest_nodes)
+        # forest_ideas, forest_nodes = dataforest.read_raw_data()
+        # dataforest.insert_to_db(db, promptID, graphID, forest_ideas, forest_nodes)
         ideas = db.get_data('ideas', None, {'promptID': prompt['_id']})
         # fetch all ideas given the db cursor
         ideas = [idea for idea in ideas]
@@ -139,7 +139,8 @@ if __name__ == '__main__':
         cluster_nodes = [Node(graphID, promptID, 'forest_precluster',
                               {'_id': str(ObjectId()),
                                'num_ideas': len(cluster),
-                               'idea_node_ids': [id for id in cluster]})
+                               'idea_node_ids': [id for id in cluster],
+                               'child_leaf_ids': []})
                          for cluster in clusters]
         print cluster_nodes[1].idea_node_ids
         test_nodes = db.get_data("nodes", None, {})

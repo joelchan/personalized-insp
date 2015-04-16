@@ -26,46 +26,66 @@ ForestManager = (function() {
         {$set: {forestGraphID: graphID}}
       );
       //Setup root node of the forest
-      GraphManager.createGraphNode(graphID, 'root');
+      GraphManager.createGraphNode(graphID, 'root', 
+          {'child_leaf_ids': []}
+      );
     },
     createIdeaNode: function(ideas) {
       /**************************************************************
        * Create a idea node which acts as a representation of 
        * semantically equivalent ideas
        *************************************************************/
+      logger.debug("Creating a new Idea Node");
       var graphID = ideas[0].graphID;
       var promptID = ideas[0].promptID;
       var type = "forest_leaf";
-      var ideaIDs = [];
-      for (var i=0; i<ideas.length; i++) {
-        ideaIDs.push(ideas[i]['_id']);
-      }
+      //var ideaIDs = [];
+      //for (var i=0; i<ideas.length; i++) {
+        //ideaIDs.push(ideas[i]['_id']);
+      //}
 
       data = {'label': "", 
-        'idea_node_ids': ideaIDs,
-        'child_leafIDs': []};
+        'idea_node_ids': [],
+        'child_leaf_ids': []};
       var idea_node = GraphManager.createGraphNode(graphID, type, data);
+      if (!hasForEach(ideas)) {
+        ideas = [ideas];
+      }
+      //Connect idea instance to idea node
       this.groupIdeas(ideas, idea_node);
-      return idea_node;
+
+      return Nodes.findOne({_id: idea_node._id});
     },
     groupIdeas: function(ideas, idea_node) {
       /*************************************************************
        * Connect the idea instances to the idea node in the forest
        ************************************************************/ 
       // var type = "same_ideas";
-      var ideaIDs = [];
-      for (var i=0; i<ideas.length; i++) {
-        // GraphManager.createEdge(type, idea_node, ideas[i], data);
-        ideaIDs.push(ideas[i]['_id']);
+      if (!hasForEach(ideas)) {
+        ideas = [ideas];
       }
-      Nodes.update({_id: idea_node._id}, 
-          {$addToSet: {$each: {idea_node_ids: ideaIDs}}});
-      // Mark idea nodes as clustered
-      if (Meteor.isServer) {
-        Nodes.update({_id: {$in: ideaIDs}},{$set: {is_clustered: true}});
-      } else {
+      if (ideas.length > 0) { 
+        logger.debug("connecting idea instances to idea node with id: " +
+            idea_node._id);
+        var ideaIDs = [];
         for (var i=0; i<ideas.length; i++) {
-          Nodes.update({_id: ideas[i]['_id']},{$set: {is_clustered: true}});
+          // GraphManager.createEdge(type, idea_node, ideas[i], data);
+          ideaIDs.push(ideas[i]['_id']);
+        }
+        logger.trace("Connecting instances with ids: " + JSON.stringify(ideaIDs));
+        logger.trace("Before update: " + 
+            JSON.stringify(Nodes.findOne({_id: idea_node._id})));
+        Nodes.update({_id: idea_node._id}, 
+            {$addToSet: {idea_node_ids: {$each: ideaIDs}}});
+        logger.trace("After update: " + 
+            JSON.stringify(Nodes.findOne({_id: idea_node._id})));
+        // Mark idea nodes as clustered
+        if (Meteor.isServer) {
+          Nodes.update({_id: {$in: ideaIDs}},{$set: {is_clustered: true}});
+        } else {
+          for (var i=0; i<ideas.length; i++) {
+            Nodes.update({_id: ideas[i]['_id']},{$set: {is_clustered: true}});
+          }
         }
       }
     },
@@ -81,11 +101,16 @@ ForestManager = (function() {
         // sourceID: node['_id']});
       // logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
       // var childIDs = getValsFromField(childEdges, 'targetID');
-      var children;
-      if (sorter) {
-        children =  Nodes.find({_id: {$in: node.idea_node_ids}}, {sort: sorter}).fetch()
-      } else {
-        children =  Nodes.find({_id: {$in: node.idea_node_ids}}).fetch()
+      var node = Nodes.findOne({_id: node._id});
+      var children = []
+      if (node.idea_node_ids.length > 0) {
+        if (sorter) {
+          children =  Nodes.find({_id: {$in: node.idea_node_ids}}, 
+              {sort: sorter}
+          ).fetch()
+        } else {
+          children =  Nodes.find({_id: {$in: node.idea_node_ids}}).fetch()
+        }
       }
       logger.trace("Found children nodes: " + JSON.stringify(children));
       return children;
@@ -98,11 +123,16 @@ ForestManager = (function() {
         // sourceID: node['_id']});
       // logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
       // var childIDs = getValsFromField(childEdges, 'targetID');
-      var children;
-      if (sorter) {
-        children =  Nodes.find({_id: {$in: node.child_leaf_ids}}, {sort: sorter}).fetch()
-      } else {
-        children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+      var node = Nodes.findOne({_id: node._id});
+      var children = [];
+      if (node.child_leaf_ids.length > 0) {
+        if (sorter) {
+          children =  Nodes.find({_id: {$in: node.child_leaf_ids}}, 
+                {sort: sorter}
+          ).fetch()
+        } else {
+          children =  Nodes.find({_id: {$in: node.child_leaf_ids}}).fetch()
+        }
       }
       logger.trace("Found children nodes: " + JSON.stringify(children));
       return children;
@@ -123,7 +153,7 @@ ForestManager = (function() {
         } else {
           //recurse on the first node
           var nodes = this.getNodeChildren(node);
-          return getNodeName(nodes[0]):
+          return this.getNodeName(nodes[0]);
         }
       }
 
@@ -136,13 +166,13 @@ ForestManager = (function() {
        *************************************************************/
       //Merge the nodes
        Nodes.update({_id: node1._id}, 
-          {$addToSet: {$each: {'child_node_ids': node2.child_node_ids}},
-           $addToSet: {$each: {'idea_node_ids': node2.idea_node_ids}}})
+          {$addToSet: {'child_leaf_ids': {$each: node2.child_leaf_ids}},
+           $addToSet: {'idea_node_ids': {$each: node2.idea_node_ids}}})
        //Update parents of node2 to point to node1
-       Nodes.update({'child_node_ids': {$elemMatch: {_id: node2._id}}}, 
-          {$push: {child_node_ids: node1._id}});
-       Nodes.update({'child_node_ids': {$elemMatch: {_id: node2._id}}}, 
-          {$pull: {child_node_ids: node2._id}});
+       Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node2._id}}}, 
+          {$push: {child_leaf_ids: node1._id}});
+       Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node2._id}}}, 
+          {$pull: {child_leaf_ids: node2._id}});
 
     },
     swapNodes: function(node1, node2) {
@@ -150,20 +180,20 @@ ForestManager = (function() {
        * Swap the two idea nodes, substituting edges
        * with node2._id with node1._id and vice-versa
        *************************************************************/
-       node1Children = node1.child_node_ids
+       node1Children = node1.child_leaf_ids
        node1Ideas = node1.idea_node_ids
        node1Content = node1.content
-       node2Children = node2.child_node_ids
+       node2Children = node2.child_leaf_ids
        node2Ideas = node2.idea_node_ids
        node2Content = node2.content
        //Swap the children and content of the nodes
        Nodes.update({_id: node1._id}, 
-          {$set: {'child_node_ids': node2Children, 
+          {$set: {'child_leaf_ids': node2Children, 
               'idea_node_ids': node2Ideas,
               'content': node2Content
        }})
        Nodes.update({_id: node2._id}, 
-          {$set: {'child_node_ids': node1Children, 
+          {$set: {'child_leaf_ids': node1Children, 
               'idea_node_ids': node1Ideas,
               'content': node1Content
        }})
@@ -176,10 +206,10 @@ ForestManager = (function() {
        *************************************************************/
       var an = this.createIdeaNode();
       //Update parents of node1 to point to the new node 
-      Nodes.update({'child_node_ids': {$elemMatch: {_id: node1._id}}}, 
-         {$push: {child_node_ids: an._id}});
-      Nodes.update({'child_node_ids': {$elemMatch: {_id: node1._id}}}, 
-         {$pull: {child_node_ids: node1._id}});
+      Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node1._id}}}, 
+         {$push: {child_leaf_ids: an._id}});
+      Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node1._id}}}, 
+         {$pull: {child_leaf_ids: node1._id}});
 
       this.insertToTree(an, node1);
       this.insertToTree(an, node2);

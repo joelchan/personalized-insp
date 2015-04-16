@@ -113,7 +113,7 @@ label, .fa{
 }
 
 .forest #nodestatus, #generalize, #buildcluster{
-  padding: 5px;
+  /* padding: 5px; */
 }
 
 #nomatch{
