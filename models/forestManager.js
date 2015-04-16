@@ -42,7 +42,8 @@ ForestManager = (function() {
       }
 
       data = {'label': "", 
-        'idea_node_ids': ideaIDs};
+        'idea_node_ids': ideaIDs,
+        'child_leafIDs': []};
       var idea_node = GraphManager.createGraphNode(graphID, type, data);
       this.groupIdeas(ideas, idea_node);
       return idea_node;
@@ -51,12 +52,15 @@ ForestManager = (function() {
       /*************************************************************
        * Connect the idea instances to the idea node in the forest
        ************************************************************/ 
-      var type = "same_ideas";
+      // var type = "same_ideas";
       var ideaIDs = [];
       for (var i=0; i<ideas.length; i++) {
-        GraphManager.createEdge(type, idea_node, ideas[i], data);
+        // GraphManager.createEdge(type, idea_node, ideas[i], data);
         ideaIDs.push(ideas[i]['_id']);
       }
+      Nodes.update({_id: idea_node._id}, 
+          {$addToSet: {$each: {idea_node_ids: ideaIDs}}});
+      // Mark idea nodes as clustered
       if (Meteor.isServer) {
         Nodes.update({_id: {$in: ideaIDs}},{$set: {is_clustered: true}});
       } else {
@@ -66,22 +70,22 @@ ForestManager = (function() {
       }
     },
     insertToTree: function(parent, child) {
-      var type = "parent_child";
-      GraphManager.createEdge(type, parent, child); 
+      Nodes.update({_id: parent._id}, 
+          {$addToSet: {child_leaf_ids: child._id}});
     },
     getInstanceIdeas: function(node, sorter) {
       /*************************************************************
        * Get children ideas of a given idea node
        *************************************************************/
-      var childEdges = Edges.find({type: "same_ideas",
-        sourceID: node['_id']});
-      logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
-      var childIDs = getValsFromField(childEdges, 'targetID');
+      // var childEdges = Edges.find({type: "same_ideas",
+        // sourceID: node['_id']});
+      // logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
+      // var childIDs = getValsFromField(childEdges, 'targetID');
       var children;
       if (sorter) {
-        children =  Nodes.find({_id: {$in: childIDs}}, {sort: sorter}).fetch()
+        children =  Nodes.find({_id: {$in: node.idea_node_ids}}, {sort: sorter}).fetch()
       } else {
-        children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+        children =  Nodes.find({_id: {$in: node.idea_node_ids}}).fetch()
       }
       logger.trace("Found children nodes: " + JSON.stringify(children));
       return children;
@@ -90,13 +94,13 @@ ForestManager = (function() {
       /*************************************************************
        * Get children nodes of a given idea node
        *************************************************************/
-      var childEdges = Edges.find({type: "parent_child",
-        sourceID: node['_id']});
-      logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
-      var childIDs = getValsFromField(childEdges, 'targetID');
+      // var childEdges = Edges.find({type: "parent_child",
+        // sourceID: node['_id']});
+      // logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
+      // var childIDs = getValsFromField(childEdges, 'targetID');
       var children;
       if (sorter) {
-        children =  Nodes.find({_id: {$in: childIDs}}, {sort: sorter}).fetch()
+        children =  Nodes.find({_id: {$in: node.child_leaf_ids}}, {sort: sorter}).fetch()
       } else {
         children =  Nodes.find({_id: {$in: childIDs}}).fetch()
       }
@@ -115,17 +119,30 @@ ForestManager = (function() {
         var instances = this.getInstanceIdeas(node);
         // Use the name of the first idea
         if (instances.length > 0) {
-
+          return instances[0]['content']
+        } else {
+          //recurse on the first node
+          var nodes = this.getNodeChildren(node);
+          return getNodeName(nodes[0]):
         }
       }
 
     },
     mergeNodes: function(node1, node2) {
       /*************************************************************
-       * Merge the two idea nodes into one node, substituting edges
-       * with node2._id with node1._id
+       * Merge the two idea nodes into one node, making the commong
+       * result share the set of children leafs and ideas, while
+       * keeping the label of node1
        *************************************************************/
-
+      //Merge the nodes
+       Nodes.update({_id: node1._id}, 
+          {$addToSet: {$each: {'child_node_ids': node2.child_node_ids}},
+           $addToSet: {$each: {'idea_node_ids': node2.idea_node_ids}}})
+       //Update parents of node2 to point to node1
+       Nodes.update({'child_node_ids': {$elemMatch: {_id: node2._id}}}, 
+          {$push: {child_node_ids: node1._id}});
+       Nodes.update({'child_node_ids': {$elemMatch: {_id: node2._id}}}, 
+          {$pull: {child_node_ids: node2._id}});
 
     },
     swapNodes: function(node1, node2) {
@@ -133,14 +150,40 @@ ForestManager = (function() {
        * Swap the two idea nodes, substituting edges
        * with node2._id with node1._id and vice-versa
        *************************************************************/
+       node1Children = node1.child_node_ids
+       node1Ideas = node1.idea_node_ids
+       node1Content = node1.content
+       node2Children = node2.child_node_ids
+       node2Ideas = node2.idea_node_ids
+       node2Content = node2.content
+       //Swap the children and content of the nodes
+       Nodes.update({_id: node1._id}, 
+          {$set: {'child_node_ids': node2Children, 
+              'idea_node_ids': node2Ideas,
+              'content': node2Content
+       }})
+       Nodes.update({_id: node2._id}, 
+          {$set: {'child_node_ids': node1Children, 
+              'idea_node_ids': node1Ideas,
+              'content': node1Content
+       }})
 
     },
-    createArtificialNode: function(nodes) {
+    createArtificialNode: function(node1, node2) {
       /*************************************************************
        * Create a parent node with no instance children with the
        * given nodes as node children
        *************************************************************/
-      
+      var an = this.createIdeaNode();
+      //Update parents of node1 to point to the new node 
+      Nodes.update({'child_node_ids': {$elemMatch: {_id: node1._id}}}, 
+         {$push: {child_node_ids: an._id}});
+      Nodes.update({'child_node_ids': {$elemMatch: {_id: node1._id}}}, 
+         {$pull: {child_node_ids: node1._id}});
+
+      this.insertToTree(an, node1);
+      this.insertToTree(an, node2);
+      return Nodes.findOne({_id: an._id});
     },
 
   };

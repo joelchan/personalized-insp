@@ -16,7 +16,7 @@ NODE_TYPES = {
   'idea': ['ideaID', 'content', 'time', 'vote', 'numVotes'],
   'theme': ['name', 'time', 'isTrash', 'isMerged', 
       'position', 'isCollapsed'],
-  'forest_precluster': ['num_ideas', 'idea_node_ids'],
+  'forest_precluster': ['num_ideas', 'idea_node_ids', 'child_leaf_ids'],
   'forest_idea': ['ideaID', 'content', 'is_clustered'],
   'forest_leaf': ['label', 'idea_node_ids'],
   'root': ['promptID'],
