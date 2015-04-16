@@ -93,7 +93,7 @@ Template.Forest.rendered = function(){
   var root = Nodes.findOne({type: 'root', promptID: prompt['_id']});
   Session.set("currentNode", root);
   Session.set("ideaNode", "0"); //node to be inserted
-  Session.set("bestMatchNode", "-1"); //node most similar to node being inserted
+  Session.set("bestMatchNode", null); //node most similar to node being inserted
   Session.set("currentState", States.NODECREATION);
   Session.set("swapped", false);
 
@@ -319,6 +319,16 @@ Template.ForestNodeStatus.helpers({
     logger.debug("children of current cluster: " + JSON.stringify(this));
     return ForestManager.getNodeChildren(this)
   },
+  isBestMatch: function() {
+    if (Session.get("currentState").val == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+  bestMatchNode: function() {
+    return Session.get("bestMatchNode");
+  },
   //clusterName : function(){
     //var node = Nodes.findOne({_id: this._id});
     //if (node.label) {
@@ -465,6 +475,23 @@ Template.ForestBestMatch.helpers({
 Template.ForestBestMatch.events({
   'click #nextStep': function (event) {
     logger.debug("Clicked to continue to next step");
+    var bestMatch = Session.get("bestMatchNode");
+    // If no node is selected then insert node as child of currNode
+    if (bestMatch == null) {
+      logger.debug("Setting new node as child of current node: " + 
+          JSON.stringify(Session.get("currentNode")));
+
+    } else {
+      //Continue to generalization step
+      Session.set("currentState", States.GENERALIZE);
+      $("#best-match").remove();
+      Blaze.render(
+          Template.ForestGeneralize,
+          $("#forest")[0],
+          $("#tree-viz")[0]
+      );
+
+    }
   },
   'click #bmback': function (event) {
     logger.debug("Clicked to rewind to previous step");
@@ -559,14 +586,15 @@ Template.Forest.events({
 
   //collapse and expand clusters
   'click .fa' : function(){
-    if($(event.target).hasClass('fa-angle-double-up')){
-      $(event.target).switchClass('fa-angle-double-up', 
-      	'fa-angle-double-down');
-    } else {
+    //toggle the arrow from down to right
+    if($(event.target).hasClass('fa-angle-double-down')){
       $(event.target).switchClass('fa-angle-double-down', 
-      	'fa-angle-double-up');
+      	'fa-angle-double-right');
+    } else {
+      $(event.target).switchClass('fa-angle-double-right', 
+      	'fa-angle-double-down');
     }
-    $(event.target).parent().children('li').slideToggle("fast");
+    //$(event.target).parent().children('li').slideToggle("fast");
     return false;
   },
 

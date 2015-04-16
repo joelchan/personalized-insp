@@ -55,7 +55,7 @@
 
 <template name="ForestBestMatch">
 	<!--Children of Best Match Node-->
-	<div id="tree" class="col-md-4">
+	<div id="best-match" class="col-md-4">
 		<h3>{{userPrompt}}</h3>
     <!-- {{#each bestMatchChildren}} -->
     <!-- <ul class="donestack " id={{this}}> -->
@@ -153,12 +153,19 @@
     {{#with ideaNode}}
       {{> ForestIdeaNode }}
     {{/with }}
-    <h4>Select Best Possible matches (or none):</h4>
-    <div class="stack">
-    {{#each clusterChildren }}
-      {{> ForestIdeaNode }}
-    {{/each }}
-    </div>
+    {{#if isBestMatch }}
+      <h4>Select Best Possible matches (or none):</h4>
+      <div class="stack">
+      {{#each clusterChildren }}
+        {{> ForestIdeaNode }}
+      {{/each }}
+      </div>
+    {{else}}
+      <h4>Matching Node from Tree:</h4>
+      {{#with bestMatchNode}}
+        {{> ForestIdeaNode }}
+      {{/with }}
+    {{/if}}
       <!-- <h4>End of block</h4> -->
       <!-- <ul id={{ideaNode}} class="ideanode donestack"> -->
       <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
