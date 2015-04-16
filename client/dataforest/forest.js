@@ -492,7 +492,6 @@ Template.ForestIdeaNode.helpers({
 *********************************************************************/
 Template.Forest.events({
 
-
   //click No Good Matches
   'click a#nomatch' : function(){
   	$('#yes').click(function(){
