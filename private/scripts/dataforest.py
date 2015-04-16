@@ -13,6 +13,7 @@ from db_params import *
 from mongohq import Data_Utility
 import logging
 from ideagens import Node, Edge
+from bson.objectid import ObjectId
 
 
 DATA_PATH = path.abspath("data")
@@ -27,6 +28,45 @@ PROMPTS = {'turk': "<p>Mechanical Turk currently lacks a dedicated mobile app fo
   'charity': "<p>The Electronic Frontier Foundation (EFF) is a nonprofit whose goal is to protect individual rights with respect to digital and online technologies. For example, the EFF has initiated a lawsuit against the US government to limit the degree to which the US surveils its citizens via secret NSA programs. If you are unfamiliar with the EFF and its goals, read about it on its website (<a href=\"https://www.eff.org\" target=\"_new\">https://www.eff.org</a>) or via other online sources (such as Wikipedia).</p>      <p>Brainstorm 20 <em>new</em> ways the EFF can raise funds and simultaneously increase awareness. Your ideas <em>must be different from their current methods</em>, which include donation pages, merchandise, web badges and banners, affiliate programs with Amazon and eBay, and donating things such as airmiles, cars, or stocks. See the full list of their current methods here: <a href=\"https://www.eff.org/helpout\" target=\"_new\">https://www.eff.org/helpout</a>. Be as specific as possible in your responses.</p>",
   'forgot_name': "<p>Imagine you are in a social setting and you have forgotten the name of somebody you know. Brainstorm 75 ways you could learn their name without directly asking them. Be as specific as possible in your descriptions.</p>"
 }
+
+
+class Idea:
+    """
+    Simple container for idea data from csv
+
+    """
+    def __init__(self, data):
+        self.content = data['answer']
+        self.prompt = data['question']
+        self.promptID = data['question_code']
+        self.nodeID = data['idea']
+        self.nodeParentID = data['parent']
+
+    def __str__(self):
+        result = "TreeNode with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
+
+class TreeNode:
+    """
+    Simple container for tree leaf with node metadata and edge data
+    linking ideas
+
+    """
+    def __init__(self, data):
+        self.id = data['idea']
+        self.label = data['idea_label']
+        self.parent = data['parent']
+
+    def __str__(self):
+        result = "TreeNode with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
+
 
 def read_raw_data():
     """
@@ -44,43 +84,56 @@ def read_raw_data():
 
 def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
     """
-    Insert raw ideas and idea nodes into a given db with associated 
+    Insert raw ideas and idea nodes into a given db with associated
     prompt and graph IDs as well as the edge data in the graph
 
     """
+    print "inserting from prompt with id: " + str(promptID)
+    print "inserting from graph with id: " + str(graphID)
     # Parse data into ideagens structs
     instances = []
     leafs = {}
     for i in raw_ideas:
         # Filter for only ideas in relevant prompt
         # Hard-coded for now
-        if i.promptID is 'forgot_name':
+        if i.promptID == 'forgot_name':
             instances.append(Node(promptID, graphID, 'forest_idea',
-                {'parentID': i.nodeID, 'content': i.content, 
-                'is_clustered': True}))
+                                  {'_id': str(ObjectId()),
+                                   'parentID': i.nodeID,
+                                   'content': i.content,
+                                   'is_clustered': True}))
             # Create idea nodes as they are encountered
             if i.nodeID not in leafs:
                 leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
-                        {'_id': i.nodeID, 'label': '', 
+                        {'_id': i.nodeID, 'label': '',
                         'idea_node_ids': []})
-    # print "instances: \n" 
+    # print "instances: \n"
     # for i in instances:
+        # i._id = str(ObjectId())
         # print i
+    # instances[0]._id = 1
+    # print instances[0]
+    # instances[1]._id = 2
+    # print instances[1]
+    # print leafs
     # print "leaves:"
     # for l in leafs:
-        # print l  
+        # print l
     # Insert Idea instances into graph and add _id fields from result
+    print "number of instances to insert: " + str(len(instances))
     instanceIDs = db.insert("nodes", instances)
+    print "# of instances: " + str(len(instances))
+    print "# of instance IDs: " + str(len(instanceIDs))
     instance_dict = {}
     for ID, i in zip(instanceIDs, instances):
-        i._id = ID
+        # i._id = ID
         instance_dict[ID] = i
     # print "instances after insert:"
     # for l in instances:
         # print l
         # print l._id
     leafs_list = leafs.values()
-    # print "leafs list:" 
+    # print "leafs list:"
     # for l in leafs_list:
         # print l
     leafIDs = db.insert("nodes", leafs_list)
@@ -88,57 +141,34 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
     # for l in leafs_list:
         # print l
         # print l._id
-    
+
     # Create edges connecting idea nodes in the forest
     branches = [Edge(promptID, node.parent, node.id,
-                {'type': 'parent_child'})
+                     {'_id': str(ObjectId()),
+                      'type': 'parent_child'})
                 for node in idea_nodes
                 if node.parent in leafs]
-    branches.extend([Edge(promptID, node.parent, node.id,
-                {'type': 'parent_child'})
+    root = db.get_data("nodes", None, {'type': 'root',
+                                        'promptID': promptID})[0]
+    print "# of leafs except root: " + str(len(branches))
+    print "root _id: " + str(root['_id'])
+    branches.extend([Edge(promptID, root['_id'], node.id,
+                          {'_id': str(ObjectId()),
+                           'type': 'parent_child'})
                 for node in idea_nodes
-                if node.parent == -1 and node.id in leafs])
+                if node.parent == "-1" and node.id in leafs])
+    print "# of leafs with root: " + str(len(branches))
 
-    # Create edges connecting idea intances to nodes
+    # Create edges connecting idea instances to nodes
     clusters = [Edge(promptID, idea.parentID, idea._id,
-                {'type': 'same_idea'})
+                     {'_id': str(ObjectId()),
+                      'type': 'same_idea'})
                 for idea in instances]
-    
-    db.insert("edges", branches) 
+    # for b in branches[:2000]:
+        # print b
+    db.insert("edges", branches)
     db.insert("edges", clusters)
-            
-    
 
-class Idea:
-    """
-    Simple container for idea data from csv
-    
-    """
-    def __init__(self, data):
-        self.content = data['answer']
-        self.prompt = data['question']
-        self.promptID = data['question_code']
-        self.nodeID = data['idea']
-
-    def __str__(self):
-        return "NodeID: " + self.nodeID + \
-            "\nprompt: " + self.prompt + "\nidea: " + self.content
-
-class TreeNode:
-    """
-    Simple container for tree leaf with node metadata and edge data 
-    linking ideas
-
-    """
-    def __init__(self, data):
-        self.id = data['idea']
-        self.label = data['idea_label']
-        self.parent = data['parent']
-
-    def __str__(self):
-        return "Node ID: " + self.id + \
-            "\nParentID: " + self.parent + \
-            "\nNode Label: " + self.label
 
 if __name__ == '__main__':
   print "importing Mike Terry's data forest data"
@@ -147,6 +177,6 @@ if __name__ == '__main__':
   promptID = 1
   graphID = 1
   ideas, nodes = read_raw_data()
+  print "# of ideas: " + str(len(ideas))
+  print "# of nodes: " + str(len(nodes))
   insert_to_db(db, promptID, graphID, ideas, nodes)
-
-

@@ -152,7 +152,7 @@ Template.ForestCreateCluster.rendered = function() {
           Template.ForestNodeBuilder, 
           currCluster,
           $("#forest")[0],
-          $("#tree")[0]
+          $("#tree-viz")[0]
       );
       $("#createnode").remove()
     }
@@ -278,7 +278,7 @@ Template.ForestNodeBuilder.events({
               Template.ForestNodeStatus, 
               currNode,
               $("#forest")[0],
-              $("#tree")[0]
+              $("#tree-viz")[0]
           );
   			});
         $("#buildcluster").remove();
@@ -451,6 +451,26 @@ Template.ForestGeneralize.helpers({
   	if(Session.get("currentState").val === 1)
   		return true;
   	return false;
+  },
+});
+
+Template.ForestViz.helpers({
+  rootNode: function() {
+    return Nodes.findOne({type: 'root', 
+        promptID: Session.get("currentPrompt")._id});
+  },
+  childNodes: function() {
+    logger.trace("Forest Viz childNodes: " + JSON.stringify(this));
+    return ForestManager.getNodeChildren(this, {'label': 1});
+  },
+});
+
+Template.ForestTree.helpers({
+  name: function() {
+   return ForestManager.getNodeName(this);
+  },
+  childNodes: function() {
+    return ForestManager.getNodeChildren(this, {'label': 1});
   },
 });
 
@@ -628,6 +648,45 @@ Template.Forest.events({
 
 Template.ForestIdeaNode.events({
   
+  'dblclick .forest-idea-node' : function(event){
+    /* select best match */
+    logger.debug("double clicked on a cluster");
+    logger.trace(this)
+    logger.trace(event.currentTarget)
+  	//don't do anyhting if not in best match state
+  	if(Session.get("currentState").val !== 1) {
+      logger.debug("not looking for best match, so ignoreing");
+  		return false;
+    }
+    var id = '#' + this['_id']
+    var parent = $(id).parent()
+    logger.trace(parent)
+    if ($(parent).hasClass("stack")) {
+      logger.debug("clicked on selectable cluster");
+      $(".selected-node").not(id).toggleClass("selected-node");
+      $(id).toggleClass("selected-node");
+      Session.set("bestMatchNode", this);
+    } else {
+      logger.debug("clicked on non-selectable cluster");
+    }
+  	path.push(this.toString());
+		//if current node has no children, add idea node as child of current node, exit do
+  	if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0) {
+      logger.debug("Adding idea node to child of current")
+  		/* addChild(this.toString()); */
+  		/* exitDo(); */
+  	/* } else { */
+  		/* //move to next state */
+  		/* $('#tree').hide(function(){ */
+        /* Blaze.render( */
+          /* Template.ForestGeneralize, */
+          /* $("#forest")[0] */
+        /* ) */
+  		/* }); */
+  		/* Session.set("currentState", States.GENERALIZE); */
+  	}
+  },
+
   'click .forest-idea-node .fa': function(event) {
     logger.debug("Clicked on collapse/expand of idea list");
     var id = '#list-' + this['_id'];
@@ -640,12 +699,6 @@ Template.ForestIdeaNode.events({
 /********************************************************************
 * Convenience funtions
 *********************************************************************/
-function addToCluster(ideaId, clusterId){
-	var idea = Ideas.findOne({_id: ideaId});
-	Clusters.update({_id: clusterId}, {$push: {ideas: idea}});
-	updateIdeas(ideaId, true);
-}
-
 function addChild(nodeID){
 	Clusters.update({_id: nodeID}, 
   	{$addToSet: 

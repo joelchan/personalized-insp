@@ -40,9 +40,12 @@ class Edge:
                 setattr(self, key, data[key])
 
     def __str__(self):
-        return "Edge with promptID: " + str(self.promptID) + \
-            " sourceID: " + str(self.sourceID) + \
-            " targetID: " + str(self.targetID)
+        result = "Edge with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
+
 
 class Node:
     """
@@ -55,12 +58,15 @@ class Node:
         self.type = data_type
         if data is not None:
             for key in data.keys():
+                # print "Setting attribute: " + str(key) + " with " + str(data[key])
                 setattr(self, key, data[key])
 
     def __str__(self):
-        return "Node with graphID: " + str(self.graphID) + \
-            " promptID: " + str(self.promptID) + \
-            " type: " + str(self.type)
+        result = "Node with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
 
 
 class Db_Manager:

@@ -8,6 +8,10 @@ Logger.setLevel('Model:Managers:ForestManager', 'trace');
 
 
 ForestManager = (function() {
+  /******************************************************************
+   * Manager to assist with data management of data forest graph
+   * where there are 2 types of "nodes", idea nodes & idea instances
+   ****************************************************************/
   return {
     initForest: function(prompt) {
       var group = Groups.findOne({_id: prompt.groupIDs[0]});
@@ -65,7 +69,7 @@ ForestManager = (function() {
       var type = "parent_child";
       GraphManager.createEdge(type, parent, child); 
     },
-    getInstanceIdeas: function(node) {
+    getInstanceIdeas: function(node, sorter) {
       /*************************************************************
        * Get children ideas of a given idea node
        *************************************************************/
@@ -73,11 +77,16 @@ ForestManager = (function() {
         sourceID: node['_id']});
       logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
       var childIDs = getValsFromField(childEdges, 'targetID');
-      var children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+      var children;
+      if (sorter) {
+        children =  Nodes.find({_id: {$in: childIDs}}, {sort: sorter}).fetch()
+      } else {
+        children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+      }
       logger.trace("Found children nodes: " + JSON.stringify(children));
       return children;
     },
-    getNodeChildren: function(node) {
+    getNodeChildren: function(node, sorter) {
       /*************************************************************
        * Get children nodes of a given idea node
        *************************************************************/
@@ -85,9 +94,53 @@ ForestManager = (function() {
         sourceID: node['_id']});
       logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
       var childIDs = getValsFromField(childEdges, 'targetID');
-      var children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+      var children;
+      if (sorter) {
+        children =  Nodes.find({_id: {$in: childIDs}}, {sort: sorter}).fetch()
+      } else {
+        children =  Nodes.find({_id: {$in: childIDs}}).fetch()
+      }
       logger.trace("Found children nodes: " + JSON.stringify(children));
       return children;
+    },
+    getNodeName: function(node) {
+      /*************************************************************
+       * Get the name of the node from the label, and then from
+       * the first child instance in an alphabetical sort search, 
+       * and then from the first child node (recursive)
+       *************************************************************/
+      if (node['label'] != undefined) {
+        return node['label'];
+      } else {
+        var instances = this.getInstanceIdeas(node);
+        // Use the name of the first idea
+        if (instances.length > 0) {
+
+        }
+      }
+
+    },
+    mergeNodes: function(node1, node2) {
+      /*************************************************************
+       * Merge the two idea nodes into one node, substituting edges
+       * with node2._id with node1._id
+       *************************************************************/
+
+
+    },
+    swapNodes: function(node1, node2) {
+      /*************************************************************
+       * Swap the two idea nodes, substituting edges
+       * with node2._id with node1._id and vice-versa
+       *************************************************************/
+
+    },
+    createArtificialNode: function(nodes) {
+      /*************************************************************
+       * Create a parent node with no instance children with the
+       * given nodes as node children
+       *************************************************************/
+      
     },
 
   };
