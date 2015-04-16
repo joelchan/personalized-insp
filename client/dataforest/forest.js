@@ -336,6 +336,47 @@ Template.ForestNodeStatus.helpers({
   },
 });
 
+Template.ForestNodeStatus.events({
+  'dblclick .forest-idea-node' : function(event){
+    /* select best match */
+    logger.debug("double clicked on a cluster");
+    logger.trace(this)
+    logger.trace(event.currentTarget)
+  	//don't do anyhting if not in best match state
+  	if(Session.get("currentState").val !== 1) {
+      logger.debug("not looking for best match, so ignoreing");
+  		return false;
+    }
+    var id = '#' + this['_id']
+    var parent = $(id).parent()
+    logger.trace(parent)
+    if ($(parent).hasClass("stack")) {
+      logger.debug("clicked on selectable cluster");
+      $(".selected-node").not(id).toggleClass("selected-node");
+      $(id).toggleClass("selected-node");
+      Session.set("bestMatchNode", this);
+    } else {
+      logger.debug("clicked on non-selectable cluster");
+    }
+  	path.push(this.toString());
+		/* //if current node has no children, add idea node as child of current node, exit do */
+  	/* if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0){ */
+  		/* addChild(this.toString()); */
+  		/* exitDo(); */
+  	/* } else { */
+  		/* //move to next state */
+  		/* $('#tree').hide(function(){ */
+        /* Blaze.render( */
+          /* Template.ForestGeneralize, */
+          /* $("#forest")[0] */
+        /* ) */
+  		/* }); */
+  		/* Session.set("currentState", States.GENERALIZE); */
+  	/* } */
+  },
+
+
+});
 Template.ForestBestMatch.helpers({
   userPrompt : function(){
     if (Session.get("currentState") == undefined) {
@@ -587,44 +628,6 @@ Template.Forest.events({
 
 Template.ForestIdeaNode.events({
   
-  'dblclick .forest-idea-node' : function(event){
-    /* select best match */
-    logger.debug("double clicked on a cluster");
-    logger.trace(this)
-    logger.trace(event.currentTarget)
-  	//don't do anyhting if not in best match state
-  	if(Session.get("currentState").val !== 1) {
-      logger.debug("not looking for best match, so ignoreing");
-  		return false;
-    }
-    var id = '#' + this['_id']
-    var parent = $(id).parent()
-    logger.trace(parent)
-    if ($(parent).hasClass("stack")) {
-      logger.debug("clicked on selectable cluster");
-      $(".selected-node").not(id).toggleClass("selected-node");
-      $(id).toggleClass("selected-node");
-      Session.set("bestMatchNode", this);
-    } else {
-      logger.debug("clicked on non-selectable cluster");
-    }
-  	path.push(this.toString());
-		/* //if current node has no children, add idea node as child of current node, exit do */
-  	/* if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0){ */
-  		/* addChild(this.toString()); */
-  		/* exitDo(); */
-  	/* } else { */
-  		/* //move to next state */
-  		/* $('#tree').hide(function(){ */
-        /* Blaze.render( */
-          /* Template.ForestGeneralize, */
-          /* $("#forest")[0] */
-        /* ) */
-  		/* }); */
-  		/* Session.set("currentState", States.GENERALIZE); */
-  	/* } */
-  },
-
   'click .forest-idea-node .fa': function(event) {
     logger.debug("Clicked on collapse/expand of idea list");
     var id = '#list-' + this['_id'];
