@@ -9,14 +9,14 @@
       {{> HcompDashIdeabox }}
     </div>
 
-    <div class="notes-view col-sm-5">
+    <div class="notes-view col-sm-6">
       {{> HcompBigPictureViz }}
 
       <!--{{> HcompScratchPad }}-->
 
     </div> <!-- close notes-view col -->
 
-    <div class="tasks-view col-sm-4">
+    <div class="tasks-view col-sm-3">
 
 <!--
       <div class="row fac-actions">
@@ -76,54 +76,60 @@
 
 <template name="HcompBigPictureViz">
   <div class="row" id="big-picture-viz">
-      <div class="col-md-2" width=700>
-        {{> HcompOverallStats}}
-      </div>
-      <div class="col-md-10">
-        <!--{{> HcompIdeaWordCloud}} doesn't work?-->
-        <!--{{> HcompOtherViz }}-->
-        <!--{{> ForceV }}-->
+    <!-- <div class="col-md-2" width=700> -->
+    <div class="row">
+      {{> HcompOverallStats}}
+    </div>
+    <div class="row ">
+      <div class="col-md-10 vizes">
+      <!--{{> HcompIdeaWordCloud}} doesn't work?-->
+      <!--{{> HcompOtherViz }}-->
+      <!--{{> ForceV }}-->
         {{>TabBox }} 
-        <!--{{> HcompTagCloud }} doesn't exist-->
+      <!--{{> HcompTagCloud }} doesn't exist-->
       </div>
+    </div>
   </div>
 </template>
 
 <template name="TabBox">
 
 <!-- 1. Create the tabs themselves  -->
-    <ul class="nav nav-tabs" role="tablist">
-      <li class="active"><a href="#bubble" role="tab" data-toggle="tab">Bubble</a></li>
+    <ul class="nav nav-tabs viz-tabs" role="tablist">
+      <li class="active"><a href="#wordcloud" role="tab" data-toggle="tab">WordCloud</a></li>
+      <!-- <li class="active"><a href="#bubble" role="tab" data-toggle="tab">Bubble</a></li> -->
       <li><a href="#force" role="tab" data-toggle="tab">Force</a></li>
+      <li><a href="#scratchpad" role="tab" data-toggle="tab">Scratchpad</a></li>
       <!--<li><a href="#bake" role="tab" data-toggle="tab">Other Force</a></li>-->
     </ul>
  
     <!-- 2. Create a matching tab pane for each tab. Content goes within these panes -->
     <div class="tab-content">
-      <div class="tab-pane active" id="bubble">
-        {{> HcompOtherViz }}
+      <div class="tab-pane active" id="wordcloud">
+        {{> HcompIdeaWordCloud}}
       </div>
+      <!-- <div class="tab-pane" id="bubble">
+        {{> HcompOtherViz }}
+      </div> -->
       <div class="tab-pane" id="force">
         {{> ForceV }}
       </div>
+
+      <div class="tab-pane" id="scratchpad">
+        {{ > HcompScratchPad }}
+      </div>
      <!-- <div class="tab-pane" id="bake"> 
         {{> Other }}
-      </div>-->
+     </div>-->
     </div>
 
 </template>
 
 <template name="HcompOverallStats">
   <!-- <span class="fa fa-lightbulb-o"></span> -->
-  <!-- <div class="overall-stats"> -->
-    <span class="stat">{{numIdeasAll}}</span>
-    <br>
-     ideas
-    <br>
-    <span class="stat">{{numIdeatorsAll}}</span>
-    <br>
-    ideators
-  <!-- </div> -->
+  <div class="overall-stats">
+    <span class="stat">{{numIdeasAll}}</span> ideas by <span class="stat">{{numIdeatorsAll}}</span> ideators. <span class="stat">{{numIdeatorsActive}}</span> currently active ideators.
+  </div>
 </template>
 
 <template name="HcompIdeaWordCloud">
@@ -266,6 +272,7 @@
           <span title="Edit" class="glyphicon glyphicon-edit card-edit"> </span>    
         </div>
 			</div>
+
 			<div class="task-data row">
         <div class="card-ideas col-xs-3">
           {{#if getIdeas}}
@@ -293,6 +300,7 @@
           <span title="Edit" class="glyphicon glyphicon-edit card-edit"> </span>    
         </div> -->
       </div> <!--close task-data row-->
+      <div class="clearfix"></div>
       <div class="task-ideas row">
         <div id="task-{{getID}}-ideas-group">
           <div id="task-{{getID}}-ideas" class="collapse">

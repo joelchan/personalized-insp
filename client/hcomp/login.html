@@ -1,8 +1,11 @@
 <template name="MturkLoginPage">
   <div class="container">
     <div class="login-box">
-      <!-- <input type="text" id="name" class="text-input" placeholder="Enter your Mturk ID" required> -->
-      <input type="text" id="name" class="text-input" placeholder="Enter your Name" required>
+      {{#if isExp}}
+        <input type="text" id="name" class="text-input" placeholder="Enter your Mturk ID" required>
+      {{else}}
+        <input type="text" id="name" class="text-input" placeholder="Enter your Name" required>
+      {{/if}}
     </div>
     <div class = "login-box hidden">
     <input type="text" id="nickname" class="text-input" placeholder="Enter an optional nickname">

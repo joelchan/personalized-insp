@@ -25,33 +25,41 @@ Template.HcompDashboard.rendered = function(){
   $(".ideas-view").height(height);
   $(".tasks-view").height(height);
   $(".notes-view").height(height);
+  $(".overall-stats").height(height*0.1);
+  $(".vizes").height(height*0.9
+                      -4); // clearfixes
+  var vizesHeight = $('.vizes').height();
   //logger.debug(height.toString());
   //logger.debug((height*0.7).toString());
-  $("#big-picture-viz").height(height*0.65);
-  $("#big-picture-viz").width(700);
-  $("#ideawordcloud").height(height*0.55);
-  $("#scratchpad").height(height*0.25);
-  var scratchpadHeight = $("#scratchpad").height();
+  // $("#big-picture-viz").height(height*0.65);
+  // $("#big-picture-viz").width(700);
+  $("#ideawordcloud").height(vizesHeight
+                              -$('.viz-tabs').height());
+  var wordCloudHeight = $("#ideawordcloud").height();
+  $(".scratchpad-form").height(wordCloudHeight);
+  // var scratchpadHeight = $("#scratchpad").height();
   // console.log("Scratchpad height:" + scratchpadHeight);
   // $(".scratchpad-form").height(height*0.38);
-  $(".scratchpad-form").height(scratchpadHeight*0.8);
+  // $(".scratchpad-form").height(scratchpadHeight*0.8);
 
   // var filterboxContainerHeight = $('.Hcomp-filterbox-container').height();
   var promptHeaderHeight = $('.ideas-view h1').height();
   var filterboxHeaderHeight = $('#filterbox-header').height();
-  var ideaboxHeaderHeight = $('.idea-box-header').height();
+  // var ideaboxHeaderHeight = $('.idea-box-header').height();
   $('.ideadeck-container').height(height
                                   -promptHeaderHeight
                                   -filterboxHeaderHeight
-                                  -ideaboxHeaderHeight
-                                  -40); // promptheader margin-top/bottom (30) + ideas number header margin-top (10)
+                                  // -ideaboxHeaderHeight
+                                  -30); // promptheader margin-top/bottom (30)
 
-  var facActionsHeight = $('.fac-actions').height();
-  var inspirationsHeaderHeight = $('.tasks-view h1').height();
+  // var facActionsHeight = $('.fac-actions').height();
+  var createTaskHeight = $('#create-task-container').height();
+  var inspirationsHeaderHeight = $('.task-list-header').height();
   $('#task-card-list').height(height
-                              -facActionsHeight
+                              // -facActionsHeight
+                              -createTaskHeight
                               -inspirationsHeaderHeight
-                              -80); // padding-top/bottom for fac-actions (30) + margin-top/bottom for inspirations header (30) + padding-top/bottom for task-card list
+                              -2); // clearfixes
 
   Session.set("idealistFilters", filters);
   Session.set("selectedParts", []);
@@ -99,6 +107,9 @@ Template.HcompDashboard.rendered = function(){
               Tasks.update({ _id: task._id },
                             {$set: {num: newNum}});
             });  
+            logger.debug("Updating idea word cloud filter");
+            FilterManager.create("IdeaWordCloud Filter", 
+              Session.get("currentUser"), "ideas", "userID", partNewState.userID);
           }
         }
       },
@@ -197,12 +208,35 @@ Template.HcompOverallStats.helpers({
       return userIDs.length;
     }
   },
+
+  numIdeatorsActive : function(){
+    var userIDs;
+    var exp = Session.get("currentExp");
+    if (exp) {
+      var numIdeators = 0;
+      var participants = Conditions.findOne({expID: exp._id, description: "Treatment"}).assignedParts;
+      participants.forEach(function(pID) {
+        var part = Participants.findOne({_id: pID});
+        if (part.hasStarted && !part.hasFinished && !part.exitedEarly) {
+          numIdeators += 1;
+        }
+      });
+      return numIdeators;
+    } else {
+      var groupID = Session.get("currentPrompt").groupIDs[0];
+      var group = Groups.findOne({_id: groupID});
+      userIDs = getValsFromField(group.assignments['HcompIdeator'], '_id');
+      return userIDs.length;
+    }
+  },
+
 });
 
 Template.HcompIdeaWordCloud.helpers({
     ideas : function() {
         // console.log("calling ideas for HcompIdeaWordCloud");
-        cursor = getFilteredIdeas("Ideas Filter"); //getCloudFromIdeas();
+        // cursor = getFilteredIdeas("Ideas Filter"); //getCloudFromIdeas();
+        cursor = getCloudFromIdeas();
         return cursor;
     },
     getFontSize : function() {
@@ -592,7 +626,8 @@ function getCloudFromIdeas() {
             // console.log(stopWords.words)
 			if(containsWord == false 
         && stopWords.words.indexOf(word) == -1
-        && promptStopWords.indexOf(word) == -1) {
+        && promptStopWords.indexOf(word) == -1
+        && word != "") {
 				// console.log(stopWords);
         cloudItem.word = word;
 				cloudItem.count += 1;
@@ -1798,8 +1833,33 @@ Template.Other.rendered = function() {
     "quality":"0"
   }
 ]
+    // global intensity of attraction
+  var charge = -200;
+  // link distance factor used to determine line length;
+  var distanceFactor = 140;
+  var maxDistance = 250;
 
-    CreateForceDiagram2(GetForceData(rawIdeas));
+  //size of the svg
+  var width = 200;
+  var height = 200;
+
+  //makes the svg element
+  var svg = d3.select("#svgdiv3")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    //.attr("pointer-events", "all")
+    .append('svg:g')
+    .append('svg:g')
+    .call(d3.behavior.zoom().on("zoom", redraw))
+    .append('svg:g');
+
+    function redraw() {
+      console.log("here", d3.event.translate, d3.event.scale);
+      svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")"); } 
+
+
+    CreateForceDiagram(GetForceData(rawIdeas), svg, width, height);
 }
 
 Template.ForceV.rendered = function() {
@@ -1823,6 +1883,7 @@ Template.ForceV.rendered = function() {
     .append('svg:g')
     .call(d3.behavior.zoom().on("zoom", redraw))
     .append('svg:g');
+
   
  
   function redraw() {
@@ -2618,7 +2679,7 @@ function CreateForceDiagram(forceData, svg, w, h)
 
   //size of the svg
   var width = w-200;
-  var height = 800;
+  var height = h;
 
   //in order to use the force layout for d3, the dataset has to be an object with two elements, nodes and edges, with each element being an array of objects.
     
@@ -2688,6 +2749,8 @@ function CreateForceDiagram(forceData, svg, w, h)
   //creates the dataset object that contains the arrays of nodes and edges
   var dataset = { nodes: nodes, edges: edges}; 
 
+
+
   //this sets up the force layout - it needs where the nodes and links are and the size of the space, as well as optional parameters like how long you want the distance between them to be and how much you want the nodes to repel each other
   var force = d3.layout.force()
     .nodes(dataset.nodes)
@@ -2700,6 +2763,8 @@ function CreateForceDiagram(forceData, svg, w, h)
     })
     .charge(charge)
     .start();
+
+
 
   //making the svg lines that connect the nodes
   var edges = svg.selectAll(".link")
@@ -2719,7 +2784,7 @@ function CreateForceDiagram(forceData, svg, w, h)
 
    
   var colors = d3.scale.linear()
-          .domain([0,10])
+          .domain([0,2])
           .range(["#edf8b1","#7fcdbb","#2c7fb8"]);
 
   //making the svg text that are the nodes
@@ -2728,14 +2793,32 @@ function CreateForceDiagram(forceData, svg, w, h)
     .data(dataset.nodes)
     .enter()
     .append("g")
+
+  console.log(dataset.nodes)
+  var weights = dataset.nodes.map(function(node) {return node.weight})
+  var maxw = Math.max.apply(undefined, weights)
+  console.log("max weight:")
+  console.log(maxw)
   
+  var sizes = dataset.nodes.map(function(node) {return node.size})
+  var maxs = Math.max.apply(undefined, sizes)
+
+
   var ws = d3.scale.linear()
-            .domain([0, 7])
+            .domain([0, maxw])
             .range([10, 1])
+
+  var sizescale = d3.scale.linear()
+                    .domain([0, maxs])
+                    .range([1,10])
 
   var wsc = d3.scale.linear()
             .domain([0, 5, 10])
             .range(["orange", "white", "steelblue"])
+
+  var colorscale = d3.scale.linear()
+            .domain([0,1])
+            .range(["orange", "white"])
 
   var wst = d3.scale.linear()
             .domain([0, 7])
@@ -2745,7 +2828,7 @@ function CreateForceDiagram(forceData, svg, w, h)
                 .attr("class", "node")
                 .attr("r", function(d) 
                 { 
-                  return ws(d.weight); //d.size/3; 
+                  return sizescale(d.size);  
                 })
                 .style("opacity", function(d, i) 
                 {
@@ -2755,10 +2838,11 @@ function CreateForceDiagram(forceData, svg, w, h)
                   //var cat = incomingIdeaData.ind.categories[0]
                   //return ordColor(cat);
                   if (d.text=="Nothing") {return 0;}
-                  else {return colors(d.size);}
+                  else {return wst(d.weight);}
                 })
                 .style("stroke-width", function(d,i) { return ws(d.weight);})
-                .style("fill", function(d,i) {return wsc(d.weight);})
+                //colors to size 
+                .style("fill", function(d,i) {return "orange";}) 
                 .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
   var tex = nods.append("text")

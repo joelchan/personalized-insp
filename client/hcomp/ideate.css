@@ -220,6 +220,10 @@
     margin-top: 0;
     padding: 10px;
 }
+.modal-content {
+    position: relative;
+    top: 100px;
+}
 
 #exp-begin-modal {
   top: 10%;

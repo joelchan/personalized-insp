@@ -171,6 +171,23 @@ ExperimentManager = (function () {
       }
     },
 
+    getChosenCondition: function(exp, condName) {
+      /****************************************************************
+        * Get a chosen condition from the experiment 
+        * (matching given condName param)
+        * should return cond id
+        ****************************************************************/      
+      logger.debug("Assigning to chosen condition: " + condName);
+      var condID = "";
+      exp.conditions.forEach(function(cond) {
+        if (cond.description == condName) {
+          condID = cond._id;
+          logger.trace("Matching condition id: " + condID);
+        }
+      });
+      return condID;
+    },
+
     getRandomCondition: function(exp) {
         /****************************************************************
         * Get a random condition from the experiment
@@ -334,7 +351,8 @@ ExperimentManager = (function () {
         //Create new participant if no duplicates found
         
         // assign to a condition
-        var condID = this.getRandomCondition(exp);
+        // var condID = this.getRandomCondition(exp);
+        var condID = this.getChosenCondition(exp, "Treatment");
         var part = new Participant(exp._id, user._id, condID, exp.groupID)
         part._id = Participants.insert(part);
 

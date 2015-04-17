@@ -101,6 +101,19 @@ Template.HcompLoginPage.rendered = function() {
   window.scrollTo(0,0);
 }
 
+Template.MturkLoginPage.helpers({
+
+  isExp : function () {
+    var exp = Session.get("currentExp");
+    if (exp) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+});
+
 /********************************************************************
  * Login Page event listeners 
  * *****************************************************************/
