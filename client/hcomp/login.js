@@ -24,6 +24,7 @@ Template.MturkLoginPage.events({
         } else {
           var userName = $('input#name').val().trim();
           logger.info("Logging in user with name: " + userName);
+          EventLogger.logUserLogin();
           var user = LoginManager.loginUser(userName);
           UserFactory.setMturkCode(user);
           if ($("input#nickname").val() !== "") {
@@ -54,7 +55,6 @@ Template.MturkLoginPage.events({
                   });  
           } else {
              Session.set("currentPrompt", prompt);
-             EventLogger.logUserLogin();
              var exp = Session.get("currentExp");
              logger.trace("current experiment is: " + JSON.stringify(exp));
              var part = Participants.findOne({userID: user._id, experimentID: exp._id});
