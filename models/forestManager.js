@@ -51,7 +51,7 @@ ForestManager = (function() {
         'idea_node_ids': [],
         'child_leaf_ids': []};
       var idea_node = GraphManager.createGraphNode(graphID, type, data);
-        if (ideas) {
+      if (ideas) {
         if (!hasForEach(ideas)) {
           ideas = [ideas];
         }
@@ -175,14 +175,12 @@ ForestManager = (function() {
           $addToSet: {'idea_node_ids': {$each: node2.idea_node_ids}}})
       //Update parents of node2 to point to node1
       if (Meteor.isServer) {
-        Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node2._id}}}, 
+        Nodes.update({'child_leaf_ids': node2._id}, 
             {$push: {child_leaf_ids: node1._id}});
-        Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node2._id}}}, 
+        Nodes.update({'child_leaf_ids': node2._id}, 
             {$pull: {child_leaf_ids: node2._id}});
       } else {
-        var parents = Nodes.find(
-            {'child_leaf_ids': {$elemMatch: {_id: node2._id}}}
-        ).fetch();
+        var parents = Nodes.find({'child_leaf_ids': node2._id}).fetch();
         var pIDs = getValsFromField(parents, '_id');
         for (var i=0; i<pIDs.length; i++) {
           Nodes.update({_id: pIDs[i]}, 
@@ -218,24 +216,43 @@ ForestManager = (function() {
        }})
 
     },
-    createArtificialNode: function(node1, node2) {
+    createArtificialNode: function(node1, node2, label) {
       /*************************************************************
        * Create a parent node with no instance children with the
        * given nodes as node children
        *************************************************************/
-      var an = this.createIdeaNode();
-      //Update parents of node1 to point to the new node 
-      Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node1._id}}}, 
-         {$push: {child_leaf_ids: an._id}});
-      Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node1._id}}}, 
-         {$pull: {child_leaf_ids: node1._id}});
+      logger.debug("Creating an artificial Idea Node");
+      var graphID = node1.graphID;
+      var promptID = node1.promptID;
+      var type = "forest_leaf";
+      if (typeof label === undefined) {
+        label = "";
+      }
 
-      this.insertToTree(an, node1);
-      this.insertToTree(an, node2);
+      data = {'label': label,
+        'idea_node_ids': [],
+        'child_leaf_ids': [node1._id, node1._id]};
+      var an = GraphManager.createGraphNode(graphID, type, data);
+      //Update parents of node1 to point to the new node 
+      if (Meteor.isServer) {
+        Nodes.update({'child_leaf_ids': node1._id}, 
+          {$push: {child_leaf_ids: an._id}});
+        Nodes.update({'child_leaf_ids': node1._id}, 
+          {$pull: {child_leaf_ids: node1._id}});
+      } else {
+        var parents = Nodes.find({'child_leaf_ids': node1._id}).fetch();
+        var pIDs = getValsFromField(parents, '_id');
+        for (var i=0; i<pIDs.length; i++) {
+          Nodes.update({_id: pIDs[i]}, 
+            {$push: {child_leaf_ids: an._id}});
+          Nodes.update({_id: pIDs[i]}, 
+            {$pull: {child_leaf_ids: node1._id}});
+        }
+
+      }
+
       return Nodes.findOne({_id: an._id});
     },
 
   };
 }());
-
-

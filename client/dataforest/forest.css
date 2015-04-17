@@ -72,8 +72,8 @@
 .forest ul {
 	list-style: none;
 	list-style-type: none;
-  padding: 0;
-  margin: 0;
+  /* padding: 0; */
+  /* margin: 0; */
 }
 
 .forest li.ui-sortable-helper{

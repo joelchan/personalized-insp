@@ -581,9 +581,6 @@ Template.ForestGeneralize.events({
   'click #neither' : function(){
     logger.debug("Clicked to create articial parent for idea and tree nodes");
     $("#nameModal").modal('show')
-    $("#make-node").click(function(event) {
-      logger.debug("clicked save-name to make node artificial node"); 
-    });
   },
 
   //idea node more general than best match
@@ -694,11 +691,12 @@ Template.ForestNodeName.events({
     );
     var label = $("#artificial-name").val();
     logger.debug("Creating Artificial Node with label: " + label); 
-    var an = ForestManager.createIdeaNode(null, label);
+    var an = ForestManager.createArtificialNode(bestMatchNode, ideaNode, label);
     ForestManager.insertToTree(Session.get("currentNode"), an);
-    ForestManager.insertToTree(an, ideaNode);
-    ForestManager.insertToTree(an, bestMatchNode);
+    //ForestManager.insertToTree(an, ideaNode);
+    //ForestManager.insertToTree(an, bestMatchNode);
     //Reset to beginning
+    $("#nameModal").modal('hide');
     $("#generalize").remove();
     $("#nodestatus").remove();
     $("#ideas").slideToggle()
