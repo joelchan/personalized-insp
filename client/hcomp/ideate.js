@@ -212,9 +212,9 @@ Template.MturkIdeaEntryBox.events({
       logger.debug("Adding a new idea to a task");
       logger.trace(this);
       TaskManager.addIdeaToTask(idea, this);
-      EventLogger.logIdeaSubmission(idea, this, true); 
+      EventLogger.logIdeaSubmission(idea, this); 
     } else {
-      EventLogger.logIdeaSubmission(idea, null, true); 
+      EventLogger.logIdeaSubmission(idea, null); 
     }
   },
   //waits 3 seconds after user stops typing to change isTyping flag to false
