@@ -311,9 +311,9 @@ Template.ForestNodeStatus.helpers({
     return ForestManager.getInstanceIdeas(Session.get('ideaNode'))
   },
   ideaNodeName : function(){
-  	var currNode = Session.get('ideaNode');
-  	var currCluster = Nodes.findOne({_id: currNode._id});
-    return currCluster.label
+  	//var currNode = Session.get('ideaNode');
+  	//var currCluster = Nodes.findOne({_id: currNode._id});
+    return ForestManager.getNodeName(Session.get("ideaNode"));
   },
   clusterChildren : function(){
     logger.debug("children of current cluster: " + JSON.stringify(this));

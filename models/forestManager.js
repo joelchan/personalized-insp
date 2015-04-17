@@ -180,14 +180,13 @@ ForestManager = (function() {
         Nodes.update({'child_leaf_ids': node2._id}, 
             {$pull: {child_leaf_ids: node2._id}});
       } else {
-        var parents = Nodes.find({'child_leaf_ids': node2._id}).fetch();
-        var pIDs = getValsFromField(parents, '_id');
-        for (var i=0; i<pIDs.length; i++) {
-          Nodes.update({_id: pIDs[i]}, 
+        var parents = Nodes.find({'child_leaf_ids': node2._id});
+        parents.forEach(function (parent) {
+          Nodes.update({_id: parent._id}, 
               {$push: {child_leaf_ids: node1._id}});
-          Nodes.update({_id: pIDs[i]}, 
+          Nodes.update({_id: parent._id}, 
               {$pull: {child_leaf_ids: node2._id}});
-        }
+        });
         
       }
 
@@ -231,23 +230,30 @@ ForestManager = (function() {
 
       data = {'label': label,
         'idea_node_ids': [],
-        'child_leaf_ids': [node1._id, node1._id]};
+        'child_leaf_ids': [node1._id, node2._id]};
       var an = GraphManager.createGraphNode(graphID, type, data);
+      logger.trace("Artificial node created: " + JSON.stringify(an));
       //Update parents of node1 to point to the new node 
       if (Meteor.isServer) {
+        logger.debug("Updating tree for artificial node on server");
         Nodes.update({'child_leaf_ids': node1._id}, 
           {$push: {child_leaf_ids: an._id}});
         Nodes.update({'child_leaf_ids': node1._id}, 
           {$pull: {child_leaf_ids: node1._id}});
       } else {
-        var parents = Nodes.find({'child_leaf_ids': node1._id}).fetch();
-        var pIDs = getValsFromField(parents, '_id');
-        for (var i=0; i<pIDs.length; i++) {
-          Nodes.update({_id: pIDs[i]}, 
+        logger.debug("Updating tree for artificial node on client");
+        var parents = Nodes.find({$and: [
+            {'child_leaf_ids': node1._id},
+            {'_id': {$ne: an._id}}
+        ]});
+        parents.forEach(function(parent) {
+          logger.trace("Updating parent of node1: " + JSON.stringify(parent));
+
+          Nodes.update({_id: parent._id}, 
             {$push: {child_leaf_ids: an._id}});
-          Nodes.update({_id: pIDs[i]}, 
+          Nodes.update({_id: parent._id}, 
             {$pull: {child_leaf_ids: node1._id}});
-        }
+        });
 
       }
 
