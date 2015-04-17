@@ -101,7 +101,7 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
                                   {'_id': str(ObjectId()),
                                    'parentID': i.nodeID,
                                    'content': i.content,
-                                   'is_clustered': True}))
+                                   'is_clustered': True})
             instances.append(instance)
             # Create idea nodes as they are encountered
             if i.nodeID not in leafs:
