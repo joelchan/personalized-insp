@@ -582,33 +582,9 @@ Template.ForestGeneralize.events({
   'click #neither' : function(){
     logger.debug("Clicked to create articial parent for idea and tree nodes");
     $("#nameModal").modal('show')
-  	//get name from user
-      //var newName = $("#artificial-name").val();
-      //console.log(newName);
-      //if(newName === "" || newName === undefined){
-        //$('#nameWarning').empty();
-        //$('#nameWarning').append("<h4 class='text-danger'>Please provide a name.</h4>");
-        //return false;
-      //}
-//
-    	////clone best match
-  	  //var bestMatch = Clusters.findOne({_id: Session.get("bestMatchNode")});
-      //var clone = {
-        //name: bestMatch.name,
-  		  //children: bestMatch.children,
-  		  //ideas: bestMatch.ideas
-      //} //copy fields except id so a new id is generated on insert
-      //var cloneId = Clusters.insert(clone);
-//
-      //Clusters.remove(Session.get("bestMatchNode"))
-      ////update best match in collection such that is has name provided
-      //Clusters.insert({
-  		  //_id: Session.get("bestMatchNode"),
-  		  //name: newName,
-  		  //children: [Session.get("ideaNode"), cloneId]
-    	//});
-//
-      //exitDo();
+    $("#make-node").click(function(event) {
+      logger.debug("clicked save-name to make node artificial node"); 
+    });
   },
 
   //idea node more general than best match
@@ -677,6 +653,65 @@ Template.ForestIdeaNode.helpers({
   childNode: function() {
     return ForestManager.getInstanceIdeas(this);
   },
+});
+
+Template.ForestNodeName.events({
+  'click #make-node': function(event) {
+    logger.debug("clicked save-name to make node artificial node"); 
+    //$("#nameModal").modal('hide');
+  	//get name from user
+      //var newName = $("#artificial-name").val();
+      //console.log(newName);
+      //if(newName === "" || newName === undefined){
+        //$('#nameWarning').empty();
+        //$('#nameWarning').append("<h4 class='text-danger'>Please provide a name.</h4>");
+        //return false;
+      //}
+//
+    	////clone best match
+  	  //var bestMatch = Clusters.findOne({_id: Session.get("bestMatchNode")});
+      //var clone = {
+        //name: bestMatch.name,
+  		  //children: bestMatch.children,
+  		  //ideas: bestMatch.ideas
+      //} //copy fields except id so a new id is generated on insert
+      //var cloneId = Clusters.insert(clone);
+//
+      //Clusters.remove(Session.get("bestMatchNode"))
+      ////update best match in collection such that is has name provided
+      //Clusters.insert({
+  		  //_id: Session.get("bestMatchNode"),
+  		  //name: newName,
+  		  //children: [Session.get("ideaNode"), cloneId]
+    	//});
+//
+      //exitDo();
+
+  	var ideaNode = Nodes.findOne(
+        {_id: Session.get("ideaNode")._id}
+    );
+  	var bestMatchNode = Nodes.findOne(
+        {_id: Session.get("bestMatchNode")._id}
+    );
+    var label = $("#artificial-name").val();
+    logger.debug("Creating Artificial Node with label: " + label); 
+    var an = ForestManager.createIdeaNode(null, label);
+    ForestManager.insertToTree(Session.get("currentNode"), an);
+    ForestManager.insertToTree(an, ideaNode);
+    ForestManager.insertToTree(an, bestMatchNode);
+    //Reset to beginning
+    $("#generalize").remove();
+    $("#nodestatus").remove();
+    $("#ideas").slideToggle()
+    Blaze.render(
+      Template.ForestCreateCluster,
+      $("#ideas")[0],
+      $("#unclustered-ideas")[0]
+    );
+    resetState();
+
+  },
+
 });
 
 /********************************************************************

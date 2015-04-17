@@ -30,7 +30,7 @@ ForestManager = (function() {
           {'child_leaf_ids': []}
       );
     },
-    createIdeaNode: function(ideas) {
+    createIdeaNode: function(ideas, label) {
       /**************************************************************
        * Create a idea node which acts as a representation of 
        * semantically equivalent ideas
@@ -43,16 +43,21 @@ ForestManager = (function() {
       //for (var i=0; i<ideas.length; i++) {
         //ideaIDs.push(ideas[i]['_id']);
       //}
+      if (typeof label === undefined) {
+        label = "";
+      }
 
-      data = {'label': "", 
+      data = {'label': label,
         'idea_node_ids': [],
         'child_leaf_ids': []};
       var idea_node = GraphManager.createGraphNode(graphID, type, data);
-      if (!hasForEach(ideas)) {
-        ideas = [ideas];
+        if (ideas) {
+        if (!hasForEach(ideas)) {
+          ideas = [ideas];
+        }
+        //Connect idea instance to idea node
+        this.groupIdeas(ideas, idea_node);
       }
-      //Connect idea instance to idea node
-      this.groupIdeas(ideas, idea_node);
 
       return Nodes.findOne({_id: idea_node._id});
     },
@@ -143,7 +148,7 @@ ForestManager = (function() {
        * the first child instance in an alphabetical sort search, 
        * and then from the first child node (recursive)
        *************************************************************/
-      if (node['label'] != undefined) {
+      if (node['label'] != undefined && node['label'] != "") {
         return node['label'];
       } else {
         var instances = this.getInstanceIdeas(node);
@@ -165,14 +170,28 @@ ForestManager = (function() {
        * keeping the label of node1
        *************************************************************/
       //Merge the nodes
-       Nodes.update({_id: node1._id}, 
-          {$addToSet: {'child_leaf_ids': {$each: node2.child_leaf_ids}},
-           $addToSet: {'idea_node_ids': {$each: node2.idea_node_ids}}})
-       //Update parents of node2 to point to node1
-       Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node2._id}}}, 
-          {$push: {child_leaf_ids: node1._id}});
-       Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node2._id}}}, 
-          {$pull: {child_leaf_ids: node2._id}});
+      Nodes.update({_id: node1._id}, 
+        {$addToSet: {'child_leaf_ids': {$each: node2.child_leaf_ids}},
+          $addToSet: {'idea_node_ids': {$each: node2.idea_node_ids}}})
+      //Update parents of node2 to point to node1
+      if (Meteor.isServer) {
+        Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node2._id}}}, 
+            {$push: {child_leaf_ids: node1._id}});
+        Nodes.update({'child_leaf_ids': {$elemMatch: {_id: node2._id}}}, 
+            {$pull: {child_leaf_ids: node2._id}});
+      } else {
+        var parents = Nodes.find(
+            {'child_leaf_ids': {$elemMatch: {_id: node2._id}}}
+        ).fetch();
+        var pIDs = getValsFromField(parents, '_id');
+        for (var i=0; i<pIDs.length; i++) {
+          Nodes.update({_id: pIDs[i]}, 
+              {$push: {child_leaf_ids: node1._id}});
+          Nodes.update({_id: pIDs[i]}, 
+              {$pull: {child_leaf_ids: node2._id}});
+        }
+        
+      }
 
     },
     swapNodes: function(node1, node2) {
