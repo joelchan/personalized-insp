@@ -1,4 +1,3 @@
-// Configure logger for Tools
 var logger = new Logger('Client:DataForest:Forest');
 // Comment out to use global logging level
 Logger.setLevel('Client:DataForest:Forest', 'trace');
@@ -582,33 +581,9 @@ Template.ForestGeneralize.events({
   'click #neither' : function(){
     logger.debug("Clicked to create articial parent for idea and tree nodes");
     $("#nameModal").modal('show')
-  	//get name from user
-      //var newName = $("#artificial-name").val();
-      //console.log(newName);
-      //if(newName === "" || newName === undefined){
-        //$('#nameWarning').empty();
-        //$('#nameWarning').append("<h4 class='text-danger'>Please provide a name.</h4>");
-        //return false;
-      //}
-//
-    	////clone best match
-  	  //var bestMatch = Clusters.findOne({_id: Session.get("bestMatchNode")});
-      //var clone = {
-        //name: bestMatch.name,
-  		  //children: bestMatch.children,
-  		  //ideas: bestMatch.ideas
-      //} //copy fields except id so a new id is generated on insert
-      //var cloneId = Clusters.insert(clone);
-//
-      //Clusters.remove(Session.get("bestMatchNode"))
-      ////update best match in collection such that is has name provided
-      //Clusters.insert({
-  		  //_id: Session.get("bestMatchNode"),
-  		  //name: newName,
-  		  //children: [Session.get("ideaNode"), cloneId]
-    	//});
-//
-      //exitDo();
+    $("#make-node").click(function(event) {
+      logger.debug("clicked save-name to make node artificial node"); 
+    });
   },
 
   //idea node more general than best match
@@ -679,18 +654,69 @@ Template.ForestIdeaNode.helpers({
   },
 });
 
+Template.ForestNodeName.events({
+  'click #make-node': function(event) {
+    logger.debug("clicked save-name to make node artificial node"); 
+    //$("#nameModal").modal('hide');
+  	//get name from user
+      //var newName = $("#artificial-name").val();
+      //console.log(newName);
+      //if(newName === "" || newName === undefined){
+        //$('#nameWarning').empty();
+        //$('#nameWarning').append("<h4 class='text-danger'>Please provide a name.</h4>");
+        //return false;
+      //}
+//
+    	////clone best match
+  	  //var bestMatch = Clusters.findOne({_id: Session.get("bestMatchNode")});
+      //var clone = {
+        //name: bestMatch.name,
+  		  //children: bestMatch.children,
+  		  //ideas: bestMatch.ideas
+      //} //copy fields except id so a new id is generated on insert
+      //var cloneId = Clusters.insert(clone);
+//
+      //Clusters.remove(Session.get("bestMatchNode"))
+      ////update best match in collection such that is has name provided
+      //Clusters.insert({
+  		  //_id: Session.get("bestMatchNode"),
+  		  //name: newName,
+  		  //children: [Session.get("ideaNode"), cloneId]
+    	//});
+//
+      //exitDo();
+
+  	var ideaNode = Nodes.findOne(
+        {_id: Session.get("ideaNode")._id}
+    );
+  	var bestMatchNode = Nodes.findOne(
+        {_id: Session.get("bestMatchNode")._id}
+    );
+    var label = $("#artificial-name").val();
+    logger.debug("Creating Artificial Node with label: " + label); 
+    var an = ForestManager.createIdeaNode(null, label);
+    ForestManager.insertToTree(Session.get("currentNode"), an);
+    ForestManager.insertToTree(an, ideaNode);
+    ForestManager.insertToTree(an, bestMatchNode);
+    //Reset to beginning
+    $("#generalize").remove();
+    $("#nodestatus").remove();
+    $("#ideas").slideToggle()
+    Blaze.render(
+      Template.ForestCreateCluster,
+      $("#ideas")[0],
+      $("#unclustered-ideas")[0]
+    );
+    resetState();
+
+  },
+
+});
+
 /********************************************************************
 * Template Events
 *********************************************************************/
 Template.Forest.events({
-
-  //click No Good Matches
-  'click a#nomatch' : function(){
-  	$('#yes').click(function(){
-  		addChild(Session.get("currentNode"));
-  		exitDo();
-  	});
-  },
 
   //collapse and expand clusters
   'click .fa' : function(){
@@ -704,30 +730,6 @@ Template.Forest.events({
     }
     //$(event.target).parent().children('li').slideToggle("fast");
     return false;
-  },
-
-  //select best match
-  'dblclick .donestack' : function(){
-  	//don't do anyhting if not in best match state
-  	if(Session.get("currentState").val !== 1) 
-  		return false;
-
-  	Session.set("bestMatchNode", this.toString());
-  	path.push(this.toString());
-		//if current node has no children, add idea node as child of current node, exit do
-  	if(Clusters.findOne({_id : Session.get("currentNode")}).children.length === 0){
-  		addChild(this.toString());
-  		exitDo();
-  	} else {
-  		//move to next state
-  		$('#tree').hide(function(){
-        Blaze.render(
-          Template.ForestGeneralize,
-          $("#forest")[0]
-        )
-  		});
-  		Session.set("currentState", States.GENERALIZE);
-  	}
   },
 
   //go back while in generalization stage of traversal
@@ -816,114 +818,6 @@ Template.ForestIdeaNode.events({
 /********************************************************************
 * Convenience funtions
 *********************************************************************/
-function addChild(nodeID){
-	Clusters.update({_id: nodeID}, 
-  	{$addToSet: 
-  		{children: Session.get("ideaNode")
-  	}
-  });
-}
-
-//modified from cluster.js
-function createCluster(item) {
-  var ideaId = item.attr('id');
-  var ideas = [Ideas.findOne({_id: ideaId})];
-  var cluster = new Cluster(ideas);
-  var id = Clusters.insert(cluster);
-  updateIdeas(ideaId, true);
-  return id;
-}
-
-//imported from cluster.js
-function updateIdeas(ideaId, inCluster){
-  Ideas.update({_id: ideaId}, 
-    {$set:
-      {inCluster: inCluster}
-  });
-}
-
-function swapNodes(){
-	//copy data and remove nodes
-  var bestMatchNode = Clusters.findOne({_id: Session.get("bestMatchNode")});
-  var bestName = bestMatchNode.name;
-  var bestIdeas = bestMatchNode.ideas;
-  var bestChildren = bestMatchNode.children;
-  Clusters.remove(Session.get("bestMatchNode"));
-
-  var ideaNode = Clusters.findOne({_id: Session.get("ideaNode")});
-  var ideaNodeName = ideaNode.name;
-  var ideaNodeIdeas = ideaNode.ideas;
-  var ideaChildren = ideaNode.children;
-  Clusters.remove(Session.get("ideaNode"));
-
-  //insert ideaNode content at bestMatch id
-  Clusters.insert({
-  	_id: Session.get("bestMatchNode"),
-  	name: ideaNodeName,
-  	ideas: ideaNodeIdeas,
-  	children: ideaChildren
-  });
-
-  	//insert bestMatch content at ideaNode id
-  Clusters.insert({
-  	_id: Session.get("ideaNode"),
-  	name: bestName,
-  	ideas: bestIdeas,
-  	children: bestChildren
-  });
-}
-
-//Resets Session variables and reverts UI to beginning state
-function exitDo(){
-	//if in any state other than node creation, hide nodestatus, show idealist + clusterbuilder
-	if(Session.get("currentState").val !== 0){
-		$('#nodestatus').hide(function(){
-  		$('#ideas').slideToggle();
-  	});
-	}
-
-	//if current state is Generalization, hide generalize and show tree
-	if(Session.get("currentState").val === 2){
-		$('#generalize').hide(function(){
-  			$('#tree').slideToggle();
-  		});
-	}
-
-  $('#nameWarning').empty();
-	//$('#buildcluster').slideToggle();
-	$('#createnode').slideToggle();
-	//Session.set("currentNode", "-1");
-	Session.set("ideaNode", "0");
-	Session.set("bestMatchNode", "-1");
-	Session.set("currentState", States.NODECREATION);
-	Session.set("swapped",false);
-	path = [-1];
-}
-
-//modified from clusters.js
-function processIdeaSender(ui, ideaId){
-  var senderId = $(ui.sender).attr('id');
-  var sender = Clusters.findOne({_id: senderId});//remove that idea from sending cluster
-    
-  //find all ideas in clusters idea list with matching id (should be one)>need error check here
-  myIdea = $.grep(sender.ideas, function(idea){
-    return idea._id === ideaId;
-  })[0];
-
-  Clusters.update({_id: senderId},
-    {$pull:
-      {ideas: {_id: ideaId}}
-  });
-
-  //if sending cluster now has no ideas, get rid of it
-  var ideasLength = Clusters.findOne({_id: senderId}).ideas.length;
-  if(ideasLength === 0){
-    Clusters.remove(senderId);
-    $('#createnode').slideToggle();
-    //$('#buildcluster').slideToggle();
-  }
-}
-
 function resetState() {
   //Reset to beginning
   Session.set("currentState", States.NODECREATION);
