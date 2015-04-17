@@ -97,18 +97,22 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
         # Filter for only ideas in relevant prompt
         # Hard-coded for now
         if i.promptID == 'forgot_name':
-            instances.append(Node(promptID, graphID, 'forest_idea',
+            instance = Node(promptID, graphID, 'forest_idea',
                                   {'_id': str(ObjectId()),
                                    'parentID': i.nodeID,
                                    'content': i.content,
                                    'is_clustered': True}))
+            instances.append(instance)
             # Create idea nodes as they are encountered
             if i.nodeID not in leafs:
                 leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
                         {'_id': i.nodeID, 'label': '',
-                        'idea_node_ids': []})
+                         'idea_node_ids': [instance['_id'],],
+                         'child_leaf_ids': []})
+            else:
+                leafs[i.nodeID]['idea_node_ids'].append(instance['_id'])
 
-                        # Insert Idea instances into graph and add _id fields from result
+    # Insert Idea instances into graph and add _id fields from result
     print "number of instances to insert: " + str(len(instances))
     instanceIDs = db.insert("nodes", instances)
     print "# of instances: " + str(len(instances))
