@@ -249,16 +249,16 @@ Template.ForestNodeBuilder.helpers({
 
 Template.ForestNodeBuilder.events({
   //update cluster name as user types
-	'keyup #namecluster' : function(event, template){
-    logger.trace("Updating label of idea node");
-    logger.trace(event);
-    logger.trace($(event.target).parent().attr("id"));
-    var name = $(event.target).val();
-    logger.trace("Updating node to label: " + name);
-    var node = $(event.target).parent().data("node");
-    logger.trace(node);
-    Nodes.update({_id: node['_id']}, {$set: {label: name}});
-  },
+	// 'keyup #namecluster' : function(event, template){
+    // logger.trace("Updating label of idea node");
+    // logger.trace(event);
+    // logger.trace($(event.target).parent().attr("id"));
+    // var name = $(event.target).val();
+    // logger.trace("Updating node to label: " + name);
+    // var node = $(event.target).parent().data("node");
+    // logger.trace(node);
+    // Nodes.update({_id: node['_id']}, {$set: {label: name}});
+  // },
   //click Finish
   'click button#finish' : function(){
     var label = $("#namecluster").val();
@@ -509,6 +509,18 @@ Template.ForestBestMatch.events({
   },
   'click #bmback': function (event) {
     logger.debug("Clicked to rewind to previous step");
+    // Reset state back to node creation
+    Session.set("currentState", States.NODECREATION);
+    // Setting UI back to node builder state
+    $("#best-match").remove();
+    $("#nodestatus").remove();
+    $("#ideas").show();
+    Blaze.renderWithData(
+        Template.ForestNodeBuilder, 
+        Session.get("ideaNode"),
+        $("#forest")[0],
+        $("#tree-viz")[0]
+    );
   },
 });
 Template.ForestGeneralize.helpers({
@@ -618,6 +630,18 @@ Template.ForestGeneralize.events({
     Session.set("bestMatchNode", null);
     // Transition UI back to similarity comparison
     $('#generalize').remove()
+    Blaze.render(
+        Template.ForestBestMatch,
+        $("#forest")[0],
+        $("#tree-viz")[0]
+    );
+  },
+
+  //go back while in generalization stage of traversal
+  'click button#genback' : function(){
+  	Session.set("currentState", States.BESTMATCH);
+  	Session.set("bestMatchNode", null);
+    $('#generalize').remove();
     Blaze.render(
         Template.ForestBestMatch,
         $("#forest")[0],
@@ -752,15 +776,6 @@ Template.Forest.events({
     return false;
   },
 
-  //go back while in generalization stage of traversal
-  'click button#genback' : function(){
-  	Session.set("currentState", States.BESTMATCH);
-  	path.pop();
-  	console.log(path);
-  	Session.set("bestMatchNode", path[path.length-1].toString());
-    $('#generalize').remove();
-  	$('#tree').slideToggle();
-  },
 
   //go back while in best match stage of traversal
   'click button#bmback' : function(){
