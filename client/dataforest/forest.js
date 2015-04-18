@@ -307,17 +307,17 @@ Template.ForestNodeStatus.helpers({
   	return Nodes.findOne({_id: Session.get('ideaNode')._id});
   },
   //return list of ideas contained by idea node
-  ideaNodeIdeas : function(){
-    return ForestManager.getInstanceIdeas(Session.get('ideaNode'))
-  },
-  ideaNodeName : function(){
-  	//var currNode = Session.get('ideaNode');
-  	//var currCluster = Nodes.findOne({_id: currNode._id});
-    return ForestManager.getNodeName(Session.get("ideaNode"));
-  },
+  // ideaNodeIdeas : function(){
+    // return ForestManager.getInstanceIdeas(Session.get('ideaNode'))
+  // },
+  // ideaNodeName : function(){
+  	// //var currNode = Session.get('ideaNode');
+  	// //var currCluster = Nodes.findOne({_id: currNode._id});
+    // return ForestManager.getNodeName(Session.get("ideaNode"));
+  // },
   clusterChildren : function(){
     logger.debug("children of current cluster: " + JSON.stringify(this));
-    return ForestManager.getNodeChildren(this)
+    return ForestManager.getNodeChildren(Session.get("currentNode"))
   },
   isBestMatch: function() {
     if (Session.get("currentState").val == 1) {
@@ -586,7 +586,7 @@ Template.ForestGeneralize.events({
   //idea node more general than best match
   'click #idea-node-parent' : function(){
     logger.debug("Clicked to set tree node as parent to idea node");
-    var ideaNode = Session.get("nodeIdea")
+    var ideaNode = Session.get("ideaNode")
     var bestMatch =  Session.get("bestMatchNode")
     ForestManager.swapNodes(ideaNode, bestMatch);
 
@@ -608,7 +608,7 @@ Template.ForestGeneralize.events({
   //best match more general than idea node
   'click #best-node-parent' : function(){
     logger.debug("Clicked to set idea node as parent to tree node");
-    var ideaNode = Session.get("nodeIdea")
+    var ideaNode = Session.get("ideaNode")
     var bestMatch =  Session.get("bestMatchNode")
 
     // Swap State variables back to similarity comparison state and

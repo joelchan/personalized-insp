@@ -142,12 +142,13 @@ ForestManager = (function() {
       logger.trace("Found children nodes: " + JSON.stringify(children));
       return children;
     },
-    getNodeName: function(node) {
+    getNodeName: function(n) {
       /*************************************************************
        * Get the name of the node from the label, and then from
        * the first child instance in an alphabetical sort search, 
        * and then from the first child node (recursive)
        *************************************************************/
+      var node = Nodes.findOne({_id: n._id});
       if (node['label'] != undefined && node['label'] != "") {
         return node['label'];
       } else {
@@ -191,36 +192,57 @@ ForestManager = (function() {
       }
 
     },
-    swapNodes: function(node1, node2) {
+    swapNodes: function(n1, n2) {
       /*************************************************************
        * Swap the two idea nodes, substituting edges
        * with node2._id with node1._id and vice-versa
        *************************************************************/
-       node1Children = node1.child_leaf_ids
-       node1Ideas = node1.idea_node_ids
-       node1Content = node1.content
-       node2Children = node2.child_leaf_ids
-       node2Ideas = node2.idea_node_ids
-       node2Content = node2.content
-       //Swap the children and content of the nodes
-       Nodes.update({_id: node1._id}, 
-          {$set: {'child_leaf_ids': node2Children, 
-              'idea_node_ids': node2Ideas,
-              'content': node2Content
-       }})
-       Nodes.update({_id: node2._id}, 
-          {$set: {'child_leaf_ids': node1Children, 
-              'idea_node_ids': node1Ideas,
-              'content': node1Content
-       }})
+      var node1 = Nodes.findOne({_id: n1._id});
+      var node2 = Nodes.findOne({_id: n2._id});
+      node1Children = node1.child_leaf_ids
+      node1Ideas = node1.idea_node_ids
+      node1Content = node1.content
+      node2Children = node2.child_leaf_ids
+      node2Ideas = node2.idea_node_ids
+      node2Content = node2.content
+      //Swap the children  of the nodes
+      Nodes.update({_id: node1._id}, 
+         {$set: {'child_leaf_ids': node2Children, 
+             'idea_node_ids': node2Ideas
+      }})
+      Nodes.update({_id: node2._id}, 
+         {$set: {'child_leaf_ids': node1Children, 
+             'idea_node_ids': node1Ideas
+      }})
+      //Swap parent refs of each node
+      var n1Parents = Nodes.find({child_leaf_ids: node1._id});
+      var n2Parents = Nodes.find({child_leaf_ids: node2._id});
+      n1Parents.forEach(function(p) {
+        Nodes.update({_id: p._id}, 
+            {$push: {child_leaf_ids: node2._id}}
+        );
+        Nodes.update({_id: p._id}, 
+            {$pull: {child_leaf_ids: node1._id}}
+        );
+      });
+      n2Parents.forEach(function(p) {
+        Nodes.update({_id: p._id}, 
+            {$push: {child_leaf_ids: node1._id}}
+        );
+        Nodes.update({_id: p._id}, 
+            {$pull: {child_leaf_ids: node2._id}}
+        );
+      });
 
     },
-    createArtificialNode: function(node1, node2, label) {
+    createArtificialNode: function(n1, n2, label) {
       /*************************************************************
        * Create a parent node with no instance children with the
        * given nodes as node children
        *************************************************************/
       logger.debug("Creating an artificial Idea Node");
+      var node1 = Nodes.findOne({_id: n1._id});
+      var node2 = Nodes.findOne({_id: n2._id});
       var graphID = node1.graphID;
       var promptID = node1.promptID;
       var type = "forest_leaf";
