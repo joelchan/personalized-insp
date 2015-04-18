@@ -436,40 +436,40 @@ Template.ForestBestMatch.helpers({
   	  return Session.get("currentState").prompt;
     }
   },
-  myName : function(){
-  	var cluster = Clusters.findOne({_id: this.toString()});
-  	if(cluster === undefined) 
-  		return false;
-  	return cluster.name;
-  },
-  clusterIdeas : function(){
-  	var cluster = Clusters.findOne({_id: this.toString()});
-  	if(cluster === undefined) 
-  		return false;
-  	return cluster.ideas;
-  },
-  clusterChildren : function(){
-  	var cluster = Clusters.findOne(this.toString());
-    if(cluster === undefined)
-    	return false;
-    else return cluster.children;
-  },
+  // myName : function(){
+  	// var cluster = Clusters.findOne({_id: this.toString()});
+  	// if(cluster === undefined) 
+  		// return false;
+  	// return cluster.name;
+  // },
+  // clusterIdeas : function(){
+  	// var cluster = Clusters.findOne({_id: this.toString()});
+  	// if(cluster === undefined) 
+  		// return false;
+  	// return cluster.ideas;
+  // },
+  // clusterChildren : function(){
+  	// var cluster = Clusters.findOne(this.toString());
+    // if(cluster === undefined)
+    	// return false;
+    // else return cluster.children;
+  // },
   isBestMatch : function(){
   	if(Session.get("currentState").val === 1)
   		return true;
   	return false;
   },
-  bestMatchChildren : function(){
-  	var currNodeID = Session.get('bestMatchNode');
-  	//console.log(currNodeID);
-  	var currCluster = Clusters.findOne({_id: currNodeID});
-  	//console.log(currCluster);
-  	if(currCluster === undefined){ 
-  		//console.log("best match children undefined");
-  		return false;
-  	}
-		return currCluster.children;
-  },
+  // bestMatchChildren : function(){
+  	// var currNodeID = Session.get('bestMatchNode');
+  	// //console.log(currNodeID);
+  	// var currCluster = Clusters.findOne({_id: currNodeID});
+  	// //console.log(currCluster);
+  	// if(currCluster === undefined){ 
+  		// //console.log("best match children undefined");
+  		// return false;
+  	// }
+		// return currCluster.children;
+  // },
 });
 
 Template.ForestBestMatch.events({
@@ -519,29 +519,29 @@ Template.ForestGeneralize.helpers({
   	  return Session.get("currentState").prompt;
     }
   },
-  myName : function(){
-  	var cluster = Clusters.findOne({_id: this.toString()});
-  	if(cluster === undefined) 
-  		return false;
-  	return cluster.name;
-  },
-  clusterIdeas : function(){
-  	var cluster = Clusters.findOne({_id: this.toString()});
-  	if(cluster === undefined) 
-  		return false;
-  	return cluster.ideas;
-  },
-  clusterChildren : function(){
-  	var cluster = Clusters.findOne(this.toString());
-    if(cluster === undefined)
-    	return false;
-    else return cluster.children;
-  },
-  isBestMatch : function(){
-  	if(Session.get("currentState").val === 1)
-  		return true;
-  	return false;
-  },
+  // myName : function(){
+  	// var cluster = Clusters.findOne({_id: this.toString()});
+  	// if(cluster === undefined) 
+  		// return false;
+  	// return cluster.name;
+  // },
+  // clusterIdeas : function(){
+  	// var cluster = Clusters.findOne({_id: this.toString()});
+  	// if(cluster === undefined) 
+  		// return false;
+  	// return cluster.ideas;
+  // },
+  // clusterChildren : function(){
+  	// var cluster = Clusters.findOne(this.toString());
+    // if(cluster === undefined)
+    	// return false;
+    // else return cluster.children;
+  // },
+  // isBestMatch : function(){
+  	// if(Session.get("currentState").val === 1)
+  		// return true;
+  	// return false;
+  // },
 });
 Template.ForestGeneralize.events({
   //click to merge
@@ -586,21 +586,43 @@ Template.ForestGeneralize.events({
   //idea node more general than best match
   'click #idea-node-parent' : function(){
     logger.debug("Clicked to set tree node as parent to idea node");
-  	swapNodes();
-  	Session.set("currentNode", Session.get("bestMatchNode"));
+    var ideaNode = Session.get("nodeIdea")
+    var bestMatch =  Session.get("bestMatchNode")
+    ForestManager.swapNodes(ideaNode, bestMatch);
+
+    // Swap State variables back to similarity comparison state and
+    // traverse down tree with idea node as current node
   	Session.set("currentState", States.BESTMATCH);
+  	Session.set("currentNode", ideaNode);
+    Session.set("ideaNode", bestMatch);
+    Session.set("bestMatchNode", null);
+    // Transition UI back to similarity comparison
     $('#generalize').remove()
-  	$('#tree').slideToggle();
-  	Session.set("swapped", true);
+    Blaze.render(
+        Template.ForestBestMatch,
+        $("#forest")[0],
+        $("#tree-viz")[0]
+    );
   },
 
   //best match more general than idea node
   'click #best-node-parent' : function(){
     logger.debug("Clicked to set idea node as parent to tree node");
-  	Session.set("currentNode", Session.get("bestMatchNode"));
+    var ideaNode = Session.get("nodeIdea")
+    var bestMatch =  Session.get("bestMatchNode")
+
+    // Swap State variables back to similarity comparison state and
+    // traverse down tree with best match node as current node
   	Session.set("currentState", States.BESTMATCH);
-    $('#generalize').remove();
-  	$('#tree').slideToggle();
+  	Session.set("currentNode", bestMatch);
+    Session.set("bestMatchNode", null);
+    // Transition UI back to similarity comparison
+    $('#generalize').remove()
+    Blaze.render(
+        Template.ForestBestMatch,
+        $("#forest")[0],
+        $("#tree-viz")[0]
+    );
   },
 
 })

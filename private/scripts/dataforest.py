@@ -91,7 +91,7 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
     print "inserting from prompt with id: " + str(promptID)
     print "inserting from graph with id: " + str(graphID)
     # Parse data into ideagens structs
-    instances = []
+    instances = {}
     leafs = {}
     for i in raw_ideas:
         # Filter for only ideas in relevant prompt
@@ -102,62 +102,91 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
                                    'parentID': i.nodeID,
                                    'content': i.content,
                                    'is_clustered': True})
-            instances.append(instance)
+            instances[instance._id] = instance
             # Create idea nodes as they are encountered
             if i.nodeID not in leafs:
                 leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
                         {'_id': i.nodeID, 'label': '',
-                         'idea_node_ids': [instance['_id'],],
+                         'idea_node_ids': [instance._id,],
                          'child_leaf_ids': []})
             else:
-                leafs[i.nodeID]['idea_node_ids'].append(instance['_id'])
+                leafs[i.nodeID].idea_node_ids.append(instance._id)
+
+
 
     # Insert Idea instances into graph and add _id fields from result
-    print "number of instances to insert: " + str(len(instances))
-    instanceIDs = db.insert("nodes", instances)
-    print "# of instances: " + str(len(instances))
-    print "# of instance IDs: " + str(len(instanceIDs))
-    instance_dict = {}
-    for ID, i in zip(instanceIDs, instances):
-        # i._id = ID
-        instance_dict[ID] = i
-    leafs_list = leafs.values()
-    leafIDs = db.insert("nodes", leafs_list)
+    # print "number of instances to insert: " + str(len(instances))
+    # print "# of instances: " + str(len(instances))
+    # print "# of instance IDs: " + str(len(instanceIDs))
+    # instance_dict = {}
+    # for ID, i in zip(instanceIDs, instances):
+        # # i._id = ID
+        # instance_dict[ID] = i
 
     # Create edges connecting idea nodes in the forest
-    branches = [Edge(promptID, node.parent, node.id,
-                     {'_id': str(ObjectId()),
-                      'type': 'parent_child'})
-                for node in idea_nodes
-                if node.parent in leafs]
+    # branches = [Edge(promptID, node.parent, node.id,
+                     # {'_id': str(ObjectId()),
+                      # 'type': 'parent_child'})
+                # for node in idea_nodes
+                # if node.parent in leafs]
+
+    # Add child leaf refs to root node for all nodes with root parent
+    # root_child_ids = [node.id for node in idea_nodes \
+                      # if node.parent == "-1" and node.id in leafs
+    root_child_ids = []
+
+    for node in idea_nodes:
+        if node.id in leafs:
+            if node.parent == "-1":
+                root_child_ids.append(node.id)
+            else:
+                if node.parent in leafs:
+                    leafs[node.parent].child_leaf_ids.append(node.id)
+                else:
+                    # Create artificial node
+                    leafs[node.parent] = Node(promptID, graphID, 'forest_leaf',
+                        {'_id': node.parent, 'label': node.label,
+                         'idea_node_ids': [],
+                         'child_leaf_ids': [node.id, ]})
+                    
+        
     root = db.get_data("nodes", None, {'type': 'root',
                                         'promptID': promptID})[0]
-    print "# of leafs except root: " + str(len(branches))
-    print "root _id: " + str(root['_id'])
-    branches.extend([Edge(promptID, root['_id'], node.id,
-                          {'_id': str(ObjectId()),
-                           'type': 'parent_child'})
-                for node in idea_nodes
-                if node.parent == "-1" and node.id in leafs])
-    print "# of leafs with root: " + str(len(branches))
+    db.update("nodes",{'_id': root['_id']}, 
+              {'$push': { 'child_leaf_ids': {'$each': root_child_ids}}})
 
-    # Create edges connecting idea instances to nodes
-    clusters = [Edge(promptID, idea.parentID, idea._id,
-                     {'_id': str(ObjectId()),
-                      'type': 'same_idea'})
-                for idea in instances]
+    # print "# of leafs except root: " + str(len(branches))
+    # print "root _id: " + str(root['_id'])
+    # branches.extend([Edge(promptID, root['_id'], node.id,
+                          # {'_id': str(ObjectId()),
+                           # 'type': 'parent_child'})
+                # for node in idea_nodes
+                # if node.parent == "-1" and node.id in leafs])
+    # print "# of leafs with root: " + str(len(branches))
+# 
+    # # Create edges connecting idea instances to nodes
+    # clusters = [Edge(promptID, idea.parentID, idea._id,
+                     # {'_id': str(ObjectId()),
+                      # 'type': 'same_idea'})
+                # for idea in instances]
 
-    db.insert("edges", branches)
-    db.insert("edges", clusters)
+    # Insert all nodes into the db
+    instanceIDs = db.insert("nodes", instances.values())
+    leafIDs = db.insert("nodes", leafs.values())
 
 
 if __name__ == '__main__':
   print "importing Mike Terry's data forest data"
-  db = Data_Utility('data/mikeTerry', ALL_DBs['ideagensscd'])
+  db = Data_Utility('data/preforest', ALL_DBs['ideagensscd'])
   db.clear_db()
-  promptID = 1
-  graphID = 1
-  ideas, nodes = read_raw_data()
-  print "# of ideas: " + str(len(ideas))
-  print "# of nodes: " + str(len(nodes))
-  insert_to_db(db, promptID, graphID, ideas, nodes)
+  db.restore_db()
+  prompts = db.get_data('prompts', None,
+                        {'forestGraphID': {'$exists': 'True'}})
+  for prompt in prompts:
+      print "Preprocessing prompt with question: " + prompt['question']
+      graphID = prompt['forestGraphID']
+      promptID = prompt['_id']
+      ideas, nodes = read_raw_data()
+      print "# of ideas: " + str(len(ideas))
+      print "# of nodes: " + str(len(nodes))
+      insert_to_db(db, promptID, graphID, ideas, nodes)
