@@ -40,6 +40,7 @@ class Idea:
         self.prompt = data['question']
         self.promptID = data['question_code']
         self.nodeID = data['idea']
+        self.nodeLabel = data['idea_label']
         self.nodeParentID = data['parent']
 
     def __str__(self):
@@ -106,7 +107,7 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
             # Create idea nodes as they are encountered
             if i.nodeID not in leafs:
                 leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
-                        {'_id': i.nodeID, 'label': '',
+                        {'_id': i.nodeID, 'label': i.nodeLabel,
                          'idea_node_ids': [instance._id,],
                          'child_leaf_ids': []})
             else:
@@ -148,11 +149,11 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
                         {'_id': node.parent, 'label': node.label,
                          'idea_node_ids': [],
                          'child_leaf_ids': [node.id, ]})
-                    
-        
+
+
     root = db.get_data("nodes", None, {'type': 'root',
                                         'promptID': promptID})[0]
-    db.update("nodes",{'_id': root['_id']}, 
+    db.update("nodes",{'_id': root['_id']},
               {'$push': { 'child_leaf_ids': {'$each': root_child_ids}}})
 
     # print "# of leafs except root: " + str(len(branches))
@@ -163,7 +164,6 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
                 # for node in idea_nodes
                 # if node.parent == "-1" and node.id in leafs])
     # print "# of leafs with root: " + str(len(branches))
-# 
     # # Create edges connecting idea instances to nodes
     # clusters = [Edge(promptID, idea.parentID, idea._id,
                      # {'_id': str(ObjectId()),
