@@ -27,6 +27,16 @@
       </ul>
     {{/with}}
   </div>
+  <div class="forest-footer">
+    {{#if isLoading }}
+      <i class="fa fa-spin fa-refresh center-icon"></i>
+    {{/if}}
+    {{#if hasMoreTrees }}
+      <div id="get-more-trees" class="btn get-more-btn btn-primary btn-large">
+        Show More Trees
+      </div>
+    {{/if}}
+  </div>
 </div>
 </template>
 
@@ -131,6 +141,16 @@
         {{> PreforestIdeaCluster }}
 		  {{/each}}
 	  </ul>
+    <div class="idealist-footer">
+      {{#if isLoading }}
+        <i class="fa fa-spin fa-refresh center-icon"></i>
+      {{/if}}
+      {{#if hasMoreIdeas }}
+        <div id="get-more-ideas" class="btn get-more-btn btn-primary btn-large">
+          Show More Ideas
+        </div>
+      {{/if}}
+    </div>
   </div>
 </template>
 
@@ -264,7 +284,7 @@
 </template>
 
 <template name="ForestIdea">
-  <li class="forest-idea-item">{{content}}</li>
+  <li id="{{_id}}" class="forest-idea-item">{{content}}</li>
 </template>
 
 <template name="ForestIdeaNode">

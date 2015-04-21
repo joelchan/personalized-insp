@@ -79,6 +79,9 @@ Template.Forest.rendered = function(){
   Session.set("currentState", States.NODECREATION);
   Session.set("swapped", false);
 
+  Session.set("moreTrees", 5);
+  Session.set("moreIdeas", 20);
+
 }
 
 
@@ -122,8 +125,20 @@ Template.ForestIdeaNode.onRendered(function() {
   $("#" + id).data("node", this.data);
 });
 
+Template.ForestIdeaList.onCreated(function() {
+  //Initialize the  limit on the number of ideas rendered in the list
+  Session.set("numIdeas", 20);
+  Session.set("hasMoreIdeas", false);
+  Session.set("isLoadingIdeas", false);
+});
+
 Template.ForestIdea.onRendered(function() {
-  $(this).draggable({
+  logger.debug("Rendered idea");
+  logger.trace(this);
+  // Set the ID according to the _id of the node
+  var id = "#" + this.data['_id']
+  // this.$(".forest-idea-item").attr("id", this.data['_id']);
+  $(id).draggable({
     revert: true,
     helper: 'clone',
     appendTo: ".forest",
@@ -135,9 +150,6 @@ Template.ForestIdea.onRendered(function() {
       logger.trace(width);
     },
   });
-  // Set the ID according to the _id of the node
-  var id = "#" + this.data['_id']
-  this.$(".forest-idea-item").attr("id", this.data['_id']);
   //logger.trace(this.$(".forest-idea-item"))
   $(id).data("node", this.data);
 
@@ -163,6 +175,17 @@ Template.ForestNodeBuilder.onRendered(function() {
       "node", Session.get("ideaNode"));
 });
 
+Template.ForestViz.onCreated(function() {
+  // Initialize the number of nodes to display in the tree
+  Session.set("numTrees", 15);
+  Session.set("hasMoreTrees", false);
+  Session.set("isLoadingTrees", false);
+});
+
+Template.ForestTree.onCreated(function() {
+  //Set Loading to false
+  Session.set("isLoadingTrees", false);
+});
 /********************************************************************
 * Template Helpers
 *********************************************************************/
@@ -174,22 +197,34 @@ Template.Forest.helpers({
 
 Template.ForestIdeaList.helpers({
 	ideaClusters : function(){
-    var nodes =  Nodes.find({
+    var numIdeas = Session.get("numIdeas");
+    var numClusters = numIdeas/4;
+    var hasMoreIdeas = false;
+    var n =  Nodes.find({
         promptID: Session.get("currentPrompt")._id, 
-        type: 'forest_precluster'
-    }).fetch()
+        type: 'forest_precluster'},
+        {limit: numClusters}
+    );
+    if (n.count() == numClusters) {
+      hasMoreIdeas = true;
+    }
+    var nodes = n.fetch();
     var clusteredIDs = []
     for (var i=0; i<nodes.length; i++) {
       clusteredIDs = clusteredIDs.concat(nodes[i]['idea_node_ids']);
     }
-    var otherNodes = Nodes.find({
+    n = Nodes.find({
         promptID: Session.get("currentPrompt")._id, 
         type: 'forest_idea',
         _id: {$nin: clusteredIDs}},
-        {fields: {_id: 1}}
-    ).fetch()
-    nodes = nodes.concat({idea_node_ids: _.pluck(otherNodes, '_id')
-    });
+        {fields: {_id: 1}, limit: numIdeas}
+    )
+    if (n.count() == numIdeas) {
+      hasMoreIdeas = true;
+    }
+    var otherNodes = n.fetch()
+    nodes = nodes.concat({idea_node_ids: _.pluck(otherNodes, '_id')});
+    Session.set("hasMoreIdeas", hasMoreIdeas);
     return nodes
   },
 	isClustered : function(){
@@ -198,6 +233,12 @@ Template.ForestIdeaList.helpers({
    	} else {
      	return true;
     }
+  },
+  isLoading: function() {
+    return Session.get("isLoadingIdeas");
+  },
+  hasMoreIdeas: function() {
+    return Session.get("hasMoreIdeas");
   },
 });
 
@@ -283,9 +324,26 @@ Template.ForestViz.helpers({
   },
   childNodes: function() {
     var children = ForestManager.getNodeChildren(this, {'label': 1});
-    logger.trace("Forest Viz children of root: " + 
-        JSON.stringify(children));
-    return children
+    var numTrees = Session.get("numTrees");
+    if (children.length > numTrees) {
+      Session.set("hasMoreTrees", true);
+      logger.trace("Forest Viz children of root: " + 
+          JSON.stringify(children.slice(0, numTrees)));
+      // Session.set("isLoadingTrees", false);
+      return children.slice(0,numTrees);
+    } else {
+      Session.set("hasMoreTrees", false);
+      logger.trace("Forest Viz children of root: " + 
+          JSON.stringify(children));
+      // Session.set("isLoadingTrees", false);
+      return children;
+    }
+  },
+  hasMoreTrees: function() {
+    return Session.get("hasMoreTrees");
+  },
+  isLoading: function() {
+    return Session.get("isLoadingTrees");
   },
 });
 
@@ -329,6 +387,15 @@ Template.Forest.events({
     }
     //$(event.target).parent().children('li').slideToggle("fast");
     return false;
+  },
+});
+
+Template.ForestIdeaList.events({
+  "click #get-more-ideas": function(event) {
+    logger.debug("Requested more ideas to display");
+    var numIdeas = Session.get("numIdeas") + Session.get("moreIdeas");
+    Session.set("numIdeas", numIdeas);
+    Session.set("isLoadingIdeas", true);
   },
 });
 
@@ -579,9 +646,16 @@ Template.ForestNodeStatus.events({
       logger.debug("clicked on non-selectable cluster");
     }
   },
-
 });
 
+Template.ForestViz.events({
+  "click #get-more-trees": function(event) {
+    logger.debug("Requested more trees to display");
+    var numTrees = Session.get("numTrees") + Session.get("moreTrees");
+    Session.set("numTrees", numTrees);
+    Session.set("isLoadingTrees", true);
+  },
+});
 
 /********************************************************************
 * Convenience funtions

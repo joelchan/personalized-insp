@@ -121,3 +121,7 @@ h3 {
   display: inline-block
 }
 
+.get-more-btn {
+  width: 80%;
+  margin: 10px 10%;
+}
