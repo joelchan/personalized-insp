@@ -125,6 +125,15 @@ Template.ForestIdeaNode.onRendered(function() {
   $("#" + id).data("node", this.data);
 });
 
+Template.ForestIdeaList.onRendered(function() {
+  //Determine height of components above the idealist
+  var usedHeight = $("#lpheader").height();
+  usedHeight += $("#clusterprompt").height();
+  var height = $(window).height() - usedHeight;
+  //Set the Idea list to stretch only to the bottom of the window
+  $("#unclustered-ideas").height(height);
+});
+
 Template.ForestIdea.onRendered(function() {
   logger.debug("Rendered idea");
   logger.trace(this);
