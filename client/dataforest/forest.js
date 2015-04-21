@@ -125,13 +125,6 @@ Template.ForestIdeaNode.onRendered(function() {
   $("#" + id).data("node", this.data);
 });
 
-Template.ForestIdeaList.onCreated(function() {
-  //Initialize the  limit on the number of ideas rendered in the list
-  Session.set("numIdeas", 20);
-  Session.set("hasMoreIdeas", false);
-  Session.set("isLoadingIdeas", false);
-});
-
 Template.ForestIdea.onRendered(function() {
   logger.debug("Rendered idea");
   logger.trace(this);
@@ -197,34 +190,21 @@ Template.Forest.helpers({
 
 Template.ForestIdeaList.helpers({
 	ideaClusters : function(){
-    var numIdeas = Session.get("numIdeas");
-    var numClusters = numIdeas/4;
-    var hasMoreIdeas = false;
-    var n =  Nodes.find({
+    var nodes =  Nodes.find({
         promptID: Session.get("currentPrompt")._id, 
-        type: 'forest_precluster'},
-        {limit: numClusters}
-    );
-    if (n.count() == numClusters) {
-      hasMoreIdeas = true;
-    }
-    var nodes = n.fetch();
+        type: 'forest_precluster'}
+    ).fetch()
     var clusteredIDs = []
     for (var i=0; i<nodes.length; i++) {
       clusteredIDs = clusteredIDs.concat(nodes[i]['idea_node_ids']);
     }
-    n = Nodes.find({
+    var otherNodes = Nodes.find({
         promptID: Session.get("currentPrompt")._id, 
         type: 'forest_idea',
         _id: {$nin: clusteredIDs}},
-        {fields: {_id: 1}, limit: numIdeas}
-    )
-    if (n.count() == numIdeas) {
-      hasMoreIdeas = true;
-    }
-    var otherNodes = n.fetch()
+        {fields: {_id: 1}}
+    ).fetch()
     nodes = nodes.concat({idea_node_ids: _.pluck(otherNodes, '_id')});
-    Session.set("hasMoreIdeas", hasMoreIdeas);
     return nodes
   },
 	isClustered : function(){
@@ -233,12 +213,6 @@ Template.ForestIdeaList.helpers({
    	} else {
      	return true;
     }
-  },
-  isLoading: function() {
-    return Session.get("isLoadingIdeas");
-  },
-  hasMoreIdeas: function() {
-    return Session.get("hasMoreIdeas");
   },
 });
 
@@ -387,15 +361,6 @@ Template.Forest.events({
     }
     //$(event.target).parent().children('li').slideToggle("fast");
     return false;
-  },
-});
-
-Template.ForestIdeaList.events({
-  "click #get-more-ideas": function(event) {
-    logger.debug("Requested more ideas to display");
-    var numIdeas = Session.get("numIdeas") + Session.get("moreIdeas");
-    Session.set("numIdeas", numIdeas);
-    Session.set("isLoadingIdeas", true);
   },
 });
 
