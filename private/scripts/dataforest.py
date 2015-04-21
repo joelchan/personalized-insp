@@ -98,7 +98,7 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
         # Filter for only ideas in relevant prompt
         # Hard-coded for now
         if i.promptID == 'forgot_name':
-            instance = Node(promptID, graphID, 'forest_idea',
+            instance = Node(graphID, promptID, 'forest_idea',
                                   {'_id': str(ObjectId()),
                                    'parentID': i.nodeID,
                                    'content': i.content,
@@ -106,7 +106,7 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
             instances[instance._id] = instance
             # Create idea nodes as they are encountered
             if i.nodeID not in leafs:
-                leafs[i.nodeID] = Node(promptID, graphID, 'forest_leaf',
+                leafs[i.nodeID] = Node(graphID, promptID, 'forest_leaf',
                         {'_id': i.nodeID, 'label': i.nodeLabel,
                          'idea_node_ids': [instance._id,],
                          'child_leaf_ids': []})
@@ -145,7 +145,7 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
                     leafs[node.parent].child_leaf_ids.append(node.id)
                 else:
                     # Create artificial node
-                    leafs[node.parent] = Node(promptID, graphID, 'forest_leaf',
+                    leafs[node.parent] = Node(graphID, promptID, 'forest_leaf',
                         {'_id': node.parent, 'label': node.label,
                          'idea_node_ids': [],
                          'child_leaf_ids': [node.id, ]})
