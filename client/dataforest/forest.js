@@ -248,9 +248,11 @@ Template.ForestIdeaList.helpers({
     for (var i=0; i<nodes.length; i++) {
       clusteredIDs = clusteredIDs.concat(nodes[i]['idea_node_ids']);
     }
+    nodes = Nodes.find({_id: {$in: clusterIDs}, is_clustered: false}).fetch();
     var otherNodes = Nodes.find({
         promptID: Session.get("currentPrompt")._id, 
         type: 'forest_idea',
+        is_clustered: false,
         _id: {$nin: clusteredIDs}},
         {fields: {_id: 1}}
     ).fetch()
