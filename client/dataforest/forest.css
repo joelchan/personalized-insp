@@ -59,8 +59,8 @@
 	border-radius: 5px;
 	list-style: none;
 	list-style-type: none;
-  margin: 10px 0px;
-  padding: 10px 10px;
+  margin: 5px 0px;
+  padding: 5px 10px;
 }
 
 .forest .selected-node {
@@ -72,7 +72,7 @@
 	border: none;
 	list-style: none;
 	list-style-type: none;
-  margin: 5px 0px;
+  margin: 0px 0px;
 }
 
 

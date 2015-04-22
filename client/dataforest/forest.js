@@ -123,6 +123,12 @@ Template.ForestIdeaNode.onRendered(function() {
   logger.trace(this);
   var id = this.data['_id'];
   $("#" + id).data("node", this.data);
+  $("#list-" + id).toggleClass('hidden');
+  if (id == Session.get("ideaNode")['_id']) {
+    // $("#list-" + id).collapse('show');
+    logger.debug("showing node with id: list-" + id);
+  } 
+
 });
 
 Template.ForestIdeaList.onRendered(function() {
@@ -538,7 +544,8 @@ Template.ForestIdeaNode.events({
     logger.debug("Clicked on collapse/expand of idea list");
     var id = '#list-' + this['_id'];
     logger.debug("looking at cluster with id: " + id);
-    $(id).collapse('toggle'); 
+    // $(id).collapse('toggle'); 
+    $(id).toggleClass('hidden'); 
   },
 });
 
