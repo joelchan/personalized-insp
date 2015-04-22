@@ -294,13 +294,23 @@ Template.ForestNodeBuilder.helpers({
     return ForestManager.getNodeName(Session.get('ideaNode'));
   },
   ideaNode : function(){
-  	return Session.get('ideaNode')['_id'];
+    var node = Session.get('ideaNode');
+    if (node) {
+  	  return node._id;
+    } else {
+      return "default-forest-node";
+    }
   },
 });
 
 Template.ForestNodeStatus.helpers({
   ideaNode : function(){
-  	return Nodes.findOne({_id: Session.get('ideaNode')._id});
+    var n = Session.get('ideaNode');
+    if (n) {
+      return Nodes.findOne({_id: n._id});
+    } else {
+      return null;
+    }
   },
   clusterChildren : function(){
     logger.debug("children of current cluster: " + JSON.stringify(this));

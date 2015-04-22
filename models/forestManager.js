@@ -156,19 +156,23 @@ ForestManager = (function() {
        * the first child instance in an alphabetical sort search, 
        * and then from the first child node (recursive)
        *************************************************************/
-      var node = Nodes.findOne({_id: n._id});
-      if (node['label'] != undefined && node['label'] != "") {
-        return node['label'];
-      } else {
-        var instances = this.getInstanceIdeas(node);
-        // Use the name of the first idea
-        if (instances.length > 0) {
-          return instances[0]['content']
+      if (n) {
+        var node = Nodes.findOne({_id: n._id});
+        if (node['label'] != undefined && node['label'] != "") {
+          return node['label'];
         } else {
-          //recurse on the first node
-          var nodes = this.getNodeChildren(node);
-          return this.getNodeName(nodes[0]);
+          var instances = this.getInstanceIdeas(node);
+          // Use the name of the first idea
+          if (instances.length > 0) {
+            return instances[0]['content']
+          } else {
+            //recurse on the first node
+            var nodes = this.getNodeChildren(node);
+            return this.getNodeName(nodes[0]);
+          }
         }
+      } else {
+        return "";
       }
 
     },
