@@ -12,10 +12,6 @@
   margin: 15px 0;
 }
 
-.forest .forest-tree {
-  display: inline-block;
-}
-
 .forest #other-node-status {
   overflow: scroll;
 }
@@ -23,10 +19,17 @@
 .forest .forest-tree{
   font-size: small;
   /* Set height to zero and divs will auto size*/
-  height: 0;
   margin: 0;
   padding: 0;
 }
+.forest .forest-tree h3 {
+  margin: 0;
+}
+
+.forest .forest-tree .fa {
+  padding: 3px;
+}
+
 .forest #root-tree {
   overflow: scroll;
 }
@@ -50,6 +53,7 @@
 }
 
 .forest .forest-idea-item {
+	background-color: #f5f5f5;
 	border: solid 1px #ddd;
 	border-radius: 5px;
 	list-style: none;

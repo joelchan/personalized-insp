@@ -179,6 +179,7 @@ Template.ForestIdea.onRendered(function() {
       logger.trace(ui.helper[0]);
       var width = $(this).css('width');
       logger.trace(width);
+      $(ui.helper[0]).css('width', width);
     },
   });
   //logger.trace(this.$(".forest-idea-item"))
@@ -289,9 +290,8 @@ Template.ForestNodeBuilder.helpers({
     return ForestManager.getInstanceIdeas(Session.get('ideaNode'));
   },
   ideaNodeName : function(){
-  	var currNode = Session.get('ideaNode');
-  	var currCluster = Nodes.findOne({_id: currNode['_id']});
-    return Session.get('ideaNode'['label']);
+  	// var currCluster = Nodes.findOne({_id: currNode['_id']});
+    return ForestManager.getNodeName(Session.get('ideaNode'));
   },
   ideaNode : function(){
   	return Session.get('ideaNode')['_id'];

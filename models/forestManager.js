@@ -106,19 +106,23 @@ ForestManager = (function() {
         // sourceID: node['_id']});
       // logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
       // var childIDs = getValsFromField(childEdges, 'targetID');
-      var node = Nodes.findOne({_id: node._id});
-      var children = []
-      if (node.idea_node_ids.length > 0) {
-        if (sorter) {
-          children =  Nodes.find({_id: {$in: node.idea_node_ids}}, 
-              {sort: sorter}
-          ).fetch()
-        } else {
-          children =  Nodes.find({_id: {$in: node.idea_node_ids}}).fetch()
+      if (node) {
+        var node = Nodes.findOne({_id: node._id});
+        var children = []
+        if (node.idea_node_ids.length > 0) {
+          if (sorter) {
+            children =  Nodes.find({_id: {$in: node.idea_node_ids}}, 
+                {sort: sorter}
+            ).fetch()
+          } else {
+            children =  Nodes.find({_id: {$in: node.idea_node_ids}}).fetch()
+          }
         }
+        logger.trace("Found children nodes: " + JSON.stringify(children));
+        return children;
+      } else {
+        return []
       }
-      logger.trace("Found children nodes: " + JSON.stringify(children));
-      return children;
     },
     getNodeChildren: function(node, sorter) {
       /*************************************************************
@@ -128,19 +132,23 @@ ForestManager = (function() {
         // sourceID: node['_id']});
       // logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
       // var childIDs = getValsFromField(childEdges, 'targetID');
-      var node = Nodes.findOne({_id: node._id});
-      var children = [];
-      if (node.child_leaf_ids.length > 0) {
-        if (sorter) {
-          children =  Nodes.find({_id: {$in: node.child_leaf_ids}}, 
-                {sort: sorter}
-          ).fetch()
-        } else {
-          children =  Nodes.find({_id: {$in: node.child_leaf_ids}}).fetch()
+      if (node) {
+        var node = Nodes.findOne({_id: node._id});
+        var children = [];
+        if (node.child_leaf_ids.length > 0) {
+          if (sorter) {
+            children =  Nodes.find({_id: {$in: node.child_leaf_ids}}, 
+                  {sort: sorter}
+            ).fetch()
+          } else {
+            children =  Nodes.find({_id: {$in: node.child_leaf_ids}}).fetch()
+          }
         }
+        logger.trace("Found children nodes: " + JSON.stringify(children));
+        return children;
+      } else {
+        return []
       }
-      logger.trace("Found children nodes: " + JSON.stringify(children));
-      return children;
     },
     getNodeName: function(n) {
       /*************************************************************
