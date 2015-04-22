@@ -1862,6 +1862,211 @@ Template.Other.rendered = function() {
     CreateForceDiagram(GetForceData(rawIdeas), svg, width, height);
 }
 
+/*
+Template.ExperimentalForceV.rendered = function() {
+
+  // global intensity of attraction
+  var charge = -200;
+  // link distance factor used to determine line length;
+  var distanceFactor = 140;
+  var maxDistance = 250;
+
+  //size of the svg
+  var width = 700;
+  var height = 800;
+
+  var color = d3.scale.category10();
+
+  var svg = d3.select("#svgdiv2")
+              .append("svg")
+              .attr("width", width)
+              .attr("height", height)
+              .call(d3.behavior.zoom().scaleExtent([.5, 3]).on("zoom",rescale))
+              .append("g")
+
+  function rescale() {
+    trans=d3.event.translate;
+    scale=d3.event.scale;
+
+    svg.attr("transform",
+        "translate(" + trans + ")"
+        + " scale(" + scale + ")");
+  }
+  
+  //data
+  var rawIdeas = getFilteredIdeas("IdeaWordCloud Filter");
+  var newData = formatData(rawIdeas)
+  var dataset = processData(GetForceData(newData));
+
+  var nodes1 = dataset.nodes, 
+      links1 = dataset.edges
+
+  //force layout
+  var f1 = d3.layout.force()
+    .nodes(nodes1)
+    .links(links1)
+    .charge(charge)
+    .size([width-90, height-90])
+    .linkDistance(function(d) 
+    {
+      return 50-d.strength;
+    })
+    .on("tick", tick);
+
+var node1 = svg.selectAll(".node"),
+    link1 = svg.selectAll(".link");
+
+// 1. Add three nodes and three links.
+setTimeout(function() {
+  var a = {text: "a", weight:2, size:6}, b = {text: "b", weight:2, size:8}, c = {text: "c", weight:2, size:10};
+  nodes1.push(a, b, c);
+  links1.push({source: a, target: b, strength:2}, {source: a, target: c, strength:2}, {source: b, target: c, strength:2});
+  start();
+}, 9000);
+
+setTimeout(function() {
+  var r = {text: "r", weight:2, size:12}
+  nodes1.push(r);
+  start();
+}, 6000);
+
+
+
+function start() {
+
+  console.log(dataset.nodes)
+  var weights = dataset.nodes.map(function(node) {return node.weight})
+  var maxw = Math.max.apply(undefined, weights)
+  console.log("max weight:")
+  console.log(maxw)
+  
+  var sizes = dataset.nodes.map(function(node) {return node.size})
+  var maxs = Math.max.apply(undefined, sizes)
+
+
+  var ws = d3.scale.linear()
+            .domain([0, maxw])
+            .range([10, 1])
+
+  //scaling node size
+  var sizescale = d3.scale.linear()
+                    .domain([0, maxs])
+                    .range([4,12])
+
+  //scaling node color
+  var cscale = d3.scale.linear()
+                    .domain([0, 1, maxs])
+                    .range(["#DCE5E3",
+"#FAD8D4",
+"#C7548B"])
+
+  var wsc = d3.scale.linear()
+            .domain([0, 5, 10])
+            .range(["orange", "white", "steelblue"])
+
+  var colorscale = d3.scale.linear()
+            .domain([0,1])
+            .range(["orange", "white"])
+
+  //scaling opacity
+  var wst = d3.scale.linear()
+            .domain([0, 7])
+            .range([1, .5])
+
+    link1 = link1.data(f1.links())
+  link1.enter()
+    .append("line")
+    .attr("class", "link")
+    .style("stroke", "grey")
+    .style("opacity", function(d) 
+    {
+      return d.strength/3;
+    })
+      .style("stroke-width", function(d) 
+    {
+      return   (1/10)*(Math.round(Math.sqrt(d.strength)));
+    });
+
+  node1 = node1.data(f1.nodes(), function(d) { return d.text;});
+  node1.enter().append("circle")
+    .attr("class", function(d) { return "node " + d.text; })
+    .attr("r", function(d) 
+                { 
+                  return sizescale(d.size);  
+                })
+                .style("opacity", function(d, i) 
+                {
+                  if (d.text=="Nothing") {return 0;}
+                  else {return wst(d.weight);}
+                })
+                .style("stroke-width", function(d,i) { return ws(d.weight);})
+                //colors to size 
+                .style("fill", function(d,i) {return cscale(d.size);}) 
+                .on("mouseover", function(d){mouseAdd(d)})
+                .call(f1.drag);
+  node1.exit().remove();
+
+  function mouseAdd(d) {
+
+    console.log("mouseing over")
+    var newIdeasToAdd = [{name:10, size:d.weight, text:d.text+"1"},{name:11, size:7, text:d.text+"2"},{name:12, size:14, text:d.text+"3"}]
+
+    nodes1.push.apply(nodes1, newIdeasToAdd)
+    console.log("calling start")
+    start();
+  }
+
+
+  f1.start();
+
+  console.log("nodes:")
+  console.log(nodes1)
+  console.log("links:")
+  console.log(links1)
+}
+
+function tick() {
+  link1.attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; })
+  node1.attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; })
+}
+
+  
+  Deps.autorun(function() {  
+
+    var newRaw =  getFilteredIdeas("Ideas Filter")
+    var newlen = newRaw.length
+    var oldlen = rawIdeas.length
+
+    var newIdeasToAdd = [{name:newlen, size:3, text:"idea yay"},{name:newlen-1, size:7, text:"another idea"},{name:newlen-2, size:14, text:"idea3"}]
+
+    nodes1.push.apply(nodes, newIdeasToAdd)
+    start();
+
+    if (newlen > oldlen) {
+
+      //get difference between ideas and call
+
+    }
+  
+
+    //Old force diagram code
+   
+    var rawIdeas = getFilteredIdeas("Ideas Filter");
+
+    var newData = formatData(rawIdeas)
+
+    var dataset = processData(GetForceData(newData));
+
+    CreateForceDiagram(dataset, svg, width, height);
+    
+  })
+
+} */
+
 Template.ForceV.rendered = function() {
 
   // global intensity of attraction
@@ -1874,36 +2079,42 @@ Template.ForceV.rendered = function() {
   var width = 700;
   var height = 800;
 
-  //makes the svg element
+  var color = d3.scale.category10();
+
   var svg = d3.select("#svgdiv2")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("pointer-events", "all")
-    .append('svg:g')
-    .call(d3.behavior.zoom().on("zoom", redraw))
-    .append('svg:g');
+              .append("svg")
+              .attr("width", width)
+              .attr("height", height)
+              .call(d3.behavior.zoom().scaleExtent([.5, 3]).on("zoom",rescale))
+              .append("g")
 
+  function rescale() {
+    trans=d3.event.translate;
+    scale=d3.event.scale;
+
+    svg.attr("transform",
+        "translate(" + trans + ")"
+        + " scale(" + scale + ")");
+  }
   
- 
-  function redraw() {
-      console.log("here", d3.event.translate, d3.event.scale);
-      svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")"); } 
-
- 
-
   Deps.autorun(function() {  
 
-    var rawIdeas = getFilteredIdeas("Ideas Filter");
+     //Old force diagram code
+    
+    //var rawIdeas = getFilteredIdeas("IdeaWordCloud");
+    var rawIdeas = FilterManager.performQuery("IdeaWordCloud Filter", 
+        Session.get("currentUser"),   
+        "ideas").fetch();
 
     var newData = formatData(rawIdeas)
 
+    var dataset = processData(GetForceData(newData));
 
+    CreateForceDiagram(dataset, svg, width, height);
 
-    CreateForceDiagram(GetForceData(newData), svg, width, height);
-  })
-
+    })
 }
+ 
 
 function GetForceData(ideaData)
 {
@@ -2737,10 +2948,10 @@ function processData(forceData){
 
 }
 
-function CreateForceDiagram(forceData, svg, w, h)
+function CreateForceDiagram(dataset, svg, w, h)
 {
-  //svg.selectAll("*")
-   //.remove();
+  svg.selectAll("*")
+   .remove();
   // global intensity of attraction
   var charge = -200;
   // link distance factor used to determine line length;
@@ -2756,7 +2967,7 @@ function CreateForceDiagram(forceData, svg, w, h)
   //ordinal scale in order to color the nodes
   var colors = d3.scale.category20();
   
-  var dataset = processData(forceData);
+  //var dataset = processData(forceData);
 
   //this sets up the force layout - it needs where the nodes and links are and the size of the space, as well as optional parameters like how long you want the distance between them to be and how much you want the nodes to repel each other
   var force = d3.layout.force()
@@ -2771,6 +2982,10 @@ function CreateForceDiagram(forceData, svg, w, h)
     .charge(charge)
     .start();
 
+  var edgescale = d3.scale.linear()
+                    .domain([0, 10])
+                    .range([.1, .5])
+
 
   //making the svg lines that connect the nodes
   var edges = svg.selectAll(".link")
@@ -2781,7 +2996,7 @@ function CreateForceDiagram(forceData, svg, w, h)
     .style("stroke", "grey")
     .style("opacity", function(d) 
     {
-      return d.strength/10;
+      return edgescale(d.strength);
     })
       .style("stroke-width", function(d) 
     {
@@ -2814,24 +3029,37 @@ function CreateForceDiagram(forceData, svg, w, h)
             .domain([0, maxw])
             .range([10, 1])
 
+  var opacityscale = d3.scale.linear()
+                      .domain([0, maxw])
+                      .range([.2, 1])
+
+  var opacityscale2 = d3.scale.linear()
+                      .domain([0, maxw/2])
+                      .range([1, .05])
+
   var sizescale = d3.scale.linear()
                     .domain([0, maxs])
-                    .range([1,10])
+                    .range([.5,5])
 
   var wsc = d3.scale.linear()
             .domain([0, 5, 10])
             .range(["orange", "white", "steelblue"])
 
   var colorscale = d3.scale.linear()
-            .domain([0,1])
-            .range(["orange", "white"])
+            .domain([0,maxs])
+            .range(["orange", "beige"])
 
-  var wst = d3.scale.linear()
-            .domain([0, 7])
-            .range([1, 0])
+  var cscale = d3.scale.linear()
+                    .domain([0, 1, maxs])
+                    .range(["#DCE5E3",
+"#FAD8D4",
+"#C7548B"])
+
+  
 
   var nodes = nods.append("circle")
                 .attr("class", "node")
+                //.attr("class", function(d) {console.log(d.text); return d.text})
                 .attr("r", function(d) 
                 { 
                   return sizescale(d.size);  
@@ -2844,29 +3072,86 @@ function CreateForceDiagram(forceData, svg, w, h)
                   //var cat = incomingIdeaData.ind.categories[0]
                   //return ordColor(cat);
                   if (d.text=="Nothing") {return 0;}
-                  else {return wst(d.weight);}
+                  else {return opacityscale(d.size);}
                 })
                 .style("stroke-width", function(d,i) { return ws(d.weight);})
                 //colors to size 
-                .style("fill", function(d,i) {return "orange";}) 
+                .style("fill", function(d,i) {return cscale(d.size);}) 
                 .call(force.drag);//this line is necessary in order for the user to be able to move the nodes (drag them)
 
   var tex = nods.append("text")
     .text(function(d) { 
       if (d.text=="Nothing") {return ""}
-      else {return d.text;};})
+      else {
+        if (d.text.length > 13) 
+        {
+          return d.text.substring(0,13) + "..."
+        }
+        else 
+        {
+          return d.text;
+        }
+      }
+    }
+        )
     //.attr("fill", function(d,i) {return wsc(d.weight);})
-    .style("opacity", function(d,i){return wst(d.weight)})
-    .attr("font-size", "20px");
+    .style("opacity", function(d,i){return opacityscale2(d.weight)})
+    .attr("font-size", "20px")
+    .on("mouseover", function() {
+      d3.select(this).style("fill","orange")
+                     .style("opacity", 1)
+                     .text(function(d) {return d.text;})
+    })
+    .on("mouseout", function() 
+    {
+      d3.select(this).style("fill","black")
+                    .style("opacity", function(d,i){return opacityscale2(d.weight)})
+                    .text(function(d) 
+        { 
+          if (d.text=="Nothing") {return ""}
+          else 
+          {
+            if (d.text.length > 20) 
+            {
+              return d.text.substring(0,13) + "..."
+            }
+            else 
+            {
+              return d.text;
+            }
+          }
+        })
+    
+
+    });
+
+    /*.attr("class", function(d) {
+      var str = d.text.replace(/\s+/g, '');
+      console.log(str);
+      return str.substring(0,5)})*/
 
   nodes.append("title")
     .text(function(d) { if (d.text=="Nothing") {return ""}
                         else {return d.text; };})
 
-    
+  /*nodes.on("mouseover", function() {
 
-  nodes.on("mouseover", function() {d3.select(this).style("stroke","orange").style("stroke-width",1);});
+    d3.select(this).style("stroke","pink").style("stroke-width",5);
+
+    console.log(this.children[0].innerHTML);
+
+    var txt = this.children[0].innerHTML
+    var str = txt.replace(/\s+/g, '');
+    var new = str.substring(0,5)
+
+
+    d3.select("." + new).style("opacity", 1)
+                      .attr("font-size", "30px")
+                      .style("stroke", "orange")
+  });
   nodes.on("mouseout", function() {d3.select(this).style("stroke","none");});
+
+  */
   //this tells the visualization what to do when time passes
   //it updates where the nodes and edges should be
   force.on("tick", function() 
