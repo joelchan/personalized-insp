@@ -242,13 +242,13 @@ Template.ForestIdeaList.helpers({
 	ideaClusters : function(){
     var nodes =  Nodes.find({
         promptID: Session.get("currentPrompt")._id, 
-        type: 'forest_precluster'}
+        type: 'forest_precluster'},
+        {sort: {num_ideas: -1}}
     ).fetch()
     var clusteredIDs = []
     for (var i=0; i<nodes.length; i++) {
       clusteredIDs = clusteredIDs.concat(nodes[i]['idea_node_ids']);
     }
-    nodes = Nodes.find({_id: {$in: clusterIDs}, is_clustered: false}).fetch();
     var otherNodes = Nodes.find({
         promptID: Session.get("currentPrompt")._id, 
         type: 'forest_idea',
@@ -256,6 +256,8 @@ Template.ForestIdeaList.helpers({
         _id: {$nin: clusteredIDs}},
         {fields: {_id: 1}}
     ).fetch()
+    //Tack all the other ideas not in a precluster onto the end of the
+    //preclusters lsit as a pseudo precluster
     nodes = nodes.concat({idea_node_ids: _.pluck(otherNodes, '_id')});
     return nodes
   },
