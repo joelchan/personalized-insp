@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import mongohq
+import db_params
 import file_manager
 import sys, os
 
@@ -15,7 +16,7 @@ def get_amd_data(argv):
     db = mongohq.Data_Utility()
   else:
     print "Using arguments to set data"
-    db = mongohq.Data_Utility(argv[0], mongohq.DB_PARAMS[argv[1]])
+    db = mongohq.Data_Utility(argv[0], db_params.ALL_DBs[argv[1]])
   # Get Ideas 
   ideas = db.get_data("ideas", ['_id', 'content', 'promptID'])
   idea_dict = dict([(idea['_id'], {'content': idea['content']}) 

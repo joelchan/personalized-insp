@@ -137,6 +137,7 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
         rowDict['promptQuestion'] = promptQuestion
         rowDict['ideaID'] = idea[u'_id']
         rowDict['idea'] = idea[u'content']
+        rowDict['likes'] = len(idea[u'votes'])
         rowDict['userID'] = idea[u'userID']
         rowDict['userName'] = idea[u'userName']
         rowDict['submissionTime'] = idea[u'time']
@@ -201,6 +202,6 @@ if __name__ == '__main__':
    # restore_db('data/hcompTest', mongohq.local_meteor)
    # clear_db(mongohq.ideagens)
    # restore_db('data/hcompTest', mongohq.ideagens)
-   dump_db('data/facTutorial', mongohq.local_meteor)
-   # get_data_output('data/hcompTest', mongohq.ideagens)
+   # dump_db('data/facTutorial', mongohq.local_meteor)
+   get_data_output('data/owen', mongohq.fac_exp)
 
