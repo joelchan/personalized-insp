@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers:ForestManager');
 // Comment out to use global logging level
-Logger.setLevel('Model:Managers:ForestManager', 'trace');
+//Logger.setLevel('Model:Managers:ForestManager', 'trace');
 // Logger.setLevel('Model:Managers:ForestManager', 'debug');
-// Logger.setLevel('Model:Managers:ForestManager', 'info');
+Logger.setLevel('Model:Managers:ForestManager', 'info');
 // Logger.setLevel('Model:Managers:ForestManager', 'warn');
 
 

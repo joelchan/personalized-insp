@@ -12,6 +12,21 @@
   margin: 15px 0;
 }
 
+.forest .forest-tree {
+  display: inline-block;
+}
+
+.forest .forest-tree{
+  font-size: small;
+  /* Set height to zero and divs will auto size*/
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+.forest #root-tree {
+  overflow: scroll;
+}
+
 .forest .form-group {
   margin-bottom: 10px;
 }

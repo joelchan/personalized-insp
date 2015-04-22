@@ -3,8 +3,8 @@
 	<div id="forest" class="row forest">
 	<!--IdeaList and Node Starter-->
 		<div id="ideas" class="col-md-4">
-        {{> ForestCreateCluster }}
-        {{> ForestIdeaList }}
+      {{> ForestCreateCluster }}
+      {{> ForestIdeaList }}
 		</div>
 	<!--End-->
     {{> ForestViz }}
@@ -18,7 +18,7 @@
 <template name="ForestViz">
 <div id="tree-viz" class="col-md-4 pull-right">
 	<h3>Idea Forest</h3>
-  <div class="forest-tree">
+  <div id="root-tree" class="forest-tree">
     {{#with rootNode}}
       <ul class="indent" id="list-{{ _id }}">
         {{#each childNodes }}
@@ -43,8 +43,10 @@
 <template name="ForestTree">
 <div class="forest-tree">
   <div class="forest-node-label">
-    <i class="fa fa-angle-double-down sort-disabled"></i>
-    <h3>{{ name }}</h3>
+    <h3>
+      <i class="fa fa-angle-double-down sort-disabled"></i>
+      {{ name }}
+    </h3>
   </div>
   <ul class="indent" id="list-{{ _id }}">
     {{#each childNodes }}

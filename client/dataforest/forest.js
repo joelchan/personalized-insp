@@ -1,7 +1,7 @@
 var logger = new Logger('Client:DataForest:Forest');
 // Comment out to use global logging level
-Logger.setLevel('Client:DataForest:Forest', 'trace');
-//Logger.setLevel('Client:DataForest:Forest', 'debug');
+// Logger.setLevel('Client:DataForest:Forest', 'trace');
+Logger.setLevel('Client:DataForest:Forest', 'debug');
 //Logger.setLevel('Client:DataForest:Forest', 'info');
 //Logger.setLevel('Client:DataForest:Forest', 'warn');
 
@@ -127,11 +127,20 @@ Template.ForestIdeaNode.onRendered(function() {
 
 Template.ForestIdeaList.onRendered(function() {
   //Determine height of components above the idealist
-  var usedHeight = $("#lpheader").height();
-  usedHeight += $("#clusterprompt").height();
+  var usedHeight = $("#lpheader").outerHeight(true);
+  logger.trace("Height: " + usedHeight);
+  usedHeight += $("#clusterprompt").outerHeight(true);
+  logger.trace("Height: " + usedHeight);
+  usedHeight += $("#createnode").outerHeight(true);
+  logger.trace("Height: " + usedHeight);
+  usedHeight += this.$("h3").outerHeight(true);
+  logger.trace("Height: " + usedHeight);
+  //arbitrary
+  usedHeight += 65;
+  logger.trace("Height: " + usedHeight);
   var height = $(window).height() - usedHeight;
   //Set the Idea list to stretch only to the bottom of the window
-  $("#unclustered-ideas").height(height);
+  $("#idealist").height(height);
 });
 
 Template.ForestIdea.onRendered(function() {
@@ -182,6 +191,18 @@ Template.ForestViz.onCreated(function() {
   Session.set("numTrees", 15);
   Session.set("hasMoreTrees", false);
   Session.set("isLoadingTrees", false);
+});
+
+Template.ForestViz.onRendered(function() {
+  //Derive the height of elements above the forest div
+  var usedHeight = $("#lpheader").outerHeight(true);
+  usedHeight += $("#clusterprompt").outerHeight(true);
+  usedHeight += $("#tree-viz h3").outerHeight(true);
+  usedHeight += $("#tree-viz .forest-footer").outerHeight(true);
+  usedHeight += 30;
+  var height = $(window).height() - usedHeight;
+  //Set the Idea list to stretch only to the bottom of the window
+  $("#root-tree").height(height);
 });
 
 Template.ForestTree.onCreated(function() {
