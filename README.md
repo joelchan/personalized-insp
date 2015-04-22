@@ -47,6 +47,7 @@ a db along with a user for that db.
 ```
 > heroku login 
 > heroku create <app-name> --stack cedar --buildpack https://github.com/djhi/heroku-buildpack-meteorite 
+> heroku create <app-name> --stack cedar --buildpack https://github.com/AdmitHub/meteor-buildpack-horse.git#mongohq
 > heroku config:set --app <app-name> MONGO_URL=mongodb://<mongo-user:<pswd@<url_to_mongodb>:<mongodb_port>/<remainder_of_url>
 > heroku config:set --app <app_name> ROOT_URL=http://<app_name>.herokuapp.com
 ```
