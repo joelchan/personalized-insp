@@ -185,7 +185,7 @@ Template.ForestViz.onCreated(function() {
 });
 
 Template.CurrentTree.onRendered(function() {
-  $(this).hide();
+  $("#single-tree").hide();
 });
 
 Template.ForestTree.onCreated(function() {
@@ -226,6 +226,13 @@ Template.ForestIdeaList.helpers({
    	} else {
      	return true;
     }
+  },
+  numIdeas: function() {
+    return Nodes.find({
+        promptID: Session.get("currentPrompt")._id, 
+        type: 'forest_idea',
+        is_clustered: false
+    }).count();
   },
 });
 

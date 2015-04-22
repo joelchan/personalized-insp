@@ -155,7 +155,8 @@
 
 <template name="ForestIdeaList">
   <div id="unclustered-ideas">
-	  <h3>Idea List</h3>
+	  <h3>Idea List</h3> 
+    <h3># of Ideas: {{ numIdeas }}</h3>
 	  <ul id="idealist" class="deck">
 		  <li class="sort-disabled"></li>
 		  {{#each ideaClusters}}
