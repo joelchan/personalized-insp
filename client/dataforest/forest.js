@@ -123,11 +123,12 @@ Template.ForestIdeaNode.onRendered(function() {
   logger.trace(this);
   var id = this.data['_id'];
   $("#" + id).data("node", this.data);
-  $("#list-" + id).toggleClass('hidden');
   if (id == Session.get("ideaNode")['_id']) {
     // $("#list-" + id).collapse('show');
     logger.debug("showing node with id: list-" + id);
-  } 
+  } else {
+    $("#list-" + id).toggleClass('hidden');
+  }
 
 });
 
