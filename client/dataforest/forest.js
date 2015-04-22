@@ -184,6 +184,10 @@ Template.ForestViz.onCreated(function() {
   Session.set("isLoadingTrees", false);
 });
 
+Template.CurrentTree.onRendered(function() {
+  $(this).hide();
+});
+
 Template.ForestTree.onCreated(function() {
   //Set Loading to false
   Session.set("isLoadingTrees", false);
@@ -330,6 +334,33 @@ Template.ForestViz.helpers({
   },
 });
 
+Template.CurrentTree.helpers({
+  currentNode: function() {
+    var n = Session.get("bestMatchNode");
+    return Session.get("bestMatchNode");
+  },
+  childNodes: function() {
+    var children = ForestManager.getNodeChildren(this, {'label': 1});
+    var numTrees = Session.get("numTrees");
+    if (children.length > numTrees) {
+      Session.set("hasMoreTrees", true);
+      logger.trace("Forest Viz children of root: " + 
+          JSON.stringify(children.slice(0, numTrees)));
+      // Session.set("isLoadingTrees", false);
+      return children.slice(0,numTrees);
+    } else {
+      Session.set("hasMoreTrees", false);
+      logger.trace("Forest Viz children of root: " + 
+          JSON.stringify(children));
+      // Session.set("isLoadingTrees", false);
+      return children;
+    }
+  },
+  name: function() {
+    return ForestManager.getNodeName(Session.get("bestMatchNode"));
+  }
+});
+
 Template.ForestTree.helpers({
   name: function() {
     var name = ForestManager.getNodeName(this); 
@@ -395,6 +426,7 @@ Template.ForestBestMatch.events({
           $("#unclustered-ideas")[0]
       )
       $("#ideas").slideToggle()
+      showForestView();
       resetState();
     } else {
       //Continue to generalization step
@@ -405,6 +437,7 @@ Template.ForestBestMatch.events({
           $("#forest")[0],
           $("#tree-viz")[0]
       );
+      hideForestView();
 
     }
   },
@@ -447,6 +480,7 @@ Template.ForestGeneralize.events({
         $("#ideas")[0],
         $("#unclustered-ideas")[0]
     );
+    showForestView();
     resetState();
   },
 
@@ -557,7 +591,7 @@ Template.ForestNodeBuilder.events({
               $("#tree-viz")[0]
           );
   			});
-        
+        hideForestView(); 
         $("#buildcluster").remove();
   		}
   	//}
@@ -608,6 +642,8 @@ Template.ForestNodeStatus.events({
       if ($(id).hasClass("selected-node")) {
         $(id).toggleClass("selected-node");
         Session.set("bestMatchNode", null);
+        // Swap tree view from current to forest
+        showForestView();
       } else {
         //Clear all selected clusters
         $(".selected-node").not(id).toggleClass("selected-node");
@@ -615,6 +651,7 @@ Template.ForestNodeStatus.events({
         $(id).toggleClass("selected-node");
         //Set selected cluster node as the current best match
         Session.set("bestMatchNode", this);
+        hideForestView();
       }
     } else {
       logger.debug("clicked on non-selectable cluster");
@@ -644,4 +681,14 @@ function resetState() {
   );
   logger.trace(root)
   Session.set("currentNode", root);
+}
+
+function showForestView() {
+  $("#single-tree").hide();
+  $("#tree-viz").show();
+}
+
+function hideForestView() {
+  $("#single-tree").show();
+  $("#tree-viz").hide();
 }

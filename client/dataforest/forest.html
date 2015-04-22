@@ -8,11 +8,32 @@
 		</div>
 	<!--End-->
     {{> ForestViz }}
+
+    {{> CurrentTree }}
     {{> ForestNodeName }}
     {{> ForestConfirm }}
 	</div>
 	<!--End Container-->
 
+</template>
+
+<template name="CurrentTree">
+<div id="single-tree" class="col-md-4 pull-right">
+	<h3>Current Tree</h3>
+  <div class="forest-tree">
+    <div class="forest-node-label">
+      <i class="fa fa-angle-double-down sort-disabled"></i>
+      <h3>{{ name }}</h3>
+    </div>
+    {{#with currentNode}}
+      <ul class="indent" id="list-{{ _id }}">
+        {{#each childNodes }}
+          {{> ForestTree }}
+        {{/each}}
+      </ul>
+    {{/with}}
+  </div>
+</div>
 </template>
 
 <template name="ForestViz">
