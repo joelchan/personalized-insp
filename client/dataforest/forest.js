@@ -240,11 +240,11 @@ Template.Forest.helpers({
 
 Template.ForestIdeaList.helpers({
 	ideaClusters : function(){
-    var nodes =  Nodes.find({
-        promptID: Session.get("currentPrompt")._id, 
-        type: 'forest_precluster'},
-        {sort: {num_ideas: -1}}
-    ).fetch()
+     var nodes =  Nodes.find({
+         promptID: Session.get("currentPrompt")._id, 
+         type: 'forest_precluster'},
+         {sort: {num_ideas: -1, _id: 1}}
+     ).fetch();
     var clusteredIDs = []
     for (var i=0; i<nodes.length; i++) {
       clusteredIDs = clusteredIDs.concat(nodes[i]['idea_node_ids']);
