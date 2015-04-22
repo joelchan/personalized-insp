@@ -12,6 +12,28 @@
   margin: 15px 0;
 }
 
+.forest #other-node-status {
+  overflow: scroll;
+}
+
+.forest .forest-tree{
+  font-size: small;
+  /* Set height to zero and divs will auto size*/
+  margin: 0;
+  padding: 0;
+}
+.forest .forest-tree h3 {
+  margin: 0;
+}
+
+.forest .forest-tree .fa {
+  padding: 3px;
+}
+
+.forest #root-tree {
+  overflow: scroll;
+}
+
 .forest .form-group {
   margin-bottom: 10px;
 }
@@ -31,6 +53,7 @@
 }
 
 .forest .forest-idea-item {
+	background-color: #f5f5f5;
 	border: solid 1px #ddd;
 	border-radius: 5px;
 	list-style: none;
@@ -44,8 +67,8 @@
 	border-radius: 5px;
 	list-style: none;
 	list-style-type: none;
-  margin: 10px 0px;
-  padding: 10px 10px;
+  margin: 5px 0px;
+  padding: 5px 10px;
 }
 
 .forest .selected-node {
@@ -57,7 +80,7 @@
 	border: none;
 	list-style: none;
 	list-style-type: none;
-  margin: 5px 0px;
+  margin: 0px 0px;
 }
 
 

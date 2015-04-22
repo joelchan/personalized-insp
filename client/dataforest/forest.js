@@ -1,7 +1,7 @@
 var logger = new Logger('Client:DataForest:Forest');
 // Comment out to use global logging level
-Logger.setLevel('Client:DataForest:Forest', 'trace');
-//Logger.setLevel('Client:DataForest:Forest', 'debug');
+// Logger.setLevel('Client:DataForest:Forest', 'trace');
+Logger.setLevel('Client:DataForest:Forest', 'debug');
 //Logger.setLevel('Client:DataForest:Forest', 'info');
 //Logger.setLevel('Client:DataForest:Forest', 'warn');
 
@@ -118,20 +118,49 @@ Template.ForestCreateCluster.onRendered(function() {
   });
 });
 
+Template.ForestNodeStatus.onRendered(function() {
+  //Derive the height of elements above the forest div
+  var usedHeight = $("#lpheader").outerHeight(true);
+  usedHeight += $("#clusterprompt").outerHeight(true);
+  usedHeight += $("#nodestatus h2").outerHeight(true);
+  usedHeight += $("#nodestatus h4").outerHeight(true);
+  usedHeight += $("#nodestatus #current-idea-node").outerHeight(true);
+  // bottom padding
+  var height = $(window).height() - usedHeight;
+  //Set the Idea list to stretch only to the bottom of the window
+  $("#other-node-status").height(height);
+});
+
 Template.ForestIdeaNode.onRendered(function() {
   logger.trace("Rendering idea node: ");
   logger.trace(this);
   var id = this.data['_id'];
   $("#" + id).data("node", this.data);
+  if (id == Session.get("ideaNode")['_id']) {
+    // $("#list-" + id).collapse('show');
+    logger.debug("showing node with id: list-" + id);
+  } else {
+    $("#list-" + id).toggleClass('hidden');
+  }
+
 });
 
 Template.ForestIdeaList.onRendered(function() {
   //Determine height of components above the idealist
-  var usedHeight = $("#lpheader").height();
-  usedHeight += $("#clusterprompt").height();
+  var usedHeight = $("#lpheader").outerHeight(true);
+  logger.trace("Height: " + usedHeight);
+  usedHeight += $("#clusterprompt").outerHeight(true);
+  logger.trace("Height: " + usedHeight);
+  usedHeight += $("#createnode").outerHeight(true);
+  logger.trace("Height: " + usedHeight);
+  usedHeight += this.$("h3").outerHeight(true);
+  logger.trace("Height: " + usedHeight);
+  //arbitrary
+  usedHeight += 65;
+  logger.trace("Height: " + usedHeight);
   var height = $(window).height() - usedHeight;
   //Set the Idea list to stretch only to the bottom of the window
-  $("#unclustered-ideas").height(height);
+  $("#idealist").height(height);
 });
 
 Template.ForestIdea.onRendered(function() {
@@ -150,6 +179,7 @@ Template.ForestIdea.onRendered(function() {
       logger.trace(ui.helper[0]);
       var width = $(this).css('width');
       logger.trace(width);
+      $(ui.helper[0]).css('width', width);
     },
   });
   //logger.trace(this.$(".forest-idea-item"))
@@ -184,10 +214,21 @@ Template.ForestViz.onCreated(function() {
   Session.set("isLoadingTrees", false);
 });
 
+Template.ForestViz.onRendered(function() {
+  //Derive the height of elements above the forest div
+  var usedHeight = $("#lpheader").outerHeight(true);
+  usedHeight += $("#clusterprompt").outerHeight(true);
+  usedHeight += $("#tree-viz h3").outerHeight(true);
+  usedHeight += $("#tree-viz .forest-footer").outerHeight(true);
+  usedHeight += 30;
+  var height = $(window).height() - usedHeight;
+  //Set the Idea list to stretch only to the bottom of the window
+  $("#root-tree").height(height);
+});
+
 Template.CurrentTree.onRendered(function() {
   $("#single-tree").hide();
 });
-
 Template.ForestTree.onCreated(function() {
   //Set Loading to false
   Session.set("isLoadingTrees", false);
@@ -203,10 +244,11 @@ Template.Forest.helpers({
 
 Template.ForestIdeaList.helpers({
 	ideaClusters : function(){
-    var nodes =  Nodes.find({
-        promptID: Session.get("currentPrompt")._id, 
-        type: 'forest_precluster'}
-    ).fetch()
+     var nodes =  Nodes.find({
+         promptID: Session.get("currentPrompt")._id, 
+         type: 'forest_precluster'},
+         {sort: {num_ideas: -1, _id: 1}}
+     ).fetch();
     var clusteredIDs = []
     for (var i=0; i<nodes.length; i++) {
       clusteredIDs = clusteredIDs.concat(nodes[i]['idea_node_ids']);
@@ -214,9 +256,12 @@ Template.ForestIdeaList.helpers({
     var otherNodes = Nodes.find({
         promptID: Session.get("currentPrompt")._id, 
         type: 'forest_idea',
+        is_clustered: false,
         _id: {$nin: clusteredIDs}},
         {fields: {_id: 1}}
     ).fetch()
+    //Tack all the other ideas not in a precluster onto the end of the
+    //preclusters lsit as a pseudo precluster
     nodes = nodes.concat({idea_node_ids: _.pluck(otherNodes, '_id')});
     return nodes
   },
@@ -255,18 +300,27 @@ Template.ForestNodeBuilder.helpers({
     return ForestManager.getInstanceIdeas(Session.get('ideaNode'));
   },
   ideaNodeName : function(){
-  	var currNode = Session.get('ideaNode');
-  	var currCluster = Nodes.findOne({_id: currNode['_id']});
-    return Session.get('ideaNode'['label']);
+  	// var currCluster = Nodes.findOne({_id: currNode['_id']});
+    return ForestManager.getNodeName(Session.get('ideaNode'));
   },
   ideaNode : function(){
-  	return Session.get('ideaNode')['_id'];
+    var node = Session.get('ideaNode');
+    if (node) {
+  	  return node._id;
+    } else {
+      return "default-forest-node";
+    }
   },
 });
 
 Template.ForestNodeStatus.helpers({
   ideaNode : function(){
-  	return Nodes.findOne({_id: Session.get('ideaNode')._id});
+    var n = Session.get('ideaNode');
+    if (n) {
+      return Nodes.findOne({_id: n._id});
+    } else {
+      return null;
+    }
   },
   clusterChildren : function(){
     logger.debug("children of current cluster: " + JSON.stringify(this));
@@ -558,7 +612,8 @@ Template.ForestIdeaNode.events({
     logger.debug("Clicked on collapse/expand of idea list");
     var id = '#list-' + this['_id'];
     logger.debug("looking at cluster with id: " + id);
-    $(id).collapse('toggle'); 
+    // $(id).collapse('toggle'); 
+    $(id).toggleClass('hidden'); 
   },
 });
 

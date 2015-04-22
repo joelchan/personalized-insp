@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers:ForestManager');
 // Comment out to use global logging level
-Logger.setLevel('Model:Managers:ForestManager', 'trace');
+//Logger.setLevel('Model:Managers:ForestManager', 'trace');
 // Logger.setLevel('Model:Managers:ForestManager', 'debug');
-// Logger.setLevel('Model:Managers:ForestManager', 'info');
+Logger.setLevel('Model:Managers:ForestManager', 'info');
 // Logger.setLevel('Model:Managers:ForestManager', 'warn');
 
 
@@ -106,19 +106,23 @@ ForestManager = (function() {
         // sourceID: node['_id']});
       // logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
       // var childIDs = getValsFromField(childEdges, 'targetID');
-      var node = Nodes.findOne({_id: node._id});
-      var children = []
-      if (node.idea_node_ids.length > 0) {
-        if (sorter) {
-          children =  Nodes.find({_id: {$in: node.idea_node_ids}}, 
-              {sort: sorter}
-          ).fetch()
-        } else {
-          children =  Nodes.find({_id: {$in: node.idea_node_ids}}).fetch()
+      if (node) {
+        var node = Nodes.findOne({_id: node._id});
+        var children = []
+        if (node.idea_node_ids.length > 0) {
+          if (sorter) {
+            children =  Nodes.find({_id: {$in: node.idea_node_ids}}, 
+                {sort: sorter}
+            ).fetch()
+          } else {
+            children =  Nodes.find({_id: {$in: node.idea_node_ids}}).fetch()
+          }
         }
+        logger.trace("Found children nodes: " + JSON.stringify(children));
+        return children;
+      } else {
+        return []
       }
-      logger.trace("Found children nodes: " + JSON.stringify(children));
-      return children;
     },
     getNodeChildren: function(node, sorter) {
       /*************************************************************
@@ -128,19 +132,23 @@ ForestManager = (function() {
         // sourceID: node['_id']});
       // logger.trace("Found children edges: " + JSON.stringify(childEdges.fetch()));
       // var childIDs = getValsFromField(childEdges, 'targetID');
-      var node = Nodes.findOne({_id: node._id});
-      var children = [];
-      if (node.child_leaf_ids.length > 0) {
-        if (sorter) {
-          children =  Nodes.find({_id: {$in: node.child_leaf_ids}}, 
-                {sort: sorter}
-          ).fetch()
-        } else {
-          children =  Nodes.find({_id: {$in: node.child_leaf_ids}}).fetch()
+      if (node) {
+        var node = Nodes.findOne({_id: node._id});
+        var children = [];
+        if (node.child_leaf_ids.length > 0) {
+          if (sorter) {
+            children =  Nodes.find({_id: {$in: node.child_leaf_ids}}, 
+                  {sort: sorter}
+            ).fetch()
+          } else {
+            children =  Nodes.find({_id: {$in: node.child_leaf_ids}}).fetch()
+          }
         }
+        logger.trace("Found children nodes: " + JSON.stringify(children));
+        return children;
+      } else {
+        return []
       }
-      logger.trace("Found children nodes: " + JSON.stringify(children));
-      return children;
     },
     getNodeName: function(n) {
       /*************************************************************
@@ -148,19 +156,23 @@ ForestManager = (function() {
        * the first child instance in an alphabetical sort search, 
        * and then from the first child node (recursive)
        *************************************************************/
-      var node = Nodes.findOne({_id: n._id});
-      if (node['label'] != undefined && node['label'] != "") {
-        return node['label'];
-      } else {
-        var instances = this.getInstanceIdeas(node);
-        // Use the name of the first idea
-        if (instances.length > 0) {
-          return instances[0]['content']
+      if (n) {
+        var node = Nodes.findOne({_id: n._id});
+        if (node['label'] != undefined && node['label'] != "") {
+          return node['label'];
         } else {
-          //recurse on the first node
-          var nodes = this.getNodeChildren(node);
-          return this.getNodeName(nodes[0]);
+          var instances = this.getInstanceIdeas(node);
+          // Use the name of the first idea
+          if (instances.length > 0) {
+            return instances[0]['content']
+          } else {
+            //recurse on the first node
+            var nodes = this.getNodeChildren(node);
+            return this.getNodeName(nodes[0]);
+          }
         }
+      } else {
+        return "";
       }
 
     },
