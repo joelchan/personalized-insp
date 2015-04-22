@@ -229,6 +229,7 @@ Template.ForestViz.onRendered(function() {
 Template.CurrentTree.onRendered(function() {
   $("#single-tree").hide();
 });
+
 Template.ForestTree.onCreated(function() {
   //Set Loading to false
   Session.set("isLoadingTrees", false);
@@ -258,7 +259,7 @@ Template.ForestIdeaList.helpers({
         type: 'forest_idea',
         is_clustered: false,
         _id: {$nin: clusteredIDs}},
-        {fields: {_id: 1}}
+        {fields: {_id: 1}, sort: {_id: 1}}
     ).fetch()
     //Tack all the other ideas not in a precluster onto the end of the
     //preclusters lsit as a pseudo precluster
@@ -324,7 +325,10 @@ Template.ForestNodeStatus.helpers({
   },
   clusterChildren : function(){
     logger.debug("children of current cluster: " + JSON.stringify(this));
-    return ForestManager.getNodeChildren(Session.get("currentNode"))
+    return ForestManager.getNodeChildren(
+        Session.get("currentNode"), 
+        {_id: 1}
+    );
   },
   isBestMatch: function() {
     if (Session.get("currentState").val == 1) {
@@ -371,7 +375,7 @@ Template.ForestViz.helpers({
     return root
   },
   childNodes: function() {
-    var children = ForestManager.getNodeChildren(this, {'label': 1});
+    var children = ForestManager.getNodeChildren(this, {_id: 1});
     var numTrees = Session.get("numTrees");
     if (children.length > numTrees) {
       Session.set("hasMoreTrees", true);
@@ -653,7 +657,6 @@ Template.ForestNodeBuilder.events({
               $("#tree-viz")[0]
           );
   			});
-        hideForestView(); 
         $("#buildcluster").remove();
   		}
   	//}
@@ -727,6 +730,13 @@ Template.ForestViz.events({
     var numTrees = Session.get("numTrees") + Session.get("moreTrees");
     Session.set("numTrees", numTrees);
     Session.set("isLoadingTrees", true);
+  },
+  'click .forest-tree .fa': function(event) {
+    logger.debug("Clicked on collapse/expand of idea list");
+    var id = '#list-' + this['_id'];
+    logger.debug("looking at cluster with id: " + id);
+    // $(id).collapse('toggle'); 
+    $(id).toggleClass('hidden'); 
   },
 });
 
