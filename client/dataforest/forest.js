@@ -118,6 +118,19 @@ Template.ForestCreateCluster.onRendered(function() {
   });
 });
 
+Template.ForestNodeStatus.onRendered(function() {
+  //Derive the height of elements above the forest div
+  var usedHeight = $("#lpheader").outerHeight(true);
+  usedHeight += $("#clusterprompt").outerHeight(true);
+  usedHeight += $("#nodestatus h2").outerHeight(true);
+  usedHeight += $("#nodestatus h4").outerHeight(true);
+  usedHeight += $("#nodestatus #current-idea-node").outerHeight(true);
+  // bottom padding
+  var height = $(window).height() - usedHeight;
+  //Set the Idea list to stretch only to the bottom of the window
+  $("#other-node-status").height(height);
+});
+
 Template.ForestIdeaNode.onRendered(function() {
   logger.trace("Rendering idea node: ");
   logger.trace(this);

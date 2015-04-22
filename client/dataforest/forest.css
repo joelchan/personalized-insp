@@ -16,6 +16,10 @@
   display: inline-block;
 }
 
+.forest #other-node-status {
+  overflow: scroll;
+}
+
 .forest .forest-tree{
   font-size: small;
   /* Set height to zero and divs will auto size*/

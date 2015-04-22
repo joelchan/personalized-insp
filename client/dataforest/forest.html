@@ -177,22 +177,26 @@
 	<div id="nodestatus" class="col-md-4">
 		<h2>Working Nodes</h2>
 		<h4>Node to be Inserted</h4>
-    {{#with ideaNode}}
-      {{> ForestIdeaNode }}
-    {{/with }}
-    {{#if isBestMatch }}
-      <h4>Select Best Possible matches (or none):</h4>
-      <div class="stack">
-      {{#each clusterChildren }}
-        {{> ForestIdeaNode }}
-      {{/each }}
-      </div>
-    {{else}}
-      <h4>Comparison Node from Tree:</h4>
-      {{#with bestMatchNode}}
+    <div id="current-idea-node">
+      {{#with ideaNode}}
         {{> ForestIdeaNode }}
       {{/with }}
-    {{/if}}
+    </div>
+    <h4>Select Best Possible matches (or none):</h4>
+    <div id="other-node-status">
+      {{#if isBestMatch }}
+        <div class="stack">
+        {{#each clusterChildren }}
+          {{> ForestIdeaNode }}
+        {{/each }}
+        </div>
+      {{else}}
+        <h4>Comparison Node from Tree:</h4>
+        {{#with bestMatchNode}}
+          {{> ForestIdeaNode }}
+        {{/with }}
+      {{/if}}
+    </div>
       <!-- <h4>End of block</h4> -->
       <!-- <ul id={{ideaNode}} class="ideanode donestack"> -->
       <!-- <i class="fa fa-angle-double-down sort-disabled"></i> -->
