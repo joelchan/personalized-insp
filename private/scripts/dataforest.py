@@ -60,6 +60,7 @@ class TreeNode:
         self.id = data['idea']
         self.label = data['idea_label']
         self.parent = data['parent']
+        self.promptID = data['question_code']
 
     def __str__(self):
         result = "TreeNode with: "
@@ -97,21 +98,20 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
     for i in raw_ideas:
         # Filter for only ideas in relevant prompt
         # Hard-coded for now
-        if i.promptID == 'forgot_name':
-            instance = Node(graphID, promptID, 'forest_idea',
-                                  {'_id': str(ObjectId()),
-                                   'parentID': i.nodeID,
-                                   'content': i.content,
-                                   'is_clustered': True})
-            instances[instance._id] = instance
-            # Create idea nodes as they are encountered
-            if i.nodeID not in leafs:
-                leafs[i.nodeID] = Node(graphID, promptID, 'forest_leaf',
-                        {'_id': i.nodeID, 'label': i.nodeLabel,
-                         'idea_node_ids': [instance._id,],
-                         'child_leaf_ids': []})
-            else:
-                leafs[i.nodeID].idea_node_ids.append(instance._id)
+        instance = Node(graphID, promptID, 'forest_idea',
+                                {'_id': str(ObjectId()),
+                                'parentID': i.nodeID,
+                                'content': i.content,
+                                'is_clustered': True})
+        instances[instance._id] = instance
+        # Create idea nodes as they are encountered
+        if i.nodeID not in leafs:
+            leafs[i.nodeID] = Node(graphID, promptID, 'forest_leaf',
+                    {'_id': i.nodeID, 'label': i.nodeLabel,
+                        'idea_node_ids': [instance._id,],
+                        'child_leaf_ids': []})
+        else:
+            leafs[i.nodeID].idea_node_ids.append(instance._id)
 
 
 
@@ -135,20 +135,44 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
     # root_child_ids = [node.id for node in idea_nodes \
                       # if node.parent == "-1" and node.id in leafs
     root_child_ids = []
-
+    num_ans = 0
+    # Create complete graph
     for node in idea_nodes:
-        if node.id in leafs:
+        if node.id not in leafs:
+            leafs[node.id] = Node(
+                graphID, promptID, 'forest_leaf',
+                {'_id': node.id, 'label': node.label,
+                 'idea_node_ids': [],
+                 'child_leaf_ids': []})
+            num_ans += 1;
+        if node.parent in leafs:
+            if node.id not in leafs[node.parent].child_leaf_ids:
+                leafs[node.parent].child_leaf_ids.append(node.id)
+        else:
             if node.parent == "-1":
                 root_child_ids.append(node.id)
             else:
-                if node.parent in leafs:
-                    leafs[node.parent].child_leaf_ids.append(node.id)
-                else:
-                    # Create artificial node
-                    leafs[node.parent] = Node(graphID, promptID, 'forest_leaf',
-                        {'_id': node.parent, 'label': node.label,
-                         'idea_node_ids': [],
-                         'child_leaf_ids': [node.id, ]})
+                # Create artificial node
+                leafs[node.parent] = Node(
+                        graphID, promptID, 'forest_leaf',
+                        {'_id': node.id, 'label': node.label,
+                        'idea_node_ids': [],
+                        'child_leaf_ids': [node.id, ]})
+                num_ans += 1;
+
+    # for node in idea_nodes:
+        # if node.id in leafs:
+            # if node.parent == "-1":
+                # root_child_ids.append(node.id)
+            # else:
+                # if node.parent in leafs:
+                    # leafs[node.parent].child_leaf_ids.append(node.id)
+                # else:
+                    # # Create artificial node
+                    # leafs[node.parent] = Node(graphID, promptID, 'forest_leaf',
+                        # {'_id': node.parent, 'label': node.label,
+                         # 'idea_node_ids': [],
+                         # 'child_leaf_ids': [node.id, ]})
 
 
     root = db.get_data("nodes", None, {'type': 'root',
@@ -171,6 +195,9 @@ def insert_to_db(db, promptID, graphID, raw_ideas, idea_nodes, filt=None):
                 # for idea in instances]
 
     # Insert all nodes into the db
+    print "# of ideas: " + str(len(instances.values()))
+    print "# of nodes: " + str(len(leafs.values()))
+    print "# of artificial nodes: " + str(num_ans)
     instanceIDs = db.insert("nodes", instances.values())
     leafIDs = db.insert("nodes", leafs.values())
 
@@ -187,6 +214,8 @@ if __name__ == '__main__':
       graphID = prompt['forestGraphID']
       promptID = prompt['_id']
       ideas, nodes = read_raw_data()
-      print "# of ideas: " + str(len(ideas))
-      print "# of nodes: " + str(len(nodes))
-      insert_to_db(db, promptID, graphID, ideas, nodes)
+      mt_prompt = 'forgot_name'
+      p_ideas = [i for i in ideas if i.promptID == my_prompt]
+      p_nodes = [n for n in nodes if n.promptID == my_prompt]
+
+      insert_to_db(db, promptID, graphID, p_ideas, p_nodes)
