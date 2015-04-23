@@ -2,8 +2,8 @@ var logger = new Logger('Client:DataForest:Forest');
 // Comment out to use global logging level
 // Logger.setLevel('Client:DataForest:Forest', 'trace');
 Logger.setLevel('Client:DataForest:Forest', 'debug');
-//Logger.setLevel('Client:DataForest:Forest', 'info');
-//Logger.setLevel('Client:DataForest:Forest', 'warn');
+// Logger.setLevel('Client:DataForest:Forest', 'info');
+// Logger.setLevel('Client:DataForest:Forest', 'warn');
 
 //Maps routes to templates
 
@@ -57,20 +57,6 @@ var path = [-1]; //tracks path starting from root. Used by back button.
 * Forest Template onRender functions
 *********************************************************************/
 Template.Forest.rendered = function(){
-	// $('#idealist').sortable({
-		// items: ">*:not(.sort-disabled)",
-		// connectWith:'ul.newstack, ul.stack',
-		// receive: function(event, ui){
-      // var myIdeaId = $(ui.item).attr('id');
-      // if(ui.sender.hasClass('stack')){
-        // processIdeaSender(ui, myIdeaId);
-      // } else {
-        // alert("unknown sender"); //no way for this to happen
-        // return false;
-      // }
-      // updateIdeas(myIdeaId, false);
-    // }
-	// });
   var prompt = Session.get("currentPrompt");
   var root = Nodes.findOne({type: 'root', promptID: prompt['_id']});
   Session.set("currentNode", root);
@@ -433,7 +419,7 @@ Template.ForestTree.helpers({
     return name
   },
   childNodes: function() {
-    var children = ForestManager.getNodeChildren(this, {'label': 1});
+    var children = ForestManager.getNodeChildren(this, {_id: 1});
     logger.trace("Forest tree children: " + JSON.stringify(children));
     return children
   },
@@ -733,15 +719,23 @@ Template.ForestViz.events({
   },
   'click .forest-tree .fa': function(event) {
     logger.debug("Clicked on collapse/expand of idea list");
-    var id = '#list-' + this['_id'];
+    var id = '#ft-' + this['_id'];
     logger.debug("looking at cluster with id: " + id);
-    // $(id).collapse('toggle'); 
+    $(id).toggleClass('hidden'); 
+  },
+});
+
+Template.CurrentTree.events({
+  'click .forest-tree .fa': function(event) {
+    logger.debug("Clicked on collapse/expand of idea list");
+    var id = '#ct-' + this['_id'];
+    logger.debug("looking at cluster with id: " + id);
     $(id).toggleClass('hidden'); 
   },
 });
 
 /********************************************************************
-* Convenience funtions
+* Convenience functions
 *********************************************************************/
 function resetState() {
   //Reset to beginning
