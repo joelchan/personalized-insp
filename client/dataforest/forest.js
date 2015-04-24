@@ -296,12 +296,21 @@ Template.ForestNodeBuilder.helpers({
   //return list of ideas contained by idea node
   ideaNodeIdeas : function(){
     var n = Session.get('ideaNode');
-    logger.trace("Node Builder current idea node: " + JSON.stringify(n));
-    return ForestManager.getInstanceIdeas(n);
+    if (n) {
+      logger.trace("Node Builder current idea node: " + JSON.stringify(n));
+      return ForestManager.getInstanceIdeas(n);
+    } else {
+      return []
+    }
   },
   ideaNodeName : function(){
   	// var currCluster = Nodes.findOne({_id: currNode['_id']});
-    return ForestManager.getNodeName(Session.get('ideaNode'));
+    var n = Session.get('ideaNode');
+    if (n) {
+      return ForestManager.getNodeName(Session.get('ideaNode'));
+    } else {
+      return "";
+    }
   },
   ideaNode : function(){
     var node = Session.get('ideaNode');
