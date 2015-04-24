@@ -351,8 +351,8 @@ ExperimentManager = (function () {
         //Create new participant if no duplicates found
         
         // assign to a condition
-        // var condID = this.getRandomCondition(exp);
-        var condID = this.getChosenCondition(exp, "Treatment");
+        var condID = this.getRandomCondition(exp);
+        // var condID = this.getChosenCondition(exp, "Treatment");
         var part = new Participant(exp._id, user._id, condID, exp.groupID)
         part._id = Participants.insert(part);
 
