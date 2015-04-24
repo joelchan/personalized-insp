@@ -24,8 +24,8 @@ Template.MturkLoginPage.events({
         } else {
           var userName = $('input#name').val().trim();
           logger.info("Logging in user with name: " + userName);
-          EventLogger.logUserLogin();
           var user = LoginManager.loginUser(userName);
+          EventLogger.logUserLogin();
           UserFactory.setMturkCode(user);
           if ($("input#nickname").val() !== "") {
             logger.info("Adding alias to user");
