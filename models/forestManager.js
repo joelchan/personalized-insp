@@ -61,6 +61,14 @@ ForestManager = (function() {
 
       return Nodes.findOne({_id: idea_node._id});
     },
+    renameNode: function(node, name) {
+      /*************************************************************
+       * Rename the node
+       ************************************************************/ 
+      Nodes.update({_id: node._id}, {$set: {label: name}});
+      return Nodes.findOne({_id: node._id});
+    },
+      
     groupIdeas: function(ideas, idea_node) {
       /*************************************************************
        * Connect the idea instances to the idea node in the forest
