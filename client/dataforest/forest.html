@@ -207,20 +207,25 @@
         {{> ForestIdeaNode }}
       {{/with }}
     </div>
-    <h4>Select Best Possible matches (or none):</h4>
     <div id="other-node-status">
-      {{#if isBestMatch }}
-        <div class="stack">
+      <div id="status-children" class="stack">
+        <h4>Select Best Possible matches (or none):</h4>
         {{#each clusterChildren }}
           {{> ForestIdeaNode }}
         {{/each }}
-        </div>
-      {{else}}
+      </div>
+      <div id="root-children" class="stack">
+        <h4>Select Best Possible matches (or none):</h4>
+        {{#each rootChildren }}
+          {{> ForestIdeaNode }}
+        {{/each }}
+      </div>
+      <div id="comparison-node">
         <h4>Comparison Node from Tree:</h4>
         {{#with bestMatchNode}}
           {{> ForestIdeaNode }}
         {{/with }}
-      {{/if}}
+      </div>
     </div>
       <!-- <h4>End of block</h4> -->
       <!-- <ul id={{ideaNode}} class="ideanode donestack"> -->
