@@ -1,12 +1,14 @@
 <template name="Forest">
 <h1 class="page-header" id="clusterprompt">{{ prompt }}</h1>
 	<div id="forest" class="row forest">
-	<!--IdeaList and Node Starter-->
 		<div id="ideas" class="col-md-4">
-      {{> ForestCreateCluster }}
       {{> ForestIdeaList }}
 		</div>
-	<!--End-->
+    {{> ForestNodeStatus }}
+    {{> ForestBestMatch }}
+    {{> ForestGeneralize }}
+    {{> ForestCreateCluster }}
+    {{> ForestNodeBuilder }}
     {{> ForestViz }}
 
     {{> CurrentTree }}
@@ -148,7 +150,8 @@
 </template>
 
 <template name="ForestCreateCluster">
-	<div id="createnode"><h3>Create a New Cluster</h3>
+	<div id="createnode" class="col-md-4">
+    <h3>Create a New Cluster</h3>
 		<ul class="newstack" id="node-drag-target">
 	  	Drag idea here to create a new cluster
 		</ul>
@@ -200,24 +203,29 @@
 		<h2>Working Nodes</h2>
 		<h4>Node to be Inserted</h4>
     <div id="current-idea-node">
-      {{#with ideaNode}}
+      {{#each ideaNode}}
         {{> ForestIdeaNode }}
-      {{/with }}
+      {{/each }}
     </div>
-    <h4>Select Best Possible matches (or none):</h4>
     <div id="other-node-status">
-      {{#if isBestMatch }}
-        <div class="stack">
+      <div id="status-children" class="stack">
+        <h4>Select Best Possible matches (or none):</h4>
         {{#each clusterChildren }}
           {{> ForestIdeaNode }}
         {{/each }}
-        </div>
-      {{else}}
-        <h4>Comparison Node from Tree:</h4>
-        {{#with bestMatchNode}}
+      </div>
+      <div id="root-children" class="stack">
+        <h4>Select Best Possible matches (or none):</h4>
+        {{#each rootChildren }}
           {{> ForestIdeaNode }}
-        {{/with }}
-      {{/if}}
+        {{/each }}
+      </div>
+      <div id="comparison-node">
+        <h4>Comparison Node from Tree:</h4>
+        {{#each bestMatchNode}}
+          {{> ForestIdeaNode }}
+        {{/each }}
+      </div>
     </div>
       <!-- <h4>End of block</h4> -->
       <!-- <ul id={{ideaNode}} class="ideanode donestack"> -->

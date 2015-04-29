@@ -60,7 +60,7 @@ Template.Forest.rendered = function(){
   var prompt = Session.get("currentPrompt");
   var root = Nodes.findOne({type: 'root', promptID: prompt['_id']});
   Session.set("currentNode", root);
-  Session.set("ideaNode", "0"); //node to be inserted
+  Session.set("ideaNode", null); //node to be inserted
   Session.set("bestMatchNode", null); //node most similar to node being inserted
   Session.set("currentState", States.NODECREATION);
   Session.set("swapped", false);
@@ -92,19 +92,33 @@ Template.ForestCreateCluster.onRendered(function() {
 			var currCluster = ForestManager.createIdeaNode([node,]) 
       //sets ID as idea node
       Session.set("ideaNode", currCluster); 
-      
-      Blaze.renderWithData(
-          Template.ForestNodeBuilder, 
-          currCluster,
-          $("#forest")[0],
-          $("#tree-viz")[0]
-      );
-      $("#createnode").remove()
+      $("#buildcluster").show()    
+      // Blaze.renderWithData(
+          // Template.ForestNodeBuilder, 
+          // currCluster,
+          // $("#forest")[0],
+          // $("#tree-viz")[0]
+      // );
+
+      // $("#createnode").remove()
+      $("#createnode").hide()
     }
   });
 });
 
+Template.ForestNodeStatus.onCreated(function() {
+  if (Session.get("ideaNode") == undefined) {
+    Session.set("ideaNode", null);
+  }
+  if (Session.get("currentNode") == undefined) {
+    Session.set("currentNode", null);
+  }
+});
+
 Template.ForestNodeStatus.onRendered(function() {
+  $("#comparison-node").hide();
+  $("#status-children").hide();
+  $("#nodestatus").hide();
   //Derive the height of elements above the forest div
   var usedHeight = $("#lpheader").outerHeight(true);
   usedHeight += $("#clusterprompt").outerHeight(true);
@@ -117,16 +131,29 @@ Template.ForestNodeStatus.onRendered(function() {
   $("#other-node-status").height(height);
 });
 
+Template.ForestBestMatch.onRendered(function() {
+  $("#best-match").hide();
+});
+
+Template.ForestGeneralize.onRendered(function() {
+  $("#generalize").hide();
+});
+
 Template.ForestIdeaNode.onRendered(function() {
-  logger.trace("Rendering idea node: ");
+  logger.debug("Rendering idea node: ");
   logger.trace(this);
   var id = this.data['_id'];
   $("#" + id).data("node", this.data);
-  if (id == Session.get("ideaNode")['_id']) {
-    // $("#list-" + id).collapse('show');
-    logger.debug("showing node with id: list-" + id);
-  } else {
+  var ideaNode = Session.get("ideaNode");
+  if (ideaNode == null) {
     $("#list-" + id).toggleClass('hidden');
+  } else {
+    if (id == Session.get("ideaNode")['_id']) {
+      // $("#list-" + id).collapse('show');
+      logger.debug("showing node with id: list-" + id);
+    } else {
+      $("#list-" + id).toggleClass('hidden');
+    }
   }
 
 });
@@ -137,7 +164,7 @@ Template.ForestIdeaList.onRendered(function() {
   logger.trace("Height: " + usedHeight);
   usedHeight += $("#clusterprompt").outerHeight(true);
   logger.trace("Height: " + usedHeight);
-  usedHeight += $("#createnode").outerHeight(true);
+  // usedHeight += $("#createnode").outerHeight(true);
   logger.trace("Height: " + usedHeight);
   usedHeight += this.$("h3").outerHeight(true);
   logger.trace("Height: " + usedHeight);
@@ -173,7 +200,14 @@ Template.ForestIdea.onRendered(function() {
 
 });
 
+Template.ForestNodeBuilder.onCreated(function() {
+  if (Session.get("ideaNode") == undefined) {
+    Session.set("ideaNode", null);
+  }
+});
+
 Template.ForestNodeBuilder.onRendered(function() {
+  $("#buildcluster").hide();
   $("#buildcluster .form-group").droppable({
     accept: '.forest-idea-item',
     tolerance: "pointer",
@@ -283,16 +317,26 @@ Template.PreforestIdeaCluster.helpers({
 Template.ForestNodeBuilder.helpers({
   //return list of ideas contained by idea node
   ideaNodeIdeas : function(){
-    logger.trace("Node Builder current idea node: " + JSON.stringify(this));
-    return ForestManager.getInstanceIdeas(Session.get('ideaNode'));
+    var n = Session.get('ideaNode');
+    if (n != null) {
+      logger.trace("Node Builder current idea node: " + JSON.stringify(n));
+      return ForestManager.getInstanceIdeas(n);
+    } else {
+      return []
+    }
   },
   ideaNodeName : function(){
   	// var currCluster = Nodes.findOne({_id: currNode['_id']});
-    return ForestManager.getNodeName(Session.get('ideaNode'));
+    var n = Session.get('ideaNode');
+    if (n != null) {
+      return ForestManager.getNodeName(n);
+    } else {
+      return "";
+    }
   },
   ideaNode : function(){
     var node = Session.get('ideaNode');
-    if (node) {
+    if (node != null) {
   	  return node._id;
     } else {
       return "default-forest-node";
@@ -303,28 +347,68 @@ Template.ForestNodeBuilder.helpers({
 Template.ForestNodeStatus.helpers({
   ideaNode : function(){
     var n = Session.get('ideaNode');
-    if (n) {
-      return Nodes.findOne({_id: n._id});
+    if (n != null) {
+      logger.debug("Node Status set to new idea node: " + JSON.stringify(n));
+      return [Nodes.findOne({_id: n._id})]
     } else {
-      return null;
+      logger.debug("Node Status set to null");
+      return [];
     }
   },
   clusterChildren : function(){
-    logger.debug("children of current cluster: " + JSON.stringify(this));
-    return ForestManager.getNodeChildren(
-        Session.get("currentNode"), 
-        {_id: 1}
-    );
+    var current = Session.get("currentNode");
+    logger.trace("children of current cluster: " + JSON.stringify(current));
+    if (current != null) {
+      if (current.type == "root") {
+        return [];
+      } else {
+        logger.debug("Node Status current set to new node: " + JSON.stringify(current));
+        return ForestManager.getNodeChildren(
+            current, 
+            {_id: 1}
+        );
+      }
+    } else {
+      logger.debug("Node Status current set null");
+      return [];
+    }
+  },
+  rootChildren: function() {
+    var root = Nodes.findOne({type: 'root', 
+        promptID: Session.get("currentPrompt")._id});
+    logger.trace("Forest Viz root: " + JSON.stringify(root));
+    if (root) {
+      logger.debug("Node Status root set: " + JSON.stringify(root));
+      return ForestManager.getNodeChildren(
+          root, 
+          {_id: 1}
+      );
+    } else {
+      logger.debug("Node Status root not found");
+      return [];
+    }
   },
   isBestMatch: function() {
-    if (Session.get("currentState").val == 1) {
-      return true;
+    var state = Session.get("currentState");
+    if (state != undefined) {
+      if (Session.get("currentState").val == 1) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
   },
   bestMatchNode: function() {
-    return Session.get("bestMatchNode");
+    var n = Session.get('bestMatchNode');
+    if (n != null) {
+      logger.debug("Node Status best Match set to: " + JSON.stringify(n));
+      return [Nodes.findOne({_id: n._id})]
+    } else {
+      logger.debug("Node Status best Match not found");
+      return [];
+    }
   },
 });
 
@@ -337,9 +421,14 @@ Template.ForestBestMatch.helpers({
     }
   },
   isBestMatch : function(){
-  	if(Session.get("currentState").val === 1)
-  		return true;
-  	return false;
+    var state = Session.get("currentState");
+    if (state) {
+  	  if(Session.get("currentState").val === 1)
+  		  return true;
+  	  return false;
+    } else {
+      return false;
+    }
   },
 });
 
@@ -388,7 +477,7 @@ Template.ForestViz.helpers({
 Template.CurrentTree.helpers({
   currentNode: function() {
     var n = Session.get("bestMatchNode");
-    return Session.get("bestMatchNode");
+    return n;
   },
   childNodes: function() {
     var children = ForestManager.getNodeChildren(this, {'label': 1});
@@ -469,28 +558,41 @@ Template.ForestBestMatch.events({
           Session.get("ideaNode")
       );
       //Reset UI
-      $("#nodestatus").remove();
-      $("#best-match").remove();
-      Blaze.render(
-          Template.ForestCreateCluster,
-          $("#ideas")[0],
-          $("#unclustered-ideas")[0]
-      )
+      // $("#nodestatus").remove();
+      $("#status-children").hide();
+      $("#root-children").show();
+      $("#comparison-node").hide();
+      $("#nodestatus").hide();
+      // $("#best-match").remove();
+      $("#best-match").hide();
+      // Blaze.render(
+          // Template.ForestCreateCluster,
+          // $("#ideas")[0],
+          // $("#unclustered-ideas")[0]
+      // )
+      $("#createnode").show();
       $("#ideas").slideToggle()
       showForestView();
       resetState();
     } else {
       //Continue to generalization step
       Session.set("currentState", States.GENERALIZE);
-      $("#best-match").remove();
-      Blaze.render(
-          Template.ForestGeneralize,
-          $("#forest")[0],
-          $("#tree-viz")[0]
-      );
+      // $("#best-match").remove();
+      $("#best-match").hide();
+      $("#status-children").hide();
+      $("#root-children").hide();
+      $("#comparison-node").show();
+      // Blaze.render(
+          // Template.ForestGeneralize,
+          // $("#forest")[0],
+          // $("#tree-viz")[0]
+      // );
+      $("#generalize").show()
       hideForestView();
 
     }
+    // Reset the selected UI nodes
+    $(".selected-node").toggleClass("selected-node");
   },
   // 'click #bmback': function (event) {
     // logger.debug("Clicked to rewind to previous step");
@@ -523,14 +625,17 @@ Template.ForestGeneralize.events({
     );
     ForestManager.mergeNodes(bestMatchNode, ideaNode);
     //Reset to beginning
-    $("#generalize").remove();
-    $("#nodestatus").remove();
+    // $("#generalize").remove();
+    $("#generalize").hide();
+    // $("#nodestatus").remove();
+    $("#nodestatus").hide();
     $("#ideas").slideToggle()
-    Blaze.render(
-        Template.ForestCreateCluster,
-        $("#ideas")[0],
-        $("#unclustered-ideas")[0]
-    );
+    // Blaze.render(
+        // Template.ForestCreateCluster,
+        // $("#ideas")[0],
+        // $("#unclustered-ideas")[0]
+    // );
+    $("#createnode").show()
     showForestView();
     resetState();
   },
@@ -555,12 +660,17 @@ Template.ForestGeneralize.events({
     Session.set("ideaNode", bestMatch);
     Session.set("bestMatchNode", null);
     // Transition UI back to similarity comparison
-    $('#generalize').remove()
-    Blaze.render(
-        Template.ForestBestMatch,
-        $("#forest")[0],
-        $("#tree-viz")[0]
-    );
+    // $('#generalize').remove()
+    $('#generalize').hide()
+    // Blaze.render(
+        // Template.ForestBestMatch,
+        // $("#forest")[0],
+        // $("#tree-viz")[0]
+    // );
+    $("#best-match").show();
+    $("#status-children").show();
+    $("#comparison-node").hide();
+    showForestView();
   },
 
   //best match more general than idea node
@@ -575,24 +685,32 @@ Template.ForestGeneralize.events({
   	Session.set("currentNode", bestMatch);
     Session.set("bestMatchNode", null);
     // Transition UI back to similarity comparison
-    $('#generalize').remove()
-    Blaze.render(
-        Template.ForestBestMatch,
-        $("#forest")[0],
-        $("#tree-viz")[0]
-    );
+    // $('#generalize').remove()
+    $('#generalize').hide()
+    // Blaze.render(
+        // Template.ForestBestMatch,
+        // $("#forest")[0],
+        // $("#tree-viz")[0]
+    // );
+    $("#best-match").show();
+    $("#status-children").show();
+    $("#comparison-node").hide();
+    showForestView();
   },
 
   //go back while in generalization stage of traversal
   'click button#genback' : function(){
+    //////////////////// Currently doesn't work ////////////////////
   	Session.set("currentState", States.BESTMATCH);
   	Session.set("bestMatchNode", null);
-    $('#generalize').remove();
-    Blaze.render(
-        Template.ForestBestMatch,
-        $("#forest")[0],
-        $("#tree-viz")[0]
-    );
+    // $('#generalize').remove();
+    $('#generalize').hide();
+    // Blaze.render(
+        // Template.ForestBestMatch,
+        // $("#forest")[0],
+        // $("#tree-viz")[0]
+    // );
+    $("#best-match").show();
   },
 
 })
@@ -610,41 +728,49 @@ Template.ForestIdeaNode.events({
 Template.ForestNodeBuilder.events({
   'click button#finish' : function(){
     var label = $("#namecluster").val();
-    //make sure a name has been provided
-  	//if(label === undefined || label === "") { 
-  		//alert("Please name cluster");
-  		//return false;
-  	//} else { 
-  		//if current node has no children, insert idea node under current
-  	  var compareNode = Nodes.findOne({_id: Session.get("ideaNode")['_id']});
-      var currNode = Nodes.findOne({_id: Session.get("currentNode")._id});
-  		if(ForestManager.getNodeChildren(currNode).length == 0) {
-        ForestManager.insertToTree(currNode, compareNode);
-        //Reset UI to initial
-        Blaze.render(
-            Template.ForestCreateCluster,
-            $("#ideas")[0],
-            $("#unclustered-ideas")[0]
-        );
-        $("#buildcluster").remove();
-        resetState()
-  		} else { //else continue to next state
-  			Session.set("currentState", States.BESTMATCH);
-  			$('#ideas').hide(function(){
-          Blaze.renderWithData(
-              Template.ForestNodeStatus, 
-              currNode,
-              $("#forest")[0],
-              $("#tree-viz")[0]
-          );
-          Blaze.render(
-              Template.ForestBestMatch,
-              $("#forest")[0],
-              $("#tree-viz")[0]
-          );
-  			});
-        $("#buildcluster").remove();
-  		}
+    $("#namecluster").val("");
+    //Update the label of the node
+
+  	if(label != undefined || label != "") { 
+      ForestManager.renameNode(Session.get("ideaNode"), label);
+    }
+  	//if current node has no children, insert idea node under current
+  	var compareNode = Nodes.findOne({_id: Session.get("ideaNode")['_id']});
+    var currNode = Nodes.findOne({_id: Session.get("currentNode")._id});
+  	if(ForestManager.getNodeChildren(currNode).length == 0) {
+      ForestManager.insertToTree(currNode, compareNode);
+      //Reset UI to initial
+      $("#createnode").show()
+      // Blaze.render(
+          // Template.ForestCreateCluster,
+          // $("#ideas")[0],
+          // $("#unclustered-ideas")[0]
+      // );
+      // $("#buildcluster").remove();
+      $("#buildcluster").hide();
+      resetState()
+  	} else { //else continue to next state
+  		Session.set("currentState", States.BESTMATCH);
+      $('#ideas').hide();
+  		// $('#ideas').hide(function(){
+        // Blaze.renderWithData(
+            // Template.ForestNodeStatus, 
+            // currNode,
+            // $("#forest")[0],
+            // $("#tree-viz")[0]
+        // );
+      $("#nodestatus").show()
+      $("#root-children").show()
+        // Blaze.render(
+            // Template.ForestBestMatch,
+            // $("#forest")[0],
+            // $("#tree-viz")[0]
+        // );
+      $("#best-match").show()
+  		// });
+      // $("#buildcluster").remove();
+      $("#buildcluster").hide();
+  	}
   	//}
   },
 });
@@ -665,14 +791,19 @@ Template.ForestNodeName.events({
     
     //Reset to beginning
     $("#nameModal").modal('hide');
-    $("#generalize").remove();
-    $("#nodestatus").remove();
+    // $("#generalize").remove();
+    $("#generalize").hide();
+    // $("#nodestatus").remove();
+    $("#nodestatus").hide();
     $("#ideas").slideToggle()
-    Blaze.render(
-      Template.ForestCreateCluster,
-      $("#ideas")[0],
-      $("#unclustered-ideas")[0]
-    );
+    $("#createnode").show();
+    showForestView();
+    $(".selected-node").toggleClass("selected-node");
+    // Blaze.render(
+      // Template.ForestCreateCluster,
+      // $("#ideas")[0],
+      // $("#unclustered-ideas")[0]
+    // );
     resetState();
   },
 
