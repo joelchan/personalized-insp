@@ -98,6 +98,10 @@ ForestManager = (function() {
       Nodes.update({_id: parent._id}, 
           {$addToSet: {child_leaf_ids: child._id}});
     },
+    removeFromTree: function(parent, child) {
+      Nodes.update({_id: parent._id}, 
+          {$pull: {child_leaf_ids: child._id}});
+    },
     getInstanceIdeas: function(node, sorter) {
       /*************************************************************
        * Get children ideas of a given idea node
@@ -293,6 +297,64 @@ ForestManager = (function() {
 
       return Nodes.findOne({_id: an._id});
     },
-
+    findOrphans: function() {
+      /*************************************************************
+       * Find and return any orphan nodes (not attached to the tree)
+       * Returns empty list if there aren't any
+       *************************************************************/
+      orphanLeaves = []
+      allLeaves = Nodes.find({type: "forest_leaf"});
+      allLeaves.forEach(function(leaf) {
+        retrievedParent = Nodes.find({child_leaf_ids: leaf._id});
+        if (!retrievedParent && !isInList(leaf, orphanLeaves)) {
+          orphanNodes.push(leaf);
+        }
+      });
+      return orphanNodes;
+    },
+    cleanOrphans: function() {
+      /*************************************************************
+       * Clean up the orphans
+       *************************************************************/
+       orphanLeaves = this.findOrphans();
+       if (orphanLeaves.length > 0) {
+        logger.debug("Cleaning up " + orphanLeaves.length + " orphan leaves");
+        logger.trace("Orphan leaves: " + JSON.stringify(orphanLeaves));
+        orphanLeaves.forEach(function(orphanLeaf) {
+          // remove idea_node_ids from the cluster
+          idea_node_ids = orphanLeaf.idea_node_ids
+          idea_node_ids.forEach(function(idea_node_id) {
+            Nodes.update({_id: leaf._id},
+                          {$pull: {idea_node_ids: idea_node_id}});
+          });
+          // set them as unclustered
+          idea_node_ids.forEach(function(idea_node_id) {
+            Nodes.update({_id: idea_node_id},
+                          {$set: {is_clustered: false}});
+          });
+          // destroy the orphan
+          Nodes.remove({_id: orphanLeaf._id});
+        });
+       } else {
+        logger.debug("No orphan leaves");
+       }
+    },
+    moveNodeinTree: function(toMove, source, dest) {
+      /**************************************************************
+       * Move a node in the tree from a source parent node
+       * to a destination parent node
+       * @Params
+       *    toMove - id of the node to be moved
+       *    source - id of the current parent node
+       *    dest - id of the desired (destination) parent node
+       * @Return
+       *    boolean - true if successful move
+       * ***********************************************************/
+       node = Nodes.findOne({_id: toMove});
+       currentParent = Nodes.findOne({_id: source});
+       destParent = Nodes.findOne({_id: dest});
+       this.removeFromTree(currentParent, node);
+       this.insertToTree(destParent, node);
+    },
   };
 }());
