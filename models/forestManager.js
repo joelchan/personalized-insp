@@ -221,23 +221,29 @@ ForestManager = (function() {
        * Swap the two idea nodes, substituting edges
        * with node2._id with node1._id and vice-versa
        *************************************************************/
+      
+      // get node1 data
       var node1 = Nodes.findOne({_id: n1._id});
-      var node2 = Nodes.findOne({_id: n2._id});
       node1Children = node1.child_leaf_ids
-      node1Ideas = node1.idea_node_ids
+      // node1Ideas = node1.idea_node_ids
       node1Content = node1.content
+      
+      // get node2 data
+      var node2 = Nodes.findOne({_id: n2._id});
       node2Children = node2.child_leaf_ids
-      node2Ideas = node2.idea_node_ids
+      // node2Ideas = node2.idea_node_ids
       node2Content = node2.content
+
       //Swap the children  of the nodes
       Nodes.update({_id: node1._id}, 
          {$set: {'child_leaf_ids': node2Children, 
-             'idea_node_ids': node2Ideas
+             // 'idea_node_ids': node2Ideas
       }})
       Nodes.update({_id: node2._id}, 
          {$set: {'child_leaf_ids': node1Children, 
-             'idea_node_ids': node1Ideas
+             // 'idea_node_ids': node1Ideas
       }})
+      
       //Swap parent refs of each node
       var n1Parents = Nodes.find({child_leaf_ids: node1._id});
       var n2Parents = Nodes.find({child_leaf_ids: node2._id});
@@ -259,6 +265,7 @@ ForestManager = (function() {
       });
 
     },
+
     createArtificialNode: function(n1, n2, label) {
       /*************************************************************
        * Create a parent node with no instance children with the
