@@ -333,7 +333,7 @@ ForestManager = (function() {
           // remove idea_node_ids from the cluster
           idea_node_ids = orphanLeaf.idea_node_ids
           idea_node_ids.forEach(function(idea_node_id) {
-            Nodes.update({_id: leaf._id},
+            Nodes.update({_id: orphanLeaf._id},
                           {$pull: {idea_node_ids: idea_node_id}});
           });
           // set them as unclustered
