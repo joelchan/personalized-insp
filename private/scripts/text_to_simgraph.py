@@ -40,15 +40,15 @@ if __name__ == '__main__':
         print "Preprocessing prompt with question: " + prompt['question']
         graphID = prompt['forestGraphID']
         promptID = prompt['_id']
-        forest_ideas, forest_nodes = dataforest.read_raw_data()
-        mt_prompt = 'forgot_name'
-        p_ideas = [i for i in forest_ideas if i.promptID == mt_prompt]
-        p_nodes = [n for n in forest_nodes if n.promptID == mt_prompt]
-        print "all instances from file: " + str(len(forest_ideas))
-        print "all nodes from file: " + str(len(forest_nodes))
-        print "raw instances from file: " + str(len(p_ideas))
-        print "raw nodes from file: " + str(len(p_nodes))
-        dataforest.insert_to_db(db, promptID, graphID, p_ideas, p_nodes)
+        # forest_ideas, forest_nodes = dataforest.read_raw_data()
+        # mt_prompt = 'forgot_name'
+        # p_ideas = [i for i in forest_ideas if i.promptID == mt_prompt]
+        # p_nodes = [n for n in forest_nodes if n.promptID == mt_prompt]
+        # print "all instances from file: " + str(len(forest_ideas))
+        # print "all nodes from file: " + str(len(forest_nodes))
+        # print "raw instances from file: " + str(len(p_ideas))
+        # print "raw nodes from file: " + str(len(p_nodes))
+        # dataforest.insert_to_db(db, promptID, graphID, p_ideas, p_nodes)
         ideas = db.get_data('ideas', None, {'promptID': prompt['_id']})
         # fetch all ideas given the db cursor
         ideas = [idea for idea in ideas]
