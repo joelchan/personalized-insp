@@ -188,32 +188,38 @@ ForestManager = (function() {
       }
 
     },
-    mergeNodes: function(node1, node2) {
+    mergeNodes: function(sourceNode, targetNode) {
       /*************************************************************
-       * Merge the two idea nodes into one node, making the commong
-       * result share the set of children leafs and ideas, while
-       * keeping the label of node1
+       * Merge sourceNode into targetNode
+       * This means all ideas are now part of the targetNode
+       * AND we destroy the sourceNode
+       * so that it's not dangling off by itself, separate from the forest
        *************************************************************/
-      //Merge the nodes
-      Nodes.update({_id: node1._id}, 
-        {$addToSet: {'child_leaf_ids': {$each: node2.child_leaf_ids}},
-          $addToSet: {'idea_node_ids': {$each: node2.idea_node_ids}}})
-      //Update parents of node2 to point to node1
+      // Transfer children and idea information to targetNode
+      Nodes.update({_id: targetNode._id}, 
+        {$addToSet: {'child_leaf_ids': {$each: sourceNode.child_leaf_ids}},
+          $addToSet: {'idea_node_ids': {$each: sourceNode.idea_node_ids}}})
+      // Transfer parent information from sourceNode to targetNode
       if (Meteor.isServer) {
-        Nodes.update({'child_leaf_ids': node2._id}, 
-            {$push: {child_leaf_ids: node1._id}});
-        Nodes.update({'child_leaf_ids': node2._id}, 
-            {$pull: {child_leaf_ids: node2._id}});
+        // have the parents of the sourceNode also now point to the targetNode
+        Nodes.update({'child_leaf_ids': sourceNode._id}, 
+            {$push: {child_leaf_ids: targetNode._id}});
+        // and detach the sourceNode from its parents
+        Nodes.update({'child_leaf_ids': sourceNode._id}, 
+            {$pull: {child_leaf_ids: sourceNode._id}});
       } else {
-        var parents = Nodes.find({'child_leaf_ids': node2._id});
+        var parents = Nodes.find({'child_leaf_ids': sourceNode._id});
         parents.forEach(function (parent) {
+          // have this sourceNode parent point to the targetNode
           Nodes.update({_id: parent._id}, 
-              {$push: {child_leaf_ids: node1._id}});
+              {$push: {child_leaf_ids: targetNode._id}});
+          // and detach the sourceNode from this parent
           Nodes.update({_id: parent._id}, 
-              {$pull: {child_leaf_ids: node2._id}});
+              {$pull: {child_leaf_ids: sourceNode._id}});
         });
-        
       }
+      // Destroy the sourceNode (to clean up)
+      Nodes.remove({_id: sourceNode._id});
 
     },
     swapNodes: function(n1, n2) {
