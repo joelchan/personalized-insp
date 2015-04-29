@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers:ForestManager');
 // Comment out to use global logging level
-//Logger.setLevel('Model:Managers:ForestManager', 'trace');
+Logger.setLevel('Model:Managers:ForestManager', 'trace');
 // Logger.setLevel('Model:Managers:ForestManager', 'debug');
-Logger.setLevel('Model:Managers:ForestManager', 'info');
+// Logger.setLevel('Model:Managers:ForestManager', 'info');
 // Logger.setLevel('Model:Managers:ForestManager', 'warn');
 
 
@@ -311,14 +311,15 @@ ForestManager = (function() {
        * Returns empty list if there aren't any
        *************************************************************/
       orphanLeaves = []
-      allLeaves = Nodes.find({type: "forest_leaf"});
+      allLeaves = Nodes.find({type: "forest_leaf"}).fetch();
       allLeaves.forEach(function(leaf) {
-        retrievedParent = Nodes.find({child_leaf_ids: leaf._id});
+        retrievedParent = Nodes.findOne({child_leaf_ids: leaf._id});
+        logger.trace("Found a parent: " + JSON.stringify(retrievedParent));
         if (!retrievedParent && !isInList(leaf, orphanLeaves)) {
-          orphanNodes.push(leaf);
+          orphanLeaves.push(leaf);
         }
       });
-      return orphanNodes;
+      return orphanLeaves;
     },
     cleanOrphans: function() {
       /*************************************************************
