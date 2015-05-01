@@ -203,7 +203,7 @@ ForestManager = (function() {
       if (Meteor.isServer) {
         // have the parents of the sourceNode also now point to the targetNode
         Nodes.update({'child_leaf_ids': sourceNode._id}, 
-            {$push: {child_leaf_ids: targetNode._id}});
+            {$addToSet: {child_leaf_ids: targetNode._id}});
         // and detach the sourceNode from its parents
         Nodes.update({'child_leaf_ids': sourceNode._id}, 
             {$pull: {child_leaf_ids: sourceNode._id}});
@@ -212,7 +212,7 @@ ForestManager = (function() {
         parents.forEach(function (parent) {
           // have this sourceNode parent point to the targetNode
           Nodes.update({_id: parent._id}, 
-              {$push: {child_leaf_ids: targetNode._id}});
+              {$addToSet: {child_leaf_ids: targetNode._id}});
           // and detach the sourceNode from this parent
           Nodes.update({_id: parent._id}, 
               {$pull: {child_leaf_ids: sourceNode._id}});
@@ -343,19 +343,26 @@ ForestManager = (function() {
         logger.debug("Cleaning up " + orphanLeaves.length + " orphan leaves");
         logger.trace("Orphan leaves: " + JSON.stringify(orphanLeaves));
         orphanLeaves.forEach(function(orphanLeaf) {
-          // remove idea_node_ids from the cluster
-          idea_node_ids = orphanLeaf.idea_node_ids
-          idea_node_ids.forEach(function(idea_node_id) {
-            Nodes.update({_id: orphanLeaf._id},
-                          {$pull: {idea_node_ids: idea_node_id}});
-          });
-          // set them as unclustered
-          idea_node_ids.forEach(function(idea_node_id) {
-            Nodes.update({_id: idea_node_id},
-                          {$set: {is_clustered: false}});
-          });
-          // destroy the orphan
-          Nodes.remove({_id: orphanLeaf._id});
+
+          if (leaf.child_leaf_ids.length < 1) {
+            // remove idea_node_ids from the cluster
+            idea_node_ids = orphanLeaf.idea_node_ids
+            idea_node_ids.forEach(function(idea_node_id) {
+              Nodes.update({_id: orphanLeaf._id},
+                            {$pull: {idea_node_ids: idea_node_id}});
+            });
+            // set them as unclustered
+            idea_node_ids.forEach(function(idea_node_id) {
+              Nodes.update({_id: idea_node_id},
+                            {$set: {is_clustered: false}});
+            });
+            // destroy the orphan
+            Nodes.remove({_id: orphanLeaf._id});
+          } else {
+            logger.debug("Has children but no parents - not destroying this leaf");
+            logger.trace(JSON.stringify(leaf));
+          }
+          
         });
        } else {
         logger.debug("No orphan leaves");

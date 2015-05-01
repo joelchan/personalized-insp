@@ -623,7 +623,7 @@ Template.ForestGeneralize.events({
   	var bestMatchNode = Nodes.findOne(
         {_id: Session.get("bestMatchNode")._id}
     );
-    ForestManager.mergeNodes(bestMatchNode, ideaNode);
+    ForestManager.mergeNodes(ideaNode, bestMatchNode);
     //Reset to beginning
     // $("#generalize").remove();
     $("#generalize").hide();
