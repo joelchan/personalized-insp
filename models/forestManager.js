@@ -385,5 +385,58 @@ ForestManager = (function() {
        this.removeFromTree(currentParent, node);
        this.insertToTree(destParent, node);
     },
+    clusteredIdeasNotOnTree: function() {
+      /**************************************************************
+       * Convenience function for debugging
+       * We want to know if there are any ideas incorrectly marked
+       * as clustered (i.e., is_clustered = false, but they are actually
+       * NOT attached to a leaf on the tree)
+       * ***********************************************************/
+      clusteredButNotOnTree = []
+      clusteredIdeas = Nodes.find({type: "forest_idea", is_clustered: true}).fetch()
+      clusteredIdeas.forEach(function(idea) {
+        // get the parent leaf
+        parentLeaves = Nodes.find({type: "forest_leaf", idea_node_ids: idea._id}).fetch();
+        if (parentLeaves.length < 1 && clusteredButNotOnTree.indexOf(idea) < 0) {
+          clusteredButNotOnTree.push(idea);
+        }
+      });
+      return clusteredButNotOnTree;
+    },
+
+    unclusteredIdeasOnTree: function() {
+      /**************************************************************
+       * Convenience function for debugging
+       * We want to know if there are any ideas incorrectly marked
+       * as unclustered (i.e., is_clustered = false, but they nevertheless
+       * are attached to a leaf on the tree)
+       * ***********************************************************/
+      unclusteredButOnTree = []
+      unclusteredIdeas = Nodes.find({type: "forest_idea", is_clustered: false}).fetch()
+      unclusteredIdeas.forEach(function(idea) {
+        parentLeaves = Nodes.find({type: "forest_leaf", idea_node_ids: idea._id}).fetch();
+        if (parentLeaves.length > 0 && unclusteredButOnTree.indexOf(idea) < 0) {
+           unclusteredButOnTree.push(idea);
+        }
+      });
+      return unclusteredButOnTree;
+    },
+
+    multipleParentLeaves: function() {
+      /**************************************************************
+       * Convenience function for debugging
+       * Find ideas that are attached to more than one leaf
+       * ***********************************************************/
+       ideas = Nodes.find({type: "forest_idea"}).fetch()
+       multipleParentIdeas = []
+       ideas.forEach(function(idea) {
+        parents = Nodes.find({idea_node_ids: idea._id, type: "forest_leaf"}).fetch();
+        if (parents.length > 1 && multipleParentIdeas.indexOf(ideas) < 0) {
+          multipleParentIdeas.push(idea);
+        }
+       });
+       return multipleParentIdeas;
+    }
+
   };
 }());
