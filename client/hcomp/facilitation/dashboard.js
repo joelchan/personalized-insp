@@ -15,6 +15,8 @@ var filters = {
 
 MS_PER_MINUTE = 60000;
 
+var forceTimerHandler = "";
+
 Template.HcompDashboard.rendered = function(){
   
   //Set height of elements to viewport height
@@ -2097,25 +2099,42 @@ Template.ForceV.rendered = function() {
         + " scale(" + scale + ")");
   }
   
-  Deps.autorun(function() {  
-
-     //Old force diagram code
-    
-    //var rawIdeas = getFilteredIdeas("IdeaWordCloud");
-    var rawIdeas = FilterManager.performQuery("IdeaWordCloud Filter", 
+  // first render
+  var rawIdeas = FilterManager.performQuery("IdeaWordCloud Filter", 
         Session.get("currentUser"),   
         "ideas").fetch();
+  Session.set("numOld", rawIdeas.length);
+  var newData = formatData(rawIdeas)
+  var dataset = processData(GetForceData(newData));
+  CreateForceDiagram(dataset, svg, width, height);
 
-    var newData = formatData(rawIdeas)
+  // update every minute
+  forceTimerHandler = Meteor.setInterval(function(){
+    numOld = Session.get("numOld");
+    logger.debug("Checking for new ideas to update force diagram");
+    rawIdeas = FilterManager.performQuery("IdeaWordCloud Filter", 
+          Session.get("currentUser"),   
+          "ideas").fetch();
+    var numNew = rawIdeas.length - numOld;
+    if (numNew >= 10) {
+      logger.debug("There are " + numNew + " new ideas since last update")
+      newData = formatData(rawIdeas)
+      dataset = processData(GetForceData(newData));
+      CreateForceDiagram(dataset, svg, width, height);  
 
-    var dataset = processData(GetForceData(newData));
+      // update the threshold for new ideas
+      Session.set("numOld", rawIdeas.length);
+    } else {
+      logger.debug("Insufficient new ideas (only " + numNew + ") since last update");
+    }
+  }, 30000);
+}
 
-    CreateForceDiagram(dataset, svg, width, height);
-
-    })
+Template.ForceV.destroyed = function () {
+  // clear the interval for the force updater
+  Meteor.clearInterval(forceTimerHandler);
 }
  
-
 function GetForceData(ideaData)
 {
   // Get Category Affinity Matrix
