@@ -121,7 +121,7 @@ if __name__ == '__main__':
         # Insert similarity weights into graph as special edges
         test_edges = db.get_data("edges", None, {})
         print "number of edges before insert: " + str(test_edges.count())
-        result = db.insert('edges', sim_edges);
+        # result = db.insert('edges', sim_edges);
         test_edges = db.get_data("edges", None, {})
         print "number of edges after insert: " + str(test_edges.count())
         # for id, edge in zip(result, sim_edges):
@@ -139,8 +139,6 @@ if __name__ == '__main__':
 
         solve = solver(G)
         clusters = solver.run(solve)
-        print "***********************************************"
-        print clusters[:3]
 
         # Create cluster parent nodes
         cluster_nodes = [Node(graphID, promptID, 'forest_precluster',
@@ -160,18 +158,18 @@ if __name__ == '__main__':
         # for id, node in zip(result, cluster_nodes):
             # setattr(node, '_id', id)
         # Create edges for each cluster
-        c_edges = []
-        for node in cluster_nodes:
-            nodeID = getattr(node, '_id')
-            c_edges.extend([Edge(promptID, nodeID, childID,
-                                 {'_id': str(ObjectId()),
-                                  'type': 'parent_child'})
-                for childID in node.idea_node_ids])
-        test_edges = db.get_data("edges", None, {})
-        print "number of edges before insert: " + str(test_edges.count())
-        db.insert('edges', c_edges)
-        test_edges = db.get_data("edges", None, {})
-        print "number of edges after insert: " + str(test_edges.count())
+        # c_edges = []
+        # for node in cluster_nodes:
+            # nodeID = getattr(node, '_id')
+            # c_edges.extend([Edge(promptID, nodeID, childID,
+                                 # {'_id': str(ObjectId()),
+                                  # 'type': 'parent_child'})
+                # for childID in node.idea_node_ids])
+        # test_edges = db.get_data("edges", None, {})
+        # print "number of edges before insert: " + str(test_edges.count())
+        # db.insert('edges', c_edges)
+        # test_edges = db.get_data("edges", None, {})
+        # print "number of edges after insert: " + str(test_edges.count())
 
 
         # Update prompt as processed

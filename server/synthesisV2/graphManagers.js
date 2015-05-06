@@ -6,45 +6,45 @@ Logger.setLevel('Server:SynthesisV2:GraphManagers', 'trace');
 //Logger.setLevel('Server:SynthesisV2:GraphManagers', 'info');
 //Logger.setLevel('Server:SynthesisV2:GraphManagers', 'warn');
 
-Meteor.startup(function() {
-  /****************************************************************
-   * Setup idea listener to create idea nodes in the shared graph
-   * for all ideas in a prompt
-   * ************************************************************/
-  logger.debug("Setting up prompt idea listener");
-  var ideaNodes = Nodes.find({type: 'idea'});
-  var ideaNodeIDs = getValsFromField(ideaNodes, 'ideaID');
-  var prompts = Prompts.find().observe({
-    added: function(prompt) {
-      logger.trace("Setting up listener for prompt with id: " + 
-          JSON.stringify(prompt._id));
-      var groupID = prompt.groupIDs[0];
-      if (!groupID) {
-        groupID = '0';
-      }
-     
-      var sharedGraph = Graphs.findOne({'promptID': prompt._id, userID: null});
-      logger.trace("Shared Graph: " + JSON.stringify(sharedGraph));
-      if (!sharedGraph) {
-        logger.info("No shared graph found.  Initializing new graph");
-        sharedGraph = GraphManager.createGraph(prompt._id, groupID, '')
-      }
-  
-      logger.trace("appending ideas to shared graph with id: " + 
-          JSON.stringify(sharedGraph));
-     
-      Ideas.find({_id: {$nin: ideaNodeIDs}, 'promptID': prompt._id}).
-        observe({
-          added: function(idea) {
-            //logger.debug("New Idea added. Adding matching node to graph");
-            //GraphManager.createIdeaNode(idea, sharedGraph);
-        }
-      });
-    },
-
-  });
-
-});
+// Meteor.startup(function() {
+  // /****************************************************************
+   // * Setup idea listener to create idea nodes in the shared graph
+   // * for all ideas in a prompt
+   // * ************************************************************/
+  // logger.debug("Setting up prompt idea listener");
+  // var ideaNodes = Nodes.find({type: 'idea'});
+  // var ideaNodeIDs = getValsFromField(ideaNodes, 'ideaID');
+  // var prompts = Prompts.find().observe({
+    // added: function(prompt) {
+      // logger.trace("Setting up listener for prompt with id: " + 
+          // JSON.stringify(prompt._id));
+      // var groupID = prompt.groupIDs[0];
+      // if (!groupID) {
+        // groupID = '0';
+      // }
+    //  
+      // var sharedGraph = Graphs.findOne({'promptID': prompt._id, userID: null});
+      // logger.trace("Shared Graph: " + JSON.stringify(sharedGraph));
+      // if (!sharedGraph) {
+        // logger.info("No shared graph found.  Initializing new graph");
+        // sharedGraph = GraphManager.createGraph(prompt._id, groupID, '')
+      // }
+ //  
+      // logger.trace("appending ideas to shared graph with id: " + 
+          // JSON.stringify(sharedGraph));
+    //  
+      // Ideas.find({_id: {$nin: ideaNodeIDs}, 'promptID': prompt._id}).
+        // observe({
+          // added: function(idea) {
+            // //logger.debug("New Idea added. Adding matching node to graph");
+            // //GraphManager.createIdeaNode(idea, sharedGraph);
+        // }
+      // });
+    // },
+// 
+  // });
+// 
+// });
 
 Meteor.methods({
   /****************************************************************
