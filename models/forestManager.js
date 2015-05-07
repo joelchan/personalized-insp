@@ -288,7 +288,48 @@ ForestManager = (function() {
       });
 
     },
+    createArtificialParent: function(n, label) {
+      /*************************************************************
+       * Create a node as parent of given node with no ideas linked
+       * **********************************************************/
+      logger.debug("Creating an artificial Idea Node");
+      var node = Nodes.findOne({_id: n._id});
+      var graphID = node.graphID;
+      var promptID = node.promptID;
+      var type = "forest_leaf";
+      if (typeof label === undefined) {
+        label = "";
+      }
+      data = {'label': label,
+        'idea_node_ids': [],
+        'child_leaf_ids': [node._id]};
+      var an = GraphManager.createGraphNode(graphID, type, data);
+      logger.trace("Artificial node created: " + JSON.stringify(an));
+      if (Meteor.isServer) {
+        logger.debug("Updating tree for artificial node on server");
+        Nodes.update({'child_leaf_ids': node._id}, 
+          {$push: {child_leaf_ids: an._id}});
+        Nodes.update({'child_leaf_ids': node1._id}, 
+          {$pull: {child_leaf_ids: node._id}});
+      } else {
+        logger.debug("Updating tree for artificial node on client");
+        var parents = Nodes.find({$and: [
+            {'child_leaf_ids': node._id},
+            {'_id': {$ne: an._id}}
+        ]});
+        parents.forEach(function(parent) {
+          logger.trace("Updating parent of node1: " + JSON.stringify(parent));
 
+          Nodes.update({_id: parent._id}, 
+            {$push: {child_leaf_ids: an._id}});
+          Nodes.update({_id: parent._id}, 
+            {$pull: {child_leaf_ids: node._id}});
+        });
+      }
+
+      return Nodes.findOne({_id: an._id});
+
+    },
     createArtificialNode: function(n1, n2, label) {
       /*************************************************************
        * Create a parent node with no instance children with the

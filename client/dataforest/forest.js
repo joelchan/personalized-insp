@@ -774,7 +774,6 @@ Template.ForestNodeBuilder.events({
     var label = $("#namecluster").val();
     $("#namecluster").val("");
     //Update the label of the node
-
   	if(label != undefined || label != "") { 
       ForestManager.renameNode(Session.get("ideaNode"), label);
     }
@@ -906,12 +905,23 @@ Template.ForestViz.events({
     logger.debug(tree);
     ForestManager.removeTree(tree);
   },
+  "click #add-parent": function(event) {
+    logger.debug("Adding an artificial node as parent");
+    var treeID = $("#tree-viz .selected-node").attr('id').substring(5);
+    logger.debug("Adding parent to tree with id: " + treeID);
+    var tree = Nodes.findOne({_id: treeID});
+    logger.trace(tree);
+    var label = $("#rename-tree").val();
+    $("#rename-tree").val("");
+    logger.debug("Naming parent with label: " + label);
+    ForestManager.createArtificialParent(tree, label);
+  },
   "click #rename-tree-btn": function(event) {
     logger.debug("Renaming selected tree");
     var treeID = $("#tree-viz .selected-node").attr('id').substring(5);
     logger.debug("renaming tree with id: " + treeID);
     var tree = Nodes.findOne({_id: treeID});
-    logger.debug(tree);
+    logger.trace(tree);
     var label = $("#rename-tree").val();
     $("#rename-tree").val("");
     logger.debug("Renaming with label: " + label);
@@ -944,7 +954,7 @@ Template.ForestTree.events({
       //Mark clicked cluster as selected
       $(target).toggleClass("selected-node");
     }
-    event.stopImmediatePropagation();
+    event.stopPropagation();
   },
 });
 /********************************************************************
