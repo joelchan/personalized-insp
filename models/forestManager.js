@@ -106,6 +106,23 @@ ForestManager = (function() {
       Nodes.update({_id: parent._id}, 
           {$addToSet: {child_leaf_ids: child._id}});
     },
+    removeTree: function(t) {
+      var tree = Nodes.findOne({_id: t._id});
+      //Get Parent of tree
+      var parent = Nodes.findOne({child_leaf_ids: tree._id});
+      //Move Children to parent
+      var children = Nodes.find({_id: {$in: tree.child_leaf_ids}});
+      children.forEach(function(child) {
+        ForestManager.insertToTree(parent, child);
+      });
+      //Uncluster child ideas
+      tree['idea_node_ids'].forEach(function(id) {
+        Nodes.update({_id: id},{$set: {is_clustered: false}});
+      });
+      //Remove tree from forest
+      this.removeFromTree(parent, tree);
+      Nodes.remove({_id: tree._id});
+    },
     removeFromTree: function(parent, child) {
       Nodes.update({_id: parent._id}, 
           {$pull: {child_leaf_ids: child._id}});

@@ -40,7 +40,11 @@
 
 <template name="ForestViz">
 <div id="tree-viz" class="col-md-4 pull-right">
-	<h3>Idea Forest</h3>
+	<h3 class="forest-heading">Idea Forest</h3>
+  <div id="remove-tree" class="btn btn-danger">Remove Tree</div>
+  <div id="rename-tree-btn" class="btn btn-primary">Rename Tree</div>
+	<input type="text" class="form-control input-sm sort-disabled" 
+				id="rename-tree" placeholder="Rename tree">
   <div id="root-tree" class="forest-tree">
     {{#with rootNode}}
       <ul class="indent" id="ft-{{ _id }}">

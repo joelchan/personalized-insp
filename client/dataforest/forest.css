@@ -119,6 +119,10 @@
 
 .forest .clusternodename{
 }
+.forest #rename-tree {
+  display: inline-block;
+  width: 35%;
+}
 
 label, .fa{
 	/*padding-left: 5px;*/

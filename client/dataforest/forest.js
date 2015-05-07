@@ -898,6 +898,25 @@ Template.ForestViz.events({
     logger.debug("looking at cluster with id: " + id);
     $(id).toggleClass('hidden'); 
   },
+  "click #remove-tree": function(event) {
+    logger.debug("deleting selected trees and unclustering ideas");
+    var treeID = $("#tree-viz .selected-node").attr('id').substring(5);
+    logger.debug("removing tree with id: " + treeID);
+    var tree = Nodes.findOne({_id: treeID});
+    logger.debug(tree);
+    ForestManager.removeTree(tree);
+  },
+  "click #rename-tree-btn": function(event) {
+    logger.debug("Renaming selected tree");
+    var treeID = $("#tree-viz .selected-node").attr('id').substring(5);
+    logger.debug("renaming tree with id: " + treeID);
+    var tree = Nodes.findOne({_id: treeID});
+    logger.debug(tree);
+    var label = $("#rename-tree").val();
+    $("#rename-tree").val("");
+    logger.debug("Renaming with label: " + label);
+    ForestManager.renameNode(tree, label);
+  },
 });
 
 Template.CurrentTree.events({
@@ -909,6 +928,25 @@ Template.CurrentTree.events({
   },
 });
 
+Template.ForestTree.events({
+  'click .forest-tree-node': function(event) {
+    logger.trace(event.target);
+    var target = event.target
+    var id = '#tree-' + this['_id']
+    logger.debug("clicked on forest tree");
+    if ($(target).hasClass("selected-node")) {
+      logger.debug("Deselecting selected tree");
+      $(target).toggleClass("selected-node");
+    } else {
+      logger.debug("Selecting tree");
+      //Clear all selected clusters
+      $(".selected-node").not(id).toggleClass("selected-node");
+      //Mark clicked cluster as selected
+      $(target).toggleClass("selected-node");
+    }
+    event.stopImmediatePropagation();
+  },
+});
 /********************************************************************
 * Convenience functions
 *********************************************************************/
