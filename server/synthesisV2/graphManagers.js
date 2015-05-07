@@ -1,9 +1,9 @@
 // Configure logger for Filters
 var logger = new Logger('Server:SynthesisV2:GraphManagers');
 // Comment out to use global logging level
-Logger.setLevel('Server:SynthesisV2:GraphManagers', 'trace');
+// Logger.setLevel('Server:SynthesisV2:GraphManagers', 'trace');
 //Logger.setLevel('Server:SynthesisV2:GraphManagers', 'debug');
-//Logger.setLevel('Server:SynthesisV2:GraphManagers', 'info');
+Logger.setLevel('Server:SynthesisV2:GraphManagers', 'info');
 //Logger.setLevel('Server:SynthesisV2:GraphManagers', 'warn');
 
 // Meteor.startup(function() {

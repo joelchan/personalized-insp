@@ -254,6 +254,29 @@ Template.ForestTree.onCreated(function() {
   //Set Loading to false
   Session.set("isLoadingTrees", false);
 });
+
+Template.ForestTree.onRendered(function() {
+  //Set node as draggable
+  // this.$(".forest-idea-item").attr("id", this.data['_id']);
+  logger.trace(this);
+  $(this).draggable({
+    revert: true,
+    helper: 'clone',
+    appendTo: ".forest",
+    refreshPositions: true,
+    start: function(e, ui) {
+      logger.debug("Began dragging an idea");
+      logger.trace(ui.helper[0]);
+      var width = $(this).css('width');
+      logger.trace(width);
+      $(ui.helper[0]).css('width', width);
+    },
+  });
+  //logger.trace(this.$(".forest-idea-item"))
+
+});
+
+
 /********************************************************************
 * Template Helpers
 *********************************************************************/
