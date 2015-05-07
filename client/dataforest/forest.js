@@ -256,10 +256,13 @@ Template.ForestTree.onCreated(function() {
 });
 
 Template.ForestTree.onRendered(function() {
+  logger.trace("Rendering Forest Tree");
   //Set node as draggable
   // this.$(".forest-idea-item").attr("id", this.data['_id']);
-  logger.trace(this);
-  $(this).draggable({
+  var treeID = "#tree-" + this.data['_id']
+  var id = this.data['_id']
+  logger.trace(treeID);
+  $(treeID).draggable({
     revert: true,
     helper: 'clone',
     appendTo: ".forest",
@@ -270,6 +273,24 @@ Template.ForestTree.onRendered(function() {
       var width = $(this).css('width');
       logger.trace(width);
       $(ui.helper[0]).css('width', width);
+      $(ui.helper[0]).css('font-size', '1.2em');
+    },
+  });
+  $(treeID).droppable({
+    accept: '.forest-tree-node',
+    tolerance: "pointer",
+    drop: function(event, ui) {
+      logger.debug("************************************************");
+      logger.debug("Forest tree relocated");
+      //logger.trace(JSON.stringify(this));
+      logger.debug(ui.draggable[0]);
+      logger.debug($(ui.draggable[0]).data());
+      var myTreeId = $(ui.draggable[0]).attr('id');
+      myTreeId = myTreeId.substring(5);
+      logger.debug("Recieved tree with ID: " + myTreeId);
+      logger.debug("Relocating to tree with ID: " + id);
+      ForestManager.moveNodeInTree([myTreeId], id);
+      // var node = $("#" + myIdeaId).data("node");
     },
   });
   //logger.trace(this.$(".forest-idea-item"))

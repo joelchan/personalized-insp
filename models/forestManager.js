@@ -368,7 +368,7 @@ ForestManager = (function() {
         logger.debug("No orphan leaves");
        }
     },
-    moveNodeinTree: function(nodesToMove, dest) {
+    moveNodeInTree: function(nodesToMove, dest) {
       /**************************************************************
        * Move a node in the tree from a source parent node
        * to a destination parent node
