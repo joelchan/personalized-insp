@@ -344,7 +344,7 @@ ForestManager = (function() {
         logger.trace("Orphan leaves: " + JSON.stringify(orphanLeaves));
         orphanLeaves.forEach(function(orphanLeaf) {
 
-          if (leaf.child_leaf_ids.length < 1) {
+          if (orphanLeaf.child_leaf_ids.length < 1) {
             // remove idea_node_ids from the cluster
             idea_node_ids = orphanLeaf.idea_node_ids
             idea_node_ids.forEach(function(idea_node_id) {
@@ -360,7 +360,7 @@ ForestManager = (function() {
             Nodes.remove({_id: orphanLeaf._id});
           } else {
             logger.debug("Has children but no parents - not destroying this leaf");
-            logger.trace(JSON.stringify(leaf));
+            logger.trace(JSON.stringify(orphanLeaf));
           }
           
         });
@@ -368,22 +368,23 @@ ForestManager = (function() {
         logger.debug("No orphan leaves");
        }
     },
-    moveNodeinTree: function(toMove, source, dest) {
+    moveNodeinTree: function(nodesToMove, dest) {
       /**************************************************************
        * Move a node in the tree from a source parent node
        * to a destination parent node
        * @Params
-       *    toMove - id of the node to be moved
-       *    source - id of the current parent node
+       *    nodesToMove - array of ids of nodes to be moved
        *    dest - id of the desired (destination) parent node
-       * @Return
-       *    boolean - true if successful move
        * ***********************************************************/
-       node = Nodes.findOne({_id: toMove});
-       currentParent = Nodes.findOne({_id: source});
+       
        destParent = Nodes.findOne({_id: dest});
-       this.removeFromTree(currentParent, node);
-       this.insertToTree(destParent, node);
+
+       nodesToMove.forEach(function(toMove) {
+        currentNode = Nodes.findOne({_id: toMove});
+        currentParent = Nodes.findOne({child_leaf_ids: toMove});
+        ForestManager.removeFromTree(currentParent, currentNode);
+        ForestManager.insertToTree(destParent, currentNode);
+       });
     },
     clusteredIdeasNotOnTree: function() {
       /**************************************************************
