@@ -26,14 +26,14 @@
 }
 
 button {
-    padding: 18px 28px;
+    /*padding: 18px 28px;*/
     font-size: 32px; /*change this to your desired size */
     font-family:  'HelveticaNeue-UltraLight';
     line-height: normal;
     -webkit-border-radius: 8px;
        -moz-border-radius: 8px;
             border-radius: 8px;
-    margin-top: 50px;
+    /*margin-top: 50px;*/
     border: none;
     background: none;
 }
@@ -107,4 +107,21 @@ body {
 .timer {
   display: inline-block;
   margin: 18px 10px;
+}
+
+h3 {
+  display: inline-block;
+}
+
+.indent {
+  margin-left: 15px;
+}
+
+.icon-wrapper {
+  display: inline-block
+}
+
+.get-more-btn {
+  width: 80%;
+  margin: 10px 10%;
 }

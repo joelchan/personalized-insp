@@ -18,9 +18,8 @@ Router.route('Forest/:promptID/:userID', {
     var pID = this.params.promptID;
     return [
       Meteor.subscribe('graphs', {promptID: pID}),
-      Meteor.subscribe('edges', {promptID: pID}),
       Meteor.subscribe('nodes', {promptID: pID}),
-      Meteor.subscribe('ideas', {promptID: pID}),
+      // Meteor.subscribe('ideas', {promptID: pID}),
     ];
   },
   onBeforeAction: function() {

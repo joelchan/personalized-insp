@@ -3,7 +3,7 @@ EventTypes = new Meteor.Collection("eventTypes");
 
 Event = function (msg, user) {
   //time stamp for the event
-  this.time = new Date();
+  this.time = new Date().getTime();
   //type of the event
   //this.type = type;
   /*********** Leaving description in for legacy reasons *******/

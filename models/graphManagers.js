@@ -14,13 +14,12 @@ Logger.setLevel('Model:SynthesisV2:GraphManagers', 'trace');
  * ***************************************************************/
 GraphManager = (function() {
   return {
-
-    createGraph: function(prompt, group, user, type) {
+    createGraph: function(prompt, group, user, type, metadata) {
       /*************************************************************
       * Create a graph
       * **********************************************************/
       console.log("Creating new Graph");
-      var graph = new Graph(prompt._id, group._id, user._id, type);
+      var graph = new Graph(prompt._id, group._id, user._id, type, metadata);
       graph._id = Graphs.insert(graph);
       return graph._id;
     },

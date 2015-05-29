@@ -94,6 +94,7 @@ def get_mongodb(dbUrl, dbPort, dbName, dbUser=None, dbPswd=None):
 default_collections = [
     'system.indexes',
     'system.users',
+    'meteor_accounts_loginServiceConfiguration',
 ]
 
 
@@ -174,13 +175,13 @@ class Data_Utility:
             # Remove all docs from collection
             self.db[col].remove()
 
-    def get_data(self, collection, fields=None, filters=None):
+    def get_data(self, collection, fields=None, filters=None, sorters=None):
         """
         Get a list of documents from the db collection for specified
         fields only. fields is list of field names for each document.
 
         """
-        data = self.db[collection].find(filters)
+        data = self.db[collection].find(filters, sort=sorters)
         if fields is None:
             return data
         else:
@@ -195,11 +196,11 @@ class Data_Utility:
     def join_data(self, base_data, join_data, base_field, join_fields):
         """
         Perform a similar operation to a sql join for 2 sets of data.
-        
+
         @Params
         base_data - list of fields to extend with joined data
         join_data - dictionary of data, indexed by base_field value
-        base_field - value to use as key in lookup in join_data 
+        base_field - value to use as key in lookup in join_data
             dictionary
         join_fields - list of field data to replace the base_field id
 
@@ -211,9 +212,45 @@ class Data_Utility:
           extra = join_data[data[base_field]]
           for field in join_fields:
             data[field] = extra[field]
-        
+
         return base_data
-  
+
+    def insert(self, col, docs):
+        """
+        Perform insert or bulk insert of documents given
+
+        @params
+            col - the collection to insert documents
+            docs - a single or list of documents to insert into the db
+
+        @return
+            docs with updated ids
+
+        """
+        # for doc in docs:
+            # d = doc.__dict__
+            # for key in d.keys():
+                # print key + ": " + d[key]
+        try:
+            if docs:
+                data = [doc.__dict__ for doc in docs]
+                results = self.db[col].insert(data,
+                                              continue_on_error=True)
+                return results
+        except DuplicateKeyError:
+            print "Attempted insert of document with duplicate key"
+        else:
+            print "Error while inserting into collection"
+
+    def update(self, col, sel, update):
+        """
+        Update the documents in the specified collection according to
+        the given selector and update statement
+
+        """
+        results = self.db[col].update(sel, update)
+        return results
+
     def get_ideas(self):
         """
         Get a list of all the ideas
@@ -238,7 +275,7 @@ class Data_Utility:
         """
         fields = ['name', ]
         return self.get_data("myUsers", fields)
-    
+
     @staticmethod
     def get_db(db_name):
         """
@@ -254,15 +291,15 @@ class Data_Utility:
 def parse_args(args):
     """
     Parse arguments passed to the script
-    
+
     @params
       first arg is a database name
       Each pair of args following is a path and an operation:
         dump - raw dump all the data in the db to the path given
         restore - restore data to the db from the files in the path
         clear - empty the db (ignores the path)
-    
-    """         
+
+    """
     db_params = Data_Utility.get_db(args[0])
     logger.debug(db_params)
     db = None
@@ -294,9 +331,9 @@ if __name__ == '__main__':
       parse_args(sys.argv[1:])
     else:
       # Rudimentary script to dump to db as we previously were doing
-      util = Data_Utility('data/facPilot', ALL_DBs['ideagens'])
-      # util.restore_db()
-      # util.clear_db()
-      # util.dumo_db()
+      util = Data_Utility('data/amd3-2', ALL_DBs['ideagensscd'])
+      util.clear_db()
+      util.restore_db()
+      # util.dump_db()
 
 

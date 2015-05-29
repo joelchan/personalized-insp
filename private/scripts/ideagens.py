@@ -17,10 +17,7 @@ def list_to_dict(docs):
     indexed by the _id field
 
     """
-    results = {}
-    for doc in docs:
-        results[doc['_id']] = doc
-    return results
+    return Dict([(doc['_id'], doc) for doc in docs])
 
 def get_ids(docs):
     """
@@ -28,6 +25,48 @@ def get_ids(docs):
 
     """
     return [doc['_id'] for doc in docs]
+
+class Edge:
+    """
+    Graph Edge as defined by Ideagens
+
+    """
+    def __init__(self, promptID, sourceID, targetID, data=None):
+        self.promptID = promptID
+        self.sourceID = sourceID
+        self.targetID = targetID
+        if data is not None:
+            for key in data.keys():
+                setattr(self, key, data[key])
+
+    def __str__(self):
+        result = "Edge with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
+
+
+class Node:
+    """
+    Graph Node as defined by Ideagens
+
+    """
+    def __init__(self, graphID, promptID, data_type, data=None):
+        self.graphID = graphID
+        self.promptID = promptID
+        self.type = data_type
+        if data is not None:
+            for key in data.keys():
+                # print "Setting attribute: " + str(key) + " with " + str(data[key])
+                setattr(self, key, data[key])
+
+    def __str__(self):
+        result = "Node with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
 
 
 class Db_Manager:
