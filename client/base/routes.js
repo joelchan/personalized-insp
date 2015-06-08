@@ -50,6 +50,23 @@ Router.map(function () {
   });
 });
 
+/* Testing replay fucntions */
+Router.route('replay/', {
+  name: 'TestReplay',
+  template: 'IdeaReplay',
+  subscriptions: function() {
+    return [
+      Meteor.subscribe('ideas'),
+    ];
+  },
+  onBeforeAction: function() {
+    var user = MyUsers.findOne();
+    LoginManager.loginUser(user.name);
+    Session.set("currentUser", user);
+    this.next();
+  },
+});
+
 //Sets layout for all routes to IdeaGen template
 Router.configure({
 	layoutTemplate: 'IdeaGen',
