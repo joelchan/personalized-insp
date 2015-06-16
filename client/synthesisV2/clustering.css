@@ -64,7 +64,6 @@
   /*margin-right: 5px;*/
 }
 
-
 .mturk-cluster-interface button {
     margin-top:0px;
 }
@@ -129,14 +128,14 @@ i {
 	padding: 5px;
 	background-color: #fff;
 	cursor: pointer;
-  min-width: 100px;
-  position: relative;
+    min-width: 100px;
+    position: relative;
 	list-style-type: none;
 }
 
 li.idea-item .gamechangestar{
 	float: left;
-  padding: 2px 5px 2px 0;
+    padding: 2px 5px 2px 0;
 	color: #f0ad4e;
 	text-shadow: 1px 1px #ddd; /*#eea236;*/
 }
@@ -155,7 +154,7 @@ li.idea-item .gamechangestar{
 	border: dashed 1px;
 	border-radius: 5px;
 	padding: 10px;
-  margin: 10px 10px 10px 10px;
+    margin: 10px 10px 10px 10px;
 }
 
 .mturk-cluster-interface .namecluster{

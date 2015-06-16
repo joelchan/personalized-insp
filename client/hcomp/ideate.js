@@ -230,7 +230,6 @@ Template.MturkIdeaEntryBox.events({
   }
 });
 
-
 Template.MturkTaskLists.helpers({
   getMyTasks: function() {
     logger.debug("Getting a list of all tasks assigned to current user");

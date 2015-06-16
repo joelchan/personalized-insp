@@ -14,7 +14,6 @@ Ideas = new Meteor.Collection("ideas");
 DummyIdeas = new Meteor.Collection("dummyIdeas");
 Clusters = new Meteor.Collection("clusters");
 
-
 IdeaToProcess = function(content, participant){
   this.content = content;
   this.participantID = participant._id;
@@ -27,16 +26,20 @@ Idea = function (content, user, prompt, participant) {
   *
   * @return {object} Idea object 
   ********************************************************************/
-  this.time = new Date().getTime();
-  this.content = content;
-  this.userID = user._id;
-  this.userName = user.name;
-  this.prompt = prompt; /*** Deprecated **/
-  this.promptID = prompt._id;
+  this.time          = new Date().getTime();
+  this.content       = content;
+  this.userID        = user._id;
+  this.userName      = user.name;
+  this.prompt        = prompt; /*** Deprecated **/
+  this.promptID      = prompt._id;
   this.isGamechanger = false;
+  
+  //List of Id'S of users that have read that idea
+  this.readIDs    = [];
+
   //List of userIDs of users who have voted
-  this.votes = [];
-  this.inCluster = false;
+  this.votes      = [];
+  this.inCluster  = false;
   this.clusterIDs = [];
   //Optional fields not logged during non-experiments
   if (participant) {
@@ -44,15 +47,13 @@ Idea = function (content, user, prompt, participant) {
   }
 };
 
-
-
 Cluster = function(user, prompt, ideaIDs){
   if (!ideaIDs)
-  {
-    this.ideaIDs = [];
-  } else {
+    { this.ideaIDs = [];
+      } else {
     this.ideaIDs = ideaIDs;
   }
+  
   this.userID = user._id;
   this.userName = user.name;
   this.promptID = prompt._id;

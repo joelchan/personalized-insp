@@ -1,0 +1,59 @@
+.list {
+    background-color: #def;
+    border: 1px solid gray;
+}
+ 
+.items .ui-selected {
+    background: red;
+    color: white;
+    font-weight: bold;
+}
+ 
+.items {
+    list-style-type: none;
+    margin-left: 10px;
+    padding: 0;
+    width: 200px;
+    float: left;
+    background-color: #dec;
+    min-height: 100px
+
+}
+ 
+.items li {
+    margin: 2px;
+    padding: 2px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+ 
+.g {
+    background-color: #def;
+}
+ 
+.o {
+    background-color: orange;
+}
+ 
+.highlight {
+    border: 2px solid red;
+    font-weight: bold;
+}
+
+.dragbox1 {
+    float: left;
+    width: 200px;
+    height: 1600px; 
+    background-color: #def;
+    padding: 5px;
+}
+
+.dragbox2{
+    float:right;
+    width: 225px;
+    height: 400px; 
+    background-color: #dec;
+    padding: 5px;
+    border-color: blue;
+    border-width: 8px;
+}

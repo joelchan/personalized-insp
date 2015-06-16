@@ -41,6 +41,16 @@ IdeaFactory = (function() {
       Ideas.update({_id: idea._id}, 
         {$pull: {votes: user._id}});
     },
+    read: function(idea, user) {
+      // idea.readIDs.push(user._id);
+       Ideas.update({_id: idea._id},
+        {$push: {readIDs: user._id}});
+    },
+    removeRead: function(idea, user) {
+      // idea.readIDs.push(user._id);
+      Ideas.update({_id: idea._id},
+        {$pull: {readIDs: user._id}});
+    },
     getWithIDs: function(ids) {
       if (hasForEach(ids)) {
         return Ideas.find({_id: {$in: ids}});
@@ -48,17 +58,20 @@ IdeaFactory = (function() {
         return Ideas.findOne({_id: ids});
       }
     },
-    createDummy: function(user, prompt, num) {
+    //Generates test cards 
+    createDummy: function(user, prompt, num) {          
       if (!num) {
         num = 1;
       }
+      
       logger.trace("Creating Dummy Ideas: #" + num);
-      var content = "Test Idea ";
+      var content;
       var ideas = [];
       for (var i=0; i<num; i++) {
+        content = "Test Idea " + i;
         ideas.push(this.create(content, user, prompt));
       }
-      return ideas;
+       return ideas;
     },
     remove: function(ideas) {
       if (hasForEach(ideas)) {
@@ -80,7 +93,8 @@ IdeaFactory = (function() {
   };
 }());
 
-ClusterFactory = (function() {
+
+ClusterFactory = ( function() {
   return {
     insertIdeaToCluster: function(idea, cluster) {
       logger.trace("Inserting idea into cluster");
@@ -89,8 +103,8 @@ ClusterFactory = (function() {
       idea.clusterIDs.push(cluster._id);
       logger.debug(idea);
       //Update the corresponding db entries for each idea and cluster
-      Ideas.update({_id: idea._id}, {$push: {'clusterIDs': cluster._id}});
-      Clusters.update({_id: cluster._id}, {$push: {'ideaIDs': idea._id}});
+      Ideas.update({_id: idea._id}, { $push: {'clusterIDs': cluster._id}});
+      Clusters.update({_id: cluster._id}, { $push: {'ideaIDs': idea._id}});
     },
     create: function(ideas, user, prompt) {
       logger.trace("Creating new Cluster");
@@ -241,8 +255,5 @@ ClusterFactory = (function() {
           Clusters.remove({_id: clusters._id});
       }
     }
-
-
-
   };
 }());

@@ -6,7 +6,6 @@ Logger.setLevel('Client:Hcomp:Filterbox', 'trace');
 // Logger.setLevel('Client:Hcomp:Filterbox', 'info');
 //Logger.setLevel('Client:Hcomp:Filterbox', 'warn');
 
-
 Template.HcompFilterbox.rendered = function(){
 	//Create isInCluster filter
 	// console.log("rendering");
@@ -16,8 +15,8 @@ Template.HcompFilterbox.rendered = function(){
 	createDefaultIdeasFilter("Ideas Filter");
 
 	FilterManager.reset("IdeaWordCloud Filter", Session.get("currentUser"), "ideas");
-    logger.trace("Creating default filter for ideawordcloud filter");
-    createDefaultIdeasFilter("IdeaWordCloud Filter");
+  logger.trace("Creating default filter for ideawordcloud filter");
+  createDefaultIdeasFilter("IdeaWordCloud Filter");
 	// Ideas.ensureIndex({ content: "text" }); // to enable text search
 
     var exp = Session.get("currentExp");
@@ -39,7 +38,7 @@ Template.HcompFilterbox.rendered = function(){
             } else {
               logger.debug("Not a treatment participant, not updating inspirations");
             }
-             
+    
             if (update) {
               logger.debug("Updating participant ideas filter");
               FilterManager.create("Ideas Filter", Session.get("currentUser"), "ideas", "userID", partNewState.userID);
@@ -47,12 +46,12 @@ Template.HcompFilterbox.rendered = function(){
           }
         },
       });    
-    }
+  }
 }
 
 Template.HcompFilterBoxHeader.rendered = function(){
 	$('.all-ideas-filter-btn').click();
-	FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas","time" , -1,1);
+	FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas", "time", -1, 1);
 }
 
 var filterName;
@@ -73,20 +72,28 @@ Template.HcompFilterbox.helpers({
 	currentClusters: function(){
 		return Clusters.find({_id: {$ne: "-1"}});
 	},
-
 	numIdeas : function() {
 		return getFilteredIdeas("Ideas Filter").length;
-	}
+	}, hasRead: function() {
+  
+   if(isInList(Session.get("currentUser")._id, this.readIDs)) {
+      return(true); 
+    }else{
+      return(false);
+    }
+   },
 });
 
 Template.HcompFilterBoxIdeaItem.rendered = function() {
+  
   $(this.firstNode).draggable({containment: '.hcomp-dashboard',
     revert: true,
     zIndex: 50,
     helper: 'clone',
     appendTo: ".hcomp-dashboard",
     refreshPositions: true,
-    start: function(e, ui) {
+  
+  start: function(e, ui) {
       logger.debug("Began dragging an idea");
       logger.trace(ui.helper[0]);
       var width = $(this).css('width');
@@ -94,8 +101,8 @@ Template.HcompFilterBoxIdeaItem.rendered = function() {
       $(ui.helper[0]).css('width', width);
     },
   });
-
 };
+
 Template.HcompFilterBoxIdeaItem.helpers({
 	gameChangerStatus: function() {
 		return this.isGamechanger;
@@ -128,6 +135,7 @@ Template.HcompFilterBoxIdeaItem.rendered(function() {
       "ideas"
   );
 });
+
 Template.HcompFilterBoxIdeaItem.events({
   'click .up-vote': function(e, elm) {
     if (!isInList(Session.get("currentUser")._id, this.votes)) {
@@ -138,8 +146,21 @@ Template.HcompFilterBoxIdeaItem.events({
       IdeaFactory.downVote(this, Session.get("currentUser"));
     }
   },
-
 });
+
+Template.HcompFilterBoxIdeaItem.events({
+'mouseover .filterbox-idea-content': function(e, elm) {
+  logger.debug(this._id);
+
+  if(!isInList(Session.get("currentUser")._id, this.readIDs)) {
+   logger.debug("Read Idea");
+   // var select =  "#" + this._id;
+   // $(select).css("background-color", "#def");
+   IdeaFactory.read(this,Session.get("currentUser"));
+  }
+ },
+});
+
 Template.FilterBoxSorter.events({
   	'change #sortingfields' : function(e,target)
   	{
@@ -192,8 +213,7 @@ Template.FilterBoxSorter.events({
   			sortButtonIconTime.removeClass("glyphicon-chevron-up");		
   			sortButtonTime.css("background-color","white");
   		}
-  		else{
-
+  		else {
   			sortButtonIconTime.addClass("glyphicon-chevron-down")
   			sortButtonTime.css("background-color","rgb(58, 175, 58)");
   			sortingOrder = -1;
@@ -203,9 +223,7 @@ Template.FilterBoxSorter.events({
   		if(sortingOrder)
   		{
   			FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas",sortingField , sortingOrder,1);
-  		}
-
-  		
+  		}  		
   	},
 
   	'click #sortButtonAlpha' : function(e,target)
@@ -240,15 +258,12 @@ Template.FilterBoxSorter.events({
   			sortButtonAlpha.css("background-color","rgb(58, 175, 58)");
   			sortingOrder = -1;
   		}
-
   		/* If sorting order is not defined, not doing anything */
   		if(sortingOrder)
   		{
   			FilterManager.createSorter("Ideas Filter", Session.get("currentUser"), "ideas",sortingField , sortingOrder,1);
-  		}
-  		
+  		}	
   	},
-
 });
 Template.HcompFilterBoxHeader.events({
 	// apply new full-text search of idea content
@@ -385,7 +400,7 @@ createDefaultIdeasFilter = function createDefaultIdeasFilter(ideasFilterName) {
             treatmentIDs.forEach(function(tID) {
                 FilterManager.create(ideasFilterName, Session.get("currentUser"), "ideas", "userID", tID);
             });    
-        }
+      }
 	}
 }
 

@@ -1,0 +1,35 @@
+<template name="SubrouteSandbox">
+    <div class="synthesisBox">
+        {{> drag}} {{#each getClusters}} {{> drag2}} {{/each}}
+    </div>
+</template>
+<template name="drag">
+    <div class="dragbox1">
+        {{> CreateIdeas}}
+    </div>
+</template>
+<template name="drag2">
+    <div class="dragbox2">
+        {{> CreateCluster}}
+    </div>
+</template>
+<template name="CreateIdeas">
+    <ul id="items2" class="items">
+        {{#each getIdeas}}
+        <li id="ci-{{_id}}" class="list">{{content}}</li>
+        {{/each}}
+    </ul>
+</template>
+<template name="CreateCluster">
+    <h1> Cluster 1 </h1>
+    <ul id="items1" class="items">
+        
+    </ul>
+    <!--    </div> -->
+</template>
+<!-- <template name="">
+    <div class="" id=cluster-{{_id}}>
+        
+    </div>
+</template> -->
+<!-- < we need to unroll the web page dynamically. Starting with each module for the number of Clusters and number of inspirations. The first thing we need to do is make roll out the ideas > -->

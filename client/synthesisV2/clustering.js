@@ -2,42 +2,39 @@
  var logger = new Logger('Client:Clustering');
  // Comment out to use global logging level
  Logger.setLevel('Client:Synthesis:Clustering', 'trace');
- // Logger.setLevel('Client:Synthesis:Clustering', 'debug');
- // Logger.setLevel('Client:Synthesis:Clustering', 'info');
+ //Logger.setLevel('Client:Synthesis:Clustering', 'debug');
+ //Logger.setLevel('Client:Synthesis:Clustering', 'info');
  //Logger.setLevel('Client:Synthesis:Clustering', 'warn');
-
 /*******************************************************************
  * ******************  Clustering Template ************************
  * ****************************************************************/
 // Name for filters applied to idea list of unclustered ideas
-var ideaFilterName = "Unclustered Ideas"; 
+var ideaFilterName    = "Unclustered Ideas"; 
 var clusterFilterName = "Clustering droppable";
-
 
 /********************************************************************
 * Attaches sortable to idea and cluster lists, new cluster area.
 ********************************************************************/
-Template.MturkClustering.rendered = function(){
+Template.MturkClustering.rendered = function() {
+  
   logger.debug("Rendering Clustering page");
   Session.set("searchQuery","");
-
   //Set height of elements to viewport height
   //Navbar height=50, header up to idealist = 150, clustering interface header=63
   var clusterHeaderHeight = $(".mturk-cluster-header").height() + 10; //10px margin
   var navbarHeight = $("#header").height();
-  var height = $(window).height() - 
-    navbarHeight - clusterHeaderHeight - 5;
+  var height = $(window).height() - navbarHeight - clusterHeaderHeight - 5;
   logger.debug("window viewport height = " + height.toString());
   $("#left-clustering").height(height);
   var ideaHeaderHeight = $('.idea-box-header').height() + 
-    $("#filterbox-header").height() + 75; //unknown manual tweak
+  $("#filterbox-header").height() + 75; //unknown manual tweak
   $("#idealist").height(height - ideaHeaderHeight);
   $("#middle-clustering").height(height);
   var themeHeaderHeight = $(".cluster-list h3").height() +
-    $("#new-cluster").height() + 80;
+  $("#new-cluster").height() + 80;
   $("#clusterlist").height(height-themeHeaderHeight);
   $("#right-clustering").height(height);
- 
+
   // Set draggable and droppable properties of appropriate components 
   $('.cluster-idea-list').droppable({accept: ".idea-item",
     tolerance: "pointer",
@@ -72,6 +69,7 @@ Template.MturkClustering.rendered = function(){
   //Get Data and setup listeners
   var prompt = Session.get("currentPrompt");
   var group = Groups.findOne({_id: prompt.groupIDs[0]});
+  
   Session.set("currentGroup", group);
   //var group = Groups.findOne({_id: Session.get("currentGroupID")});
   var group = Session.get("currentGroup");
@@ -79,10 +77,12 @@ Template.MturkClustering.rendered = function(){
   //Get user graph
   var userGraph = Graphs.findOne({
     'promptID': prompt._id,
-    'groupID': group._id,
-    'userID': user._id
+    'groupID' : group._id,
+    'userID'  : user._id
   });
+  
   logger.trace(userGraph);
+  
   if (!userGraph) {
     logger.info("No user graph found.  Initializing new graph");
     Meteor.call("graphCreate", prompt._id, group._id, user._id,
@@ -91,10 +91,12 @@ Template.MturkClustering.rendered = function(){
         logger.debug("Setting User graph");
         var cg = Graphs.findOne({_id: result});
         Session.set("currentGraph", cg);
+       
         if (Session.get("sharedGraph")) {
           logger.debug("setting filters after getting userGraph");
           setFilters(cg, Session.get("sharedGraph"));
         }
+       
         Tracker.autorun(function(c) {
           logger.debug("Attempting to set shared graph listener.");
           if (Session.get("sharedGraph")) {
@@ -125,6 +127,7 @@ Template.MturkClustering.rendered = function(){
     'userID': null,
   });
   logger.trace(sharedGraph);
+  
   if (!sharedGraph) {
     logger.info("No shared graph found.  Initializing new graph");
     Meteor.call("graphCreate", prompt._id, group._id, null,
@@ -137,9 +140,7 @@ Template.MturkClustering.rendered = function(){
           logger.debug("setting filters after getting sharedGraph");
           setFilters(Session.get("currentGraph"), sg);
         }
-
-      }
-    );
+      });
   } else {
     logger.debug("Found and Setting shared graph");
     Session.set("sharedGraph", sharedGraph);
@@ -148,24 +149,14 @@ Template.MturkClustering.rendered = function(){
 
   logger.debug("Setting base idea and theme filters");
   ////Reset all the filters before initializing
-  FilterManager.reset(ideaFilterName,
-      Session.get("currentUser"),
-      "nodes"); 
-  FilterManager.reset(clusterFilterName,
-      Session.get("currentUser"),
-      "nodes"); 
+  FilterManager.reset(ideaFilterName, Session.get("currentUser"),"nodes"); 
+  FilterManager.reset(clusterFilterName,Session.get("currentUser"), "nodes"); 
   Session.set("filtersSet", false);
   //Create base filters for ideas
   FilterManager.create(ideaFilterName,
-      Session.get("currentUser"),
-      "nodes",
-      "type",
-      'idea'
-  );
+      Session.get("currentUser"), "nodes", "type", 'idea');
   //Create base filters for themes
-  FilterManager.create(clusterFilterName,
-      Session.get("currentUser"),
-      "nodes",
+  FilterManager.create(clusterFilterName,Session.get("currentUser"),"nodes",
       "type",
       'theme'
   );
@@ -196,7 +187,6 @@ Template.MturkClustering.rendered = function(){
         ""
     ); 
   }
-  
 };
 
 var setSharedGraphListener = function(sharedGraph, userGraph) {
@@ -204,8 +194,7 @@ var setSharedGraphListener = function(sharedGraph, userGraph) {
   Tracker.autorun(function() {
     logger.debug("*********Setting up shared graph listener *************");
     if (!Session.get("duplicatingNode")) {
-      var sharedThemes = Nodes.find({graphID: sharedGraph._id, 
-          type: 'theme'});
+      var sharedThemes = Nodes.find({ graphID: sharedGraph._id, type: 'theme'});
       var userThemes = Nodes.find({graphID: userGraph._id, 
           type: 'theme'});
       var sharedIDs = getIDs(sharedThemes);
@@ -218,14 +207,15 @@ var setSharedGraphListener = function(sharedGraph, userGraph) {
       var unsyncedIDs = _.difference(sharedIDs, syncedIDs);
       logger.trace("All Theme IDs: " + JSON.stringify(sharedIDs));
       logger.trace("User Node IDs: " + JSON.stringify(userNodeIDs));
-      logger.trace("Synchronized Theme IDs: " + 
-        JSON.stringify(syncedIDs));
-      logger.trace("Unsynchronized Theme IDs: " + 
-        JSON.stringify(unsyncedIDs));
+     
+      logger.trace("Synchronized Theme IDs: " + JSON.stringify(syncedIDs));
+      logger.trace("Unsynchronized Theme IDs: " + JSON.stringify(unsyncedIDs));
+     
       if (unsyncedIDs.length !== 0) {
         logger.debug("Graph not syncronized with shared graph, " + 
           "copying unsynchronized theme nodes");
         var gID = Session.get("currentGraph")._id;
+       
         for (var i=0; i<unsyncedIDs.length; i++) {
           logger.debug("creating duplicate shared node");
           Session.set("duplicatingNode", true);
@@ -252,7 +242,7 @@ var setSharedGraphListener = function(sharedGraph, userGraph) {
 
 var setFilters = function(userGraph, sharedGraph) {
   logger.debug("Removing old filters with null graphID");
-  logger.trace("User Graph: " + JSON.stringify(userGraph));
+  logger.trace("User Graph: "   + JSON.stringify(userGraph));
   logger.trace("Shared Graph: " + JSON.stringify(sharedGraph));
   FilterManager.remove(ideaFilterName,
       Session.get("currentUser"),
@@ -371,8 +361,7 @@ Template.MturkClusteringIdeaList.helpers({
     if (Session.get("filtersSet")) {
 	    return FilterManager.performQuery(
         ideaFilterName, 
-		    Session.get("currentUser"),
-		    "nodes").count();
+		    Session.get("currentUser"), "nodes").count();
     } else {
       return 0;
     }
@@ -497,7 +486,6 @@ Template.MturkClusteringIdeaListIdeaItem.events({
         logger.trace(result);
     });
   },
-
 });
 
 /********************************************************************
