@@ -1,11 +1,10 @@
 // Configure logger for Filters
 var logger = new Logger('Model:Managers');
 // Comment out to use global logging level
-// Logger.setLevel('Model:Managers', 'trace');
+ Logger.setLevel('Model:Managers', 'trace');
 //Logger.setLevel('Model:Managers', 'debug');
-Logger.setLevel('Model:Managers', 'info');
+//Logger.setLevel('Model:Managers', 'info');
 //Logger.setLevel('Model:Managers', 'warn');
-
 
 IdeaFactory = (function() {
   return {
@@ -68,7 +67,7 @@ IdeaFactory = (function() {
       var content;
       var ideas = [];
       for (var i=0; i<num; i++) {
-        content = "Test Idea " + i;
+        content = "BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH" + i;
         ideas.push(this.create(content, user, prompt));
       }
        return ideas;
@@ -89,15 +88,16 @@ IdeaFactory = (function() {
       } else {
         Ideas.remove({_id: ideas._id});
       }
-    }
+    },
+    
   };
 }());
-
 
 ClusterFactory = ( function() {
   return {
     insertIdeaToCluster: function(idea, cluster) {
       logger.trace("Inserting idea into cluster");
+      
       cluster.ideaIDs.push(idea._id);
       logger.debug(cluster);
       idea.clusterIDs.push(cluster._id);
@@ -106,7 +106,11 @@ ClusterFactory = ( function() {
       Ideas.update({_id: idea._id}, { $push: {'clusterIDs': cluster._id}});
       Clusters.update({_id: cluster._id}, { $push: {'ideaIDs': idea._id}});
     },
-    create: function(ideas, user, prompt) {
+    getIdeas: function(cluster) {
+      var c = Clusters.find({_id: cluster._id})
+      return Ideas.find({"_id": {$in: c.ideaIDs}});
+    },
+    create: function(user, prompt, ideas) {
       logger.trace("Creating new Cluster");
       var cluster = new Cluster(user, prompt);
       cluster._id = Clusters.insert(cluster);
@@ -119,6 +123,8 @@ ClusterFactory = ( function() {
       } else if (ideas) {
         logger.trace("Adding idea with id + " + ideas._id + " to cluster");
         ClusterFactory.insertIdeaToCluster(ideas, cluster);
+      } else {
+        logger.trace("No ideas, not adding to cluster");
       }
       return cluster;
     },
@@ -194,8 +200,11 @@ ClusterFactory = ( function() {
       }
       logger.trace("Creating Dummy Clusters: #" + num);
       var clusters = [];
-      for (var i=0; i<num; i++) {
-        clusters.push(this.create(ideas, user, prompt));
+      for (var i=1; i<2; i++) {
+        logger.debug("Creating cluster " + i + " for prompt: " + JSON.stringify(prompt));
+        var clusterID = this.create(user, prompt);
+        logger.trace("Created cluster with id " + clusterID);
+        clusters.push(Clusters.findOne({_id: clusterID}));
       }
       return clusters;
     },

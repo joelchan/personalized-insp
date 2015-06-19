@@ -1,35 +1,59 @@
 <template name="SubrouteSandbox">
-    <div class="synthesisBox">
-        {{> drag}} {{#each getClusters}} {{> drag2}} {{/each}}
+    <div class="synthesisBox">           
+            {{> ClusterSpace}}
+            {{> InstantiateCluster}}
+            {{> IdeaSpace}}      
     </div>
 </template>
-<template name="drag">
-    <div class="dragbox1">
-        {{> CreateIdeas}}
+
+<template name = "MakeClusterButton">
+    <div class = "clusterButton"> 
+        
+    </div> 
+</template>
+
+<template name="IdeaSpace">
+        <ul id="ideas" class="ideaList ul">
+            {{#each getIdeas}}
+                {{> IdeaElement}}
+            {{/each}}
+        </ul>
+</template>
+
+<template name = "InstantiateCluster">
+    <div class = "clusterButton">
+
     </div>
 </template>
-<template name="drag2">
-    <div class="dragbox2">
-        {{> CreateCluster}}
-    </div>
-</template>
-<template name="CreateIdeas">
-    <ul id="items2" class="items">
-        {{#each getIdeas}}
-        <li id="ci-{{_id}}" class="list">{{content}}</li>
+
+<template name = "ClusterSpace">
+     <div class = "ClusterBox">   
+        {{#each getClusters}}
+            {{ > Cluster}}
         {{/each}}
-    </ul>
+     </div>
 </template>
-<template name="CreateCluster">
-    <h1> Cluster 1 </h1>
-    <ul id="items1" class="items">
-        
-    </ul>
-    <!--    </div> -->
-</template>
-<!-- <template name="">
-    <div class="" id=cluster-{{_id}}>
-        
+
+<template name= "Cluster">
+    <div class = "cluster">
+        <ul id="clusters" class="clusterList ul">
+            {{#each getClusterIdeas}}
+                {{> IdeaElement}}
+            {{/each}}
+        </ul>
     </div>
-</template> -->
-<!-- < we need to unroll the web page dynamically. Starting with each module for the number of Clusters and number of inspirations. The first thing we need to do is make roll out the ideas > -->
+</template>
+
+<template name = "IdeaElement">     
+    <li id="{{_id}}" class="IdeaListElement"> {{content}} </li>
+</template>
+
+
+<!-- <ul id="cluster" class="cluster ul">
+            {{#each getClusters}}
+                
+            {{/each}}
+        </ul> -->
+
+
+

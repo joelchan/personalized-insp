@@ -1,59 +1,87 @@
-.list {
-    background-color: #def;
-    border: 1px solid gray;
-}
  
-.items .ui-selected {
-    background: red;
-    color: white;
-    font-weight: bold;
-}
- 
-.items {
-    list-style-type: none;
-    margin-left: 10px;
-    padding: 0;
-    width: 200px;
-    float: left;
-    background-color: #dec;
-    min-height: 100px
-
-}
- 
-.items li {
-    margin: 2px;
-    padding: 2px;
-    cursor: pointer;
-    border-radius: 3px;
-}
- 
-.g {
-    background-color: #def;
-}
- 
-.o {
-    background-color: orange;
-}
- 
-.highlight {
-    border: 2px solid red;
-    font-weight: bold;
-}
-
-.dragbox1 {
-    float: left;
-    width: 200px;
-    height: 1600px; 
-    background-color: #def;
-    padding: 5px;
-}
-
-.dragbox2{
+.clusterButton {
     float:right;
-    width: 225px;
-    height: 400px; 
-    background-color: #dec;
+    height: 80px;
+    width:  80px;
+    background-color: #00DAD0;
+}
+ 
+ .cluster {
+    width: 80px;
+    height: 80px;
+    background-color: #2329DA;    
+ }
+
+.IdeaListElement {
+    list-style-type: none;
+    border-color: #0D1366;
+    width: 200px;
+    background-color: #def;
+    margin-top: 5px;
+    -moz-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
+    -webkit-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
+    box-shadow: 1px 2px 3px rgba(0,0,0,.5);
+}
+ 
+.ideaList ul {
+    margin: 10px;
+    width: 300px;
+    padding: 8px;
+    cursor: pointer;
+}
+ 
+.ClusterBox {
+    float: right;
+    width: 80px;
+    height: 80px;
+    background-color: #8624D7;
+
+}
+
+.clusterList ul {
+    margin: 10px;
+    width: 300px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.IdeaList {
+    float: left;
+    width: relative;
+    height: relative; 
+    background-color: #def;
     padding: 5px;
-    border-color: blue;
+}
+
+.IdeaCapsule {
+    width: 300px;
+    height: 800px; 
+    background-color: #BF3FC7;
+}
+
+.clusters ul {
+    float: right;
+    margin: 10px;
+    width: 300px;
+    padding: 8px;
+    cursor: pointer;
+ 
+}
+ 
+
+.clust {
+    float:right;
+    width: 80px;
+    height: 80px;
+    background-color: #def;
+}
+
+.ClusterCapsule {
+    float:right;
+    width: relative;
+    height: relative; 
+    background-color: #00FFFF;
+    padding: 5px;
+    border-color: #def;
     border-width: 8px;
 }

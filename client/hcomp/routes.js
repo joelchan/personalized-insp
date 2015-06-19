@@ -65,6 +65,9 @@ Router.map(function () {
           var user = MyUsers.findOne({_id: this.params.userID});
           LoginManager.loginUser(user.name);
           Session.set("currentUser", user);
+
+          var prompt = Prompts.findOne({_id: this.params.promptID});
+          Session.set("currentPrompt", prompt);
         }
         this.next();
       }
