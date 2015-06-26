@@ -1,22 +1,82 @@
- 
+
+/*.col-md-9 {
+    height: 1000px;
+    border:1px solid #444;
+    background-color: #def;
+}*/
+
+.col-md-1 {
+    border-width: 5px;
+    border-right-color: #000000;
+}
+
+.numIdeas {
+    margin-top: 20px;
+    background-color: #def; 
+    width: 250px;
+    height: 80px;
+    font-size: 28px;
+    border-radius: 8px;
+}
+
+.trashCan {
+    float: right;
+    margin:8px;
+    width: 300px;
+    height: 100px;
+    background-color: #615D61;
+    border-radius: 8px;
+    color: #F5EBF5;
+}
+
+.dropdown-toggle {
+    color: #0F0CFF;
+}
+
 .clusterButton {
     float:right;
-    height: 80px;
-    width:  80px;
-    background-color: #00DAD0;
+    height: 100px;
+    width:  300px;
+    font-size: 28px;
+    border-radius: 8px;
+    background-color: #A278FB;
+    font-color: #3EFFFC;
 }
  
  .cluster {
-    width: 80px;
-    height: 80px;
-    background-color: #2329DA;    
+    float:right;
+    width: 300px;
+    height: relative;
+    min-height: 80px;
+    min-width: 80px;
+    background-color: #0FACFB;
+    margin-top: 8px;
+    border-radius: 20px;
+    backg-moz-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
+    -webkit-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
+    box-shadow: 1px 2px 3px rgba(0,0,0,.5);
  }
+
+.clusterListElement {
+    list-style-type: none;
+    border-color: #0D1366;
+    width: 200px;
+    height: 60px;
+    border-radius: 8px;
+    background-color: #FCF1A6;
+    margin-top: 5px;
+    -moz-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
+    -webkit-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
+    box-shadow: 1px 2px 3px rgba(0,0,0,.5);
+}
 
 .IdeaListElement {
     list-style-type: none;
     border-color: #0D1366;
+    border-radius:10px;
     width: 200px;
-    background-color: #def;
+    height: 60px;
+    background-color: #FCF1A6;
     margin-top: 5px;
     -moz-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
     -webkit-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
@@ -32,18 +92,26 @@
  
 .ClusterBox {
     float: right;
-    width: 80px;
-    height: 80px;
-    background-color: #8624D7;
+    width: 300px;
+    height: relative;
+    background-color: #def;
+}
 
+.tagBox {
+    border-radius: 8px;
+    background-color: #EFF9FF;
 }
 
 .clusterList ul {
     margin: 10px;
-    width: 300px;
+    width: relative;
+    height: relative;
     padding: 8px;
+    min-height: 80px;
     cursor: pointer;
 }
+
+
 
 .IdeaList {
     float: left;
@@ -65,9 +133,7 @@
     width: 300px;
     padding: 8px;
     cursor: pointer;
- 
 }
- 
 
 .clust {
     float:right;
@@ -76,12 +142,7 @@
     background-color: #def;
 }
 
-.ClusterCapsule {
-    float:right;
-    width: relative;
-    height: relative; 
-    background-color: #00FFFF;
-    padding: 5px;
-    border-color: #def;
-    border-width: 8px;
+.clusterName {
+font-size: 20px;
+
 }

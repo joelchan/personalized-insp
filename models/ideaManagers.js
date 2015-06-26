@@ -57,17 +57,18 @@ IdeaFactory = (function() {
         return Ideas.findOne({_id: ids});
       }
     },
+    
     //Generates test cards 
     createDummy: function(user, prompt, num) {          
       if (!num) {
         num = 1;
       }
-      
+
       logger.trace("Creating Dummy Ideas: #" + num);
       var content;
       var ideas = [];
       for (var i=0; i<num; i++) {
-        content = "BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH" + i;
+       var content = "Artificial Idea " + i;
         ideas.push(this.create(content, user, prompt));
       }
        return ideas;
@@ -89,7 +90,6 @@ IdeaFactory = (function() {
         Ideas.remove({_id: ideas._id});
       }
     },
-    
   };
 }());
 
@@ -124,7 +124,8 @@ ClusterFactory = ( function() {
         logger.trace("Adding idea with id + " + ideas._id + " to cluster");
         ClusterFactory.insertIdeaToCluster(ideas, cluster);
       } else {
-        logger.trace("No ideas, not adding to cluster");
+        logger.trace("No ideas, not adding ideas to cluster");
+        logger.trace("idea manager cluster interface " + this.id) 
       }
       return cluster;
     },
@@ -138,7 +139,6 @@ ClusterFactory = ( function() {
       logger.trace("Removing idea from cluster");
       logger.debug("Cluster has " + cluster.ideaIDs.length + " ideas");
       removeMember(cluster.ideaIDs, idea._id);
-
       // if (cluster.ideaIDs.length === 0) {
       //   deleteCluster = true;
       // }

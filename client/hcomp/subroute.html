@@ -1,59 +1,50 @@
 <template name="SubrouteSandbox">
-    <div class="synthesisBox">           
-            {{> ClusterSpace}}
-            {{> InstantiateCluster}}
-            {{> IdeaSpace}}      
+    <!-- <input type="range" class="zoom-range" step="0.05" min="0.4" max="5">    -->
+    <div class="synthesisBox">
+        <div class="row">
+            <div class="col-md-1">
+                <div class="numIdeas"> Ideas Count {{getNumIdeas}} </div>
+                {{> IdeaSpace}}</div>
+            <div class="col-md-9"> </div>
+            <div class="col-md-2"> {{> ClusterSpace}} {{> DeleteCluster}}</div>
+        </div>
     </div>
 </template>
-
-<template name = "MakeClusterButton">
-    <div class = "clusterButton"> 
-        
-    </div> 
-</template>
-
 <template name="IdeaSpace">
-        <ul id="ideas" class="ideaList ul">
-            {{#each getIdeas}}
-                {{> IdeaElement}}
-            {{/each}}
-        </ul>
+    <ul id="ideas" class="ideaList ul">
+        {{#each displayIdeas}} {{ > IdeaElement}} {{/each}}
+    </ul>
 </template>
-
-<template name = "InstantiateCluster">
-    <div class = "clusterButton">
-
+<template name="InstantiateCluster">
+    <div class="clusterButton"> CREATE CLUSTER</div>
+</template>
+<template name="ClusterSpace">
+    {{> InstantiateCluster}} {{#each getClusters}} {{ > Cluster}} {{/each}}
+</template>
+<template name="Cluster">
+    <div class="cluster" id="{{_id}}">
+        <form class="clusterLabel">
+            <input type="text" name="myInput" class="tagBox" id={{_id}} />
+            <a data-toggle="dropdown" class="dropdown-toggle" href="#">Dropdown</a>
+            <ul class="dropdown-menu">
+                {{#each getClusterIdeas}} {{> ClusterIdeaElement}} {{/each}}
+            </ul>
+        </form>
     </div>
 </template>
-
-<template name = "ClusterSpace">
-     <div class = "ClusterBox">   
-        {{#each getClusters}}
-            {{ > Cluster}}
-        {{/each}}
-     </div>
-</template>
-
-<template name= "Cluster">
-    <div class = "cluster">
-        <ul id="clusters" class="clusterList ul">
-            {{#each getClusterIdeas}}
-                {{> IdeaElement}}
-            {{/each}}
-        </ul>
+<template name="DeleteCluster">
+    <div class="trashCan">
+        <h1> TRASH </h1>
     </div>
 </template>
-
-<template name = "IdeaElement">     
+<template name="IdeaElement">
     <li id="{{_id}}" class="IdeaListElement"> {{content}} </li>
 </template>
-
-
+<template name="ClusterIdeaElement">
+    <li id="{{_id}}" class="clusterListElement"> {{content}} </li>
+</template>
 <!-- <ul id="cluster" class="cluster ul">
             {{#each getClusters}}
                 
             {{/each}}
         </ul> -->
-
-
-
