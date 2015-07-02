@@ -1,23 +1,45 @@
 <template name="SubrouteSandbox">
-    <!-- <input type="range" class="zoom-range" step="0.05" min="0.4" max="5">    -->
+    
     <div class="synthesisBox">
+         
+<div class = "controlPanel">
+    <input type="range" class="zoom-range" step="0.01" min="1" max="2">
+</div>
+
+         
+         <input type="button" class="zoomIn" step="0.01" min="0.4" max="5">
+         <input type="button" class="zoomOut" step="0.05" min="0.4" max="5">
+            
         <div class="row">
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <div class="numIdeas"> Ideas Count {{getNumIdeas}} </div>
-                {{> IdeaSpace}}</div>
-            <div class="col-md-9"> </div>
-            <div class="col-md-2"> {{> ClusterSpace}} {{> DeleteCluster}}</div>
+                {{> IdeaSpace}}
+            </div>
+            <div class="col-md-8"> 
+                {{ > ZoomSpace}} 
+            </div>
+            <div class="col-md-2"> 
+                {{> ClusterSpace}} {{> DeleteCluster}}
+            </div>
         </div>
     </div>
 </template>
+
 <template name="IdeaSpace">
     <ul id="ideas" class="ideaList ul">
-        {{#each displayIdeas}} {{ > IdeaElement}} {{/each}}
+        {{#each getIdeas}} {{ > IdeaElement}} {{/each}}
     </ul>
 </template>
 <template name="InstantiateCluster">
     <div class="clusterButton"> CREATE CLUSTER</div>
 </template>
+
+<template name = "ZoomSpace">
+     
+     <div class = "zoomFrame">  {{#each getIdeas}} {{ > IdeaElement}} {{/each}} </div> 
+
+</template>
+
 <template name="ClusterSpace">
     {{> InstantiateCluster}} {{#each getClusters}} {{ > Cluster}} {{/each}}
 </template>
@@ -37,12 +59,20 @@
         <h1> TRASH </h1>
     </div>
 </template>
+
+<template name= "DropBox">
+<div class = "Box">  </div>
+</template>
+
 <template name="IdeaElement">
     <li id="{{_id}}" class="IdeaListElement"> {{content}} </li>
 </template>
 <template name="ClusterIdeaElement">
     <li id="{{_id}}" class="clusterListElement"> {{content}} </li>
 </template>
+
+
+
 <!-- <ul id="cluster" class="cluster ul">
             {{#each getClusters}}
                 

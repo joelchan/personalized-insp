@@ -1,13 +1,28 @@
+.controlPanel {
+    width: 100px;
+    
+}
 
-/*.col-md-9 {
-    height: 1000px;
+.zoom-range {
+    height: 80px;
+    width: 80px;
+}
+
+.col-md-8 {
+    height: 3000px;
     border:1px solid #444;
     background-color: #def;
-}*/
+}
 
 .col-md-1 {
     border-width: 5px;
     border-right-color: #000000;
+}
+
+.ZoomSpace {
+height: 2000px;
+width: 2000px;
+
 }
 
 .numIdeas {
@@ -75,7 +90,7 @@
     border-color: #0D1366;
     border-radius:10px;
     width: 200px;
-    height: 60px;
+    height: relative;
     background-color: #FCF1A6;
     margin-top: 5px;
     -moz-box-shadow: 1px 2px 3px rgba(0,0,0,.5);

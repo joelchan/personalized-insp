@@ -1,22 +1,30 @@
 var logger = new Logger('Client:Hcomp:SubrouteSandbox');
 Logger.setLevel('Client:Hcomp:SubrouteSandbox', 'trace');
 
-// Template.SubrouteSandbox.onRendered(function () {
-//     this.$(".col-md-9").panzoom({
-//     minScale: 0,
-//     $zoomRange: $("input[type='range']")
-//     });
-// });
-
+Template.ZoomSpace.onRendered(function () {
+    this.$('.IdeaListElement').on('mousedown touchstart', function( e ) {
+    e.stopImmediatePropagation();
+    });
+    
+    this.$(".zoomFrame").panzoom({
+        minScale: .5,
+        increment: 0.2,
+        maxScale: 1.2,
+        $zoomIn: $(".zoomIn"),
+        $zoomOut: $(".zoomOut"),
+        $zoomRange: $("input[type='range']")
+        });
+    
+        this.$(".IdeaListElement").panzoom("transition", false);
+});
 
 Template.SubrouteSandbox.helpers({
     getNumIdeas: function () {
-        return Ideas.find({inCluster: false}, {fields: {inCluster: 0}}).count();
+        return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
     }, 
 });
 
-Template.IdeaSpace.helpers({
-    
+Template.IdeaSpace.helpers({ 
     getNumIdeas: function () {
         return Ideas.find({inCluster: false}, {fields: {inCluster: 0}}).count();
     }, 
@@ -54,7 +62,7 @@ Template.IdeaElement.onRendered(function () {
         //containment: '.synthesisBox',
         //revert: false,
         zIndex: 50,
-        appendTo: '.synthesisBox',
+        appendTo: '.zoomFrame',
         //removeOnDrop: true,
         //helper: 'clone',
         //accept: '.card',
@@ -68,28 +76,28 @@ Template.IdeaElement.onRendered(function () {
     });
 });
 
-// Template.IdeaSpace.rendered = function() {   
-//    $(".IdeaListElement").draggable({
-//         //containment: '.synth  esisBox',
-//         //revert: true,
-//         //zIndex: 50,
-//         //helper: 'clone',
-//         //accept: '.card',
-//         //appendTo: '.synthesisBox',
-//         //appendTo: '.card',
-//         snap: false,
-//         //refreshPositions: true, // Decreases performance tremendously 
-//         start: function(e, ui) {
-//             logger.debug("Began dragging a cluster");
-//             logger.trace(ui.helper[0]);
-//             //get current ideas element
-//             logger.trace(ui.helper[0].id); 
-//             var width = $(this).css('width');
-//             logger.trace(width);
-//             $(ui.helper[0]).css('width', width);
-//         },
-//     });
-// };
+Template.IdeaSpace.rendered = function() {   
+   $(".IdeaListElement").draggable({
+        //containment: '.synth  esisBox',
+        //revert: true,
+        //zIndex: 50,
+        //helper: 'clone',
+        //accept: '.card',
+        //appendTo: '.synthesisBox',
+        //appendTo: '.card',
+        snap: false,
+        //refreshPositions: true, // Decreases performance tremendously 
+        start: function(e, ui) {
+            logger.debug("Began dragging a cluster");
+            logger.trace(ui.helper[0]);
+            //get current ideas element
+            logger.trace(ui.helper[0].id); 
+            var width = $(this).css('width');
+            logger.trace(width);
+            $(ui.helper[0]).css('width', width);
+        },
+    });
+};
 // Template.MakeClusterButton.helper({
 // });
 
@@ -114,11 +122,12 @@ Template.DeleteCluster.onRendered( function() {
                 var clusterID =  ui.helper[0].id; 
                 var cluster = Clusters.findOne(clusterID);
                 var ideasInCluster = cluster.ideaIDs; 
+                ui.helper[0].remove();
                 for (var i = ideasInCluster.lengideaIDsth - 1; i >= 0; i--) {
                     logger.debug("Look here "  + ideasInCluster[i]);     
                     Ideas.update({_id: ideasInCluster[i]}, {$set: {'inCluster': false}});
                 };
-                ui.helper[0].remove();
+                
             }
            //Clusters.update({_id:{ideasInCluster}}, {$set: {'inCluster':false}});
            //logger.debug("Here" + JSON.stringify(ids));
@@ -158,7 +167,7 @@ Template.ClusterIdeaElement.onCreated(function () {
         zIndex: 50,
         //helper: 'clone',
         //accept: '.card',
-        //appendTo: '.synthesisBox',
+        appendTo: '.synthesisBox',
         //appendTo: '.card',
         //snap: true,
         //refreshPositions: true, // Decreases performance tremendously 
@@ -173,13 +182,13 @@ Template.ClusterIdeaElement.onCreated(function () {
     });
 });
 
-
 Template.ClusterIdeaElement.onRendered(function () {
   logger.debug("Calling onRendered for new Idea"); 
   $(".clusterListElement").draggable({
         //containment: '.synth  esisBox',
         revert: true,
         zIndex: 50,
+        appendTo: '.synthesisBox',
         //removeOnDrop: true,
         //helper: 'clone',
         //accept: '.card',
@@ -192,7 +201,6 @@ Template.ClusterIdeaElement.onRendered(function () {
         },
     });
 });
-
 
 Template.Cluster.events({
 "submit .clusterLabel": function (event, template) {
@@ -207,7 +215,6 @@ Template.Cluster.events({
     return false;
   }
 });
-
 
 Template.Cluster.onCreated( function() {
  $(this.firstNode).draggable({
@@ -317,12 +324,10 @@ Template.Cluster.onRendered( function() {
             
             var clusterObject = Clusters.find(currentClusterID).fetch();
             var ideaObject =  Ideas.find(ideaID).fetch();            
-            
             //ClusterFactory.removeIdeaFromCluster(idea[0], cluster[0])
             // //logger.debug(clusterAssocIdea[0].clusterIDs + "Current CLuster ID");
             // var idAssocCluster = clusterAssocIdea[0].clusterIDs[0]; 
             // var cluster = Clusters.find(idAssocCluster).fetch();
-            
             if($.inArray(ideaID, clusterObject[0].ideaIDs) == -1) {
                 Ideas.update({_id: ideaObject[0]._id}, {$set: {'inCluster': true}});
                 ClusterFactory.insertIdeaToCluster(ideaObject[0], clusterObject[0]);              
@@ -337,12 +342,10 @@ Template.Cluster.onRendered( function() {
             }
             //id = document.getElementById(idea[0]._id);
             //id.parentNode.removeChild(id);
-            
             //logger.debug("Here");
-            
             // Move draggable into droppable   
             //draggable.appendTo(droppable);
-           // ClusterFactory.insertIdeaToCluster(Ideas.find().fetch(Session.get("currentUser")) ); 
+           // ClusterFactory.insertIdeaToCluster(Ideas.find().fetch(Session.get("currentUser"))); 
         }
     });
 
@@ -355,6 +358,9 @@ Template.Cluster.onRendered( function() {
 
 });
 
-
-
+Template.ZoomSpace.helpers({
+    getIdeas: function() {
+        return Ideas.find();
+    },
+}); 
 
