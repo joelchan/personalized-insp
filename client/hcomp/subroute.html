@@ -1,24 +1,20 @@
 <template name="SubrouteSandbox">
-    
     <div class="synthesisBox">
-         
-<div class = "controlPanel">
-    <input type="range" class="zoom-range" step="0.01" min="1" max="2">
-</div>
-
-         
-         <input type="button" class="zoomIn" step="0.01" min="0.4" max="5">
-         <input type="button" class="zoomOut" step="0.05" min="0.4" max="5">
-            
+        <div class="controlPanel">
+            <input type="range" class="zoom-range" step="0.01" min="1" max="2">
+        </div>
+        <input type="button" class="zoomIn" step="0.01" min="0.4" max="5">
+        <input type="button" class="zoomOut" step="0.05" min="0.4" max="5">
         <div class="row">
             <div class="col-md-2">
                 <div class="numIdeas"> Ideas Count {{getNumIdeas}} </div>
-                {{> IdeaSpace}}
+                <!-- {{> IdeaSpace}} -->
             </div>
-            <div class="col-md-8"> 
-                {{ > ZoomSpace}} 
+            <div class="col-md-8">
+                {{> MiniMap}} 
+                {{ > ZoomSpace}}
             </div>
-            <div class="col-md-2"> 
+            <div class="col-md-2">
                 {{> ClusterSpace}} {{> DeleteCluster}}
             </div>
         </div>
@@ -27,22 +23,26 @@
 
 <template name="IdeaSpace">
     <ul id="ideas" class="ideaList ul">
-        {{#each getIdeas}} {{ > IdeaElement}} {{/each}}
+        <!-- {{#each getIdeas}} {{ > IdeaElement}} {{/each}} -->
     </ul>
 </template>
+
 <template name="InstantiateCluster">
     <div class="clusterButton"> CREATE CLUSTER</div>
 </template>
 
-<template name = "ZoomSpace">
-     
-     <div class = "zoomFrame">  {{#each getIdeas}} {{ > IdeaElement}} {{/each}} </div> 
-
+<template name="ZoomSpace">
+    <div class="zoomFrame"> 
+        <ul class="ideasList">
+            {{#each getIdeas}} {{ > IdeaElement}} {{/each}} 
+        </ul>
+    </div>
 </template>
 
 <template name="ClusterSpace">
     {{> InstantiateCluster}} {{#each getClusters}} {{ > Cluster}} {{/each}}
 </template>
+
 <template name="Cluster">
     <div class="cluster" id="{{_id}}">
         <form class="clusterLabel">
@@ -54,25 +54,29 @@
         </form>
     </div>
 </template>
+
 <template name="DeleteCluster">
     <div class="trashCan">
         <h1> TRASH </h1>
     </div>
 </template>
 
-<template name= "DropBox">
-<div class = "Box">  </div>
+<!-- Load Minimap objects with ID's from the idea _.ids -->
+<template name="MiniMap">
+    <div class="map">
+         <ul class="ideaList" >
+            {{#each getIdeas}} <li class="miniIdeas" id={{_id}}></li>{{/each}} 
+        </ul>
+    </div>
 </template>
 
 <template name="IdeaElement">
-    <li id="{{_id}}" class="IdeaListElement"> {{content}} </li>
+    <li id={{_id}} class="IdeaListElement"> {{content}} </li>
 </template>
+
 <template name="ClusterIdeaElement">
     <li id="{{_id}}" class="clusterListElement"> {{content}} </li>
 </template>
-
-
-
 <!-- <ul id="cluster" class="cluster ul">
             {{#each getClusters}}
                 

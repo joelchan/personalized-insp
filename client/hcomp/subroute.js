@@ -1,21 +1,50 @@
 var logger = new Logger('Client:Hcomp:SubrouteSandbox');
 Logger.setLevel('Client:Hcomp:SubrouteSandbox', 'trace');
 
-Template.ZoomSpace.onRendered(function () {
-    this.$('.IdeaListElement').on('mousedown touchstart', function( e ) {
-    e.stopImmediatePropagation();
-    });
-    
+Template.ZoomSpace.helpers({
+    getIdeas: function() {
+        return Ideas.find();
+    },
+}); 
+
+Template.SubrouteSandbox.onRendered(function () {
     this.$(".zoomFrame").panzoom({
-        minScale: .5,
-        increment: 0.2,
-        maxScale: 1.2,
-        $zoomIn: $(".zoomIn"),
-        $zoomOut: $(".zoomOut"),
-        $zoomRange: $("input[type='range']")
-        });
+         minScale: .5,
+         increment: 0.2,
+         maxScale: 1.2,
+         $zoomIn: $(".zoomIn"),
+         $zoomOut: $(".zoomOut"),
+         $zoomRange: $("input[type='range']")
+    })
+    .on("panzoomchange", function(e, panzoom, transform) {
+        logger.trace("Calabash and carrots");
+        
+        //print matrix
+        logger.trace(transform);
+        //logger.trace(transform[4] + "  "  + transform[5]); 
+        //Transform directions 
+        //y axis transform[5] Matrix index 5 
+        //Matrix scale is at index[0]
+        $(".ideasList").css('top', transform[5]);  
+        //x Axis  transform[4] Matrix index 4 
+        $(".ideasList").css('left', transform[4]);   
     
-        this.$(".IdeaListElement").panzoom("transition", false);
+    });
+});
+
+Template.MiniMap.helpers({
+     getIdeas: function() {
+        return Ideas.find();
+    },
+});
+
+Template.MiniMap.onRendered(function () {
+
+});
+
+Template.ZoomSpace.onRendered(function () {
+    
+    
 });
 
 Template.SubrouteSandbox.helpers({
@@ -34,31 +63,21 @@ Template.IdeaSpace.helpers({
     },
 });
 
-Template.IdeaElement.onCreated(function () {
-  $(".IdeaListElement").draggable({
-        //containment: '.synth  esisBox',
-        //revert: true,
-        zIndex: 50,
-        //helper: 'clone',
-        //accept: '.card',
-        appendTo: '.synthesisBox',
-        //snap: true,
-        //refreshPositions: true, // Decreases performance tremendously 
-        start: function(e, ui) {
-            // logger.debug("Began dragging a cluster");
-            // logger.trace(ui.helper[0]);
-            //get current ideas element
-            // logger.trace(ui.helper[0].id); 
-            var width = $(this).css('width');
-            // logger.trace(width);
-            $(ui.helper[0]).css('width', width);
-        },
-    });
-});
-
 Template.IdeaElement.onRendered(function () {
-  logger.debug("Calling onRendered for new Idea"); 
-  $(".IdeaListElement").draggable({
+    
+    logger.trace("IdeaElement rendered from IdeaElement.onRendered "); 
+        
+        var height = $(".IdeaListElement").css('height');
+        var width = $(".ideasList").css('width');   
+        var scaleHeight = parseInt(height.substring(0,2)); 
+        $(".miniIdeas").css('height', (scaleHeight * 1.2)); 
+    
+    $(this.firstNode).on('mousedown touchstart', function(e) {
+        e.stopPropagation();
+        logger.trace("I am here");
+    });  
+
+ $(this.firstNode).draggable({
         //containment: '.synthesisBox',
         //revert: false,
         zIndex: 50,
@@ -70,36 +89,39 @@ Template.IdeaElement.onRendered(function () {
         //appendTo: '.card',
         //refreshPositions: true, // Decreases performance tremendously 
         start: function(e, ui) {
+            
             var width = $(this).css('width');
-            $(ui.helper[0]).css('width', width);  
+            var top = $(this).css('top');
+            var left = $(this).css('left');
+           
+            var thisId = ui.helper[0].id; 
+            thisId = "#" +thisId.trim();
+     
+            logger.trace(thisId.length)       
+            logger.trace(top);
+            $(thisId).css('top',parseInt(top.substring(0,2)));
+            $(thisId).css('left',parseInt(left.substring(0,2)));
+            // $(thisId).css('left', parseInt(top.substring(0,2));
+            
+
+            // $(this).on('mousedown touchstart', function(e) {
+            //      e.stopImmediatePropagation();
+            //   });
+        
+        // var top = $(ui.helper[0]).css('top');   
+        // var left = $(ui.helper[0]).css('left');   
+        
+        // logger.trace("top "  + top);
+        // logger.trace("left "  + left);
+        
+        // var miniLeft = parseInt(left.substring(0,2));
+        // var miniTop = parseInt(top.substring(0,2));
+
+        // var miniTop 
+
         },
     });
 });
-
-Template.IdeaSpace.rendered = function() {   
-   $(".IdeaListElement").draggable({
-        //containment: '.synth  esisBox',
-        //revert: true,
-        //zIndex: 50,
-        //helper: 'clone',
-        //accept: '.card',
-        //appendTo: '.synthesisBox',
-        //appendTo: '.card',
-        snap: false,
-        //refreshPositions: true, // Decreases performance tremendously 
-        start: function(e, ui) {
-            logger.debug("Began dragging a cluster");
-            logger.trace(ui.helper[0]);
-            //get current ideas element
-            logger.trace(ui.helper[0].id); 
-            var width = $(this).css('width');
-            logger.trace(width);
-            $(ui.helper[0]).css('width', width);
-        },
-    });
-};
-// Template.MakeClusterButton.helper({
-// });
 
 Template.InstantiateCluster.events({
     'click .clusterButton' : function(e, ul) {
@@ -160,31 +182,9 @@ Template.Cluster.helpers({
     },  
 });
 
-Template.ClusterIdeaElement.onCreated(function () {
-  $(".clusterListElement").draggable({
-        //containment: '.synth  esisBox',
-        //revert: true,
-        zIndex: 50,
-        //helper: 'clone',
-        //accept: '.card',
-        appendTo: '.synthesisBox',
-        //appendTo: '.card',
-        //snap: true,
-        //refreshPositions: true, // Decreases performance tremendously 
-        start: function(e, ui) {
-            // logger.debug("Began dragging a cluster");
-            // logger.trace(ui.helper[0]);
-            //get current ideas element
-            // logger.trace(ui.helper[0].id); 
-            var width = $(this).css('width');
-            $(ui.helper[0]).css('width', width);
-        },
-    });
-});
-
 Template.ClusterIdeaElement.onRendered(function () {
   logger.debug("Calling onRendered for new Idea"); 
-  $(".clusterListElement").draggable({
+   $(this.firstNode).draggable({
         //containment: '.synth  esisBox',
         revert: true,
         zIndex: 50,
@@ -242,7 +242,6 @@ Template.Cluster.onCreated( function() {
         //accept: ".IdeaListElement",
         //activeClass: 'droppable-active', 
         //hoverClass: 'droppable-hover', 
-        
         drop: function(event, ui) {
             
             var currentClusterID = this.id;
@@ -250,11 +249,6 @@ Template.Cluster.onCreated( function() {
             
             var clusterObject = Clusters.find(currentClusterID).fetch();
             var ideaObject =  Ideas.find(ideaID).fetch();            
-            
-            //ClusterFactory.removeIdeaFromCluster(idea[0], cluster[0])
-            // //logger.debug(clusterAssocIdea[0].clusterIDs + "Current CLuster ID");
-            // var idAssocCluster = clusterAssocIdea[0].clusterIDs[0]; 
-            // var cluster = Clusters.find(idAssocCluster).fetch();
             
             if($.inArray(ideaID, clusterObject[0].ideaIDs) == -1) {
                 Ideas.update({_id: ideaObject[0]._id}, {$set: {'inCluster': true}});
@@ -266,16 +260,7 @@ Template.Cluster.onCreated( function() {
                //logger.debug("---> "  + );
                var prevCluster = Clusters.find(ideaObject[0].clusterIDs[0]).fetch();
                 ClusterFactory.removeIdeaFromCluster(ideaObject[0], prevCluster[0]);
-            
             }
-            //id = document.getElementById(idea[0]._id);
-            //id.parentNode.removeChild(id);
-            
-            //logger.debug("Here");
-            
-            // Move draggable into droppable   
-            //draggable.appendTo(droppable);
-           // ClusterFactory.insertIdeaToCluster(Ideas.find().fetch(Session.get("currentUser")) ); 
         }
     });
 
@@ -286,8 +271,6 @@ Template.Cluster.onCreated( function() {
     });
 
 });
-
-
 
 Template.Cluster.onRendered( function() {
    
@@ -302,32 +285,20 @@ Template.Cluster.onRendered( function() {
         //snap: true,
         //refreshPositions: true, // Decreases performance tremendously 
         start: function(e, ui) {
-            // logger.debug("Began dragging an cluster");
-            // logger.trace(ui.helper[0]);
             var width = $(this).css('width');
-           // var info = $(this).currentData(id);
-            //logger.trace(info);
-            logger.trace(width);
             $(ui.helper[0]).css('width', width);
         },
     });
     
     $(this.firstNode).droppable({
-        //accept: ".IdeaListElement",
-        //activeClass: 'droppable-active', 
-        //hoverClass: 'droppable-hover', 
         
         drop: function(event, ui) {
             
             var currentClusterID = this.id;
             var ideaID = ui.helper[0].id; 
-            
             var clusterObject = Clusters.find(currentClusterID).fetch();
             var ideaObject =  Ideas.find(ideaID).fetch();            
-            //ClusterFactory.removeIdeaFromCluster(idea[0], cluster[0])
-            // //logger.debug(clusterAssocIdea[0].clusterIDs + "Current CLuster ID");
-            // var idAssocCluster = clusterAssocIdea[0].clusterIDs[0]; 
-            // var cluster = Clusters.find(idAssocCluster).fetch();
+            
             if($.inArray(ideaID, clusterObject[0].ideaIDs) == -1) {
                 Ideas.update({_id: ideaObject[0]._id}, {$set: {'inCluster': true}});
                 ClusterFactory.insertIdeaToCluster(ideaObject[0], clusterObject[0]);              
@@ -335,20 +306,11 @@ Template.Cluster.onRendered( function() {
             
             if(ideaObject[0].clusterIDs.length > 1) {
                logger.debug("Array of clusters "  +ideaObject[0].clusterIDs);     
-               //logger.debug("---> "  + );
                var prevCluster = Clusters.find(ideaObject[0].clusterIDs[0]).fetch();
-                ClusterFactory.removeIdeaFromCluster(ideaObject[0], prevCluster[0]);
-            
+               ClusterFactory.removeIdeaFromCluster(ideaObject[0], prevCluster[0]);
             }
-            //id = document.getElementById(idea[0]._id);
-            //id.parentNode.removeChild(id);
-            //logger.debug("Here");
-            // Move draggable into droppable   
-            //draggable.appendTo(droppable);
-           // ClusterFactory.insertIdeaToCluster(Ideas.find().fetch(Session.get("currentUser"))); 
         }
-    });
-
+    });    
     
     $('.cluster').on({
         "shown.bs.dropdown": function() { this.closable = false; },
@@ -358,9 +320,5 @@ Template.Cluster.onRendered( function() {
 
 });
 
-Template.ZoomSpace.helpers({
-    getIdeas: function() {
-        return Ideas.find();
-    },
-}); 
+
 

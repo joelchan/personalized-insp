@@ -1,12 +1,17 @@
 .controlPanel {
-    width: 100px;
-    
+    width: 100px; 
 }
 
 .zoom-range {
     height: 80px;
     width: 80px;
 }
+
+.ideasList{
+    
+    /*min-height: 40px;*/
+    /*width: 300px;*/
+} 
 
 .col-md-8 {
     height: 3000px;
@@ -19,10 +24,21 @@
     border-right-color: #000000;
 }
 
-.ZoomSpace {
-height: 2000px;
-width: 2000px;
+.miniIdeas {
+    list-style-type: none;
+    position: relative;
+    margin: 2px;
+    width: 5px;
+    /*min-height: 5px;*/
+    background-color: #000000;
+}
 
+.map {
+    border: 1px solid #000000;
+    margin-top: 20px;
+    /*background-color: #def;*/
+    width: 30%;
+    height: 400px;
 }
 
 .numIdeas {
@@ -126,8 +142,6 @@ width: 2000px;
     cursor: pointer;
 }
 
-
-
 .IdeaList {
     float: left;
     width: relative;
@@ -158,6 +172,5 @@ width: 2000px;
 }
 
 .clusterName {
-font-size: 20px;
-
+   font-size: 20px;
 }
