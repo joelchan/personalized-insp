@@ -13,15 +13,22 @@ ExperimentManager = (function () {
   ****************************************************************/
   return {
 
-    createExp: function(promptID, desc, numParts) {
+      // TODOs:
+      // [] Take IVs as arguments
+      // [] Create class IV with levels?
+      // [] Call function to then assemble
+    createExp: function(promptID, desc, numParts, IV1, IV2) {
       /**************************************************************
        * Create a new experiment
        * @Params
        *    promptID - id of the prompt for the experiment
+       *    desc (string) - name of experiment
+       *    numParts (int) - desired number of participants per condition
+       *    IV1 (object) - an object that defines an independent variable
+       *                   with 2 fields: 1) name, and 2) levels
+       *    IV2 (object, optional) - a second IV definition
        * @Return
        *    expID - id of created experiment, false if unsuccessful
-       *    desc (string, optional) - name of experiment
-       *    numParts (int, optional) - desired number of participants per condition
        * ***********************************************************/
        logger.trace("Beginning ExperimentManager.createExp");
        if (promptID) {
@@ -38,12 +45,33 @@ ExperimentManager = (function () {
            url = this.setExpURL(expID);
            logger.trace("Crowd can login at " + url);
            
+           // get experimental conditions
+           var conditions = [];
+           if (!IV2) {
+            logger.debug("Simple one-way design");
+            logger.trace("IV1 (" + IV1.name + ") with levels: " + JSON.stringify(IV1.levels));
+            conditions = IV1.levels;
+           } else {
+            logger.debug("Two-way factorial"); // can extend later
+            logger.trace("IV1 (" + IV1.name + ") with levels: " + JSON.stringify(IV1.levels));
+            logger.trace("IV2 (" + IV2.name + ") with levels: " + JSON.stringify(IV2.levels));
+            IV1.levels.forEach(function(IV1level) {
+              IV2.levels.forEach(function(IV2level) {
+                combo = IV1level + "-" + IV2level;
+                conditions.push(combo);
+              });
+            });
+           }
+
+           logger.trace("Conditions to create: " + JSON.stringify(conditions));
            // create experimental conditions
-           // parameters are currently hard-coded
-           var control = this.createExpCond(expID, promptID, "Control", numParts);
-           var treatment = this.createExpCond(expID, promptID, "Treatment", numParts);
-           Experiments.update({_id: expID},
-            {$set: {conditions: [control,treatment]}});
+           conditions.forEach(function(cond) {
+            ExperimentManager.createExpCond(expID, promptID, cond, numParts);
+           });
+           // var control = this.createExpCond(expID, promptID, "Control", numParts);
+           // var treatment = this.createExpCond(expID, promptID, "Treatment", numParts);
+           // Experiments.update({_id: expID},
+           //  {$set: {conditions: [control,treatment]}});
            
            // create a group for the experiment
            this.addExpGroup(Experiments.findOne({_id: expID}))
@@ -60,6 +88,13 @@ ExperimentManager = (function () {
        }
     },
 
+    initSynthExp: function(exp) {
+       /**************************************************************
+      * tag experiment as needing processing for synthesis
+      * ***********************************************************/
+
+    },
+    // TODO: [] Extend to take argument that names the route
     setExpURL: function(expID) {
         /**************************************************************
        * Generate and set a URL for participants to login to the experiment
@@ -89,6 +124,8 @@ ExperimentManager = (function () {
         // newCond.groupTemplate = groupTemplate;
         var newCondID = Conditions.insert(newCond);
         newCond._id = newCondID;
+        Experiments.update({_id: expID},
+            {$addToSet: {conditions: newCond}});
         return newCond;
     },
 
