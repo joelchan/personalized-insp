@@ -92,6 +92,16 @@ ExperimentManager = (function () {
        /**************************************************************
       * tag experiment as needing processing for synthesis
       * ***********************************************************/
+      var exp = Experiments.findOne({_id: exp._id});
+      logger.debug("Marking exp " + exp.description + " as a synthesis experiment for processing");
+      Experiments.update(
+        {_id: exp._id},
+        {$set: {isSynthesis: true}}
+      );
+      Experiments.update(
+        {_id: exp._id},
+        {$set: {isProcessed: false}}
+      );
 
     },
     // TODO: [] Extend to take argument that names the route
