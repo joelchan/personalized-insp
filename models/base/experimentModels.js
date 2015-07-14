@@ -13,6 +13,8 @@ Participants = new Meteor.Collection("participants");
 SurveyResponses = new Meteor.Collection("surveyResponses");
 // Holds baseline fluency data for participants
 FluencyMeasures = new Meteor.Collection("fluencyMeasures");
+// Defines synthesis subsets (partitions of the data to synthesize)
+SynthSubsets = new Meteor.Collection("synthSubsets");
 
 Experiment = function (promptID, desc) {
    /****************************************************************
@@ -90,6 +92,20 @@ ExpCondition = function(expID, promptID, desc, partNum) {
   //Miscellaneous data associated with assignmnt
   this.misc;
 };
+
+ExpSynthSubset = function(ideaIDs, cond, exp) {
+  this.users = [];
+  this.ideaIDs = ideaIDs;
+  this.condID = cond._id;
+  this.condName = cond.description;
+  this.expID = exp._id;
+
+  // we can add a field called "data" when we create a subset, and put in
+  // - size
+  // - simMean
+  // - simVar
+  // - seed
+}
 
 Participant = function(expID, userID, condID, groupID) {
     /****************************************************************
