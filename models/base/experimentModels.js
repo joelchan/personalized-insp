@@ -93,12 +93,29 @@ ExpCondition = function(expID, promptID, desc, partNum) {
   this.misc;
 };
 
-ExpSynthSubset = function(ideaIDs, cond, exp) {
+ExpSynthSubset = function(ideaIDs, cond, exp, data) {
+  /****************************************************************
+    * Definition of synthesis subset object for synthesis experiments
+    * Each subset defines a partition of the complete dataset to be synthesized
+    * @Params
+    *   ideaIDs (array) - array of ids for ideas that are in this subset
+    *   cond (object) - the experiment condition this subset is a part of
+    *   exp (object) - the experiment this subset is a part of
+    *   data (optional) - object with metadata for the subset
+    ****************************************************************/
   this.users = [];
   this.ideaIDs = ideaIDs;
   this.condID = cond._id;
   this.condName = cond.description;
   this.expID = exp._id;
+
+  if (data) {
+    // Add metadata fields if any are given
+    var fields = Object.keys(data);
+    for (var i=0; i<fields.length; i++) {
+      this[fields[i]] = data[fields[i]];
+    }
+  }
 
   // we can add a field called "data" when we create a subset, and put in
   // - size

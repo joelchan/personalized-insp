@@ -6,6 +6,7 @@ import nltk
 from nltk.corpus import wordnet as wn
 import numpy as np
 from file_manager import read_data
+from gensim import corpora, models, similarities, matutils
 
 
 def cosine(doc1, doc2, doc_topic_weights):
@@ -121,3 +122,38 @@ def bag_of_words(ideas, stopwords):
         data.append(idea)
 
     return data, expandedText
+
+def est_tfidf_lsi(items):
+    #### tokenize ####
+    # get stopwords
+    stopWords = get_stopwords()
+    # get bag of words
+    data, expandedText = bag_of_words(items, stopWords)
+
+    # prepare dictionary
+    dictionary = corpora.Dictionary(expandedText)
+
+    # convert tokenized documents to a corpus of vectors
+    corpus = [dictionary.doc2bow(text) for text in expandedText]
+
+    # convert raw vectors to tfidf vectors
+    tfidf = models.TfidfModel(corpus) #initialize model
+    corpus_tfidf = tfidf[corpus] #apply tfidf model to whole corpus
+    # make lsa space
+    if len(data) > 300:
+        dim = 300 # default is 300 dimensions
+    else:
+        dim = len(data)
+    lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=dim) #create the space
+
+    # output the matrix V so we can use it to get pairwise cosines
+    # https://github.com/piskvorky/gensim/wiki/Recipes-&-FAQ#q3-how-do-you-calculate-the-matrix-v-in-lsi-space
+    vMatrix = matutils.corpus2dense(lsi[corpus_tfidf],len(lsi.projection.s)).T / lsi.projection.s
+
+    # convert data to dict for easier processing
+    # map each item to its position in the vMatrix so we can access it
+    data_dict = {}
+    for i in xrange(len(data)):
+        data_dict[data[i]['_id']] = i
+
+    return vMatrix, data_dict
