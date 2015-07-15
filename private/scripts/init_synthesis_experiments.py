@@ -44,17 +44,28 @@ def sample_items(items, numWanted=1, probabilities=None):
     itemSet.difference_update(sampledItems)
     return sampledItems, list(itemSet)
 
-def get_sampling_probs(seed, itemNames, simData, reverse=False):
+def get_sampling_probs(seed, itemNames, simData, idMappings, reverse=False):
     # get the probability weights
     # each remaining item has a sampling weight that is some function of
     # its affinity to the seed
-    weights = []
+    weights_raw = []
     for item in itemNames:
+        indexSeed = idMappings[seed]
+        indexItem = idMappings[item]
         if reverse:
-            weight = math.pow(cosine(simData[seed], simData[item]),32)
+            dist = cosine(simData[indexSeed], simData[indexItem])
+            # print dist
+            # weight = math.pow(dist,32)
+            weights_raw.append(dist)
         else:
-            weight = math.pow(1-cosine(simData[seed], simData[item]),32)
-        weights.append(weight)
+            sim = 1-cosine(simData[indexSeed], simData[indexItem])
+            # print sim
+            # weight = math.pow(sim,32)
+            weights_raw.append(sim)
+        # weights_raw.append(weight)
+    weights_adjusted = [abs(np.min(weights_raw)) + w for w in weights_raw]
+    # print sorted(weights_adjusted, reverse=True)
+    weights = [math.pow(w,32) for w in weights_adjusted]
     # print sorted(weights, reverse=True)
     probabilities = [w/np.sum(weights) for w in weights]
     return probabilities
@@ -165,14 +176,10 @@ def create_random_HITs(items, subsetNames, m, v, simData, idMappings):
     report_overlap(subSets)
 
     report_pairwise_sim(subSets)
-
-    # for subset in subSets:
-
-
     
     return subSets
 
-def create_clustered_HITs(items, subsetNames, m, v, simData, reverse=False):
+def create_clustered_HITs(items, subsetNames, m, v, simData, idMappings, reverse=False):
     """
     Random sampling procedure from Strehl & Ghosh (2003) to randomly distribute n items across h subsets 
     with redundancy of v.
@@ -194,28 +201,49 @@ def create_clustered_HITs(items, subsetNames, m, v, simData, reverse=False):
     print "\t\tSimple deterministic phase..."
 
     # create a copy of the items which we will whittle away when we deterministically distribute
-    itemsCopy = items.keys()
+    # itemsCopy = items.keys()
+    itemsCopy = items
+    itemsCopy2 = items
     # print itemsCopy
     for subset in subsetNames:
-        # print "\tProcessing subset " + subset
+        print "\tProcessing subset " + subset
         thisSet = set()
         
         # first randomly sample a seed
-        sample, itemsCopy = sample_items(itemsCopy)
-        seed = sample[0]
-        thisSet.add(seed)
+        if len(itemsCopy) > 0:
+            sample, itemsCopy = sample_items(itemsCopy)
+            seed = sample[0]
+            thisSet.add(seed)
+        else:
+            sample, itemsCopy2 = sample_items(itemsCopy2)
+            seed = sample[0]
+            thisSet.add(seed)
         
         # get the probability weights
         # each remaining item has a sampling weight that is some function of
         # its affinity to the seed
-        probabilities = get_sampling_probs(seed, itemsCopy, simData, reverse)
         # print sorted(probabilities, reverse=True)
         
-        numWanted = m/v-1
+        numWanted = int(math.ceil(m/v))-1
         if numWanted > 0:
-            sample, itemsCopy = sample_items(itemsCopy, numWanted=numWanted, probabilities=probabilities)
-            thisSet.update(sample)
-        subSets[subset] = {"itemNames": list(thisSet), "items": [items[i] for i in thisSet], "seed": seed}
+            if numWanted < len(itemsCopy):
+                print "Remaining number of items to sample from: " + str(len(itemsCopy))
+                print "Desired number of items to sample: " + str(numWanted)
+                probabilities = get_sampling_probs(seed, itemsCopy, simData, idMappings, reverse)
+                # print probabilities
+                sample, itemsCopy = sample_items(itemsCopy, numWanted, probabilities)
+                thisSet.update(sample)
+            else:
+                print "Remaining number of items to sample from: " + str(len(itemsCopy2))
+                print "Desired number of items to sample: " + str(numWanted)
+                probabilities = get_sampling_probs(seed, itemsCopy2, simData, idMappings, reverse)
+                # print probabilities
+                sample, itemsCopy2 = sample_items(itemsCopy2, numWanted, probabilities)
+                thisSet.update(sample)
+
+            # sample, itemsCopy = sample_items(itemsCopy, numWanted=numWanted, probabilities=probabilities)
+            # thisSet.update(sample)
+        subSets[subset] = {"ideaIDs": list(thisSet), "seed": seed}
 
     # print sets
 
@@ -226,29 +254,21 @@ def create_clustered_HITs(items, subsetNames, m, v, simData, reverse=False):
     for subset, subsetData in subSets.items():
         # print "\tProcessing subset " + subset
         # this gives N-[M/V]
-        remaining = [item for item in items.keys() if item not in subsetData['itemNames']]
-        numWanted = m-len(subsetData['itemNames'])
-        probabilities = get_sampling_probs(subsetData['seed'], remaining, simData)
+        remaining = [item for item in items if item not in subsetData['ideaIDs']]
+        numWanted = int(m-len(subsetData['ideaIDs']))
+        probabilities = get_sampling_probs(subsetData['seed'], remaining, simData, idMappings, reverse)
         
-        sample, remaining = sample_items(remaining, numWanted=numWanted, probabilities=probabilities)
-        subSets[subset]['itemNames'] += sample
-        subSets[subset]['items'] += [items[i] for i in sample]
+        sample, remaining = sample_items(remaining, numWanted, probabilities)
+        subSets[subset]['ideaIDs'] += sample
 
-        pairwiseSims = get_pairwise_sims(subSets[subset]['itemNames'], simData)
+        # pairwiseSims = get_pairwise_sims(subSets[subset]['ideaIDs'], simData)
+        pairwiseSims = get_pairwise_sims(subSets[subset]['ideaIDs'], simData, idMappings)
         subSets[subset]['pairwiseSims'] = pairwiseSims
         subSets[subset]['pairwiseSims_mean'] = np.mean(pairwiseSims)
         subSets[subset]['pairwiseSims_sd'] = np.std(pairwiseSims)
 
     print "\t\tFinished!"
     
-    item_counts = {}
-    for subset, subsetData in subSets.items():
-        for item in subsetData['itemNames']:
-            if item in item_counts:
-                item_counts[item] += 1
-            else:
-                item_counts[item] = 1
-
     report_overlap(subSets)
 
     report_pairwise_sim(subSets)
@@ -321,6 +341,12 @@ if __name__ == '__main__':
             subsetNames = ["%s-%.0f-%d" %(sem_weight, m, w) for w in xrange(1,int(h)+1)]
             if sem_weight == "Random":
                 subSets = create_random_HITs(idea_ids, subsetNames, m, v, simData, idMappings)
+                insert_subsets_to_db(subSets, cond, exp)
+            elif sem_weight == "Homo":
+                subSets = create_clustered_HITs(idea_ids, subsetNames, m, v, simData, idMappings)
+                insert_subsets_to_db(subSets, cond, exp)
+            else:
+                subSets = create_clustered_HITs(idea_ids, subsetNames, m, v, simData, idMappings, reverse=True)
                 insert_subsets_to_db(subSets, cond, exp)
 
 

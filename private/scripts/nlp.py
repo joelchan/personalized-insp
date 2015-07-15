@@ -140,8 +140,8 @@ def est_tfidf_lsi(items):
     tfidf = models.TfidfModel(corpus) #initialize model
     corpus_tfidf = tfidf[corpus] #apply tfidf model to whole corpus
     # make lsa space
-    if len(data) > 300:
-        dim = 300 # default is 300 dimensions
+    if len(data) > 100:
+        dim = 100 # default is 100 dimensions
     else:
         dim = len(data)
     lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=dim) #create the space
