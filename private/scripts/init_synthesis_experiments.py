@@ -290,8 +290,15 @@ def parse_cond_params(condName):
     return m, sem_weight
 
 def insert_subsets_to_db(subSets, cond, exp):
+    """
+    Create and insert the subset documents
+
+    """
+    # grab the condition
     cond = db['exp-conditions'].find_one({'_id': cond['_id']})
-    print cond
+    # print cond
+    
+    # create the docs
     subset_docs = [ExpSynthSubset(subsetData['ideaIDs'],
                                 cond,
                                 exp,
@@ -300,12 +307,19 @@ def insert_subsets_to_db(subSets, cond, exp):
                                  'pairwiseSims_mean': subsetData['pairwiseSims_mean'],
                                  'pairwiseSims_sd': subsetData['pairwiseSims_sd']}
                                 ) for subsetName, subsetData in subSets.items()]
-    for doc in subset_docs:
-        print doc.__dict__
-        
+    # for doc in subset_docs:
+    #     print doc.__dict__
+    
+    # insert the subset documents
     subset_ids = db_util.insert('synthSubsets', subset_docs)
+
+    # reference the subset ids in the condition
     db['exp-conditions'].update({'_id': cond['_id']},
-                                {'$set': {'subsetIDs': [str(i) for i in subset_ids]}})
+                                {'$set': {'misc.subsetIDs': [str(i) for i in subset_ids]}})
+
+    # set the number of participants wanted to h*r
+    db['exp-conditions'].update({'_id': cond['_id']},
+                                {'$set': {'partNum': int(h*r)}})    
 
 if __name__ == '__main__':
     db = mongohq.get_db(db_params.local_meteor)
@@ -352,6 +366,10 @@ if __name__ == '__main__':
             else:
                 subSets = create_clustered_HITs(idea_ids, subsetNames, m, v, simData, idMappings, reverse=True)
                 insert_subsets_to_db(subSets, cond, exp)
+
+        # untag the experiment
+        db.experiments.update({'_id': exp['_id']},
+                              {'$set': {'isProcessed': True}})
 
 
 
