@@ -280,9 +280,13 @@ def parse_cond_params(condName):
     This is brittle for now, but we will expect the following format:
     <m>-<sem_weight>
     """
-    params = condName.split("-")
-    m = float(params[0])
-    sem_weight = params[1]
+    if "-" in condName:
+        params = condName.split("-")
+        m = float(params[0])
+        sem_weight = params[1]
+    else:
+        m = float(condName)
+        sem_weight = ""
     return m, sem_weight
 
 def insert_subsets_to_db(subSets, cond, exp):
@@ -339,7 +343,7 @@ if __name__ == '__main__':
             print "h = %.1f" %h
 
             subsetNames = ["%s-%.0f-%d" %(sem_weight, m, w) for w in xrange(1,int(h)+1)]
-            if sem_weight == "Random":
+            if sem_weight == "Random" or sem_weight == "":
                 subSets = create_random_HITs(idea_ids, subsetNames, m, v, simData, idMappings)
                 insert_subsets_to_db(subSets, cond, exp)
             elif sem_weight == "Homo":
