@@ -41,6 +41,7 @@ Idea = function (content, user, prompt, participant) {
   this.votes      = [];
   this.inCluster  = false;
   this.clusterIDs = [];
+  this.inZoomSpace = false; 
   //Optional fields not logged during non-experiments
   if (participant) {
     this.participantID = participant._id;

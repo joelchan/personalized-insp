@@ -96,6 +96,9 @@ IdeaFactory = (function() {
         Ideas.remove({_id: ideas._id});
       }
     },
+    removeAmount : function (amount) {
+    for(var i  =  0; i < amount; i++ ){ IdeaFactory.remove(Ideas.findOne());}  
+    }, 
   };
 }());
 
