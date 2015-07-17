@@ -320,6 +320,7 @@ Router.map(function () {
         this.subscribe('prompts', {_id: this.params.promptID}).wait();
         this.subscribe('assignments').wait();
         this.subscribe('tasks', {promptID: this.params.promptID});
+        this.subscribe('synthSubsets');
       },
     onBeforeAction: function(pause) {
         if (this.ready()) {

@@ -6,30 +6,37 @@ Logger.setLevel('Client:SynthPlaceholder', 'trace');
 // Logger.setLevel('Client:SynthPlaceholder', 'warn');
 
 Template.SynthesisPlaceholder.rendered = function(){
-
+    var subset = SynthSubsets.findOne({_id: Session.get("currentParticipant").misc.subsetID});
+    FilterManager.reset("synthesisIdeasFilter", Session.get("currentUser"), "ideas");
+    subset.ideaIDs.forEach(function(ideaID){
+        FilterManager.create("synthesisIdeasFilter", Session.get("currentUser"),
+        "ideas", "_id", ideaID);
+    });
+    
 }
 
 Template.SynthesisPlaceholder.helpers({
     condition: function() {
-        // var part = Session.get("currentParticipant");
-        // var cond = Conditions.findOne({_id: part.conditionID});
-        // return cond.description;
-        return "TestCondition";
+        var part = Session.get("currentParticipant");
+        var cond = Conditions.findOne({_id: part.conditionID});
+        return cond.description;
+        // return "TestCondition";
     },
     experiment: function() {
-        // var part = Session.get("currentParticipant");
-        // var exp = Experiments.findOne({_id: part.experimentID});
-        // return exp.description;
-        return "TestExperiment";
+        var part = Session.get("currentParticipant");
+        var exp = Experiments.findOne({_id: part.experimentID});
+        return exp.description;
+        // return "TestExperiment";
     },
     subset: function() {
-        // var part = Session.get("currentParticipant");
-        // var subset = SynthSubets.findOne({_id: part.misc.synthSubsetID})
-        // return subset.description;
-        return "TestSubset";
+        var part = Session.get("currentParticipant");
+        var subset = SynthSubsets.findOne({_id: part.misc.subsetID})
+        return subset.description;
+        // return "TestSubset";
     },
     ideas: function() {
-        return "Nothing";
+        return FilterManager.performQuery("synthesisIdeasFilter", Session.get("currentUser"), "ideas")
+        // return "Nothing";
     }
 
 });

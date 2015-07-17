@@ -49,7 +49,9 @@ Template.HcompConsentPage.events({
 
                           // assign a subset if it's a synthesis experiment
                           if (exp.isSynthesis) {
-                            ExperimentManager.getRandomSynthSubset(part._id, cond._id);
+                            // need to extend this to deal with cases where the participant has to come back to this page
+                            // and hasn't finished the subset. in that case, we want 
+                            ExperimentManager.assignSynthSubset(part._id, cond._id);
                           }
                         }
                         EventLogger.logConsent();

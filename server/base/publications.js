@@ -62,7 +62,7 @@ Meteor.startup(function(){
 		Meteor.publish("fluencyMeasures", function() {
 			return FluencyMeasures.find();
 		});
-		Meteor.publish("SynthSubsets", function() {
+		Meteor.publish("synthSubsets", function() {
 			return SynthSubsets.find();
 		});
 		/*****************************************************************

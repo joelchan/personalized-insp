@@ -116,7 +116,7 @@ ExperimentManager = (function () {
 
     },
 
-    getRandomSynthSubset: function(partID, condID) {
+    assignSynthSubset: function(partID, condID) {
        /**************************************************************
       * Randomly sample a subset from a condition and assign to participant
       * Need to figure out how to deal with the potential problem of unfinished subsets
@@ -124,7 +124,20 @@ ExperimentManager = (function () {
       *     partID (str) - the condition object to process
       *     condID (array) - array of route names - order matters!
       * ***********************************************************/
-      
+      var part = Participants.findOne({_id: partID});
+      if (part.misc) {
+        if (part.misc.subsetID) {
+          logger.debug("Already has a subset assigned. Doing nothing");
+        } 
+      } else {
+        logger.debug("Assigning a new subset");
+        var cond = Conditions.findOne({_id: condID});
+        var availableSubsets = SynthSubsets.find({condID: condID, users: []}).fetch();
+        logger.debug(availableSubsets.length + " available out of " + cond.misc.subsetIDs.length + " total subsets in this condition ");
+        var subset = getRandomElement(availableSubsets);
+        logger.trace("Assigning subset with id " + subset._id + " to participant");
+        Participants.update({_id: part._id}, {$set: {'misc.subsetID': subset._id}});
+      }
     },
 
     setExpURL: function(expID) {
