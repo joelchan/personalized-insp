@@ -13,10 +13,6 @@ ExperimentManager = (function () {
   ****************************************************************/
   return {
 
-      // TODOs:
-      // [] Take IVs as arguments
-      // [] Create class IV with levels?
-      // [] Call function to then assemble
     createExp: function(promptID, desc, numParts, IV1, IV2) {
       /**************************************************************
        * Create a new experiment
@@ -88,11 +84,11 @@ ExperimentManager = (function () {
        }
     },
 
-    initSynthExp: function(exp) {
+    initSynthExp: function(expID) {
        /**************************************************************
       * tag experiment as needing processing for synthesis
       * ***********************************************************/
-      var exp = Experiments.findOne({_id: exp._id});
+      var exp = Experiments.findOne({_id: expID});
       logger.debug("Marking exp " + exp.description + " as a synthesis experiment for processing");
       Experiments.update(
         {_id: exp._id},
@@ -104,7 +100,33 @@ ExperimentManager = (function () {
       );
 
     },
-    // TODO: [] Extend to take argument that names the route
+    
+    initCondRoutes: function(condID, routeSequence) {
+       /**************************************************************
+      * tag experiment as needing processing for synthesis
+      * @Params
+      *     condID (str) - ID of the condition we want to process
+      *     routeSequence (array) - array of route names - order matters!
+      * ***********************************************************/
+      var cond = Conditions.findOne({_id: condID});
+      logger.debug("Updating route for condition " + cond.description +
+        "with the route sequence " + JSON.stringify(routeSequence));
+      Conditions.update({_id: cond._id},
+                        {$set: {'misc.routeSequence': routeSequence}});
+
+    },
+
+    getRandomSynthSubset: function(partID, condID) {
+       /**************************************************************
+      * Randomly sample a subset from a condition and assign to participant
+      * Need to figure out how to deal with the potential problem of unfinished subsets
+      * @Params
+      *     partID (str) - the condition object to process
+      *     condID (array) - array of route names - order matters!
+      * ***********************************************************/
+      
+    },
+
     setExpURL: function(expID) {
         /**************************************************************
        * Generate and set a URL for participants to login to the experiment

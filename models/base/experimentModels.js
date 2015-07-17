@@ -159,6 +159,9 @@ Participant = function(expID, userID, condID, groupID) {
 
     //Participants have not finished by default
     this.hasFinished = false;
+
+    //Misc data we want to store (we're putting assigned synth subsets in here for now)
+    this.misc;
 };
 
 Consent = function (participant) {
@@ -186,3 +189,9 @@ QuestionResponse = function(question, answer) {
   this.question = question;
   this.answer = answer;
 };
+
+conditionRouteData = {
+  "IdeationControl": ["TutorialControl", "MTurkIdeationControl", "SurveyPage", "LegionFinalPage"],
+  "IdeationTreatment": ["TutorialTreatment", "MTurkIdeationTreatment", "SurveyPage", "LegionFinalPage"],
+  "Synthesis": ["SynthesisPlaceholder"]
+}
