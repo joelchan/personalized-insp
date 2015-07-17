@@ -15,10 +15,8 @@ Template.ZoomSpace.helpers({
         return Clusters.find();
     },
 }); 
-
      
 Template.SubrouteSandbox.onRendered(function () {
-
 $('.ScalingViewPane').css('top', 75); 
 $('.ScalingViewPane').css('left', 50); 
 
@@ -67,9 +65,7 @@ Template.MiniMap.helpers({
     },
 });
 
-
 Template.ZoomSpace.onRendered(function () {
-    
     
      $(this.firstNode).on('mousedown touchstart', function(e) {
                e.stopPropagation();
@@ -132,7 +128,6 @@ Template.ZoomSpace.onRendered(function () {
                 
                 // ui.position.top += Math.round(((ui.position.top - ui.originalPosition.top) * factor));
                 // ui.position.left += Math.round(((ui.position.left- ui.originalPosition.left) * factor)); 
-
                 //count - 100
                 //logger.trace(count);
                 // count++; 
@@ -294,6 +289,14 @@ Template.Cluster.helpers({
     },
     getClusterName: function() {
         return Clusters.findOne({_id:this._id}).name; 
+    },
+    getClusterIdeasCount: function() {  
+        var targetCluster = Clusters.findOne(this._id);
+        //logger.trace("target cluster " + JSON.stringify(targetCluster));
+        IdeaIDs = targetCluster.ideaIDs; 
+        // logger.debug("Idea IDS "  + IdeaIDs)
+        //{ field: { $in: [<value1>, <value2>, ... <valueN> ] } }
+        return Ideas.find({_id:{$in:IdeaIDs}}).count();  // Iterated over IdeaIDs 
     },  
 });
 
@@ -301,13 +304,13 @@ Template.ClusterIdeaElement.onRendered(function () {
   
    $(this.firstNode).draggable({
         //containment: '.synth  esisBox',
-        //revert: true,
+        revert: true,
         zIndex: 50,
         appendTo: '.panZoomFrame',
         drag: function(e, ui) {
             var width = $(this).css('width');
             $(ui.helper[0]).css('width', width); 
-    
+            
         },
     });
 });

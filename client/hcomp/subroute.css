@@ -42,7 +42,7 @@
     z-index: 999;
     position: fixed;
     border: 3px solid #000000;
-    background-color: white;
+    background-color: #E6E6E6;
     margin-top: 10px; 
     left: 20px;
     width: 200px;
@@ -50,12 +50,20 @@
 }
 
 #leftEye{
-  margin-top: 10px;
-  margin-left: 30px;
+  position: absolute;
+  left: 30%; 
+  top:30%;
 }
 
+#rightEye{
+  position: absolute;
+  left: 50%; 
+  top:30%;
+}
+
+
 #console{
-  border-right: 2px solid#444;;
+  border-right: 2px solid #000000;
 }
 
 .zoomBox {
@@ -95,7 +103,7 @@
 
 .numIdeas {
     position: fixed;
-    top:350px;
+    top:370px;
     margin-top: 35px;
     width: 200px;
     height: 40px;
@@ -119,8 +127,9 @@
 }
 
 .clusterButton {
+    text-align: center;
     position: fixed;
-    margin-top: 10px;
+    margin-top: 15px;
     border:1px solid #444;
     border-radius: 12px;
     left: 70px;
@@ -141,10 +150,11 @@
  }
 
 .ideaArea{
-  top: 400px;
-  position: relative;
-  min-height: 5000px;
-  padding-left: 10px;
+  top: 385px;
+  position: absolute;
+  min-height: 2120px;
+  padding-left: 3px;
+  
 }
 
 .clusterListElement {
@@ -153,6 +163,7 @@
     width: 200px;
     height: relative;
     margin-top: 5px;
+    background-color: #1EFFF3;
 }
 
 .box {
@@ -175,6 +186,15 @@
   overflow: hidden;
 }
 
+#mock{
+  z-index: 999;
+  border-bottom: 2px solid #000000;
+  position: fixed;
+  height: 385px;
+  width: 237px;
+  background-color: white;
+}
+
 .ideaListElement {
     position: relative;
     list-style-type: none;
@@ -194,13 +214,14 @@
     height: relative;
 }
 
-#trashSpace {
-  display: inline-block;
-  position: relative;
+.clustNumIdeas{
+  left:40px;
+  display: inline;
 }
 
 #trashSpace {
-  margin-top: 10px;
+  display: inline-block;
+  position: absolute;
 }
 
 #downArrow {
@@ -218,6 +239,7 @@
 
 .ScalingViewPane {
   position: relative;;
+  background-color:white;
   z-index: 999;
   border:1px solid #444;
   width: 100px;

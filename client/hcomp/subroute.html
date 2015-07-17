@@ -1,8 +1,8 @@
 <template name="SubrouteSandbox">
     <div class="synthesisBox">
         <div class="row">
-            <div class="col-md-2" id = "console">
-                <div class="row">
+            <div class="col-md-2" id="console">
+                <div class="row" id="mock">
                     {{> MiniMap}}
                 </div>
                 <div class="row">
@@ -39,38 +39,27 @@
             <input type="range" class="zoom-range" step="0.01" min="0.5" max="1">
         </div>
         <div id="zIn"><span class="glyphicon glyphicon-zoom-in" style="font-size:30px;"> </span></div>
-         {{ > InstantiateCluster}}
-        <div class = "numIdeas">
-         {{getNumIdeas}} Ideas left to cluster
-         </div>
+        {{ > InstantiateCluster}}
+        <div class="numIdeas">
+            {{getNumIdeas}} Ideas left to cluster
+        </div>
     </div>
     <div class="map">
-        {{ > MiniMapViewPane}}  
-    
-        {{#each getIdeas}} 
-            {{ > MiniMapElement}}
-        {{/each}}
-        
-        {{#each getClusters}} 
-            {{ > MiniClusterElement}}
-        {{/each}}
- 
+        {{ > MiniMapViewPane}} {{#each getIdeas}} {{ > MiniMapElement}} {{/each}} {{#each getClusters}} {{ > MiniClusterElement}} {{/each}}
     </div>
 </template>
-
-<template name ="MiniClusterElement">
+<template name="MiniClusterElement">
     <div class="miniCluster"></div>
 </template>
-
 <template name="MiniMapElement">
-    <div class="miniIdeas" ></div>
+    <div class="miniIdeas"></div>
 </template>
 <template name="MiniMapViewPane">
-    <div class="ScalingViewPane"> <span class="glyphicon glyphicon-eye-open" id ="leftEye" style="font-size:15px;"></span> <span class="glyphicon glyphicon-eye-open" id ="rightEye" style="font-size:15px;"></span>   </div>
+    <div class="ScalingViewPane"> <span class="glyphicon glyphicon-eye-open" id="leftEye" style="font-size:20px;"></span> <span class="glyphicon glyphicon-eye-open" id="rightEye" style="font-size:20px;"></span> </div>
 </template>
 <template name="InstantiateCluster">
     <div class="clusterButton">
-        <span id = "addCluster" style="font-size:18px;">New Cluster</span>
+        <span id="addCluster" style="font-size:18px;">New Cluster</span>
     </div>
 </template>
 <template name="ClusterSpace">
@@ -80,8 +69,12 @@
     <div class="cluster" id="{{_id}}">
         <form class="clusterLabel">
             <input type="text" name="myInput" class="tagBox" autocomplete="off" placeholder="{{getClusterName}}" id={{_id}}/>
-            <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="glyphicon glyphicon-chevron-down" id = "downArrow" style="font-size:48px;"></span></a> {{> DeleteCluster}}
-            <ul class="dropdown-menu">{{#each getClusterIdeas}} {{> ClusterIdeaElement}} {{/each}} </ul>
+            <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="glyphicon glyphicon-chevron-down" id = "downArrow" style="font-size:48px;"></span></a>
+            <div class="clustNumIdeas">
+                {{getClusterIdeasCount}}
+            </div>
+            {{> DeleteCluster}}
+            <ul class="dropdown-menu">{{#each getClusterIdeas}}{{> ClusterIdeaElement}} {{/each}} </ul>
         </form>
     </div>
 </template>
