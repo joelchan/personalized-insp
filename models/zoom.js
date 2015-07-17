@@ -22,16 +22,16 @@ ZoomManager = (function() {
          * Update the position of this element in the zoom space for this user
          *
          ********************************************************************/ 
-         zoomPosition = ZoomPositions.findOne({elementType: elementType, elementID: elementID, userID: user._id});
-         if (zoomPosition) {
-            logger.debug("Updating existing position");
-            ZoomPositions.update({_id: zoomPosition._id},
-                                 {$set: {position: position}});
-         } else {
-            logger.debug("Adding a new position");
-            newPosition = new ZoomPosition(elementID, elementType, position, user);
-            newPositionID = ZoomPositions.insert(newPosition);
-         }
+             zoomPosition = ZoomPositions.findOne({elementType: elementType, elementID: elementID, userID: user._id});
+             if (zoomPosition) {
+                logger.debug("Updating existing position");
+                ZoomPositions.update({_id: zoomPosition._id},
+                                     {$set: {position: position}});
+             } else {
+                logger.debug("Adding a new position");
+                newPosition = new ZoomPosition(elementID, elementType, position, user);
+                newPositionID = ZoomPositions.insert(newPosition);
+             }
         },
         getElementPosition: function(elementID, user) {
         /********************************************************************
@@ -45,6 +45,17 @@ ZoomManager = (function() {
                 return {"top": 2500, "left": 2500}
             }
             
+        },
+        removePosition: function(elementID, elementType, user) {
+        /********************************************************************
+        * Remove zoom position for this element when it leaves the zoom space
+        * Cases:
+        * 1) Idea enters a cluster
+        * 2) Idea moves from zoom space to idea list
+        * 3) Cluster gets deleted
+        ********************************************************************/
+
+
         }
     };
 }());
