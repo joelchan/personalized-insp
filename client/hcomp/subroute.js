@@ -60,20 +60,19 @@ Template.ZoomSpace.onRendered(function () {
 
      $('.panZoomFrame').droppable({
         accept: ".ideaListElement",
+        //refreshPositions:true,
         //activeClass: 'droppable-active', 
         //hoverClass: 'droppable-hover', 
-       
         drop: function(event, ui) {
     
+       
+        
+        var factor = ((1 / global) -1);
+
         ideaLeftOffset =  $(ui.helper[0]).offset().left; 
         ideaTopOffset  =  $(ui.helper[0]).offset().top;
-        
-         var factor = ((1 / global) -1);
-        
-
-        pZMTopOffset   =  $('.panZoomFrame').offset().top *global;
-        pZMLeftOffset  =  $('.panZoomFrame').offset().left * global;   
-
+        pZMTopOffset   =  $('.panZoomFrame').offset().top;
+        pZMLeftOffset  =  $('.panZoomFrame').offset().left;   
         //$(ui.helper[0]).detach().appendTo('.panZoomFrame').css('position', 'absolute');
         //$(ui.helper[0]).css('5left', ((ideaLeftOffset - $(ui.helper[0]).scrollTop() +  $(ui.helper[0]).clientX)));
         // logger.trace("ideaTopOffset " + ideaTopOffset); 
@@ -106,15 +105,17 @@ Template.ZoomSpace.onRendered(function () {
       
                 var ideaID  = ui.helper[0].id;
                 var ideaObject =  Ideas.find(ideaID).fetch();            
+                
+
                 //var cAtDrop = $('.ideaListElement').position({'top':event.pageY, 'left': event.pageX});    
                 //logger.trace("TOP " + cAtDrop.top);
                 Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true}});
                 
                // var factor = ((1 / global) -1);
                
-                $('#' + ideaID).css('left', ((ideaLeftOffset - pZMLeftOffset)));
-                $('#' + ideaID).css('top',  ((ideaTopOffset) - (pZMTopOffset))); 
-                
+                logger.trace(ideaLeftOffset - pZMLeftOffset);
+                $('#' + ideaID).css('left',(((ideaLeftOffset/global) - (pZMLeftOffset/global))));
+                $('#' + ideaID).css('top', (((ideaTopOffset/global) - (pZMTopOffset/global)))); 
                 // ui.position.top += Math.round(((ui.position.top - ui.originalPosition.top) * factor));
                 // ui.position.left += Math.round(((ui.position.left- ui.originalPosition.left) * factor)); 
 
@@ -123,10 +124,10 @@ Template.ZoomSpace.onRendered(function () {
                 // count++; 
          }
             
-        // if($.inArray(ideaID, clusterObject[0].ideaIDs) == -1) {
-        //     Ideas.update({_id: ideaObject[0]._id}, {$set: {'inCluster': true}});
-        //     ClusterFactory.insertIdeaToCluster(ideaObject[0], clusterObject[0]);              
-        // } 
+            // if($.inArray(ideaID, clusterObject[0].ideaIDs) == -1) {
+            //     Ideas.update({_id: ideaObject[0]._id}, {$set: {'inCluster': true}});
+            //     ClusterFactory.insertIdeaToCluster(ideaObject[0], clusterObject[0]);              
+            // } 
              
             //  logger.trace("top"  + draggedElement.css('top')); 
             //  logger.trace("left"  + draggedElement.css('left')); 

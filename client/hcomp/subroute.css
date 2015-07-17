@@ -32,6 +32,7 @@
 }
 
 .zoomControl {
+    z-index: 999;
     position: fixed;
     display: inline;
     padding-left: 20px;
@@ -43,6 +44,7 @@
 }
 
 .map {
+    z-index: 999;
     position: fixed;
     border: 1px solid #000000;
     background-color: white;
@@ -118,8 +120,8 @@
  }
 
 .ideaArea{
-  top: 45%;
-  position: fixed;
+  top: 300px;
+  position: relative;
   min-height: 5000px;
   padding-left: 10px;
 }
