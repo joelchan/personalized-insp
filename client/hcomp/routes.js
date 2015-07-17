@@ -56,6 +56,7 @@ Router.map(function () {
           Meteor.subscribe('nodes'),
           Meteor.subscribe('edges'),
           Meteor.subscribe('tasks'),
+          Meteor.subscribe('zoomPositions'),
       ];
     }, 
     onBeforeAction: function() {
