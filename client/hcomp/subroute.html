@@ -1,53 +1,48 @@
 <template name="SubrouteSandbox">
     <div class="synthesisBox">
         <div class="row">
-            <div class="col-md-2" id = "firstCol" >
+            <div class="col-md-2" id="controlPanel">
+                <div class="row">
+                    {{> MiniMap}}
+                </div>
                 <div class="row">
                     {{> IdeaSpace}}
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-10">
                 {{> ZoomSpace}}
-            </div>
-            <div class="col-md-2" id="miniArea">
-                {{> MiniMap}}
             </div>
         </div>
     </div>
 </template>
-
 <template name="IdeaSpace">
-       <div class = "ideaArea">
-            {{#each displayIdeas}} 
-                {{ > IdeaListElement}} 
-            {{/each}}
-        </div>
+    <div class="ideaArea">
+        {{#each displayIdeas}} {{ > IdeaListElement}} {{/each}}
+    </div>
 </template>
-
 <template name="IdeaListElement">
-    <li class="ideaListElement" id={{_id}}> {{content}} </li>
+    <div class="ideaListElement" id={{_id}}> {{content}} </div>
 </template>
 <template name="ZoomSpace">
     <div class="panZoomFrame">
-        {{#each getZoomSpaceIdeas}} {{ >ZoomSpaceElement}}{{/each}} 
-        {{#each getClusters}} {{> Cluster}} {{/each}}
+        {{#each getZoomSpaceIdeas}} {{ >ZoomSpaceElement}} {{/each}} {{#each getClusters}} {{> Cluster}} {{/each}}
     </div>
-        {{ > DeleteCluster}}
+    <!-- {{ > DeleteCluster}} -->
 </template>
 <template name="ZoomSpaceElement">
     <div class=" zoomSpaceElement" id={{_id}}> {{content}} </div>
 </template>
 <template name="MiniMap">
     <div class="zoomControl">
-        <span class="glyphicon glyphicon-zoom-out" style="font-size:72px;"> </span>
-        <span class="glyphicon glyphicon-zoom-in" style="font-size:72px;"> </span>
-       
-        <!-- <input type="button" class="zoomIn" step="0.01" min="0.4" max="5"> -->
-        <input type="range" class="zoom-range" step="0.01" min="1" max="2">
-        {{ > InstantiateCluster}}
+        <div id="zOut"><span class="glyphicon glyphicon-zoom-out" style="font-size:30px;"> </span></div>
+        <div id="zBar">
+            <input type="range" class="zoom-range" step="0.01" min="1" max="2">
+        </div>
+        <div id="zIn"><span class="glyphicon glyphicon-zoom-in" style="font-size:30px;"> </span></div>
+        <!-- {{ > InstantiateCluster}} -->
     </div>
     <div class="map">
-        {{#each getIdeas}} {{> MiniMapElement}} {{/each}} {{ > MiniMapViewPane}}
+        <!-- {{#each getIdeas}} {{> MiniMapElement}} {{/each}}  -->{{ > MiniMapViewPane}}
     </div>
 </template>
 <template name="MiniMapElement">
@@ -57,27 +52,24 @@
     <div class="ScalingViewPane"> </div>
 </template>
 <template name="InstantiateCluster">
-    <div class="clusterButton"> 
+    <div class="clusterButton">
         <span class="glyphicon glyphicon-plus" style="font-size:48px;"> </span>
-        CREATE CLUSTER
     </div>
-
 </template>
 <template name="ClusterSpace">
     {{> InstantiateCluster}} {{#each getClusters}} {{ > Cluster}} {{/each}}
 </template>
 <template name="Cluster">
     <div class="cluster" id="{{_id}}">
-        
         <form class="clusterLabel">
-            <input type="text" name="myInput" class="tagBox" autocomplete="off" placeholder = "{{getClusterName}}" id={{_id}}/>
-            <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="glyphicon glyphicon-chevron-down" style="font-size:48px;"></span></a>
+            <input type="text" name="myInput" class="tagBox" autocomplete="off" placeholder="{{getClusterName}}" id={{_id}}/>
+            <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="glyphicon glyphicon-chevron-down" id = "downArrow" style="font-size:48px;"></span></a> {{> DeleteCluster}}
             <ul class="dropdown-menu">{{#each getClusterIdeas}} {{> ClusterIdeaElement}} {{/each}} </ul>
         </form>
     </div>
 </template>
 <template name="DeleteCluster">
-        <span class="glyphicon glyphicon-trash" id ="trash" style="font-size:120px;"> </span>
+    <span class="glyphicon glyphicon-trash" id="{{_id}}" style="font-size:48px;"> </span>
 </template>
 <template name="zoomPane">
     <div class="zoomBox"></div>

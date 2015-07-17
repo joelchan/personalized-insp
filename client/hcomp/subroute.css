@@ -1,50 +1,27 @@
+
 .controlPanel {
-     width: 500px;
+  border:3px solid #444;
 }
 
-#ideaSpace {
-    width: 500px;
-}
+
 #leftSide {
     border:1px solid #444;
     /*margin: 50px;*/
 }
-/*.col-md-3 {
-    background-color: #def;
-    height: ;
-}*/
-#control {
-    margin-top: 20px;
-    border:1px solid #444;
-}
-
-
 
 .panZoomFrame{
-    position: absolute;
-    /*border: 1px solid #444;*/
-    min-height: 3000px;
-    min-width: 3000px;
-}
+    border:1px solid #444;
+    position: relative;
+    min-height: 5000px;
+    min-width: 5000px;
 
-.zoom-range {
-    
 }
-
-#firstCol{
-  min-height: 3000px;
-  border:1px solid #444;
-}
-
 
 #ideaSpace {
+  top: 70%;
   border:1px solid #444;
   height:3000px;
 }
-
-/*.zoomFrame {
-
-}*/
 
 .zoomIn {
     width: 240px;
@@ -53,10 +30,13 @@
 .zoomOut {
     width: 240px;
 }
+
 .zoomControl {
     position: fixed;
-    top: 85%;
-    width: 300px;
+    display: inline;
+    padding-left: 20px;
+    top: 35%;
+    
 }
 #small {
     position: absolute;
@@ -66,9 +46,10 @@
     position: fixed;
     border: 1px solid #000000;
     background-color: white;
-    margin-top: 25px; 
-    width: 300px;
-    height: 300px;
+    margin-top: 10px; 
+    left: 20px;
+    width: 200px;
+    height: 200px;
 }
 
 .zoomBox {
@@ -82,12 +63,6 @@
     min-height: 3000px;
     min-height: 3000px;
 }
-
-/*.col-md-2.col-xs-height {
-    border: 8px;
-    border-width: 5px;
-    border-right-color: black;
-}*/
 
 .miniIdeas {
     list-style-type: none;
@@ -108,42 +83,45 @@
     border-radius: 8px;
 }
 
-.trashCan {
-    float: right;
-    margin:8px;
-    width: 300px;
-    height: 100px;
-    background-color: #615D61;
-    border-radius: 8px;
-    color: #F5EBF5;
+.dropdown-toggle {
+    
 }
 
-.dropdown-toggle {
-    color: #0F0CFF;
+
+#zBar{
+   display: inline-block;
+}
+#zIn {
+   display: inline-block;
+}
+ #zOut{
+   display: inline-block;
 }
 
 .clusterButton {
     position: fixed;
-    margin-top: 20px;
-    margin-left: 40px;
-    border:5px solid #444;
+    border:1px solid #444;
+    left: .5%;
     height: 100px;
-    width:  400px;
+    width:  100px;
     font-size: 28px;
 }
  
  .cluster {
-    position: relative;
-    border: 1px solid #000000;
-    width: 300px;
+    
+    position: absolute;
+    border: 4px solid #000000;
+    width: 200px;
+    height: 85px;
     height: 180px;
-    min-height: 80px;
-    min-width: 80px;
-    margin-top: 8px;
+    background-color: #def;
  }
 
 .ideaArea{
-  padding-left: 40px;
+  top: 45%;
+  position: fixed;
+  min-height: 5000px;
+  padding-left: 10px;
 }
 
 .clusterListElement {
@@ -164,80 +142,64 @@
 }
 
 .zoomSpaceElement {
-  position: relative;
+  position: absolute;
   list-style-type: none;
-  border:1px solid #444;
-  width: 400px;
-  height: 100px;
+  border: 2px solid #444;
+  width: 200px;
+  height: 85px;
   margin-top: 5px;
+  background-color: #FFFC9B;
+  overflow: hidden;
 }
 
 .ideaListElement {
     position: relative;
-    z-index: 50;
     list-style-type: none;
     border:2px solid #444;
-    width: 400px;
-    height: 100px;
-    
+    width: 225px;
+    height: 75px;
     margin-top: 5px;
-    /*-moz-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
-    -webkit-box-shadow: 1px 2px 3px rgba(0,0,0,.5);
-    box-shadow: 1px 2px 3px rgba(0,0,0,.5);*/
+    overflow: hidden;
+    background-color: #FFFC9B;
 }
  
 .ideasList {
     position: relative;
     border:5px solid #444;
-    padding-top: 25px;
     
     width: 400px;
     height: relative;
 }
 
-.ClusterBox {
-    float: right;
-    width: 300px;
-    height: relative;
-    background-color: #def;
+#trashSpace {
+  display: inline-block;
+  position: relative;
 }
-#trash {
-  position: fixed;
-  left:75%;
-  top:90%;
+
+#trashSpace {
+  margin-top: 10px;
+}
+
+#downArrow {
+  margin-right: 90px;
 }
 
 .tagBox {
     background-color: white;
     color: black;
     font-style: bold;
-    border:2px solid #444;
+    height: 100px;
+    width:192px;
+    /*border:2px solid #444;*/
 }
 
 .ScalingViewPane {
+  position: relative;;
   z-index: 999;
   border:2px solid #444;
-  width: 160px;
-  height: 80px;
+  width: 80px;
+  height: 40px;
 }
-
-.clusterList ul {
-    margin: 10px;
-    width: relative;
-    height: relative;
-    padding: 8px;
-    min-height: 80px;
-    cursor: pointer;
-}
-
-/*.IdeaPanel {
-    height: 100px;
-    border:1px solid #444;
-    position: relative;
-    margin-top: 80px;
-    margin-left: 80px;    
-    padding: 5px;
-}*/
 
 .IdeaCapsule {
     width: 300px;
@@ -245,161 +207,8 @@
     background-color: #BF3FC7;
 }
 
-.ClusterSpace {
-  position: fixed;
-}
 
-.clusters ul {
-    float: right;
-    margin: 10px;
-    width: 300px;
-    padding: 8px;
-    cursor: pointer;
-}
 
-.clust {
-    float:right;
-    width: 80px;
-    height: 80px;
-    background-color: #def;
-}
 
-.clusterName {
-   font-size: 20px;
-   font-color: #FFE917;
-}
 
-/* content styles  ADDED BENEFIT*/
-.inside {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  background: #ededed;
-  background: -webkit-gradient(linear, left top, left bottom,color-stop(0%, #f4f4f4), color-stop(100%, #ededed));
-  background: -moz-linear-gradient(top, #f4f4f4 0%, #ededed 100%);
-  background: -ms-linear-gradient(top, #f4f4f4 0%, #ededed 100%);
-}
-.inside-full-height {
-  /*
-  // if you want to give content full height give him height: 100%;
-  // with content full height you can't apply margins to the content
-  // content full height does not work in ie http://stackoverflow.com/questions/27384433/ie-display-table-cell-child-ignores-height-100
-  */
-  height: 100%;
-  margin-top: 0;
-  margin-bottom: 0;
-}
 
-/* columns of same height styles */
-
-.row-height {
-  display: table;
-  table-layout: fixed;
-  height: 100%;
-  width: 100%;
-}
-.col-height {
-  display: table-cell;
-  float: none;
-  height: 100%;
-}
-.col-top {
-  vertical-align: top;
-}
-.col-middle {
-  vertical-align: middle;
-}
-.col-bottom {
-  vertical-align: bottom;
-}
-
-@media (min-width: 480px) {
-  .row-xs-height {
-    display: table;
-    table-layout: fixed;
-    height: 100%;
-    width: 100%;
-  }
-  .col-xs-height {
-    display: table-cell;
-    float: none;
-    height: 100%;
-  }
-  .col-xs-top {
-    vertical-align: top;
-  }
-  .col-xs-middle {
-    vertical-align: middle;
-  }
-  .col-xs-bottom {
-    vertical-align: bottom;
-  }
-}
-
-@media (min-width: 768px) {
-  .row-sm-height {
-    display: table;
-    table-layout: fixed;
-    height: 100%;
-    width: 100%;
-  }
-  .col-sm-height {
-    display: table-cell;
-    float: none;
-    height: 100%;
-  }
-  .col-sm-top {
-    vertical-align: top;
-  }
-  .col-sm-middle {
-    vertical-align: middle;
-  }
-  .col-sm-bottom {
-    vertical-align: bottom;
-  }
-}
-
-@media (min-width: 992px) {
-  .row-md-height {
-    display: table;
-    table-layout: fixed;
-    height: 100%;
-    width: 100%;
-  }
-  .col-md-height {
-    display: table-cell;
-    float: none;
-    height: 100%;
-  }
-  .col-md-top {
-    vertical-align: top;
-  }
-  .col-md-middle {
-    vertical-align: middle;
-  }
-  .col-md-bottom {
-    vertical-align: bottom;
-  }
-}
-
-@media (min-width: 1200px) {
-  .row-lg-height {
-    display: table;
-    table-layout: fixed;
-    height: 100%;
-    width: 100%;
-  }
-  .col-lg-height {
-    display: table-cell;
-    float: none;
-    height: 100%;
-  }
-  .col-lg-top {
-    vertical-align: top;
-  }
-  .col-lg-middle {
-    vertical-align: middle;
-  }
-  .col-lg-bottom {
-    vertical-align: bottom;
-  }
-}
