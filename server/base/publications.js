@@ -41,6 +41,9 @@ Meteor.startup(function(){
 		Meteor.publish("sorters", function(){
 			return Sorters.find();
 		});				
+		Meteor.publish("zoomPositions", function(){
+			return ZoomPositions.find();
+		});
 		/*****************************************************************
 		* Publish experimentModels.js collections
 		******************************************************************/

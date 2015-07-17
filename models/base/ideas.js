@@ -49,11 +49,11 @@ Idea = function (content, user, prompt, participant) {
 
   // this stores key value pairs defining whether this
   // idea is in the zoom pane for a given user
-  this.zoomSpace = {};
+  this.zoomSpace = [];
 
   // this stores key value pairs defining position
   // of the idea in a 100% zoom pane for a given user
-  this.zoomPosition = {}
+  // this.zoomPosition = {}
 
 };
 
@@ -79,6 +79,6 @@ Cluster = function(user, prompt, ideaIDs){
 
   // this stores key value pairs defining position
   // of the cluster in a 100% zoom pane for a given user
-  this.zoomPosition = {}
+  // this.zoomPosition = {}
 }
 

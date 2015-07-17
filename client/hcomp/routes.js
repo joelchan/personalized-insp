@@ -362,6 +362,7 @@ Router.map(function () {
         this.subscribe('prompts', {_id: this.params.promptID}).wait();
         this.subscribe('clusters');
         this.subscribe('synthSubsets');
+        this.subscribe('zoomPositions');
       },
     onBeforeAction: function(pause) {
         if (this.ready()) {

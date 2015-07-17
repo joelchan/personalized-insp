@@ -141,6 +141,14 @@ Template.ZoomSpace.onRendered(function () {
                 
                // var factor = ((1 / global) -1);
                
+               var elementID = ui.helper[0].id;
+               var left = (((ideaLeftOffset/global) - (pZMLeftOffset/global)));
+               var top = (((ideaTopOffset/global) - (pZMTopOffset/global)));
+               var position = {"top": top, "left": left};
+               logger.debug("Updating current position of idea in zoom space");
+               logger.trace("New position of idea " + elementID + ": " + JSON.stringify(position));
+               ZoomManager.updatePosition(elementID, "Ideas", position, Session.get("currentUser"));
+
                 logger.trace(ideaLeftOffset - pZMLeftOffset);
                 $('#' + ideaID).css('left',(((ideaLeftOffset/global) - (pZMLeftOffset/global))));
                 $('#' + ideaID).css('top', (((ideaTopOffset/global) - (pZMTopOffset/global)))); 
@@ -244,7 +252,16 @@ Template.IdeaListElement.onRendered(function () {
 });
 
 Template.ZoomSpaceElement.onRendered(function () {
-     
+    
+    var zoomElementID = $(this.firstNode)[0].id;
+    // logger.trace("Zoom element: ");
+    // logger.trace(zoomElement);
+    logger.trace("Zoom element ID: " + zoomElementID);
+    var oldPosition = ZoomManager.getElementPosition(zoomElementID, Session.get("currentUser"));
+    logger.trace("Old position: " + oldPosition);
+    $(this.firstNode).css("top", oldPosition.top);
+    $(this.firstNode).css("left", oldPosition.left);
+
     $(this.firstNode).on('mousedown touchstart', function(e) {
                  //logger.trace("This current css left " + $(this.firstNode).css('left'));
                  e.stopPropagation();
@@ -258,17 +275,26 @@ Template.ZoomSpaceElement.onRendered(function () {
         appendTo: '.panZoomFrame',
         drag: function(e, ui) {
               
-        ui.position.top = Math.round(ui.position.top / global);
-        ui.position.left = Math.round(ui.position.left / global);
+            ui.position.top = Math.round(ui.position.top / global);
+            ui.position.left = Math.round(ui.position.left / global);
 
-        if (ui.position.left < 0) 
-            ui.position.left = 0;
-        if (ui.position.left + $(this).width() > canvasWidth)
-            ui.position.left = canvasWidth - $(this).width();  
-        if (ui.position.top < 0)
-            ui.position.top = 0;
-        if (ui.position.top + $(this).height() > canvasHeight)
-            ui.position.top = canvasHeight - $(this).height();  
+            if (ui.position.left < 0) 
+                ui.position.left = 0;
+            if (ui.position.left + $(this).width() > canvasWidth)
+                ui.position.left = canvasWidth - $(this).width();  
+            if (ui.position.top < 0)
+                ui.position.top = 0;
+            if (ui.position.top + $(this).height() > canvasHeight)
+                ui.position.top = canvasHeight - $(this).height();  
+        },
+        stop: function(event, ui) {
+            logger.trace("UI for stop zoom space drag");
+            logger.trace(ui.helper[0].id);
+            var elementID = ui.helper[0].id;
+            var position = ui.position;
+            logger.debug("Updating current position of idea in zoom space");
+            logger.trace("New position of idea " + elementID + ": " + JSON.stringify(position));
+            ZoomManager.updatePosition(elementID, "Ideas", position, Session.get("currentUser"));
         },
     });
 });
@@ -367,6 +393,15 @@ Template.Cluster.events({
 
 Template.Cluster.onRendered( function() {   
     
+    var clusterID = $(this.firstNode)[0].id;
+    // logger.trace("Zoom element: ");
+    // logger.trace(zoomElement);
+    logger.trace("Zoom element ID: " + clusterID);
+    var oldPosition = ZoomManager.getElementPosition(clusterID, Session.get("currentUser"));
+    logger.trace("Old position: " + oldPosition);
+    $(this.firstNode).css("top", oldPosition.top);
+    $(this.firstNode).css("left", oldPosition.left);
+
     $(this.firstNode).on('mousedown touchstart', function(e) {
             e.stopPropagation();
     });
@@ -391,6 +426,13 @@ Template.Cluster.onRendered( function() {
             ui.position.left = Math.round(ui.position.left / global);
               
             
+        },
+        stop: function(e, ui) {
+            var elementID = ui.helper[0].id;
+            var position = ui.position;
+            logger.debug("Updating current position of cluster in zoom space");
+            logger.trace("New position of idea " + elementID + ": " + JSON.stringify(position));
+            ZoomManager.updatePosition(elementID, "Clusters", position, Session.get("currentUser"));
         },
     });
     

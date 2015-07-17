@@ -217,7 +217,11 @@ Meteor.methods({
   graphUpdateIdeaVotes: function(nodeID) {
     return GraphManager.updateVotes(nodeID);
   },
-
+  clusterUpdatePsnByUser: function(cluster, position, user) {
+    Clusters.update({_id: clusterDoc._id},
+      {$set: {'zoomPosition.$': 
+        {userID: user._id, top: position.top, left: position.left}}})
+  }
     
 });
 
