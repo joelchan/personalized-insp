@@ -173,10 +173,16 @@ Template.IdeaSpace.onRendered(function() {
     FilterManager.create("displayIdeas", Session.get("currentUser"),
         "ideas", "inZoomSpace", false);
 
+    // for getting the count of ideas remaining
+    FilterManager.reset("remainingIdeas", Session.get("currentUser"), "ideas");
+    FilterManager.create("remainingIdeas", Session.get("currentUser"),
+        "ideas", "inCluster", false);
+
     var part = Session.get("currentParticipant");
     if (part) {
         logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
         addSynthIdeasFilter("displayIdeas", part);
+        addSynthIdeasFilter("remainingIdeas", part);
     }
 
 });
