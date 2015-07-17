@@ -311,6 +311,46 @@ Router.map(function () {
     },
   });
 
+  this.route('SynthesisPlaceholder', {
+    path: 'synthplaceholder/:partID',
+    template: 'SynthesisPlaceholder',
+    subscriptions: function() {
+        logger.debug("Waiting on...");
+        this.subscribe('ideas', {promptID: this.params.promptID})
+        this.subscribe('prompts', {_id: this.params.promptID}).wait();
+        this.subscribe('assignments').wait();
+        this.subscribe('tasks', {promptID: this.params.promptID});
+      },
+    onBeforeAction: function(pause) {
+        if (this.ready()) {
+          var part = Participants.findOne({_id: this.params.partID});
+          logger.trace("participant: " + part.userName);
+          Session.set("currentParticipant", part);
+          var user = MyUsers.findOne({_id: part.userID});
+          logger.trace("user: " + user.name);
+          MyUsers.update({_id: user._id}, {$set: {route: 'SynthesisPlaceholder'}});
+          Session.set("currentUser", user);
+          var exp = Experiments.findOne({_id: part.experimentID});
+          if (exp) {
+            logger.trace("Found exp with id: " + part.experimentID)
+            Session.set("currentExp", exp);
+          } else {
+            logger.warn("no experiment found with id: " + part.experimentID);
+          }
+          var prompt = Prompts.findOne({_id: exp.promptID});
+          if (prompt) {
+            logger.trace("Found prompt with id: " + exp.promptID);
+            Session.set("currentPrompt", prompt);
+          } else {
+            logger.warn("no prompt found with id: " + exp.promptID);
+          }
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+  });
+
   this.route('TutorialControl', {
       path: 'tutorial/ideate/:partID',
       template: 'TutorialControl',
@@ -430,58 +470,6 @@ Router.map(function () {
           //initRolePage();
           insertExitStudy();
         }
-    },
-  });
-
-this.route('ExpBaselineFluency', {
-      name: 'ExpBaselineFluency',
-      path: 'warmup/:partID',
-      template: 'ExpBaselineFluencyPage',
-    subscriptions: function() {
-        this.subscribe('fluencyMeasures');
-        this.subscribe('experiments');
-        this.subscribe('prompts');
-    },
-    waitOn: function() {
-
-    },
-    onBeforeAction: function(pause) {
-        if (this.ready()) {
-          logger.debug("onBeforeAction for fluency");
-          logger.debug("Data ready");
-          var part = Participants.findOne({_id: this.params.partID});
-          logger.trace("participant: " + part.userName);
-          Session.set("currentParticipant", part);
-          // var user = MyUsers.findOne({_id: part.userID});
-          // logger.trace("user: " + user.name);
-          // MyUsers.update({_id: user._id}, {$set: {route: 'TutorialControl'}});
-          // Session.set("currentUser", user);
-          // var exp = Experiments.findOne({_id: part.experimentID});
-          // if (exp) {
-          //   logger.trace("Found exp with id: " + part.experimentID)
-          //   Session.set("currentExp", exp);
-          // } else {
-          //   logger.warn("no experiment found with id: " + part.experimentID);
-          // }
-          this.next();
-        } else {
-          logger.debug("Not ready");
-        }
-    },
-    action: function(){
-      if(this.ready()) {
-        Session.set("useFluencyTimer", true);
-        // Session.set("isTutorialTimer", false);
-        this.render();
-      } else
-        this.render('loading');
-    },
-    onAfterAction: function() {
-      if (this.ready()) {
-        // initFluencyPage();
-        insertExitStudy();
-      }
-      //Session.set("nextPage", "MturkIdeationControl");
     },
   });
   
