@@ -3,6 +3,8 @@ Logger.setLevel('Client:Hcomp:SubrouteSandbox', 'trace');
 
 
 var global = 1; 
+var clusterTop = 0;
+var clusterLeft = 0;
 
 Template.ZoomSpace.helpers({
     getZoomSpaceIdeas: function() {
@@ -16,6 +18,10 @@ Template.ZoomSpace.helpers({
 
      
 Template.SubrouteSandbox.onRendered(function () {
+
+$('.ScalingViewPane').css('top', 75); 
+$('.ScalingViewPane').css('left', 50); 
+
     this.$(".panZoomFrame").panzoom({
          minScale: .5,
          increment: 0.2,
@@ -26,11 +32,15 @@ Template.SubrouteSandbox.onRendered(function () {
     })
     .on("panzoomchange", function(e, panzoom, transform) {
         global = transform[0];
+        clusterTop  = transform[5];
+        clusterLeft = transform[4];
         //$('.zoomSpaceElement').css('top', top*transform[0]);
         //$('.zoomSpaceElement').css('left', transform[0]);
 
-        $('.ScalingViewPane').css('top', ((transform[5] * global)/20)* -1); 
-        $('.ScalingViewPane').css('left', ((transform[4] * global)/35) * -1); 
+        $('.ScalingViewPane').css('top', (((transform[5])/25)* -1) + 75); 
+        $('.ScalingViewPane').css('left', (((transform[4])/25)* -1) + 50); 
+        $('.ScalingViewPane').css('width', 100 * transform[0]); 
+        $('.ScalingViewPane').css('height', 50 * transform[0]); 
 
         //print matrix
         //logger.trace(transform);
@@ -46,10 +56,17 @@ Template.SubrouteSandbox.onRendered(function () {
 });
 
 Template.MiniMap.helpers({
+    getNumIdeas: function () {
+        return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
+    },
      getIdeas: function() {
          return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
     },
+    getClusters: function() {
+        return Clusters.find();
+    },
 });
+
 
 Template.ZoomSpace.onRendered(function () {
     
@@ -64,11 +81,7 @@ Template.ZoomSpace.onRendered(function () {
         //activeClass: 'droppable-active', 
         //hoverClass: 'droppable-hover', 
         drop: function(event, ui) {
-    
-       
-        
-        var factor = ((1 / global) -1);
-
+        //var factor = ((1 / global) -1);
         ideaLeftOffset =  $(ui.helper[0]).offset().left; 
         ideaTopOffset  =  $(ui.helper[0]).offset().top;
         pZMTopOffset   =  $('.panZoomFrame').offset().top;
@@ -116,6 +129,7 @@ Template.ZoomSpace.onRendered(function () {
                 logger.trace(ideaLeftOffset - pZMLeftOffset);
                 $('#' + ideaID).css('left',(((ideaLeftOffset/global) - (pZMLeftOffset/global))));
                 $('#' + ideaID).css('top', (((ideaTopOffset/global) - (pZMTopOffset/global)))); 
+                
                 // ui.position.top += Math.round(((ui.position.top - ui.originalPosition.top) * factor));
                 // ui.position.left += Math.round(((ui.position.left- ui.originalPosition.left) * factor)); 
 
@@ -150,10 +164,7 @@ Template.ZoomSpace.onRendered(function () {
     });
 });
 
-Template.SubrouteSandbox.helpers({
-    //getNumIdeas: function () {
-    //     return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
-    // },
+Template.SubrouteSandbox.helpers({    
      getIdeas: function() {
         return Ideas.find();
     }, 
@@ -232,10 +243,13 @@ Template.ZoomSpaceElement.onRendered(function () {
 
 
 Template.InstantiateCluster.events({
-    'click .clusterButton' : function(e, ul) {
+    'click .clusterButton' : function(e, ui) {
         var user   = Session.get('currentUser');
         var prompt = Session.get('currentPrompt');
         var newCluster = ClusterFactory.create(user, prompt, null);        
+        
+        $("#" +newCluster._id).css('top' , ((clusterTop*-1)/global) + 2850);
+         $("#" +newCluster._id).css('left', ((clusterLeft*-1)/global) + 2900);
     },
 });
 
@@ -266,16 +280,6 @@ Template.DeleteCluster.onRendered( function() {
     });
 });
 
-Template.ClusterSpace.helpers({
-    getClusters: function() {
-        var currPrompt = Session.get("currentPrompt");
-        return Clusters.find();
-    },
-    createCluster: function() {
-        return ClusterFactory.createDummy(); 
-    },
-});
-
 Template.Cluster.helpers({
     getIdeas: function() {
         return Ideas.find();
@@ -297,12 +301,13 @@ Template.ClusterIdeaElement.onRendered(function () {
   
    $(this.firstNode).draggable({
         //containment: '.synth  esisBox',
-        revert: true,
+        //revert: true,
         zIndex: 50,
         appendTo: '.panZoomFrame',
         drag: function(e, ui) {
             var width = $(this).css('width');
             $(ui.helper[0]).css('width', width); 
+    
         },
     });
 });
@@ -316,7 +321,6 @@ Template.Cluster.events({
     var cluster = Clusters.find(clusterID).fetch();
     Clusters.update({_id: cluster[0]._id}, {$set: {'name' : text}});
     event.target.myInput.value = text;
-  
     return false;
   }
 });
@@ -329,6 +333,7 @@ Template.Cluster.onRendered( function() {
      
      var canvasHeight = $('.panZoomFrame').height();
      var canvasWidth = $('.panZoomFrame').width();
+    
     
      $(this.firstNode).draggable({
         //containment: '.synthesisBox',

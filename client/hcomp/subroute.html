@@ -1,7 +1,7 @@
 <template name="SubrouteSandbox">
     <div class="synthesisBox">
         <div class="row">
-            <div class="col-md-2" id="controlPanel">
+            <div class="col-md-2" id = "console">
                 <div class="row">
                     {{> MiniMap}}
                 </div>
@@ -36,24 +36,41 @@
     <div class="zoomControl">
         <div id="zOut"><span class="glyphicon glyphicon-zoom-out" style="font-size:30px;"> </span></div>
         <div id="zBar">
-            <input type="range" class="zoom-range" step="0.01" min="1" max="2">
+            <input type="range" class="zoom-range" step="0.01" min="0.5" max="1">
         </div>
         <div id="zIn"><span class="glyphicon glyphicon-zoom-in" style="font-size:30px;"> </span></div>
-        <!-- {{ > InstantiateCluster}} -->
+         {{ > InstantiateCluster}}
+        <div class = "numIdeas">
+         {{getNumIdeas}} Ideas left to cluster
+         </div>
     </div>
     <div class="map">
-        <!-- {{#each getIdeas}} {{> MiniMapElement}} {{/each}}  -->{{ > MiniMapViewPane}}
+        {{ > MiniMapViewPane}}  
+    
+        {{#each getIdeas}} 
+            {{ > MiniMapElement}}
+        {{/each}}
+        
+        {{#each getClusters}} 
+            {{ > MiniClusterElement}}
+        {{/each}}
+ 
     </div>
 </template>
+
+<template name ="MiniClusterElement">
+    <div class="miniCluster"></div>
+</template>
+
 <template name="MiniMapElement">
-    <div class="miniIdeas" id={{_id}}></div>
+    <div class="miniIdeas" ></div>
 </template>
 <template name="MiniMapViewPane">
-    <div class="ScalingViewPane"> </div>
+    <div class="ScalingViewPane"> <span class="glyphicon glyphicon-eye-open" id ="leftEye" style="font-size:15px;"></span> <span class="glyphicon glyphicon-eye-open" id ="rightEye" style="font-size:15px;"></span>   </div>
 </template>
 <template name="InstantiateCluster">
     <div class="clusterButton">
-        <span class="glyphicon glyphicon-plus" style="font-size:48px;"> </span>
+        <span id = "addCluster" style="font-size:18px;">New Cluster</span>
     </div>
 </template>
 <template name="ClusterSpace">
