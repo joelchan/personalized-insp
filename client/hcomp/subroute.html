@@ -6,6 +6,9 @@
                     {{> MiniMap}}
                 </div>
                 <div class="row">
+                    {{> InstantiateCluster}} 
+                </div>
+                <div class="row">
                     {{> IdeaSpace}}
                 </div>
             </div>
@@ -15,26 +18,47 @@
         </div>
     </div>
 </template>
+
 <template name="IdeaSpace">
     <div class="ideaArea">
-        {{#each displayIdeas}} {{ > IdeaListElement}} {{/each}}
+        {{#each displayIdeas}} 
+            {{ > IdeaListElement}} 
+        {{/each}}
     </div>
 </template>
+
 <template name="IdeaListElement">
-    <div class="ideaListElement" id={{_id}}> {{content}} </div>
+    <div class="ideaListElement" id="{{_id}}"> 
+        {{content}} 
+    </div>
 </template>
+
 <template name="ZoomSpace">
     <div class="panZoomFrame">
-        {{#each getZoomSpaceIdeas}} {{ >ZoomSpaceElement}} {{/each}} {{#each getClusters}} {{> Cluster}} {{/each}}
+        
+        {{#each getZoomSpaceIdeas}} 
+            {{ >ZoomSpaceElement}} 
+        {{/each}} 
+        
+        {{#each getClusters}} 
+            {{> Cluster}} 
+        {{/each}}
+
     </div>
     <!-- {{ > DeleteCluster}} -->
 </template>
+
 <template name="ZoomSpaceElement">
-    <div class=" zoomSpaceElement" id={{_id}}> {{content}} </div>
+    <div class=" zoomSpaceElement" id="{{_id}}"> 
+        {{content}} 
+    </div>
 </template>
+
 <template name="MiniMap">
     <div class="zoomControl">
-        <div id="zOut"><span class="glyphicon glyphicon-zoom-out" style="font-size:30px;"> </span></div>
+        <div id="zOut">
+            <span class="glyphicon glyphicon-zoom-out zoom-control-buttons"> </span>
+        </div>
         <div id="zBar">
             <input type="range" class="zoom-range" step="0.01" min="0.5" max="1">
         </div>
@@ -54,17 +78,26 @@
 <template name="MiniMapElement">
     <div class="miniIdeas"></div>
 </template>
+
 <template name="MiniMapViewPane">
-    <div class="ScalingViewPane"> <span class="glyphicon glyphicon-eye-open" id="leftEye" style="font-size:20px;"></span> <span class="glyphicon glyphicon-eye-open" id="rightEye" style="font-size:20px;"></span> </div>
+    <div class="ScalingViewPane"> 
+        <!-- <span class="glyphicon glyphicon-eye-open" id="leftEye" style="font-size:20px;"></span> <span class="glyphicon glyphicon-eye-open" id="rightEye" style="font-size:20px;"></span>  -->
+    </div>
 </template>
+
 <template name="InstantiateCluster">
     <div class="clusterButton">
         <span id="addCluster" style="font-size:18px;">New Cluster</span>
     </div>
 </template>
+
 <template name="ClusterSpace">
-    {{> InstantiateCluster}} {{#each getClusters}} {{ > Cluster}} {{/each}}
+    {{> InstantiateCluster}} 
+    {{#each getClusters}} 
+        {{ > Cluster}} 
+    {{/each}}
 </template>
+
 <template name="Cluster">
     <div class="cluster" id="{{_id}}">
         <form class="clusterLabel">
@@ -78,15 +111,21 @@
         </form>
     </div>
 </template>
+
 <template name="DeleteCluster">
     <span class="glyphicon glyphicon-trash" id="{{_id}}" style="font-size:48px;"> </span>
 </template>
+
 <template name="zoomPane">
-    <div class="zoomBox"></div>
+    <div class="zoomBox">
+    </div>
 </template>
+
 <!-- Load Minimap objects with ID's from the idea _.ids -->
 <template name="ClusterIdeaElement">
-    <div class="clusterListElement" id="{{_id}}"> {{content}} </div>
+    <div class="clusterListElement" id="{{_id}}"> 
+        {{content}} 
+    </div>
 </template>
 <!-- <ul id="cluster" class="cluster ul">
             {{#each getClusters}}

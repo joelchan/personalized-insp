@@ -24,7 +24,6 @@ Template.HcompConsentPage.events({
                         logger.trace("Result of server addParticipant: " + JSON.stringify(part))
                         if (part) {
                           logger.trace("Successfully created participant with id " + part._id);
-                          condDesc = Conditions.findOne({_id: part.conditionID}).description;
                           var group = Groups.findOne({_id: exp.groupID});
                           var role;
                           if (!GroupManager.hasUser(group, user)) {
@@ -35,30 +34,42 @@ Template.HcompConsentPage.events({
                           }
                           Session.set("currentRole", role);
                           Session.set("currentGroup", group);
-                          if (condDesc == "Treatment") {
-                              logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
-                              Session.set("nextPage", "TutorialTreatment");
-                          } else {
-                              logger.trace("Assigned to control condition, sending to control tutorial page");
-                              Session.set("nextPage", "TutorialControl");
+
+                          // set the next route based on condition
+                          // we grab the first route in the sequence
+                          var cond = Conditions.findOne({_id: part.conditionID});
+                          Session.set("nextPage", cond.misc.routeSequence[0]);
+                          // if (condDesc == "Treatment") {
+                          //     logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
+                          //     Session.set("nextPage", "TutorialTreatment");
+                          // } else {
+                          //     logger.trace("Assigned to control condition, sending to control tutorial page");
+                          //     Session.set("nextPage", "TutorialControl");
+                          // }
+
+                          // assign a subset if it's a synthesis experiment
+                          if (exp.isSynthesis) {
+                            // need to extend this to deal with cases where the participant has to come back to this page
+                            // and hasn't finished the subset. in that case, we want 
+                            ExperimentManager.assignSynthSubset(part._id, cond._id);
                           }
                         }
                         EventLogger.logConsent();
                         Router.go(Session.get("nextPage"), {partID: part._id});
-              });
-            } else {
-              logger.trace("Participant has participated before; rejecting participant");
-              Router.go('NoParticipation');
-            }
-        });
-        logger.trace("******* After meteor call to canparticipate *******");
-        //console.log("**** clicked continue ****");
-        //login user
-        //var userName = $('input#name').val().trim();
-        //var myUser = new User(userName);
-        //loginUser(myUser);
+                });
+              } else {
+                logger.trace("Participant has participated before; rejecting participant");
+                Router.go('NoParticipation');
+              }
+          });
+          logger.trace("******* After meteor call to canparticipate *******");
+          //console.log("**** clicked continue ****");
+          //login user
+          //var userName = $('input#name').val().trim();
+          //var myUser = new User(userName);
+          //loginUser(myUser);
 
-        //Go to next page
+          //Go to next page
         
     }
 });

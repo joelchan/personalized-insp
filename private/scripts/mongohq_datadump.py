@@ -199,9 +199,9 @@ def get_data_output(dir_path='data', db_params=mongohq.ideagenstest):
 if __name__ == '__main__':
 
    # clear_db(mongohq.fac_exp)
-   # restore_db('data/hcompTest', mongohq.local_meteor)
+   restore_db('data/mf_2015-4-24', mongohq.local_meteor)
    # clear_db(mongohq.ideagens)
    # restore_db('data/hcompTest', mongohq.ideagens)
    # dump_db('data/facTutorial', mongohq.local_meteor)
-   get_data_output('data/owen', mongohq.fac_exp)
+   # get_data_output('data/owen', mongohq.fac_exp)
 

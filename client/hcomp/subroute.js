@@ -6,24 +6,30 @@ var global = 1;
 var clusterTop = 0;
 var clusterLeft = 0;
 
+// <<<<<<< HEAD
 Template.ZoomSpace.helpers({
     getZoomSpaceIdeas: function() {
-        return Ideas.find({inZoomSpace: true, inCluster:false}, {fields: {inZoomSpace: 0,inCluster: 0}});        
+        // return Ideas.find({inZoomSpace: true, inCluster:false}, {fields: {inZoomSpace: 0,inCluster: 0}});        
+        return FilterManager.performQuery("zoomSpaceIdeas", Session.get("currentUser"), "ideas");
     },
 
     getClusters: function() {
-        return Clusters.find();
+        var user = Session.get("currentUser");
+        return Clusters.find({userID: user._id});
     },
-}); 
+});
      
 Template.SubrouteSandbox.onRendered(function () {
 $('.ScalingViewPane').css('top', 75); 
 $('.ScalingViewPane').css('left', 50); 
 
+// =======
+//  Template.SubrouteSandbox.onRendered(function () {
+// >>>>>>> synthInterfaceNew
     this.$(".panZoomFrame").panzoom({
-         minScale: .5,
-         increment: 0.2,
-         maxScale: 1.2,
+         minScale: .3,
+         increment: 0.01,
+         maxScale: 1,
          $zoomIn:    $(".glyphicon-zoom-in"),
          $zoomOut:   $(".glyphicon-zoom-out"),
          $zoomRange: $("input[type='range']")
@@ -53,6 +59,7 @@ $('.ScalingViewPane').css('left', 50);
     });
 });
 
+// <<<<<<< HEAD
 Template.MiniMap.helpers({
     getNumIdeas: function () {
         return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
@@ -67,6 +74,18 @@ Template.MiniMap.helpers({
 
 Template.ZoomSpace.onRendered(function () {
     
+    FilterManager.reset("zoomSpaceIdeas", Session.get("currentUser"), "ideas");
+    FilterManager.create("zoomSpaceIdeas", Session.get("currentUser"),
+        "ideas", "inCluster", false);
+    FilterManager.create("zoomSpaceIdeas", Session.get("currentUser"),
+        "ideas", "inZoomSpace", true);
+
+    var part = Session.get("currentParticipant");
+    if (part) {
+        logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
+        addSynthIdeasFilter("zoomSpaceIdeas", part);
+    }
+
      $(this.firstNode).on('mousedown touchstart', function(e) {
                e.stopPropagation();
      });
@@ -159,10 +178,27 @@ Template.ZoomSpace.onRendered(function () {
     });
 });
 
-Template.SubrouteSandbox.helpers({    
-     getIdeas: function() {
-        return Ideas.find();
-    }, 
+Template.IdeaSpace.onRendered(function() {
+    // SET DEFAULT FILTERS
+    // displayIdeas idea filters
+    FilterManager.reset("displayIdeas", Session.get("currentUser"), "ideas");
+    FilterManager.create("displayIdeas", Session.get("currentUser"),
+        "ideas", "inCluster", false);
+    FilterManager.create("displayIdeas", Session.get("currentUser"),
+        "ideas", "inZoomSpace", false);
+
+    // for getting the count of ideas remaining
+    FilterManager.reset("remainingIdeas", Session.get("currentUser"), "ideas");
+    FilterManager.create("remainingIdeas", Session.get("currentUser"),
+        "ideas", "inCluster", false);
+
+    var part = Session.get("currentParticipant");
+    if (part) {
+        logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
+        addSynthIdeasFilter("displayIdeas", part);
+        addSynthIdeasFilter("remainingIdeas", part);
+    }
+
 });
 
 Template.IdeaSpace.helpers({ 
@@ -170,7 +206,8 @@ Template.IdeaSpace.helpers({
         return Ideas.find({inCluster: false}, {fields: {inCluster: 0}}).count();
     }, 
     displayIdeas: function() {             
-        return Ideas.find({inCluster:false,inZoomSpace: false}, {fields: {inZoomSpace: 0,inCluster:0}});       
+        return FilterManager.performQuery("displayIdeas", Session.get("currentUser"), "ideas");
+        // return Ideas.find({inCluster:false,inZoomSpace: false}, {fields: {inZoomSpace: 0,inCluster:0}});       
     },
 });
 
@@ -387,5 +424,21 @@ Template.Cluster.onRendered( function() {
     });
 });
 
+Template.MiniMap.helpers({
+     getIdeas: function() {
+         return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
+    },
+});
 
+var addSynthIdeasFilter = function addSynthIdeasFilter(filterName, part) {
+    
+    logger.debug("Calling addSynthIdeasFilter for " + filterName);
+    
+    var subset = SynthSubsets.findOne({_id: part.misc.subsetID});
+    logger.trace(JSON.stringify(subset));
 
+    subset.ideaIDs.forEach(function(ideaID){
+        FilterManager.create(filterName, Session.get("currentUser"),
+        "ideas", "_id", ideaID);
+    });
+}

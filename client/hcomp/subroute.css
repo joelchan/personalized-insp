@@ -115,6 +115,9 @@
     
 }
 
+.zoom-control-buttons {
+  font-size: 20px;
+}
 
 #zBar{
    display: inline-block;
