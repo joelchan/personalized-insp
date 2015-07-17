@@ -18,7 +18,7 @@
 }
 
 #ideaSpace {
-  top: 70%;
+  top: 50%;
   border:1px solid #444;
   height:3000px;
 }
@@ -87,6 +87,9 @@
     
 }
 
+.zoom-control-buttons {
+  font-size: 20px;
+}
 
 #zBar{
    display: inline-block;

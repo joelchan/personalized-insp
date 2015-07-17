@@ -476,7 +476,17 @@ Template.ExperimentsTab.events({
       if (prompt) {
         logger.trace("found current prompt with id: " + prompt._id);  
       }
-      expID = ExperimentManager.createExp(prompt._id, expTitle, numParts);
+
+      var IV1 = {name: $('input#iv-first-name').val(), 
+                 levels: $('input#iv-first-levels').val().split(",")};
+      var IV2 = {name: $('input#iv-second-name').val(), 
+                 levels: $('input#iv-second-levels').val().split(",")};
+
+      if (IV2.name != "") {
+        expID = ExperimentManager.createExp(prompt._id, expTitle, numParts, IV1, IV2);
+      } else {
+        expID = ExperimentManager.createExp(prompt._id, expTitle, numParts, IV1);  
+      }
 
       logger.trace("Experiment title: " + expTitle);
       logger.trace("Number of participants: " + numParts);

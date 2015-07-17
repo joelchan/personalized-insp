@@ -69,6 +69,23 @@ class Node:
         return result
 
 
+class ExpSynthSubset:
+    """
+    ExpSynthSubset as defined by Ideagens
+
+    """
+    def __init__(self, ideaIDs, cond, exp, description, data=None):
+        self.users = []
+        self.ideaIDs = ideaIDs
+        self.condID = cond['_id']
+        self.condName = cond['description']
+        self.expID = exp['_id']
+        self.description = description
+        if data is not None:
+            for key in data.keys():
+                # print "Setting attribute: " + str(key) + " with " + str(data[key])
+                setattr(self, key, data[key])
+
 class Db_Manager:
     """
     A class for performing typical data processing operations on

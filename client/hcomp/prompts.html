@@ -208,6 +208,12 @@
               {{> ExperimentPromptItem }}
             {{/each}}
           </div>
+          <br/>
+          <h5>Define experiment conditions</h5>
+          First IV name: <input type="text" id="iv-first-name" class="modal-box" placeholder="IV name">
+          First IV levels: <input type="text" id="iv-first-levels" class="modal-box" placeholder="separate with commas with no spaces, e.g., 'Control,Treatment'">
+          Second IV name: <input type="text" id="iv-second-name" class="modal-box" placeholder="IV name">
+          Second IV levels: <input type="text" id="iv-second-levels" class="modal-box" placeholder="separate with commas with no spaces, e.g., 'Control,Treatment'">
 
           <h5 class="input-label">Target number of participants per condition</h5>
           <input type="number" id="num-parts" class="modal-number-input" placeholder="participants">

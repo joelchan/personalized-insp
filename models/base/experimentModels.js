@@ -13,6 +13,8 @@ Participants = new Meteor.Collection("participants");
 SurveyResponses = new Meteor.Collection("surveyResponses");
 // Holds baseline fluency data for participants
 FluencyMeasures = new Meteor.Collection("fluencyMeasures");
+// Defines synthesis subsets (partitions of the data to synthesize)
+SynthSubsets = new Meteor.Collection("synthSubsets");
 
 Experiment = function (promptID, desc) {
    /****************************************************************
@@ -91,6 +93,37 @@ ExpCondition = function(expID, promptID, desc, partNum) {
   this.misc;
 };
 
+ExpSynthSubset = function(ideaIDs, cond, exp, data) {
+  /****************************************************************
+    * Definition of synthesis subset object for synthesis experiments
+    * Each subset defines a partition of the complete dataset to be synthesized
+    * @Params
+    *   ideaIDs (array) - array of ids for ideas that are in this subset
+    *   cond (object) - the experiment condition this subset is a part of
+    *   exp (object) - the experiment this subset is a part of
+    *   data (optional) - object with metadata for the subset
+    ****************************************************************/
+  this.users = [];
+  this.ideaIDs = ideaIDs;
+  this.condID = cond._id;
+  this.condName = cond.description;
+  this.expID = exp._id;
+
+  if (data) {
+    // Add metadata fields if any are given
+    var fields = Object.keys(data);
+    for (var i=0; i<fields.length; i++) {
+      this[fields[i]] = data[fields[i]];
+    }
+  }
+
+  // we can add a field called "data" when we create a subset, and put in
+  // - size
+  // - simMean
+  // - simVar
+  // - seed
+}
+
 Participant = function(expID, userID, condID, groupID) {
     /****************************************************************
     * Participant object definition
@@ -126,6 +159,9 @@ Participant = function(expID, userID, condID, groupID) {
 
     //Participants have not finished by default
     this.hasFinished = false;
+
+    //Misc data we want to store (we're putting assigned synth subsets in here for now)
+    this.misc;
 };
 
 Consent = function (participant) {
@@ -153,3 +189,9 @@ QuestionResponse = function(question, answer) {
   this.question = question;
   this.answer = answer;
 };
+
+conditionRouteData = {
+  "IdeationControl": ["TutorialControl", "MTurkIdeationControl", "SurveyPage", "LegionFinalPage"],
+  "IdeationTreatment": ["TutorialTreatment", "MTurkIdeationTreatment", "SurveyPage", "LegionFinalPage"],
+  "Synthesis": ["SynthesisExp"]
+}

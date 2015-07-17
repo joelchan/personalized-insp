@@ -13,15 +13,18 @@ ExperimentManager = (function () {
   ****************************************************************/
   return {
 
-    createExp: function(promptID, desc, numParts) {
+    createExp: function(promptID, desc, numParts, IV1, IV2) {
       /**************************************************************
        * Create a new experiment
        * @Params
        *    promptID - id of the prompt for the experiment
+       *    desc (string) - name of experiment
+       *    numParts (int) - desired number of participants per condition
+       *    IV1 (object) - an object that defines an independent variable
+       *                   with 2 fields: 1) name, and 2) levels
+       *    IV2 (object, optional) - a second IV definition
        * @Return
        *    expID - id of created experiment, false if unsuccessful
-       *    desc (string, optional) - name of experiment
-       *    numParts (int, optional) - desired number of participants per condition
        * ***********************************************************/
        logger.trace("Beginning ExperimentManager.createExp");
        if (promptID) {
@@ -38,12 +41,33 @@ ExperimentManager = (function () {
            url = this.setExpURL(expID);
            logger.trace("Crowd can login at " + url);
            
+           // get experimental conditions
+           var conditions = [];
+           if (!IV2) {
+            logger.debug("Simple one-way design");
+            logger.trace("IV1 (" + IV1.name + ") with levels: " + JSON.stringify(IV1.levels));
+            conditions = IV1.levels;
+           } else {
+            logger.debug("Two-way factorial"); // can extend later
+            logger.trace("IV1 (" + IV1.name + ") with levels: " + JSON.stringify(IV1.levels));
+            logger.trace("IV2 (" + IV2.name + ") with levels: " + JSON.stringify(IV2.levels));
+            IV1.levels.forEach(function(IV1level) {
+              IV2.levels.forEach(function(IV2level) {
+                combo = IV1level + "-" + IV2level;
+                conditions.push(combo);
+              });
+            });
+           }
+
+           logger.trace("Conditions to create: " + JSON.stringify(conditions));
            // create experimental conditions
-           // parameters are currently hard-coded
-           var control = this.createExpCond(expID, promptID, "Control", numParts);
-           var treatment = this.createExpCond(expID, promptID, "Treatment", numParts);
-           Experiments.update({_id: expID},
-            {$set: {conditions: [control,treatment]}});
+           conditions.forEach(function(cond) {
+            ExperimentManager.createExpCond(expID, promptID, cond, numParts);
+           });
+           // var control = this.createExpCond(expID, promptID, "Control", numParts);
+           // var treatment = this.createExpCond(expID, promptID, "Treatment", numParts);
+           // Experiments.update({_id: expID},
+           //  {$set: {conditions: [control,treatment]}});
            
            // create a group for the experiment
            this.addExpGroup(Experiments.findOne({_id: expID}))
@@ -58,6 +82,62 @@ ExperimentManager = (function () {
        } else {
         logger.debug("No promptID provided, can't create experiment");
        }
+    },
+
+    initSynthExp: function(expID) {
+       /**************************************************************
+      * tag experiment as needing processing for synthesis
+      * ***********************************************************/
+      var exp = Experiments.findOne({_id: expID});
+      logger.debug("Marking exp " + exp.description + " as a synthesis experiment for processing");
+      Experiments.update(
+        {_id: exp._id},
+        {$set: {isSynthesis: true}}
+      );
+      Experiments.update(
+        {_id: exp._id},
+        {$set: {isProcessed: false}}
+      );
+
+    },
+    
+    initCondRoutes: function(condID, routeSequence) {
+       /**************************************************************
+      * tag experiment as needing processing for synthesis
+      * @Params
+      *     condID (str) - ID of the condition we want to process
+      *     routeSequence (array) - array of route names - order matters!
+      * ***********************************************************/
+      var cond = Conditions.findOne({_id: condID});
+      logger.debug("Updating route for condition " + cond.description +
+        "with the route sequence " + JSON.stringify(routeSequence));
+      Conditions.update({_id: cond._id},
+                        {$set: {'misc.routeSequence': routeSequence}});
+
+    },
+
+    assignSynthSubset: function(partID, condID) {
+       /**************************************************************
+      * Randomly sample a subset from a condition and assign to participant
+      * Need to figure out how to deal with the potential problem of unfinished subsets
+      * @Params
+      *     partID (str) - the condition object to process
+      *     condID (array) - array of route names - order matters!
+      * ***********************************************************/
+      var part = Participants.findOne({_id: partID});
+      if (part.misc) {
+        if (part.misc.subsetID) {
+          logger.debug("Already has a subset assigned. Doing nothing");
+        } 
+      } else {
+        logger.debug("Assigning a new subset");
+        var cond = Conditions.findOne({_id: condID});
+        var availableSubsets = SynthSubsets.find({condID: condID, users: []}).fetch();
+        logger.debug(availableSubsets.length + " available out of " + cond.misc.subsetIDs.length + " total subsets in this condition ");
+        var subset = getRandomElement(availableSubsets);
+        logger.trace("Assigning subset with id " + subset._id + " to participant");
+        Participants.update({_id: part._id}, {$set: {'misc.subsetID': subset._id}});
+      }
     },
 
     setExpURL: function(expID) {
@@ -89,6 +169,8 @@ ExperimentManager = (function () {
         // newCond.groupTemplate = groupTemplate;
         var newCondID = Conditions.insert(newCond);
         newCond._id = newCondID;
+        Experiments.update({_id: expID},
+            {$addToSet: {conditions: newCond}});
         return newCond;
     },
 

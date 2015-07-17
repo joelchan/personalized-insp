@@ -4,18 +4,7 @@ Logger.setLevel('Client:Hcomp:SubrouteSandbox', 'trace');
 
 var global = 1; 
 
-Template.ZoomSpace.helpers({
-    getZoomSpaceIdeas: function() {
-        return Ideas.find({inZoomSpace: true, inCluster:false}, {fields: {inZoomSpace: 0,inCluster: 0}});        
-    },
-
-    getClusters: function() {
-        return Clusters.find();
-    },
-}); 
-
-     
-Template.SubrouteSandbox.onRendered(function () {
+ Template.SubrouteSandbox.onRendered(function () {
     this.$(".panZoomFrame").panzoom({
          minScale: .5,
          increment: 0.2,
@@ -45,15 +34,29 @@ Template.SubrouteSandbox.onRendered(function () {
     });
 });
 
-Template.MiniMap.helpers({
+Template.SubrouteSandbox.helpers({
+    //getNumIdeas: function () {
+    //     return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
+    // },
      getIdeas: function() {
-         return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
-    },
+        return Ideas.find();
+    }, 
 });
 
 Template.ZoomSpace.onRendered(function () {
-    
-    
+
+    FilterManager.reset("zoomSpaceIdeas", Session.get("currentUser"), "ideas");
+    FilterManager.create("zoomSpaceIdeas", Session.get("currentUser"),
+        "ideas", "inCluster", false);
+    FilterManager.create("zoomSpaceIdeas", Session.get("currentUser"),
+        "ideas", "inZoomSpace", true);
+
+    var part = Session.get("currentParticipant");
+    if (part) {
+        logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
+        addSynthIdeasFilter("zoomSpaceIdeas", part);
+    }
+
      $(this.firstNode).on('mousedown touchstart', function(e) {
                e.stopPropagation();
      });
@@ -149,13 +152,33 @@ Template.ZoomSpace.onRendered(function () {
     });
 });
 
-Template.SubrouteSandbox.helpers({
-    //getNumIdeas: function () {
-    //     return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
-    // },
-     getIdeas: function() {
-        return Ideas.find();
-    }, 
+Template.ZoomSpace.helpers({
+    getZoomSpaceIdeas: function() {
+        // return Ideas.find({inZoomSpace: true, inCluster:false}, {fields: {inZoomSpace: 0,inCluster: 0}});        
+        return FilterManager.performQuery("zoomSpaceIdeas", Session.get("currentUser"), "ideas");
+    },
+
+    getClusters: function() {
+        var user = Session.get("currentUser");
+        return Clusters.find({userID: user._id});
+    },
+});
+
+Template.IdeaSpace.onRendered(function() {
+    // SET DEFAULT FILTERS
+    // displayIdeas idea filters
+    FilterManager.reset("displayIdeas", Session.get("currentUser"), "ideas");
+    FilterManager.create("displayIdeas", Session.get("currentUser"),
+        "ideas", "inCluster", false);
+    FilterManager.create("displayIdeas", Session.get("currentUser"),
+        "ideas", "inZoomSpace", false);
+
+    var part = Session.get("currentParticipant");
+    if (part) {
+        logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
+        addSynthIdeasFilter("displayIdeas", part);
+    }
+
 });
 
 Template.IdeaSpace.helpers({ 
@@ -163,7 +186,8 @@ Template.IdeaSpace.helpers({
         return Ideas.find({inCluster: false}, {fields: {inCluster: 0}}).count();
     }, 
     displayIdeas: function() {             
-        return Ideas.find({inCluster:false,inZoomSpace: false}, {fields: {inZoomSpace: 0,inCluster:0}});       
+        return FilterManager.performQuery("displayIdeas", Session.get("currentUser"), "ideas");
+        // return Ideas.find({inCluster:false,inZoomSpace: false}, {fields: {inZoomSpace: 0,inCluster:0}});       
     },
 });
 
@@ -378,5 +402,18 @@ Template.Cluster.onRendered( function() {
     });
 });
 
+Template.MiniMap.helpers({
+     getIdeas: function() {
+         return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
+    },
+});
 
+var addSynthIdeasFilter = function addSynthIdeasFilter(filterName, part) {
+    
+    var subset = SynthSubsets.findOne({_id: part.misc.subsetID});
 
+    subset.ideaIDs.forEach(function(ideaID){
+        FilterManager.create(filterName, Session.get("currentUser"),
+        "ideas", "_id", ideaID);
+    });
+}
