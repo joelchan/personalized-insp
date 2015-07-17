@@ -46,6 +46,15 @@ Idea = function (content, user, prompt, participant) {
   if (participant) {
     this.participantID = participant._id;
   }
+
+  // this stores key value pairs defining whether this
+  // idea is in the zoom pane for a given user
+  this.zoomSpace = {};
+
+  // this stores key value pairs defining position
+  // of the idea in a 100% zoom pane for a given user
+  this.zoomPosition = {}
+
 };
 
 Cluster = function(user, prompt, ideaIDs){
@@ -67,5 +76,9 @@ Cluster = function(user, prompt, ideaIDs){
   this.isCollapsed = false; //used only for clustering interface
   //Used to mark a cluster as trash without deleting the data
   this.isTrash = false;
+
+  // this stores key value pairs defining position
+  // of the cluster in a 100% zoom pane for a given user
+  this.zoomPosition = {}
 }
 

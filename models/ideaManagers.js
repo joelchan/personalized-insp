@@ -99,6 +99,20 @@ IdeaFactory = (function() {
     removeAmount : function (amount) {
     for(var i  =  0; i < amount; i++ ){ IdeaFactory.remove(Ideas.findOne());}  
     }, 
+
+    updatePosition: function(idea, position, user) {
+     /********************************************************************
+     * Update the position of this idea in the zoom space for this user
+     *
+     ********************************************************************/ 
+    },
+    updateZoomSpaceFlag: function(idea, flag, user) {
+     /********************************************************************
+     * Update the boolean zoomspace flag for this idea for this user
+     *
+     ********************************************************************/ 
+    },
+
   };
 }());
 
@@ -196,6 +210,18 @@ ClusterFactory = ( function() {
         {$set: {position: position}
       });
       cluster.position = position;
+    },
+    updatePositionByUser: function(cluster, position, user) {
+      /********************************************************************
+      * Update the position of this cluster in the zoom space for this user
+      *
+      ********************************************************************/
+      // var clusterField = "zoomPosition." + cluster._id;
+      // var topField = clusterField + ".top";
+      // var leftField = clusterField + ".left";
+      // Clusters.update({_id: cluster._id},
+          // {$set: {leftField: position.top}});
+
     },
     createDummy: function(ideas, num, user, prompt) {
       if (!num) {
