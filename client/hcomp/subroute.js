@@ -62,7 +62,9 @@ $('.ScalingViewPane').css('left', 50);
 // <<<<<<< HEAD
 Template.MiniMap.helpers({
     getNumIdeas: function () {
-        return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
+        var remainingIdeas = FilterManager.performQuery("remainingIdeas", Session.get("currentUser"), "ideas");
+        return remainingIdeas.count();
+        // return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
     },
      getIdeas: function() {
          return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
@@ -74,12 +76,21 @@ Template.MiniMap.helpers({
 
 Template.ZoomSpace.onRendered(function () {
     
-    FilterManager.reset("zoomSpaceIdeas", Session.get("currentUser"), "ideas");
-    FilterManager.create("zoomSpaceIdeas", Session.get("currentUser"),
-        "ideas", "inCluster", false);
-    FilterManager.create("zoomSpaceIdeas", Session.get("currentUser"),
+    var user = Session.get("currentUser");
+
+    FilterManager.reset("zoomSpaceIdeas", user, "ideas");
+    
+    // init cluster filters
+    var clusters = Clusters.find({userID: user._id}).fetch();
+    clusters.forEach(function(cluster) {
+        FilterManager.create("zoomSpaceIdeas", user,
+        "ideas", "clusterIDs", cluster._id, "ne");
+    });
+    
+    FilterManager.create("zoomSpaceIdeas", user,
         "ideas", "inZoomSpace", true);
 
+    // add synth subset filters (if from experiment)
     var part = Session.get("currentParticipant");
     if (part) {
         logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
@@ -187,18 +198,32 @@ Template.ZoomSpace.onRendered(function () {
 });
 
 Template.IdeaSpace.onRendered(function() {
+    
+    var user = Session.get("currentUser");
     // SET DEFAULT FILTERS
     // displayIdeas idea filters
-    FilterManager.reset("displayIdeas", Session.get("currentUser"), "ideas");
-    FilterManager.create("displayIdeas", Session.get("currentUser"),
-        "ideas", "inCluster", false);
-    FilterManager.create("displayIdeas", Session.get("currentUser"),
-        "ideas", "inZoomSpace", false);
+    FilterManager.reset("displayIdeas", user, "ideas");
 
     // for getting the count of ideas remaining
-    FilterManager.reset("remainingIdeas", Session.get("currentUser"), "ideas");
-    FilterManager.create("remainingIdeas", Session.get("currentUser"),
-        "ideas", "inCluster", false);
+    FilterManager.reset("remainingIdeas", user, "ideas");
+    
+    // init cluster filters
+    var clusters = Clusters.find({userID: user._id}).fetch();
+    clusters.forEach(function(cluster) {
+        FilterManager.create("displayIdeas", user,
+            "ideas", "clusterIDs", cluster._id, "ne");
+        FilterManager.create("remainingIdeas", user,
+            "ideas", "clusterIDs", cluster._id, "ne");
+    });
+    
+    // FilterManager.create("displayIdeas", Session.get("currentUser"),
+    //     "ideas", "inCluster", false);
+    FilterManager.create("displayIdeas", user,
+        "ideas", "inZoomSpace", false);
+
+    
+    // FilterManager.create("remainingIdeas", Session.get("currentUser"),
+    //     "ideas", "inCluster", false);
 
     var part = Session.get("currentParticipant");
     if (part) {
@@ -211,7 +236,7 @@ Template.IdeaSpace.onRendered(function() {
 
 Template.IdeaSpace.helpers({ 
     getNumIdeas: function () {
-        return Ideas.find({inCluster: false}, {fields: {inCluster: 0}}).count();
+        return FilterManager.performQuery("remainingIdeas", Session.get("currentUser"), "ideas").count();
     }, 
     displayIdeas: function() {             
         return FilterManager.performQuery("displayIdeas", Session.get("currentUser"), "ideas");
@@ -305,6 +330,7 @@ Template.InstantiateCluster.events({
         var user   = Session.get('currentUser');
         var prompt = Session.get('currentPrompt');
         var newCluster = ClusterFactory.create(user, prompt, null);        
+        updateClusterFilter(newCluster._id);
         
         $("#" +newCluster._id).css('top' , ((clusterTop*-1)/global) + 2850);
          $("#" +newCluster._id).css('left', ((clusterLeft*-1)/global) + 2900);
@@ -483,4 +509,24 @@ var addSynthIdeasFilter = function addSynthIdeasFilter(filterName, part) {
         FilterManager.create(filterName, Session.get("currentUser"),
         "ideas", "_id", ideaID);
     });
+}
+
+var updateClusterFilter = function updateClusterFilter(clusterID, remove) {
+    if (!remove) {
+        // call this function when a new cluster is created
+        FilterManager.create("zoomSpaceIdeas", Session.get('currentUser'),
+            "ideas", "clusterIDs", clusterID, "ne");
+        FilterManager.create("displayIdeas", Session.get('currentUser'),
+            "ideas", "clusterIDs", clusterID, "ne");
+        FilterManager.create("remainingIdeas", Session.get('currentUser'),
+            "ideas", "clusterIDs", clusterID, "ne");
+    } else {
+        FilterManager.remove("zoomSpaceIdeas", Session.get('currentUser'),
+            "ideas", "clusterIDs", clusterID, "ne");
+        FilterManager.remove("displayIdeas", Session.get('currentUser'),
+            "ideas", "clusterIDs", clusterID, "ne");
+        FilterManager.remove("remainingIdeas", Session.get('currentUser'),
+            "ideas", "clusterIDs", clusterID, "ne");
+    }
+    
 }
