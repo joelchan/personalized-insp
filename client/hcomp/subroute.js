@@ -15,7 +15,7 @@ Template.ZoomSpace.helpers({
 
     getClusters: function() {
         var user = Session.get("currentUser");
-        return Clusters.find({userID: user._id});
+        return Clusters.find({userID: user._id, isTrash: false});
     },
 });
      
@@ -351,10 +351,13 @@ Template.DeleteCluster.onRendered( function() {
                 var clusterID =  this.id; 
                 var cluster = Clusters.findOne(clusterID);
                 var ideasInCluster = cluster.ideaIDs; 
-                $(this.parentNode.parentNode).remove();
-                for (var i = ideasInCluster.length - 1; i >= 0; i--) {
-                    logger.debug("Look here "  + ideasInCluster[i]);     
-                    Ideas.update({_id: ideasInCluster[i]}, {$set: {'inCluster': false, 'inZoomSpace':false}});
+                ClusterFactory.trash(cluster);
+                updateClusterFilter(cluster._id, "remove");
+                // $(this.parentNode.parentNode).remove();
+                for (var i = ideasInCluster.length - 1; i >= 0; i--) {   
+                    Ideas.update({_id: ideasInCluster[i]}, 
+                        {$set: {'inZoomSpace':false}});
+                    // Ideas.update({_id: ideasInCluster[i]}, {$set: {'inCluster': false, 'inZoomSpace':false}});
                 }; 
             }
            //Clusters.update({_id:{ideasInCluster}}, {$set: {'inCluster':false}});
