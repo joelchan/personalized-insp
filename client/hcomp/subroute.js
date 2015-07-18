@@ -61,6 +61,18 @@ $('.ScalingViewPane').css('left', 50);
 
 // <<<<<<< HEAD
 Template.MiniMap.helpers({
+    numIdeasTotal: function() {
+        var part = Session.get("currentParticipant");
+        if (part) {
+            var subset = SynthSubsets.findOne({_id: part.misc.subsetID});
+            logger.debug("On synthesis experiment workflow with subset " + subset._id);
+            return subset.ideaIDs.length;
+        } else {
+            var promptID = Session.get("currentPrompt")._id;
+            return Ideas.find({promptID: promptID}).count();
+        }
+        
+    },
     getNumIdeas: function () {
         var remainingIdeas = FilterManager.performQuery("remainingIdeas", Session.get("currentUser"), "ideas");
         return remainingIdeas.count();
