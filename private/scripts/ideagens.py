@@ -5,7 +5,7 @@
 import mongohq
 from sets import Set
 import logging
-
+import datetime
 
 logging.basicConfig(format='%(levelname)s:%(message)s',
                     level=logging.DEBUG)
@@ -68,6 +68,98 @@ class Node:
             result += str(key) + ": " + str(attrs[key]) + " "
         return result
 
+class Idea:
+    """
+    Idea as defined by Ideagens
+    Add a field "previousID" to tie it to the ideas to its previous db
+
+    """
+    def __init__(self, content, previousID, user, prompt, data=None):
+        self.time = datetime.datetime.now()
+        self.content = content
+        self.previousID = previousID
+        self.userID = user['_id']
+        self.userName = user['name']
+        self.prompt = prompt
+        self.promptID = prompt['_id']
+        self.isGamechanger = False
+        self.readIDs = []
+        self.votes = [];
+        self.inCluster = False
+        self.clusterIDs = []
+        self.zoomSpace = []
+        if data is not None:
+            for key in data.keys():
+                # print "Setting attribute: " + str(key) + " with " + str(data[key])
+                setattr(self, key, data[key])
+
+    def __str__(self):
+        result = "Idea with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+class User:
+    """
+    User as defined by Ideagens
+
+    """
+    def __init__(self, name, role, data=None):
+        self.name = name
+        self.type = role
+        if data is not None:
+            for key in data.keys():
+                # print "Setting attribute: " + str(key) + " with " + str(data[key])
+                setattr(self, key, data[key])
+
+    def __str__(self):
+        result = "User with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+class Prompt:
+    """
+    Prompt as defined by Ideagens
+
+    """
+    def __init__(self, question, user, title, data=None):
+        self.question = question
+        self.time = datetime.datetime.now()
+        self.userIDs = [user['_id']]
+        self.groupIDs = [] # might need groups?
+        self.template = None # don't use this for now, but we might have to if it breaks
+        if data is not None:
+            for key in data.keys():
+                # print "Setting attribute: " + str(key) + " with " + str(data[key])
+                setattr(self, key, data[key])
+
+    def __str__(self):
+        result = "Prompt with: "
+        attrs = self.__dict__
+        for key in attrs.keys():
+            result += str(key) + ": " + str(attrs[key]) + " "
+        return result
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
 
 class ExpSynthSubset:
     """
