@@ -102,18 +102,44 @@ Template.ZoomSpace.onRendered(function () {
      $('.panZoomFrame').droppable({
         accept: ".ideaListElement ,  .clusterListElement",
         drop: function(event, ui) {
-        ideaLeftOffset =  $(ui.helper[0]).offset().left; 
-        ideaTopOffset  =  $(ui.helper[0]).offset().top;
-        pZMTopOffset   =  $('.panZoomFrame').offset().top;
-        pZMLeftOffset  =  $('.panZoomFrame').offset().left;   
-        
-        if(Ideas.findOne({_id:ui.helper[0].id}, {fields: {'inZoomSpace':false, 'inCluster':false}})) {     
+            ideaLeftOffset =  $(ui.helper[0]).offset().left; 
+            ideaTopOffset  =  $(ui.helper[0]).offset().top;
+            pZMTopOffset   =  $('.panZoomFrame').offset().top;
+            pZMLeftOffset  =  $('.panZoomFrame').offset().left;   
+            
+            var ideaID = ui.helper[0].id;
+
+            // is it coming from the displayIdeas list?
+            if(fromDisplayIdeas(ideaID)) {
+            // if(Ideas.findOne({_id:ui.helper[0].id}, {fields: {'inZoomSpace':false, 'inCluster':false}})) {     
+                   // var ideaID  = ui.helper[0].id;
+                   var ideaObject =  Ideas.find(ideaID).fetch();            
+                   //var cAtDrop = $('.ideaListElement').position({'top':event.pageY, 'left': event.pageX});    
+                   //logger.trace("TOP " + cAtDrop.top);
+                   Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true}});
+                   // var factor = ((1 / global) -1);
+                   var elementID = ui.helper[0].id;
+                   var left = (((ideaLeftOffset/global) - (pZMLeftOffset/global)));
+                   var top = (((ideaTopOffset/global) - (pZMTopOffset/global)));
+                   var position = {"top": top, "left": left};
+                   logger.debug("Updating current position of idea in zoom space");
+                   logger.trace("New position of idea " + elementID + ": " + JSON.stringify(position));
+                   ZoomManager.updatePosition(elementID, "Ideas", position, Session.get("currentUser"));
+                   logger.trace(ideaLeftOffset - pZMLeftOffset);
+                   $('#' + ideaID).css('left',(((ideaLeftOffset/global) - (pZMLeftOffset/global))));
+                   $('#' + ideaID).css('top', (((ideaTopOffset/global) - (pZMTopOffset/global)))); 
+             }
+            
+            // is it coming from a cluster?
+            if (fromCluster(ideaID)) {
+             // if(Ideas.findOne({_id:ui.helper[0].id}, {fields: {inCluster: true}})) {
                var ideaID  = ui.helper[0].id;
-               var ideaObject =  Ideas.find(ideaID).fetch();            
-               //var cAtDrop = $('.ideaListElement').position({'top':event.pageY, 'left': event.pageX});    
-               //logger.trace("TOP " + cAtDrop.top);
-               Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true}});
-               // var factor = ((1 / global) -1);
+               var ideaObject =  Ideas.find(ideaID).fetch();  
+               var cluster  = $(ui.helper[0].parentNode);
+               var clusterID = cluster[0].id;
+               Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true, 'inCluster':false}});
+               ClusterFactory.removeIdeaFromCluster(ideaObject[0], Clusters.findOne(clusterID));
+               // logger.trace("Shouldnt be here ");
                var elementID = ui.helper[0].id;
                var left = (((ideaLeftOffset/global) - (pZMLeftOffset/global)));
                var top = (((ideaTopOffset/global) - (pZMTopOffset/global)));
@@ -123,17 +149,7 @@ Template.ZoomSpace.onRendered(function () {
                ZoomManager.updatePosition(elementID, "Ideas", position, Session.get("currentUser"));
                logger.trace(ideaLeftOffset - pZMLeftOffset);
                $('#' + ideaID).css('left',(((ideaLeftOffset/global) - (pZMLeftOffset/global))));
-               $('#' + ideaID).css('top', (((ideaTopOffset/global) - (pZMTopOffset/global)))); 
-         }
-        
-         if(Ideas.findOne({_id:ui.helper[0].id}, {fields: {inCluster: true}})) {
-               var ideaID  = ui.helper[0].id;
-               var ideaObject =  Ideas.find(ideaID).fetch();  
-               var cluster  = $(ui.helper[0].parentNode);
-               var clusterID = cluster[0].id;
-               Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true, 'inCluster':false}});
-               ClusterFactory.removeIdeaFromCluster(ideaObject[0], Clusters.findOne(clusterID));
-               logger.trace("Shouldnt be here ");
+               $('#' + ideaID).css('top', (((ideaTopOffset/global) - (pZMTopOffset/global))));
             }
         }
     });
@@ -425,4 +441,27 @@ var updateClusterFilter = function updateClusterFilter(clusterID, remove) {
             "ideas", "clusterIDs", clusterID, "ne");
     }
     
+}
+
+fromCluster = function fromCluster(ideaID) {
+    var cluster = Clusters.findOne({ideaIDs: ideaID});
+    if (cluster) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+fromDisplayIdeas = function fromDisplayIdeas(ideaID) {
+    var idea = Ideas.findOne({_id: ideaID});
+    logger.trace(JSON.stringify(idea));
+    var clusters = Clusters.find({_id: {$in: idea.clusterIDs}, userID: Session.get("currentUser")._id, isTrash: false}).fetch();
+    logger.trace(JSON.stringify(clusters));
+    if (clusters.length < 1 && idea.inZoomSpace == false) {
+        logger.debug("This is coming from displayIdeas");
+        return true;
+    } else {
+        logger.debug("This is not from displayIdeas");
+        return false;
+    }
 }
