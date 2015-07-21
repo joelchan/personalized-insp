@@ -69,5 +69,6 @@ ALL_DBs = {'ideagens': ideagens,
              'local': local_meteor,
              'ideagensscd': ideagensscd,
              'synth_exp': synth_exp,
+             'local_meteor': local_meteor,
           }
 

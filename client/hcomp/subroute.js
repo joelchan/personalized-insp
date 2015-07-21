@@ -442,7 +442,7 @@ Template.DeleteCluster.onRendered( function() {
     
     $(this.firstNode).click(function(){
         
-            if(confirm("Are you sure you want to delete this element?")){
+            if(confirm("Are you sure you want to delete this label? Any attached ideas will go back into the list on the left")){
                 
                 logger.trace(this.parentNode.parentNode.parentNode.parentNode);
                 var clusterID =  this.parentNode.parentNode.parentNode.parentNode.id;

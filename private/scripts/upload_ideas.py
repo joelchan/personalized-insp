@@ -6,6 +6,7 @@ from ideagens import Idea, User, Prompt, list_to_dict
 import db_params
 import mongohq
 from bson.objectid import ObjectId
+import sys, os
 
 """
 Read in the data
@@ -13,7 +14,8 @@ Let's expect a csv with cols:
 1) id
 2) content
 """
-data_path = "/Users/jchan/Projects/CrowdIdeation/private/scripts/data/remember_names_120.csv"
+filename = sys.argv[2]
+data_path = os.path.join("/Users/jchan/Projects/CrowdIdeation/private/scripts/data/", filename)
 print data_path
 ideas = pd.read_csv(data_path)
 print ideas[:5]
@@ -21,8 +23,9 @@ print ideas[:5]
 """
 Create db connection
 """
-db = mongohq.get_db(db_params.synth_exp)
-db_util = mongohq.Data_Utility('data', db_params.synth_exp)
+db_name = sys.argv[1]
+db = mongohq.get_db(db_params.ALL_DBs[db_name])
+db_util = mongohq.Data_Utility('data', db_params.ALL_DBs[db_name])
 
 """
 Make and upload dummy user
@@ -47,8 +50,8 @@ print "New user that was created: " + str(user)
 """
 Make and upload dummy prompt
 """
-question = "What can you do with the new fabric display technology?"
-title = "Fabric display ideas"
+question = "Dummy"
+title = filename.replace(".csv","")
 prompt = Prompt(question, user, title, 
                 {'_id': str(ObjectId())})
 promptIDs = db_util.insert("prompts", [prompt])

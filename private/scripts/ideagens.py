@@ -139,6 +139,7 @@ class Prompt:
     """
     def __init__(self, question, user, title, data=None):
         self.question = question
+        self.title = title
         self.time = datetime.datetime.now()
         self.userIDs = [user['_id']]
         self.groupIDs = [] # might need groups?

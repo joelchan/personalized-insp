@@ -1,3 +1,7 @@
+.synthesisBox {
+  /*overflow:hidden;*/
+}
+
 #leftSide {
     border:1px solid #444;
     /*margin: 50px;*/
@@ -184,6 +188,7 @@
   position: absolute;
   min-height: 2120px;
   padding-left: 3px;
+  /*overflow:scroll;*/
   
 }
 

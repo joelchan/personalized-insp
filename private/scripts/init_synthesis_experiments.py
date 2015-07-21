@@ -1,7 +1,7 @@
 import numpy as np
 from random import randint
 import pandas as pd
-import math, os, csv, json, nlp
+import math, os, csv, json, nlp, sys
 from scipy.spatial.distance import cosine
 import itertools as it
 from ideagens import ExpSynthSubset, list_to_dict
@@ -322,8 +322,11 @@ def insert_subsets_to_db(subSets, cond, exp):
                                 {'$set': {'partNum': int(h*r)}})    
 
 if __name__ == '__main__':
-    db = mongohq.get_db(db_params.synth_exp)
-    db_util = mongohq.Data_Utility('data', db_params.synth_exp)
+
+    db_name = sys.argv[1]
+
+    db = mongohq.get_db(db_params.ALL_DBs[db_name])
+    db_util = mongohq.Data_Utility('data', db_params.ALL_DBs[db_name])
     experiments = [exp for exp in db.experiments.find({'isSynthesis': True, 'isProcessed': False})]
     print experiments
     # for exp in experiments:

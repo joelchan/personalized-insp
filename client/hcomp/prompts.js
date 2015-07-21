@@ -496,6 +496,11 @@ Template.ExperimentsTab.events({
       $("input#num-parts").val("");
 
     },
+
+    'click .init-synth': function () {
+        logger.debug("clicked init-synth");
+        ExperimentManager.initSynthExp(this._id);
+    },
 });
 
 Template.CrowdExperiment.events({
