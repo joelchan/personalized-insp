@@ -46,6 +46,13 @@ humandatabank = {'url': "ds041327.mongolab.com",
                'pswd': 'j4!g#RV$nAr5&FBq$BK$',
                }
 
+synth_exp = {'url': "ds033097.mongolab.com",
+        'port': 33097,
+        'dbName': 'joelc-ideagens2',
+        'user': 'joelc',
+        'pswd': 'lnC00K=beta{5}'
+        }
+
 # Info for connecting to a local instance of meteor's mongo.
 # Meteor must be running to connect
 local_meteor = {'url': "localhost",
@@ -61,5 +68,7 @@ ALL_DBs = {'ideagens': ideagens,
              'fac_exp': fac_exp,
              'local': local_meteor,
              'ideagensscd': ideagensscd,
+             'synth_exp': synth_exp,
+             'local_meteor': local_meteor,
           }
 

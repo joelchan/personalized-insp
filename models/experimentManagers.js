@@ -171,6 +171,13 @@ ExperimentManager = (function () {
         newCond._id = newCondID;
         Experiments.update({_id: expID},
             {$addToSet: {conditions: newCond}});
+        if (desc == "Treatment") {
+          ExperimentManager.initCondRoutes(newCondID, conditionRouteData.IdeationTreatment);
+        } else if (desc == "Control") {
+          ExperimentManager.initCondRoutes(newCondID, conditionRouteData.IdeationControl);
+        } else {
+          ExperimentManager.initCondRoutes(newCondID, conditionRouteData.Synthesis);
+        }
         return newCond;
     },
 

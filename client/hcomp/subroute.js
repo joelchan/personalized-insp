@@ -115,10 +115,10 @@ Template.IdeaSpace.onRendered(function() {
     
     // set default filters
     var user = Session.get("currentUser");
-    FilterManager.reset("zoomSpaceIdeas", user, "ideas");
-    FilterManager.create("zoomSpaceIdeas", user,
+    FilterManager.reset("displayIdeas", user, "ideas");
+    FilterManager.create("displayIdeas", user,
         "ideas", "zoomSpace", user._id, "ne");
-    setBaseIdeasFilters("zoomSpaceIdeas");
+    setBaseIdeasFilters("displayIdeas");
 
 });
 
@@ -226,15 +226,15 @@ Template.ZoomSpace.onRendered(function () {
                 
                    $('#miniIdeas' + ideaID).css('left', left/25);
                    $('#miniIdeas' + ideaID).css('top', top/25);
-             }
-            
+             } else if (fromCluster(ideaID)) {
             // is it coming from a cluster?
-            if (fromCluster(ideaID)) {
+            // if (fromCluster(ideaID)) {
              // if(Ideas.findOne({_id:ui.helper[0].id}, {fields: {inCluster: true}})) {
                var ideaID  = ui.helper[0].id;
                var ideaObject =  Ideas.find(ideaID).fetch();  
                var cluster  = $(ui.helper[0].parentNode);
                var clusterID = cluster[0].id.split("-").slice(-1)[0];
+               logger.trace("Cluster ID of item being dragged out: " + clusterID);
                // Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true, 'inCluster':false}});
                ClusterFactory.removeIdeaFromCluster(ideaObject[0], Clusters.findOne(clusterID));
                IdeaFactory.updateZoomSpaceFlag(ideaID, "add");
@@ -254,6 +254,8 @@ Template.ZoomSpace.onRendered(function () {
                $('#miniIdeas' + ideaID).css('left', left/25);
                $('#miniIdeas' + ideaID).css('top', top/25);
 
+            } else {
+                logger.warn("Neither from displayIdeas or cluster; rejecting for now!");
             }
         }
     });
@@ -458,7 +460,7 @@ Template.DeleteCluster.onRendered( function() {
     
     $(this.firstNode).click(function(){
         
-            if(confirm("Are you sure you want to delete this element?")){
+            if(confirm("Are you sure you want to delete this label? Any attached ideas will go back into the list on the left")){
                 
                 var clusterID =  this.parentNode.parentNode.parentNode.parentNode.id;
                 logger.trace("cluster ID to delete: " + clusterID)
@@ -540,8 +542,8 @@ var updateClusterFilter = function updateClusterFilter(clusterID, remove) {
 }
 
 fromCluster = function fromCluster(ideaID) {
-    var cluster = Clusters.findOne({ideaIDs: ideaID});
-    if (cluster) {
+    var clusters = Clusters.find({ideaIDs: ideaID}).fetch();
+    if (clusters.length > 0) {
         return true;
     } else {
         return false;
@@ -549,16 +551,27 @@ fromCluster = function fromCluster(ideaID) {
 }
 
 fromDisplayIdeas = function fromDisplayIdeas(ideaID) {
-    var user = Session.get("currentUser");
-    var idea = Ideas.findOne({_id: ideaID});
-    logger.trace(JSON.stringify(idea));
-    var clusters = Clusters.find({_id: {$in: idea.clusterIDs}, userID: user._id, isTrash: false}).fetch();
-    logger.trace(JSON.stringify(clusters));
-    if (clusters.length < 1 && !isInList(user._id, idea.zoomSpace)) {
-        logger.debug("This is coming from displayIdeas");
-        return true;
-    } else {
-        logger.debug("This is not from displayIdeas");
-        return false;
-    }
+    
+    var displayIdeas = FilterManager.performQuery("displayIdeas", Session.get("currentUser"), "ideas").fetch()
+    var fromDisplay = false;
+    displayIdeas.forEach(function(idea) {
+        if (idea._id == ideaID) {
+            logger.debug("This is coming from displayIdeas");
+            fromDisplay = true;
+        }
+    });
+    logger.debug("This is not from displayIdeas");
+    return fromDisplay;
+    // var user = Session.get("currentUser");
+    // var idea = Ideas.findOne({_id: ideaID});
+    // // logger.trace(JSON.stringify(idea));
+    // var clusters = Clusters.find({_id: {$in: idea.clusterIDs}, userID: user._id, isTrash: false}).fetch();
+    // logger.trace(JSON.stringify(clusters));
+    // if (clusters.length < 1 && !isInList(user._id, idea.zoomSpace)) {
+    //     logger.debug("This is coming from displayIdeas");
+    //     return true;
+    // } else {
+    //     logger.debug("This is not from displayIdeas");
+    //     return false;
+    // }
 }
