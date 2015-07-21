@@ -103,8 +103,8 @@
 
 .numIdeas {
     position: fixed;
-    top:370px;
-    margin-top: 35px;
+    top:360px;
+    margin-top: 10px;
     width: 200px;
     height: 40px;
     font-size: 20px;
@@ -131,10 +131,14 @@
 
 #delX{
    color: #FF3604;
+   float:right;
 }
 
 .clustNumIdeas{
-   position: center;
+   /*position: center;*/
+   margin-top: 10px;
+   /*left:40px;*/
+   /*display: inline;*/
 }
 
 .clusterButton {
@@ -144,7 +148,7 @@
     border:1px solid #444;
     border-radius: 12px;
     left: 70px;
-    height: 45px;
+    height: 35px;
     width:  110px;
     color:  #F2F2E8;
     font-size: 16px;
@@ -157,15 +161,12 @@
     width: 200px;
     height: 180px;
     background-color: #def;
+    /*padding-left:16px;*/
  }
 
-.ideaArea{
-  z-index: 999;
-  top: 500px;
-  position: absolute;
-  min-height: 2120px;
-  padding-left: 3px;
-  
+.cluster-ideas {
+  margin-top:30px;
+  margin-left:-19px;
 }
 
 .clusterListElement {
@@ -174,8 +175,35 @@
     border:1px solid #444;  
     width: 200px;
     height: relative;
-    margin-top: 5px;
+    margin-top: 3px;
     background-color:#92E37C ;
+}
+
+.del-cluster {
+  float:right;
+}
+
+ .tagBox {
+    background-color: white;
+    color: black;
+    font-style: bold;
+    font-size: 18px;
+    height: 100px;
+    width: 192px;
+    max-height: 100px;
+    max-width: 192px;
+    /*padding-left: 10px;*/
+    /*margin:auto;*/
+    /*border:2px solid #444;*/
+}
+
+.ideaArea{
+  z-index: 999;
+  top: 390px;
+  position: absolute;
+  min-height: 2120px;
+  padding-left: 3px;
+  
 }
 
 .box {
@@ -226,27 +254,14 @@
     height: relative;
 }
 
-.clustNumIdeas{
-  left:40px;
-  display: inline;
-}
-
 #trashSpace {
   display: inline-block;
   position: absolute;
 }
 
 #downArrow {
-  margin-right: 90px;
-}
-
-.tagBox {
-    background-color: white;
-    color: black;
-    font-style: bold;
-    height: 100px;
-    width:192px;
-    /*border:2px solid #444;*/
+  /*margin-right: 90px;*/
+  float: left;
 }
 
 .ScalingViewPane {

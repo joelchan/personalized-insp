@@ -65,6 +65,7 @@ Template.MiniMap.helpers({
         // return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
     },
      getIdeas: function() {
+        var user = Session.get("currentUser");
         return FilterManager.performQuery("zoomSpaceIdeas", user, "ideas");
         // return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
     },
@@ -82,6 +83,7 @@ Template.MiniMap.helpers({
 Template.IdeaSpace.onRendered(function() {
     
     // set default filters
+    var user = Session.get("currentUser");
     FilterManager.reset("zoomSpaceIdeas", user, "ideas");
     FilterManager.create("zoomSpaceIdeas", user,
         "ideas", "zoomSpace", user._id, "ne");
@@ -193,7 +195,7 @@ Template.ZoomSpace.onRendered(function () {
                var ideaID  = ui.helper[0].id;
                var ideaObject =  Ideas.find(ideaID).fetch();  
                var cluster  = $(ui.helper[0].parentNode);
-               var clusterID = cluster[0].id;
+               var clusterID = cluster[0].id.split("-").slice(-1)[0];
                // Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true, 'inCluster':false}});
                ClusterFactory.removeIdeaFromCluster(ideaObject[0], Clusters.findOne(clusterID));
                IdeaFactory.updateZoomSpaceFlag(ideaID, "add");
@@ -319,6 +321,7 @@ Template.Cluster.onRendered( function() {
         accept:'.zoomSpaceElement, .clusterListElement, .ideaListElement',
         drop: function(event, ui) {
             var currentClusterID = this.id;
+            logger.trace("current cluster ID: " + currentClusterID);
             var ideaID = ui.helper[0].id; 
             var clusterObject = Clusters.find(currentClusterID).fetch();
             var ideaObject =  Ideas.find(ideaID).fetch();            
@@ -369,16 +372,17 @@ Template.Cluster.helpers({
 });
 
 Template.Cluster.events({
-"submit .clusterLabel": function (event, template) {
-    // This function is called when the new task form is submitted
-    var text = event.target.myInput.value;
-    var clusterID = event.target.myInput.id; 
-    clusterID =  clusterID.substring(0, clusterID.length -1);
-    var cluster = Clusters.find(clusterID).fetch();
-    Clusters.update({_id: cluster[0]._id}, {$set: {'name' : text}});
-    event.target.myInput.value = text;
-    return false;
-  }
+    "keyup .clusterLabel": function (event, template) {
+        // This function is called when the new task form is submitted
+        logger.trace(event.target);
+        var text = event.target.value;
+        var clusterID = event.target.id; 
+        // clusterID =  clusterID.substring(0, clusterID.length -1);
+        // var cluster = Clusters.findOne({_id: clusterID});
+        Clusters.update({_id: clusterID}, {$set: {'name' : text}});
+        event.target.value = text;
+        return false;
+      },
 });
 
 Template.ClusterIdeaElement.onRendered(function () {
@@ -404,7 +408,9 @@ Template.DeleteCluster.onRendered( function() {
         
             if(confirm("Are you sure you want to delete this element?")){
                 
-                var clusterID =  this.parentNode.parentNode.id; 
+                logger.trace(this.parentNode.parentNode.parentNode.parentNode);
+                var clusterID =  this.parentNode.parentNode.parentNode.parentNode.id;
+                logger.trace("cluster ID to delete: " + clusterID)
                 var cluster = Clusters.findOne(clusterID);
                 var ideasInCluster = cluster.ideaIDs; 
                 var user = Session.get("currentUser");
@@ -423,7 +429,7 @@ Template.DeleteCluster.onRendered( function() {
 
 /****************************************************************
 *
-* Convenenience functions
+* Convenience functions
 *
 ****************************************************************/
 

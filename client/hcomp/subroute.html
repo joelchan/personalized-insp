@@ -95,18 +95,51 @@
 </template>
 
 <template name="Cluster">
-    <div class="cluster" id="{{_id}}">
-        <form class="clusterLabel">
-            <input type="text" name="myInput" class="tagBox" autocomplete="off" placeholder="{{getClusterName}}" id={{_id}}/>
-            <a data-toggle="dropdown" class="dropdown-toggle" href="#"> <span class="glyphicon glyphicon-chevron-down" id = "downArrow" style="font-size:36px;"></span> </a>
-            <div class="clustNumIdeas"> {{getClusterIdeasCount}} </div>
-                {{ > DeleteCluster }}
-            <div class="dropdown-menu" id ="{{_id}}"> 
+    <div class="cluster container" id="{{_id}}">
+        <div class="clusterLabel row">
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <textarea type="text" name="myInput" wrap="physical" class="tagBox" autocomplete="off" placeholder="Not named yet..." id="{{_id}}">{{getClusterName}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3 col-md-3">
+                    {{#if getClusterIdeasCount}}
+                        <a data-toggle="collapse" data-parent="#cluster-idea-group-{{_id}}" href="#cluster-idea-list-{{_id}}">
+                            <span class="glyphicon glyphicon-chevron-down" id = "downArrow" style="font-size:36px;"></span>
+                        </a> 
+                    {{else}}
+                        <span class="glyphicon glyphicon-chevron-down" id = "downArrow" style="font-size:36px;"></span>
+                    {{/if}}
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <span class="badge clustNumIdeas"> {{getClusterIdeasCount}}</span> ideas
+                </div>
+                <div class="col-xs-2 col-md-2 del-cluster">
+                    {{ > DeleteCluster }}
+                </div>
+            </div>
+            <!-- <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                <span class="glyphicon glyphicon-chevron-down" id = "downArrow" style="font-size:36px;"></span>
+            </a> -->
+            <!-- &nbsp; &nbsp;  <span class="badge clustNumIdeas"> {{getClusterIdeasCount}}</span> ideas -->
+            <!-- <div class="clustNumIdeas"> {{getClusterIdeasCount}} </div> -->
+            <!-- {{ > DeleteCluster }} -->
+            <!-- <div class="dropdown-menu" id ="{{_id}}"> 
                 {{#each getClusterIdeas}} 
                     {{> ClusterIdeaElement}} 
                 {{/each}} 
+            </div> -->
+        </div>
+        <div class="cluster-ideas row">
+            <div id="cluster-idea-group-{{_id}}">
+                <div id="cluster-idea-list-{{_id}}" class="collapse">
+                    {{#each getClusterIdeas}} 
+                        {{> ClusterIdeaElement}} 
+                    {{/each}} 
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </template>
 
