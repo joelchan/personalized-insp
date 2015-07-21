@@ -146,6 +146,10 @@
     background-color: #217EFF;
 }
 
+#addCluster {
+  cursor:pointer;
+}
+
 #instructions {
   /*position:fixed;*/
   left:80px;
@@ -153,6 +157,7 @@
   font-size:24px;
   font-weight: bold;
   color:#9C9C9C;
+  cursor: pointer;
 }
 
 #finished {

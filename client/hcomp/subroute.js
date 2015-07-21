@@ -161,7 +161,7 @@ Template.IdeaListElement.onRendered(function () {
 });
 
 Template.InstantiateCluster.events({
-    'click .clusterButton' : function(e, ui) {
+    'click #addCluster' : function(e, ui) {
         var user   = Session.get('currentUser');
         var prompt = Session.get('currentPrompt');
         var newCluster = ClusterFactory.create(user, prompt, null);        
