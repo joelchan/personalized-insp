@@ -6,19 +6,12 @@ var global = 1;
 var clusterTop = 0;
 var clusterLeft = 0;
 
-// <<<<<<< HEAD
-Template.ZoomSpace.helpers({
-    getZoomSpaceIdeas: function() {
-        // return Ideas.find({inZoomSpace: true, inCluster:false}, {fields: {inZoomSpace: 0,inCluster: 0}});        
-        return FilterManager.performQuery("zoomSpaceIdeas", Session.get("currentUser"), "ideas");
-    },
+/****************************************************************
+*
+* MASTER template rendering setup, helpers and events
+*
+****************************************************************/
 
-    getClusters: function() {
-        var user = Session.get("currentUser");
-        return Clusters.find({userID: user._id, isTrash: false});
-    },
-});
-     
 Template.SubrouteSandbox.onRendered(function () {
 $('.ScalingViewPane').css('top', 75); 
 $('.ScalingViewPane').css('left', 50); 
@@ -45,7 +38,12 @@ $('.ScalingViewPane').css('left', 50);
     });
 });
 
-// <<<<<<< HEAD
+/****************************************************************
+*
+* MINIMAP template setup, helpers and events
+*
+****************************************************************/
+
 Template.MiniMap.helpers({
     numIdeasTotal: function() {
         var part = Session.get("currentParticipant");
@@ -59,43 +57,98 @@ Template.MiniMap.helpers({
         }
         
     },
-    getNumIdeas: function () {
-        var remainingIdeas = FilterManager.performQuery("remainingIdeas", Session.get("currentUser"), "ideas");
-        return remainingIdeas.count();
+    getRemainingIdeas: function () {
+        var user = Session.get("currentUser");
+        var numDisplay = FilterManager.performQuery("displayIdeas", user, "ideas").count();
+        var numZoom = FilterManager.performQuery("zoomSpaceIdeas", user, "ideas").count();
+        return numDisplay + numZoom;
         // return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
     },
      getIdeas: function() {
-         return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
+        return FilterManager.performQuery("zoomSpaceIdeas", user, "ideas");
+        // return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
     },
     getClusters: function() {
         return Clusters.find();
     },
 });
 
+/****************************************************************
+*
+* IDEASPACE template rendering setup, helpers and events
+*
+****************************************************************/
+
+Template.IdeaSpace.onRendered(function() {
+    
+    // set default filters
+    FilterManager.reset("zoomSpaceIdeas", user, "ideas");
+    FilterManager.create("zoomSpaceIdeas", user,
+        "ideas", "zoomSpace", user._id, "ne");
+    setBaseIdeasFilters("zoomSpaceIdeas");
+
+});
+
+Template.IdeaSpace.helpers({ 
+    getNumIdeas: function () {
+        return FilterManager.performQuery("remainingIdeas", Session.get("currentUser"), "ideas").count();
+    }, 
+    displayIdeas: function() {             
+        return FilterManager.performQuery("displayIdeas", Session.get("currentUser"), "ideas");
+        // return Ideas.find({inCluster:false,inZoomSpace: false}, {fields: {inZoomSpace: 0,inCluster:0}});       
+    },
+});
+
+/****************************************************************
+*
+* IDEALIST ELEMENT template rendering setup, helpers and events
+*
+****************************************************************/
+
+Template.IdeaListElement.onRendered(function () {
+    
+    $(this.firstNode).on('mousedown touchstart', function(e) {
+        e.stopPropagation();
+    });
+        
+ $(this.firstNode).draggable({ 
+        zIndex: 50,        
+        create: function(event, ui) {
+        },
+        drag: function(e, ui) {
+        },
+        start: function(e, ui) {
+        }, 
+        stop: function (event, ui) {   
+        },
+    });
+});
+
+Template.InstantiateCluster.events({
+    'click .clusterButton' : function(e, ui) {
+        var user   = Session.get('currentUser');
+        var prompt = Session.get('currentPrompt');
+        var newCluster = ClusterFactory.create(user, prompt, null);        
+        updateClusterFilter(newCluster._id);
+        $("#" +newCluster._id).css('top' , ((clusterTop*-1)/global) + 2850);
+        $("#" +newCluster._id).css('left', ((clusterLeft*-1)/global) + 2900);
+    },
+});
+
+/****************************************************************
+*
+* ZOOMSPACE template rendering setup, helpers and events
+*
+****************************************************************/
+
 Template.ZoomSpace.onRendered(function () {
     
     var user = Session.get("currentUser");
 
     FilterManager.reset("zoomSpaceIdeas", user, "ideas");
-    
-    // init cluster filters
-    var clusters = Clusters.find({userID: user._id}).fetch();
-    clusters.forEach(function(cluster) {
-        FilterManager.create("zoomSpaceIdeas", user,
-        "ideas", "clusterIDs", cluster._id, "ne");
-    });
-    
-    // FilterManager.create("zoomSpaceIdeas", user,
-    //     "ideas", "inZoomSpace", true);
     FilterManager.create("zoomSpaceIdeas", user,
         "ideas", "zoomSpace", user._id);
-
-    // add synth subset filters (if from experiment)
-    var part = Session.get("currentParticipant");
-    if (part) {
-        logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
-        addSynthIdeasFilter("zoomSpaceIdeas", part);
-    }
+    setBaseIdeasFilters("zoomSpaceIdeas");
 
      $(this.firstNode).on('mousedown touchstart', function(e) {
                e.stopPropagation();
@@ -160,70 +213,26 @@ Template.ZoomSpace.onRendered(function () {
     });
 });
 
-// <div id="zoom-{{_id}}">
-// ui.helper[0].id.split("-")[1]
+Template.ZoomSpace.helpers({
+    getZoomSpaceIdeas: function() {
+        // return Ideas.find({inZoomSpace: true, inCluster:false}, {fields: {inZoomSpace: 0,inCluster: 0}});        
+        return FilterManager.performQuery("zoomSpaceIdeas", Session.get("currentUser"), "ideas");
+    },
 
-Template.IdeaSpace.onRendered(function() {
-    
-    var user = Session.get("currentUser");
-    // SET DEFAULT FILTERS
-    // displayIdeas idea filters
-    FilterManager.reset("displayIdeas", user, "ideas");
-
-    // for getting the count of ideas remaining
-    FilterManager.reset("remainingIdeas", user, "ideas");
-    
-    // init cluster filters
-    var clusters = Clusters.find({userID: user._id}).fetch();
-    clusters.forEach(function(cluster) {
-        FilterManager.create("displayIdeas", user,
-            "ideas", "clusterIDs", cluster._id, "ne");
-        FilterManager.create("remainingIdeas", user,
-            "ideas", "clusterIDs", cluster._id, "ne");
-    });
-    
-    // FilterManager.create("displayIdeas", user,
-    //     "ideas", "inZoomSpace", false);
-    FilterManager.create("displayIdeas", user,
-        "ideas", "zoomSpace", user._id, "ne");
-
-    var part = Session.get("currentParticipant");
-    if (part) {
-        logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
-        addSynthIdeasFilter("displayIdeas", part);
-        addSynthIdeasFilter("remainingIdeas", part);
-    }
-
-});
-
-Template.IdeaSpace.helpers({ 
-    getNumIdeas: function () {
-        return FilterManager.performQuery("remainingIdeas", Session.get("currentUser"), "ideas").count();
-    }, 
-    displayIdeas: function() {             
-        return FilterManager.performQuery("displayIdeas", Session.get("currentUser"), "ideas");
-        // return Ideas.find({inCluster:false,inZoomSpace: false}, {fields: {inZoomSpace: 0,inCluster:0}});       
+    getClusters: function() {
+        var user = Session.get("currentUser");
+        return Clusters.find({userID: user._id, isTrash: false});
     },
 });
 
-Template.IdeaListElement.onRendered(function () {
-    
-    $(this.firstNode).on('mousedown touchstart', function(e) {
-        e.stopPropagation();
-    });
-        
- $(this.firstNode).draggable({ 
-        zIndex: 50,        
-        create: function(event, ui) {
-        },
-        drag: function(e, ui) {
-        },
-        start: function(e, ui) {
-        }, 
-        stop: function (event, ui) {   
-        },
-    });
-});
+// <div id="zoom-{{_id}}">
+// ui.helper[0].id.split("-")[1]
+
+/****************************************************************
+*
+* ZOOMSPACE ELEMENT template rendering setup, helpers and events
+*
+****************************************************************/
 
 Template.ZoomSpaceElement.onRendered(function () {
     
@@ -269,95 +278,11 @@ Template.ZoomSpaceElement.onRendered(function () {
     });
 });
 
-
-Template.InstantiateCluster.events({
-    'click .clusterButton' : function(e, ui) {
-        var user   = Session.get('currentUser');
-        var prompt = Session.get('currentPrompt');
-        var newCluster = ClusterFactory.create(user, prompt, null);        
-        updateClusterFilter(newCluster._id);
-        $("#" +newCluster._id).css('top' , ((clusterTop*-1)/global) + 2850);
-        $("#" +newCluster._id).css('left', ((clusterLeft*-1)/global) + 2900);
-    },
-});
-
-Template.DeleteCluster.onRendered( function() {
-    
-    $(this.firstNode).click(function(){
-        
-            if(confirm("Are you sure you want to delete this element?")){
-                
-                var clusterID =  this.parentNode.parentNode.id; 
-                var cluster = Clusters.findOne(clusterID);
-                var ideasInCluster = cluster.ideaIDs; 
-                var user = Session.get("currentUser");
-                ClusterFactory.trash(cluster);
-                updateClusterFilter(cluster._id, "remove");
-                for (var i = ideasInCluster.length - 1; i >= 0; i--) {   
-                    // Ideas.update({_id: ideasInCluster[i]}, 
-                        // {$set: {'inZoomSpace':false, 'inCluster':false}});
-                    // IdeaFactory.toggleZoomSpaceFlag(ideaID, user._id);
-                    IdeaFactory.updateZoomSpaceFlag(ideasInCluster[i], "remove");
-                    // Ideas.update({_id: ideasInCluster[i]}, {$set: {'inCluster': false, 'inZoomSpace':false}});
-                }; 
-            }
-    });
-});
-
-Template.Cluster.helpers({
-    getIdeas: function() {
-        return Ideas.find();
-    },
-    getClusterIdeas: function() {  
-        var targetCluster = Clusters.findOne(this._id);
-        //logger.trace("target cluster " + JSON.stringify(targetCluster));
-        IdeaIDs = targetCluster.ideaIDs; 
-        // logger.debug("Idea IDS "  + IdeaIDs)
-        //{ field: { $in: [<value1>, <value2>, ... <valueN> ] } }
-        return Ideas.find({_id:{$in:IdeaIDs}});  // Iterated over IdeaIDs 
-    },
-    getClusterName: function() {
-        return Clusters.findOne({_id:this._id}).name; 
-    },
-    getClusterIdeasCount: function() {  
-        var targetCluster = Clusters.findOne(this._id);
-        //logger.trace("target cluster " + JSON.stringify(targetCluster));
-        IdeaIDs = targetCluster.ideaIDs; 
-        // logger.debug("Idea IDS "  + IdeaIDs)
-        //{ field: { $in: [<value1>, <value2>, ... <valueN> ] } }
-        return Ideas.find({_id:{$in:IdeaIDs}}).count();  // Iterated over IdeaIDs 
-    },  
-});
-
-Template.ClusterIdeaElement.onRendered(function () {
-     
-     $(this.firstNode).on('mousedown touchstart', function(e) {
-        e.stopPropagation();
-    });
-
-   $(this.firstNode).draggable({
-        //containment: '.synth  esisBox',
-        //revert: true,
-        zIndex: 50,
-        drag: function(e, ui) {
-            // var width = $(this).css('width');
-            // $(ui.helper[0]).css('width', width);          
-        },
-    });
-});
-
-Template.Cluster.events({
-"submit .clusterLabel": function (event, template) {
-    // This function is called when the new task form is submitted
-    var text = event.target.myInput.value;
-    var clusterID = event.target.myInput.id; 
-    clusterID =  clusterID.substring(0, clusterID.length -1);
-    var cluster = Clusters.find(clusterID).fetch();
-    Clusters.update({_id: cluster[0]._id}, {$set: {'name' : text}});
-    event.target.myInput.value = text;
-    return false;
-  }
-});
+/****************************************************************
+*
+* CLUSTER template rendering setup, helpers and events
+*
+****************************************************************/
 
 Template.Cluster.onRendered( function() {   
     
@@ -418,15 +343,115 @@ Template.Cluster.onRendered( function() {
     });
 });
 
-Template.MiniMap.helpers({
-     getIdeas: function() {
-         return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
+Template.Cluster.helpers({
+    getIdeas: function() {
+        return Ideas.find();
     },
+    getClusterIdeas: function() {  
+        var targetCluster = Clusters.findOne(this._id);
+        //logger.trace("target cluster " + JSON.stringify(targetCluster));
+        IdeaIDs = targetCluster.ideaIDs; 
+        // logger.debug("Idea IDS "  + IdeaIDs)
+        //{ field: { $in: [<value1>, <value2>, ... <valueN> ] } }
+        return Ideas.find({_id:{$in:IdeaIDs}});  // Iterated over IdeaIDs 
+    },
+    getClusterName: function() {
+        return Clusters.findOne({_id:this._id}).name; 
+    },
+    getClusterIdeasCount: function() {  
+        var targetCluster = Clusters.findOne(this._id);
+        //logger.trace("target cluster " + JSON.stringify(targetCluster));
+        IdeaIDs = targetCluster.ideaIDs; 
+        // logger.debug("Idea IDS "  + IdeaIDs)
+        //{ field: { $in: [<value1>, <value2>, ... <valueN> ] } }
+        return Ideas.find({_id:{$in:IdeaIDs}}).count();  // Iterated over IdeaIDs 
+    },  
 });
 
-var addSynthIdeasFilter = function addSynthIdeasFilter(filterName, part) {
+Template.Cluster.events({
+"submit .clusterLabel": function (event, template) {
+    // This function is called when the new task form is submitted
+    var text = event.target.myInput.value;
+    var clusterID = event.target.myInput.id; 
+    clusterID =  clusterID.substring(0, clusterID.length -1);
+    var cluster = Clusters.find(clusterID).fetch();
+    Clusters.update({_id: cluster[0]._id}, {$set: {'name' : text}});
+    event.target.myInput.value = text;
+    return false;
+  }
+});
+
+Template.ClusterIdeaElement.onRendered(function () {
+     
+     $(this.firstNode).on('mousedown touchstart', function(e) {
+        e.stopPropagation();
+    });
+
+   $(this.firstNode).draggable({
+        //containment: '.synth  esisBox',
+        //revert: true,
+        zIndex: 50,
+        drag: function(e, ui) {
+            // var width = $(this).css('width');
+            // $(ui.helper[0]).css('width', width);          
+        },
+    });
+});
+
+Template.DeleteCluster.onRendered( function() {
     
-    logger.debug("Calling addSynthIdeasFilter for " + filterName);
+    $(this.firstNode).click(function(){
+        
+            if(confirm("Are you sure you want to delete this element?")){
+                
+                var clusterID =  this.parentNode.parentNode.id; 
+                var cluster = Clusters.findOne(clusterID);
+                var ideasInCluster = cluster.ideaIDs; 
+                var user = Session.get("currentUser");
+                ClusterFactory.trash(cluster);
+                updateClusterFilter(cluster._id, "remove");
+                for (var i = ideasInCluster.length - 1; i >= 0; i--) {   
+                    // Ideas.update({_id: ideasInCluster[i]}, 
+                        // {$set: {'inZoomSpace':false, 'inCluster':false}});
+                    // IdeaFactory.toggleZoomSpaceFlag(ideaID, user._id);
+                    IdeaFactory.updateZoomSpaceFlag(ideasInCluster[i], "remove");
+                    // Ideas.update({_id: ideasInCluster[i]}, {$set: {'inCluster': false, 'inZoomSpace':false}});
+                }; 
+            }
+    });
+});
+
+/****************************************************************
+*
+* Convenenience functions
+*
+****************************************************************/
+
+var setBaseIdeasFilters = function setBaseIdeasFilters(filterName) {
+
+    var user = Session.get("currentUser");
+
+    FilterManager.create(filterName, user, 
+        "ideas", "promptID", Session.get("currentPrompt")._id);
+    
+    // init cluster filters
+    var clusters = Clusters.find({userID: user._id}).fetch();
+    clusters.forEach(function(cluster) {
+        FilterManager.create(filterName, user,
+        "ideas", "clusterIDs", cluster._id, "ne");
+    });
+    
+    // add synth subset filters (if from experiment)
+    var part = Session.get("currentParticipant");
+    if (part) {
+        logger.debug("On synthesis experiment workflow; updating " + filterName + " filter");
+        addSynthExpFilter(filterName, part);
+    }
+}
+
+var addSynthExpFilter = function addSynthExpFilter(filterName, part) {
+    
+    logger.debug("Calling addSynthExpFilter for " + filterName);
     
     var subset = SynthSubsets.findOne({_id: part.misc.subsetID});
     logger.trace(JSON.stringify(subset));
