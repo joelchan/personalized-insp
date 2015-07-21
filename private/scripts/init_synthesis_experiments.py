@@ -322,8 +322,8 @@ def insert_subsets_to_db(subSets, cond, exp):
                                 {'$set': {'partNum': int(h*r)}})    
 
 if __name__ == '__main__':
-    db = mongohq.get_db(db_params.local_meteor)
-    db_util = mongohq.Data_Utility('data', db_params.local_meteor)
+    db = mongohq.get_db(db_params.synth_exp)
+    db_util = mongohq.Data_Utility('data', db_params.synth_exp)
     experiments = [exp for exp in db.experiments.find({'isSynthesis': True, 'isProcessed': False})]
     print experiments
     # for exp in experiments:

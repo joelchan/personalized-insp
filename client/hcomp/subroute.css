@@ -244,10 +244,10 @@
   list-style-type: none;
   border: 2px solid #444;
   width: 200px;
-  height: 85px;
+  min-height: 85px;
   margin-top: 5px;
   background-color: #FFFC9B;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 
 #mock{
@@ -264,9 +264,9 @@
     list-style-type: none;
     border:2px solid #444;
     width: 225px;
-    height: 75px;
+    min-height: 75px;
     margin-top: 5px;
-    overflow: hidden;
+    /*overflow: hidden;*/
     background-color: #FFFC9B;
 }
  

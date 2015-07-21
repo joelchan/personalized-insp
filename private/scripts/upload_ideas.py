@@ -13,7 +13,7 @@ Let's expect a csv with cols:
 1) id
 2) content
 """
-data_path = "/Users/jchan/Projects/CrowdIdeation/private/scripts/data/fabric_display_400_rand.csv"
+data_path = "/Users/jchan/Projects/CrowdIdeation/private/scripts/data/remember_names_120.csv"
 print data_path
 ideas = pd.read_csv(data_path)
 print ideas[:5]
@@ -21,13 +21,13 @@ print ideas[:5]
 """
 Create db connection
 """
-db = mongohq.get_db(db_params.local_meteor)
-db_util = mongohq.Data_Utility('data', db_params.local_meteor)
+db = mongohq.get_db(db_params.synth_exp)
+db_util = mongohq.Data_Utility('data', db_params.synth_exp)
 
 """
 Make and upload dummy user
 """
-user = User("Dummy user 2", "Brainstorm user", 
+user = User("Joel", "Brainstorm user", 
                 {'_id': str(ObjectId())})
 userIDs = db_util.insert("myUsers", [user])
 # print userIDs
