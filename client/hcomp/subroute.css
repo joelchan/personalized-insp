@@ -26,14 +26,7 @@
     width: 240px;
 }
 
-.zoomControl {
-    z-index: 999;
-    position: fixed;
-    display: inline;
-    padding-left: 20px;
-    top: 35%;
-    
-}
+
 #small {
     position: absolute;
 }
@@ -101,22 +94,20 @@
     background-color:#2139F2;
 }
 
-.numIdeas {
-    position: fixed;
-    top:360px;
-    margin-top: 10px;
-    width: 200px;
-    height: 40px;
-    font-size: 20px;
-    border-radius: 8px;
-}
-
 .dropdown-toggle {
     
 }
 
 .zoom-control-buttons {
   font-size: 20px;
+}
+
+.zoomControl {
+    z-index: 999;
+    position: fixed;
+    display: inline;
+    padding-left: 20px;
+    top: 35%;
 }
 
 #zBar{
@@ -154,7 +145,44 @@
     font-size: 16px;
     background-color: #217EFF;
 }
+
+#instructions {
+  /*position:fixed;*/
+  left:80px;
+  top: -20px;
+  font-size:24px;
+  font-weight: bold;
+  color:#9C9C9C;
+}
+
+#finished {
+  font-size: 16px;
+  font-family: sans-serif;
+  left:75px;
+  top: 355px;
+  position:fixed;
+}
+
+.numIdeas {
+    position: fixed;
+    top:380px;
+    margin-top: 10px;
+    width: 200px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 8px;
+}
  
+.ideaArea{
+  z-index: 999;
+  top: 400px;
+  position: absolute;
+  min-height: 2120px;
+  padding-left: 3px;
+  
+}
+
+
  .cluster {
     position: absolute;
     border: 4px solid #000000;
@@ -197,15 +225,6 @@
     /*border:2px solid #444;*/
 }
 
-.ideaArea{
-  z-index: 999;
-  top: 390px;
-  position: absolute;
-  min-height: 2120px;
-  padding-left: 3px;
-  
-}
-
 .box {
   position: relative;
   top:  3000px;
@@ -230,7 +249,7 @@
   z-index: 999;
   border-bottom: 2px solid #000000;
   position: fixed;
-  height: 385px;
+  height: 400px;
   width: 237px;
   background-color: white;
 }

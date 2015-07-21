@@ -19,16 +19,19 @@
 <template name="MiniMap">
     <div class="zoomControl">
         <div id="zOut">
-            <span class="glyphicon glyphicon-zoom-out zoom-control-buttons"> </span>
+            <span class="glyphicon glyphicon-zoom-out zoom-control-buttons"></span>
         </div>
         <div id="zBar">
             <input type="range" class="zoom-range" step="0.05" min="0.5" max="1">
         </div>
-        <div id="zIn"><span class="glyphicon glyphicon-zoom-in" style="font-size:30px;"> </span></div>
+        <div id="zIn">
+            <span class="glyphicon glyphicon-zoom-in zoom-control-buttons"></span>
+        </div>
         {{ > InstantiateCluster}}
+        {{ > Finished }}
         <div class="numIdeas">
-            {{numIdeasTotal}} total ideas<br/>
-            {{getRemainingIdeas}} left to cluster
+            {{numIdeasTotal}} ideas to process<br/>
+            {{getRemainingIdeas}} to go
         </div>
     </div>
     <div class="map">
@@ -76,7 +79,14 @@
 
 <template name="InstantiateCluster">
     <div class="clusterButton">
-        <span id="addCluster" style="font-size:18px;">New Cluster</span>
+        <span id="addCluster" style="font-size:18px;">New Pattern</span>
+        <a><span class="glyphicon glyphicon-question-sign" id="instructions"></span></a>
+    </div>
+</template>
+
+<template name="Finished">
+    <div class="finishedButton">
+        <button id="finished" class="btn-success">I'm finished!</button>
     </div>
 </template>
 

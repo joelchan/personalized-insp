@@ -44,6 +44,40 @@ $('.ScalingViewPane').css('left', 50);
 *
 ****************************************************************/
 
+Template.MiniMap.onRendered(function () {
+
+    var instructions = "<h1>Instructions</h1>" +
+                        "<p>Your job is to identify patterns of solutions in the ideas below. " +
+                            "Try to identify patterns that might be useful to others who want to generate ideas for the same/related problem." +
+                        "<p>Here's how you will do this:</p>" +
+                        "<ol>" +
+                            "<li>Drag ideas from the list into the canvas on the right. " +
+                            "You can move them around however you like to make sense of them (e.g., group them with other ideas).</li>" +
+                            "<li>To describe a group's pattern:" +
+                                "<ol>" +
+                                    "<li>Click on the New Pattern button. A new pattern label will appear on the canvas.</li>" +
+                                    "<li>Apply the label to one or more ideas by dragging those ideas onto the label. " +
+                                        "The ideas will change color to green and be attached to the label.</li>" +
+                                "</ol>" +
+                            "</li>" +
+                            "<li>You may rename or delete pattern labels, or move ideas from one label to another or back onto the canvas.</li>" +
+                            "<li>You must label all ideas to finish this HIT. " +
+                                "The number of ideas left (i.e., not labeled) is shown below.</li>" +
+                        "</ol>" +
+                        "<p>Click the question mark icon again to close this message. Good luck!</p>"
+
+    $('#instructions').tooltipster({
+        content: $(instructions),
+        trigger: 'click',
+        // autoClose: false,
+        // hideOnClick: true,
+        position: 'right',
+        speed: 200,
+        maxWidth: 400
+    })
+
+});
+
 Template.MiniMap.helpers({
     numIdeasTotal: function() {
         var part = Session.get("currentParticipant");
