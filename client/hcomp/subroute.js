@@ -85,8 +85,10 @@ Template.ZoomSpace.onRendered(function () {
         "ideas", "clusterIDs", cluster._id, "ne");
     });
     
+    // FilterManager.create("zoomSpaceIdeas", user,
+    //     "ideas", "inZoomSpace", true);
     FilterManager.create("zoomSpaceIdeas", user,
-        "ideas", "inZoomSpace", true);
+        "ideas", "zoomSpace", user._id);
 
     // add synth subset filters (if from experiment)
     var part = Session.get("currentParticipant");
@@ -108,7 +110,7 @@ Template.ZoomSpace.onRendered(function () {
             pZMLeftOffset  =  $('.panZoomFrame').offset().left;   
             
             var ideaID = ui.helper[0].id;
-
+            var user = Session.get("currentUser");
             // is it coming from the displayIdeas list?
             if(fromDisplayIdeas(ideaID)) {
             // if(Ideas.findOne({_id:ui.helper[0].id}, {fields: {'inZoomSpace':false, 'inCluster':false}})) {     
@@ -116,7 +118,9 @@ Template.ZoomSpace.onRendered(function () {
                    var ideaObject =  Ideas.find(ideaID).fetch();            
                    //var cAtDrop = $('.ideaListElement').position({'top':event.pageY, 'left': event.pageX});    
                    //logger.trace("TOP " + cAtDrop.top);
-                   Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true}});
+                   // Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true}});
+                   // IdeaFactory.toggleZoomSpaceFlag(ideaID, user._id);
+                   IdeaFactory.updateZoomSpaceFlag(ideaID, "add");
                    // var factor = ((1 / global) -1);
                    var elementID = ui.helper[0].id;
                    var left = (((ideaLeftOffset/global) - (pZMLeftOffset/global)));
@@ -137,8 +141,9 @@ Template.ZoomSpace.onRendered(function () {
                var ideaObject =  Ideas.find(ideaID).fetch();  
                var cluster  = $(ui.helper[0].parentNode);
                var clusterID = cluster[0].id;
-               Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true, 'inCluster':false}});
+               // Ideas.update({_id: ideaObject[0]._id}, {$set: {'inZoomSpace': true, 'inCluster':false}});
                ClusterFactory.removeIdeaFromCluster(ideaObject[0], Clusters.findOne(clusterID));
+               IdeaFactory.updateZoomSpaceFlag(ideaID, "add");
                // logger.trace("Shouldnt be here ");
                var elementID = ui.helper[0].id;
                var left = (((ideaLeftOffset/global) - (pZMLeftOffset/global)));
@@ -154,6 +159,9 @@ Template.ZoomSpace.onRendered(function () {
         }
     });
 });
+
+// <div id="zoom-{{_id}}">
+// ui.helper[0].id.split("-")[1]
 
 Template.IdeaSpace.onRendered(function() {
     
@@ -174,8 +182,11 @@ Template.IdeaSpace.onRendered(function() {
             "ideas", "clusterIDs", cluster._id, "ne");
     });
     
+    // FilterManager.create("displayIdeas", user,
+    //     "ideas", "inZoomSpace", false);
     FilterManager.create("displayIdeas", user,
-        "ideas", "inZoomSpace", false);
+        "ideas", "zoomSpace", user._id, "ne");
+
     var part = Session.get("currentParticipant");
     if (part) {
         logger.debug("On synthesis experiment workflow; updating displayIdeas filter");
@@ -279,11 +290,14 @@ Template.DeleteCluster.onRendered( function() {
                 var clusterID =  this.parentNode.parentNode.id; 
                 var cluster = Clusters.findOne(clusterID);
                 var ideasInCluster = cluster.ideaIDs; 
+                var user = Session.get("currentUser");
                 ClusterFactory.trash(cluster);
                 updateClusterFilter(cluster._id, "remove");
                 for (var i = ideasInCluster.length - 1; i >= 0; i--) {   
-                    Ideas.update({_id: ideasInCluster[i]}, 
-                        {$set: {'inZoomSpace':false, 'inCluster':false}});
+                    // Ideas.update({_id: ideasInCluster[i]}, 
+                        // {$set: {'inZoomSpace':false, 'inCluster':false}});
+                    // IdeaFactory.toggleZoomSpaceFlag(ideaID, user._id);
+                    IdeaFactory.updateZoomSpaceFlag(ideasInCluster[i], "remove");
                     // Ideas.update({_id: ideasInCluster[i]}, {$set: {'inCluster': false, 'inZoomSpace':false}});
                 }; 
             }
@@ -453,11 +467,12 @@ fromCluster = function fromCluster(ideaID) {
 }
 
 fromDisplayIdeas = function fromDisplayIdeas(ideaID) {
+    var user = Session.get("currentUser");
     var idea = Ideas.findOne({_id: ideaID});
     logger.trace(JSON.stringify(idea));
-    var clusters = Clusters.find({_id: {$in: idea.clusterIDs}, userID: Session.get("currentUser")._id, isTrash: false}).fetch();
+    var clusters = Clusters.find({_id: {$in: idea.clusterIDs}, userID: user._id, isTrash: false}).fetch();
     logger.trace(JSON.stringify(clusters));
-    if (clusters.length < 1 && idea.inZoomSpace == false) {
+    if (clusters.length < 1 && !isInList(user._id, idea.zoomSpace)) {
         logger.debug("This is coming from displayIdeas");
         return true;
     } else {

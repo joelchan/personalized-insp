@@ -99,11 +99,23 @@ IdeaFactory = (function() {
     removeAmount : function (amount) {
     for(var i  =  0; i < amount; i++ ){ IdeaFactory.remove(Ideas.findOne());}  
     }, 
-    updateZoomSpaceFlag: function(idea, flag, user) {
-     /********************************************************************
-     * Update the boolean zoomspace flag for this idea for this user
-     *
-     ********************************************************************/ 
+    updateZoomSpaceFlag: function(ideaID, operation) {
+     /**************************************************************
+       * Update whether a given idea is in the zoom space for the current user
+       * @Params
+       *    ideaID (string) - id of the idea to be updated
+       *    operation (string) - either "add" or "remove")
+       * ***********************************************************/
+      var idea = Ideas.findOne({_id: ideaID});
+      var userID = Session.get("currentUser")._id;
+      if (operation == "add") {
+        Ideas.update({_id: ideaID}, {$addToSet: {zoomSpace: userID}});
+      } else if (operation == "remove") {
+        Ideas.update({_id: ideaID}, {$pull: {zoomSpace: userID}});
+      } else {
+        // default to add
+        Ideas.update({_id: ideaID}, {$addToSet: {zoomSpace: userID}});
+      }
     },
 
   };
