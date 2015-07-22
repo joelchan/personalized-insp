@@ -380,15 +380,23 @@ Template.Cluster.onRendered( function() {
             var clusterObject = Clusters.find(currentClusterID).fetch();
             var ideaObject =  Ideas.find(ideaID).fetch();            
             
+            // make sure it's not already in the cluster
             if($.inArray(ideaID, clusterObject[0].ideaIDs) == -1) {
                 Ideas.update({_id: ideaObject[0]._id}, {$set: {'inCluster': true, 'inZoomSpace':false}});
                 ClusterFactory.insertIdeaToCluster(ideaObject[0], clusterObject[0]);              
             } 
             
+            // if it's already in another cluster belong to the user, remove it
             if(ideaObject[0].clusterIDs.length > 1) {
                logger.debug("Array of clusters"  + ideaObject[0].clusterIDs);     
                var prevCluster = Clusters.find(ideaObject[0].clusterIDs[0]).fetch();
-               ClusterFactory.removeIdeaFromCluster(ideaObject[0], prevCluster[0]);
+               if (prevCluster.userID == Session.get("currentUser")._id) {
+                    logger.debug("Removing from user's previous cluster with id: " + prevCluster._id);
+                    ClusterFactory.removeIdeaFromCluster(ideaObject[0], prevCluster[0]); 
+               } else {
+                    logger.debug("Not previously in user's clusters");
+               }
+               
             }
         }
     });    
