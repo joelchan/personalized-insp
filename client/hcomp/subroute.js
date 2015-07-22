@@ -12,8 +12,8 @@ var clusterLeft = 0;
 ****************************************************************/
 
 Template.SubrouteSandbox.onRendered(function () {
-$('.ScalingViewPane').css('top', 75); 
-$('.ScalingViewPane').css('left', 50); 
+$('.ScalingViewPane').css('top', 84); 
+$('.ScalingViewPane').css('left', 76); 
         this.$(".panZoomFrame").panzoom({
          minScale: .3,
          increment: 0.01,
@@ -30,8 +30,8 @@ $('.ScalingViewPane').css('left', 50);
         //$('.zoomSpaceElement').css('left', transform[0]);
         $('.ScalingViewPane').css('top', (((transform[5])/25)* -1) + 75); 
         $('.ScalingViewPane').css('left', (((transform[4])/25)* -1) + 50); 
-        $('.ScalingViewPane').css('width', 100 * transform[0]); 
-        $('.ScalingViewPane').css('height', 50 * transform[0]); 
+        $('.ScalingViewPane').css('width', 48 * transform[0]); 
+        $('.ScalingViewPane').css('height', 32 * transform[0]); 
     });
 });
 
@@ -162,14 +162,14 @@ Template.InstantiateCluster.events({
         var user   = Session.get('currentUser');
         var prompt = Session.get('currentPrompt');
         var newCluster = ClusterFactory.create(user, prompt, null);        
+        var tc = (clusterTop*-1/global) + 2750;
+        var lc = (clusterLeft*-1/global) + 3150;
+        var newPos = {"top": tc, "left": lc};
         updateClusterFilter(newCluster._id);
-        
-        $("#" +newCluster._id).css('top' , ((clusterTop*-1)/global) + 2850);
-        $("#" +newCluster._id).css('left', ((clusterLeft*-1)/global) + 2900);
-        
+        ZoomManager.updatePosition(newCluster._id, "Clusters", newPos, Session.get("currentUser"));
         $("#miniCluster"+ newCluster._id).css('top' , (((clusterTop*-1)/global) + 2500)/25);
         $("#miniCluster"+ newCluster._id).css('left', (((clusterLeft*-1)/global) + 2500)/25);
-
+        //logger.trace("ClusterTop :" + clusterTop);
     },
 });
 

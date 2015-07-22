@@ -42,7 +42,7 @@ ZoomManager = (function() {
             if (zoomPosition) {
                 return zoomPosition.position;    
             } else {
-                return {"top": 2500, "left": 2500}
+                return {"top": 2850, "left": 3100}
             }
             
         },
