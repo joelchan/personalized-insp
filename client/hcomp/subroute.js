@@ -389,14 +389,15 @@ Template.Cluster.onRendered( function() {
             // if it's already in another cluster belong to the user, remove it
             if(ideaObject[0].clusterIDs.length > 1) {
                logger.debug("Array of clusters"  + ideaObject[0].clusterIDs);     
-               var prevCluster = Clusters.find(ideaObject[0].clusterIDs[0]).fetch();
-               if (prevCluster.userID == Session.get("currentUser")._id) {
-                    logger.debug("Removing from user's previous cluster with id: " + prevCluster._id);
-                    ClusterFactory.removeIdeaFromCluster(ideaObject[0], prevCluster[0]); 
-               } else {
-                    logger.debug("Not previously in user's clusters");
-               }
-               
+               var prevClusters = Clusters.find(ideaObject[0].clusterIDs[0]).fetch();
+               prevClusters.forEach(function(cluster){
+                    if (cluster.userID == Session.get("currentUser")._id) {
+                         logger.debug("Removing from user's previous cluster with id: " + cluster._id);
+                         ClusterFactory.removeIdeaFromCluster(ideaObject[0], cluster); 
+                    } else {
+                         logger.debug("Cluster with id " + cluster._id + " not previously in user's clusters");
+                    }
+               });
             }
         }
     });    
