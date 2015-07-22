@@ -210,7 +210,7 @@
  }
 
 .cluster-ideas {
-  margin-top:30px;
+  margin-top:10px;
   margin-left:-19px;
 }
 
@@ -283,6 +283,7 @@
     margin-top: 5px;
     /*overflow: hidden;*/
     background-color: #FFFC9B;
+    cursor: move;
 }
  
 .ideasList {
