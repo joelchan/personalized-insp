@@ -22,7 +22,7 @@
             <span class="glyphicon glyphicon-zoom-out zoom-control-buttons"></span>
         </div>
         <div id="zBar">
-            <input type="range" class="zoom-range" step="0.05" min="0.5" max="1">
+            <input type="range" class="zoom-range" step="0.1" min="0.5" max="1">
         </div>
         <div id="zIn">
             <span class="glyphicon glyphicon-zoom-in zoom-control-buttons"></span>
@@ -64,7 +64,7 @@
         {{#each getZoomSpaceIdeas}} 
             {{ > ZoomSpaceElement}} 
         {{/each}} 
-        
+        <div class = "caliberBox"> </div>
         {{#each getClusters}} 
             {{> Cluster}} 
         {{/each}}
@@ -92,6 +92,7 @@
 
 <template name="MiniMapViewPane">
     <div class="ScalingViewPane"> 
+        <!-- <div class = "caliberBox2"> </div> -->
         <!-- <span class="glyphicon glyphicon-eye-open" id="leftEye" style="font-size:20px;"></span> <span class="glyphicon glyphicon-eye-open" id="rightEye" style="font-size:20px;"></span>  -->
     </div>
 </template>

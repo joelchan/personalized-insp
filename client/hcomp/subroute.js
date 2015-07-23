@@ -1,10 +1,11 @@
 var logger = new Logger('Client:Hcomp:SubrouteSandbox');
 Logger.setLevel('Client:Hcomp:SubrouteSandbox', 'trace');
 
-
 var global = 1; 
 var clusterTop = 0;
 var clusterLeft = 0;
+var sVTop = 84.00;
+var sVLeft = 76.00;
 /****************************************************************
 *
 * MASTER template rendering setup, helpers and events
@@ -12,12 +13,15 @@ var clusterLeft = 0;
 ****************************************************************/
 
 Template.SubrouteSandbox.onRendered(function () {
-$('.ScalingViewPane').css('top', 84); 
-$('.ScalingViewPane').css('left', 76); 
+    
+    $('.ScalingViewPane').css('top', sVTop); 
+    $('.ScalingViewPane').css('left', sVLeft); 
+    
         this.$(".panZoomFrame").panzoom({
-         minScale: .3,
-         increment: 0.01,
+         minScale: .5,
+         increment: 0.1,
          maxScale: 1,
+         
          $zoomIn:    $(".glyphicon-zoom-in"),
          $zoomOut:   $(".glyphicon-zoom-out"),
          $zoomRange: $("input[type='range']"),
@@ -26,12 +30,34 @@ $('.ScalingViewPane').css('left', 76);
         global = transform[0];
         clusterTop  = transform[5];
         clusterLeft = transform[4];
+        
         //$('.zoomSpaceElement').css('top', top*transform[0]);
         //$('.zoomSpaceElement').css('left', transform[0]);
-        $('.ScalingViewPane').css('top', (((transform[5])/25)* -1) + 75); 
-        $('.ScalingViewPane').css('left', (((transform[4])/25)* -1) + 50); 
-        $('.ScalingViewPane').css('width', 48 * transform[0]); 
-        $('.ScalingViewPane').css('height', 32 * transform[0]); 
+        
+        var paneWidth = $('.ScalingViewPane').css('width');
+        var paneHeight = $('.ScalingViewPane').css('height');; 
+        
+        //logger.trace(paneWidth);
+        //logger.trace(paneHeight);
+        
+        paneWidth = parseFloat(paneWidth.substring(0,paneWidth.length-2)*.5);
+        paneHeight = parseFloat(paneHeight.substring(0,paneHeight.length -2)*.5);
+        
+        //scaling viewpane Scaled top
+        sVTop = 100.00 - paneHeight;  
+        
+        //scaling viewpane Scaled left
+        sVLeft = 100.00 - paneWidth;
+        
+        finalTopScale = (((transform[5]/25.00) * -1) + sVTop);
+        finalLeftScale = (((transform[4]/25.00) * -1) + sVLeft);
+
+
+        $('.ScalingViewPane').css('top', finalTopScale); 
+        $('.ScalingViewPane').css('left', finalLeftScale); 
+        
+        $('.ScalingViewPane').css('width', 48 / transform[0]); 
+        $('.ScalingViewPane').css('height', 32 / transform[0]); 
     });
 });
 
@@ -162,14 +188,13 @@ Template.InstantiateCluster.events({
         var user   = Session.get('currentUser');
         var prompt = Session.get('currentPrompt');
         var newCluster = ClusterFactory.create(user, prompt, null);        
-        var tc = (clusterTop*-1/global) + 2750;
-        var lc = (clusterLeft*-1/global) + 3150;
+        var tc = (clusterTop*-1/global) + 2475;
+        var lc = (clusterLeft*-1/global) + 2475;
         var newPos = {"top": tc, "left": lc};
         updateClusterFilter(newCluster._id);
         ZoomManager.updatePosition(newCluster._id, "Clusters", newPos, Session.get("currentUser"));
-        $("#miniCluster"+ newCluster._id).css('top' , (((clusterTop*-1)/global) + 2500)/25);
-        $("#miniCluster"+ newCluster._id).css('left', (((clusterLeft*-1)/global) + 2500)/25);
-        //logger.trace("ClusterTop :" + clusterTop);
+        $("#miniCluster"+ newCluster._id).css('top' , (((clusterTop*-1)/global) + 2475)/25);
+        $("#miniCluster"+ newCluster._id).css('left', (((clusterLeft*-1)/global) + 2475)/25);
     },
 });
 
@@ -476,12 +501,14 @@ Template.DeleteCluster.onRendered( function() {
                 var ideasInCluster = cluster.ideaIDs; 
                 var user = Session.get("currentUser");
                 ClusterFactory.trash(cluster);
+                $("#miniCluster" + cluster._id).remove();
                 updateClusterFilter(cluster._id, "remove");
                 for (var i = ideasInCluster.length - 1; i >= 0; i--) {   
                     // Ideas.update({_id: ideasInCluster[i]}, 
                         // {$set: {'inZoomSpace':false, 'inCluster':false}});
                     // IdeaFactory.toggleZoomSpaceFlag(ideaID, user._id);
                     IdeaFactory.updateZoomSpaceFlag(ideasInCluster[i], "remove");
+                    //$("#" +ideasInCluster[i]).remove(); 
                    // Ideas.update({_id: ideasInCluster[i]}, {$set: {'inCluster': false, 'inZoomSpace':false}});
                 }; 
             }

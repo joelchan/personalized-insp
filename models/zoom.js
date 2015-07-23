@@ -42,7 +42,7 @@ ZoomManager = (function() {
             if (zoomPosition) {
                 return zoomPosition.position;    
             } else {
-                return {"top": 2850, "left": 3100}
+                return {"top": 2475, "left": 2475}
             }
             
         },
@@ -54,8 +54,6 @@ ZoomManager = (function() {
         * 2) Idea moves from zoom space to idea list
         * 3) Cluster gets deleted
         ********************************************************************/
-
-
         }
     };
 }());
