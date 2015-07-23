@@ -95,6 +95,17 @@ Template.MiniMap.helpers({
         return numDisplay + numZoom;
         // return Ideas.find({ inCluster: false }, {fields: {inCluster: 0}}).count();
     },
+    couldBeDone: function() {
+        var user = Session.get("currentUser");
+        var numDisplay = FilterManager.performQuery("displayIdeas", user, "ideas").count();
+        var numZoom = FilterManager.performQuery("zoomSpaceIdeas", user, "ideas").count();
+        var remaining = numDisplay + numZoom;
+        if (remaining < 1) {
+            return true;
+        } else {
+            return false;
+        }
+    },
      getIdeas: function() {
         var user = Session.get("currentUser");
         return FilterManager.performQuery("zoomSpaceIdeas", user, "ideas");
