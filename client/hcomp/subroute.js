@@ -116,6 +116,36 @@ Template.MiniMap.helpers({
     },
 });
 
+Template.Finished.events({
+    'click #finished': function() {
+        logger.debug("User clicked finish button");
+        // check if all clusters have a name
+        var user = Session.get("currentUser");
+        var clusters = FilterManager.performQuery("clusterFilter", user, "clusters");
+        var allNamed = true;
+        clusters.forEach(function(cluster) {
+            if (cluster.name == "Not named yet") {
+                allNamed = false;
+            }
+        });
+        if (allNamed) {
+            var part = Session.get("currentParticipant");
+            var cond = Conditions.findOne({_id: part.conditionID});
+            var curIndex = getIndex(cond.misc.routeSequence, "SynthesisExp");
+            logger.trace("Current position in route sequence" + curIndex);
+            var nextPage = cond.misc.routeSequence[curIndex+1]
+            logger.trace("Next page in sequence: " + nextPage);
+            Session.set("nextPage", nextPage);
+            Router.go(Session.get("nextPage"), {partID: part._id});
+
+            // TODO:
+            // [] Grab snapshot of current zoomspace and put in 
+        } else {
+            alert("All patterns need to be labeled! Please check and name all your patterns before finishing.");
+        }
+    }
+})
+
 /****************************************************************
 *
 * IDEASPACE template rendering setup, helpers and events
@@ -126,6 +156,12 @@ Template.IdeaSpace.onRendered(function() {
     
     // set default filters
     var user = Session.get("currentUser");
+    
+    // set cluster filter here because it's the innermost element that uses filters
+    // hopefully this means the filter will be set in the right order
+    FilterManager.reset("clusterFilter", user, "clusters");
+    setBaseClusterFilters("clusterFilter");
+
     FilterManager.reset("displayIdeas", user, "ideas");
     FilterManager.create("displayIdeas", user,
         "ideas", "zoomSpace", user._id, "ne");
@@ -514,7 +550,8 @@ var setBaseIdeasFilters = function setBaseIdeasFilters(filterName) {
         "ideas", "promptID", Session.get("currentPrompt")._id);
     
     // init cluster filters
-    var clusters = Clusters.find({userID: user._id}).fetch();
+    // var clusters = Clusters.find({userID: user._id}).fetch();
+    var clusters = FilterManager.performQuery("clusterFilter", user, "clusters").fetch();
     clusters.forEach(function(cluster) {
         FilterManager.create(filterName, user,
         "ideas", "clusterIDs", cluster._id, "ne");
@@ -526,6 +563,18 @@ var setBaseIdeasFilters = function setBaseIdeasFilters(filterName) {
         logger.debug("On synthesis experiment workflow; updating " + filterName + " filter");
         addSynthExpFilter(filterName, part);
     }
+}
+
+var setBaseClusterFilters = function setBaseClusterFilters(filterName) {
+
+    var user = Session.get("currentUser");
+
+    // get all clusters that belong to the user AND are not trashed
+    FilterManager.create(filterName, user, 
+        "clusters", "userID", user._id);
+    FilterManager.create(filterName, user, 
+        "clusters", "isTrash", false);
+
 }
 
 var addSynthExpFilter = function addSynthExpFilter(filterName, part) {

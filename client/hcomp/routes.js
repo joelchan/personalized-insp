@@ -372,7 +372,7 @@ Router.map(function () {
           Session.set("currentParticipant", part);
           var user = MyUsers.findOne({_id: part.userID});
           logger.trace("user: " + user.name);
-          MyUsers.update({_id: user._id}, {$set: {route: 'SynthesisPlaceholder'}});
+          // MyUsers.update({_id: user._id}, {$set: {route: 'SynthesisPlaceholder'}});
           Session.set("currentUser", user);
           var exp = Experiments.findOne({_id: part.experimentID});
           if (exp) {
@@ -769,6 +769,44 @@ Router.map(function () {
       } else {
         this.render('loading');
       }
+    },
+
+  });
+
+  this.route('MTurkFinalPage', {
+    path: 'crowd/mt/finished/:partID/',
+    template: 'FinalizePage',
+    waitOn: function() {
+      logger.debug("Waiting on...");
+      return [
+        Meteor.subscribe('prompts'),
+        Meteor.subscribe('myUsers'),
+        Meteor.subscribe('participants'),
+        Meteor.subscribe('exp-conditions'),
+      ];
+    },
+    onBeforeAction: function(pause) {
+        logger.debug("before action");
+        //if (!Session.get("currentUser")) {
+          ////if there is no user currently logged in, then render the login page
+          //this.render('MTurkLoginPage', {'promptID': this.params.promptID});
+          ////Pause rendering the given page until the user is set
+          //pause();
+        //}
+        if (this.ready()) {
+          logger.debug("Data ready");
+          var part = Participants.findOne({_id: this.params.partID});
+          Session.set("currentParticipant", part);
+          this.next();
+        } else {
+          logger.debug("Not ready");
+        }
+    },
+    action: function(){
+      if(this.ready())
+        this.render();
+      else
+        this.render('loading');
     },
 
   });

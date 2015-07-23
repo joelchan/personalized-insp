@@ -193,5 +193,5 @@ QuestionResponse = function(question, answer) {
 conditionRouteData = {
   "IdeationControl": ["TutorialControl", "MTurkIdeationControl", "SurveyPage", "LegionFinalPage"],
   "IdeationTreatment": ["TutorialTreatment", "MTurkIdeationTreatment", "SurveyPage", "LegionFinalPage"],
-  "Synthesis": ["SynthesisExp"]
+  "Synthesis": ["SynthesisExp", "SurveyPage", "MTurkFinalPage"]
 }
