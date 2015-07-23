@@ -231,7 +231,14 @@ ExperimentManager = (function () {
       var prompt = Prompts.findOne({_id: exp.promptID});
       logger.trace("Found prompt for experiment with id " + prompt._id + 
         ", current groups: " + JSON.stringify(prompt.groupIDs));
-      var group = GroupManager.create(prompt.template);
+      var group;
+      if (prompt.template != null) {
+        group = GroupManager.create(prompt.template);
+      } else {
+        logger.debug("No group template, creating new group with default template");
+        var template = GroupManager.defaultTemplate();
+        group = GroupManager.create(template);
+      }
       logger.trace("Created new group for experiment: " + JSON.stringify(group));
       PromptManager.addGroups(prompt, group);
       logger.trace("Added group to prompt. Current groups are now: " + 

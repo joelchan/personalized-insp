@@ -143,7 +143,7 @@ class Prompt:
         self.time = datetime.datetime.now()
         self.userIDs = [user['_id']]
         self.groupIDs = [] # might need groups?
-        self.template = None # don't use this for now, but we might have to if it breaks
+        self.template = None
         if data is not None:
             for key in data.keys():
                 # print "Setting attribute: " + str(key) + " with " + str(data[key])
