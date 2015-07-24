@@ -227,7 +227,7 @@ Template.IdeaListElement.onRendered(function () {
 });
 
 Template.InstantiateCluster.events({
-    'click .clusterButton' : function(e, ui) {
+    'click #addCluster' : function(e, ui) {
         var user   = Session.get('currentUser');
         var prompt = Session.get('currentPrompt');
         var newCluster = ClusterFactory.create(user, prompt, null);        
@@ -448,7 +448,14 @@ Template.Cluster.onRendered( function() {
             var ideaID = ui.helper[0].id; 
             var clusterObject = Clusters.find(currentClusterID).fetch();
             var ideaObject =  Ideas.find(ideaID).fetch();            
+        
+              $("#" + currentClusterID).css('-webkit-animation-name', 'example'); /* Chrome, Safari, Opera */
+              $("#" + currentClusterID).css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
             
+              // -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */
+              // animation-name: example;
+              // animation-duration: 4s;
+
             // make sure it's not already in the cluster
             if($.inArray(ideaID, clusterObject[0].ideaIDs) == -1) {
                 Ideas.update({_id: ideaObject[0]._id}, {$set: {'inCluster': true, 'inZoomSpace':false}});
@@ -468,6 +475,10 @@ Template.Cluster.onRendered( function() {
                     }
                });
             }
+            
+            $("#" + currentClusterID).removeClass('-webkit-animation-name', 'example'); 
+            $("#" + currentClusterID).css('-webkit-animation-name', 'example2'); 
+            $("#" + currentClusterID).css('-webkit-animation-duration', '2s'); 
         }
     });    
     

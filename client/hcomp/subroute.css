@@ -191,6 +191,7 @@
 
 #instructions {
   /*position:fixed;*/
+  padding-left: 10px;
   top: -20px;
   font-size:24px;
   font-weight: bold;
@@ -234,8 +235,33 @@
     height: 180px;
     background-color: #def;
     border-radius: 5px;
-    /*padding-left:16px;*/
- }
+   
+}
+
+@-webkit-keyframes example {
+  from { background-color: #1CF8FF;
+         -moz-box-shadow:     0 0 125px #0CFFFF;
+         -webkit-box-shadow:  0 0 125px #96E7F6;
+          box-shadow:         0 0 125px #66D7FF;  
+    }
+    to {  background-color: #def;}
+}
+
+/*@-webkit-keyframes example {
+    from {background-color: #B54DF2;}
+    to {background-color: #def;}
+}*/
+
+@-webkit-keyframes example2 {
+    
+  from { background-color: #1CF8FF;
+         -moz-box-shadow:     0 0 125px #0CFFFF;
+         -webkit-box-shadow:  0 0 125px #96E7F6;
+          box-shadow:         0 0 125px #66D7FF;  
+    }
+    to {  background-color: #def;}
+}
+
 
 .cluster-ideas {
   margin-top:10px;
