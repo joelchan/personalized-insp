@@ -63,10 +63,11 @@
     overflow: hidden;
     z-index: 990;
     position: fixed;
+    background-color: white;
     border: 2px solid #000000;
     border-radius: 3px;
     margin-top: 10px; 
-    left: 20px;
+    left: 30px;
     min-width: 200px;
     min-height: 200px;
 }
@@ -83,9 +84,19 @@
   top:30%;
 }
 
+.createPattern{
+  margin-top: 5%;
+} 
+
+.END {
+  position: relative;
+  margin-top: 3%;
+}
 
 #console{
-  border-right: 2px solid #000000;
+  margin-left: 20px;
+  /*border-right: 3px solid #000000;*/
+ /* min-height: 8000px;*/
 }
 
 .zoomBox {
@@ -136,13 +147,16 @@
     position: fixed;
     display: inline;
     padding-left: 20px;
-    top: 35%;
+    top: 30%;
+    padding-top: 5px;
 }
 
 #zBar{
+   
    display: inline-block;
 }
 #zIn {
+   
    display: inline-block;
 }
  #zOut{
@@ -163,10 +177,8 @@
    /*display: inline;*/
 }
 
-.clusterButton {
+/*.clusterButton {
     text-align: center;
-    position: fixed;
-    margin-top: 15px;
     border:1px solid #444;
     border-radius: 12px;
     left: 70px;
@@ -175,15 +187,10 @@
     color:  #F2F2E8;
     font-size: 16px;
     background-color: #217EFF;
-}
-
-#addCluster {
-  cursor:pointer;
-}
+}*/
 
 #instructions {
   /*position:fixed;*/
-  left:80px;
   top: -20px;
   font-size:24px;
   font-weight: bold;
@@ -191,6 +198,7 @@
   cursor: pointer;
 }
 
+<<<<<<< Updated upstream
 #finished {
   font-size: 16px;
   font-family: sans-serif;
@@ -212,7 +220,7 @@
  
 .ideaArea{
   z-index: 995;
-  top: 400px;
+  top: 450px;
   position: absolute;
   min-height: 2120px;
   padding-left: 3px;
@@ -228,8 +236,6 @@
     border-radius: 5px;
     /*padding-left:16px;*/
  }
-
-
 
 .cluster-ideas {
   margin-top:10px;
@@ -290,9 +296,9 @@
   z-index: 999;
   border-bottom: 2px solid #000000;
   position: fixed;
-  height: 400px;
+  height: 450px;
   width: 237px;
-  background-color: white;
+  /*background-color: white;*/
 }
 
 .ideaListElement {
@@ -310,8 +316,7 @@
  
 .ideasList {
     position: relative;
-    border:5px solid #444;
-    
+    border:1px solid #444;
     width: 400px;
     height: relative;
 }

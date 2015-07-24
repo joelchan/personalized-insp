@@ -1,6 +1,5 @@
 var logger = new Logger('Client:Hcomp:SubrouteSandbox');
 Logger.setLevel('Client:Hcomp:SubrouteSandbox', 'trace');
-
 var global = 1; 
 var clusterTop = 0;
 var clusterLeft = 0;
@@ -39,10 +38,8 @@ Template.SubrouteSandbox.onRendered(function () {
         
         //logger.trace(paneWidth);
         //logger.trace(paneHeight);
-        
         paneWidth = parseFloat(paneWidth.substring(0,paneWidth.length-2)*.5);
-        paneHeight = parseFloat(paneHeight.substring(0,paneHeight.length -2)*.5);
-        
+        paneHeight = parseFloat(paneHeight.substring(0,paneHeight.length -2)*.5);        
         //scaling viewpane Scaled top
         sVTop = 100.00 - paneHeight;  
         
@@ -51,7 +48,6 @@ Template.SubrouteSandbox.onRendered(function () {
         
         finalTopScale = (((transform[5]/25.00) * -1) + sVTop);
         finalLeftScale = (((transform[4]/25.00) * -1) + sVLeft);
-
 
         $('.ScalingViewPane').css('top', finalTopScale); 
         $('.ScalingViewPane').css('left', finalLeftScale); 
@@ -231,7 +227,7 @@ Template.IdeaListElement.onRendered(function () {
 });
 
 Template.InstantiateCluster.events({
-    'click #addCluster' : function(e, ui) {
+    'click .clusterButton' : function(e, ui) {
         var user   = Session.get('currentUser');
         var prompt = Session.get('currentPrompt');
         var newCluster = ClusterFactory.create(user, prompt, null);        
@@ -299,9 +295,9 @@ Template.ZoomSpace.onRendered(function () {
                    $('#miniIdeas' + ideaID).css('left', left/25);
                    $('#miniIdeas' + ideaID).css('top', top/25);
              } else if (fromCluster(ideaID)) {
-            // is it coming from a cluster?
-            // if (fromCluster(ideaID)) {
-             // if(Ideas.findOne({_id:ui.helper[0].id}, {fields: {inCluster: true}})) {
+               // is it coming from a cluster?
+               //if (fromCluster(ideaID)) {
+               // if(Ideas.findOne({_id:ui.helper[0].id}, {fields: {inCluster: true}})) {
                var ideaID  = ui.helper[0].id;
                var ideaObject =  Ideas.find(ideaID).fetch();  
                var cluster  = $(ui.helper[0].parentNode);
@@ -363,9 +359,10 @@ Template.ZoomSpaceElement.onRendered(function () {
     $(this.firstNode).css("top", oldPosition.top);
     $(this.firstNode).css("left", oldPosition.left);
     $(this.firstNode).on('mousedown touchstart', function(e) {
+                //$(".zoomSpaceElement").collapse();
                  e.stopPropagation();
     });
-    
+
     var canvasHeight = $('.panZoomFrame').height();
     var canvasWidth = $('.panZoomFrame').width();
 

@@ -69,12 +69,7 @@ IdeaFactory = (function() {
       var ideas = [];
       for (var i=0; i<num; i++) {
        
-      var content = "Is it possible to crowdsource categorization? Amongst the challenges: (a) each worker has only a partial view of the data, (b) different workers may have differentclustering criteria and may produce different numbers of categories, (c) theunderlying category structure may be hierarchical. We propose a Bayesian modelof how workers may approach clustering and show how one may infer clusters/ categories, as well as worker parameters, using this model. Our experiments,carried out on large collections of images, suggest that Bayesian crowdclustering works well and may be superior to single-expert annotations.";
-        
-      //check content length 
-      if(content.length > 100){
-         content = content.substring(0, 100);
-      }
+      var content = "CLICK, DRAG, DROP, PAN, AND ZOOM ME:)";
         ideas.push(this.create(content, user, prompt));
       }
        return ideas;

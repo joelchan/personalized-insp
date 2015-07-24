@@ -17,17 +17,16 @@
 </template>
 
 <template name="MiniMap">
+
+    <div class="map">
+        {{ > MiniMapViewPane}} {{#each getIdeas}} {{ > MiniMapElement}} {{/each}} {{#each getClusters}} {{ > MiniClusterElement}} {{/each}}
+    </div>
+
     <div class="zoomControl">
-        <div id="zOut">
-            <span class="glyphicon glyphicon-zoom-out zoom-control-buttons"></span>
-        </div>
-        <div id="zBar">
-            <input type="range" class="zoom-range" step="0.1" min="0.5" max="1">
-        </div>
-        <div id="zIn">
-            <span class="glyphicon glyphicon-zoom-in zoom-control-buttons"></span>
-        </div>
-        {{ > InstantiateCluster}}
+        <div id="zOut"><span class="glyphicon glyphicon-zoom-out zoom-control-buttons"></span></div>
+        <div id="zBar"><input type="range" class="zoom-range" step="0.1" min="0.5" max="1"></div>
+        <div id="zIn"><span class="glyphicon glyphicon-zoom-in zoom-control-buttons"></span></div>
+        <div class = "createPattern"> {{ > InstantiateCluster}} </div>
         <div class="numIdeas">
             {{numIdeasTotal}} ideas to process<br/>
             {{getRemainingIdeas}} to go
@@ -36,52 +35,39 @@
             {{/if}}
         </div>
     </div>
-    <div class="map">
-        {{ > MiniMapViewPane}} 
-        {{#each getIdeas}} 
-            {{ > MiniMapElement}} 
-        {{/each}} 
-        {{#each getClusters}} 
-            {{ > MiniClusterElement}} 
-        {{/each}}
-    </div>
 </template>
 
 <template name="IdeaSpace">
     <div class="ideaArea">
-        {{#each displayIdeas}} 
-            {{ > IdeaListElement}} 
-        {{/each}}
+        {{#each displayIdeas}} {{ > IdeaListElement}} {{/each}}
     </div>
 </template>
 
 <template name="IdeaListElement">
-    <div class="ideaListElement" id="{{_id}}"> 
-        {{content}} 
+    <div class="ideaListElement" id="{{_id}}">
+        {{content}}
     </div>
 </template>
 
 <template name="ZoomSpace">
     <div class="panZoomFrame">
-        {{#each getZoomSpaceIdeas}} 
-            {{ > ZoomSpaceElement}} 
-        {{/each}} 
-        <div class = "caliberBox"> </div>
-        {{#each getClusters}} 
-            {{> Cluster}} 
-        {{/each}}
-   </div>
+        {{#each getZoomSpaceIdeas}} {{ > ZoomSpaceElement}} {{/each}}
+        <div class="caliberBox"> </div>
+        {{#each getClusters}} {{> Cluster}} {{/each}}
+    </div>
 </template>
 
 <template name="ZoomSpaceElement">
-    <div class=" zoomSpaceElement" id="{{_id}}"> 
-        {{content}} 
+    <div class="zoomSpaceElement" id="{{_id}}">
+      <div class = "zoomElementContent">
+        {{content}}
+      </div>
     </div>
 </template>
 
 <template name="InstantiateCluster">
     <div class="clusterButton">
-        <span id="addCluster" style="font-size:18px;">New Pattern</span>
+        <button id="addCluster"  class = "btn-primary">New Pattern</button>
         <a><span class="glyphicon glyphicon-question-sign" id="instructions"></span></a>
     </div>
 </template>
@@ -91,20 +77,19 @@
         <button id="finished" class="btn-success">I'm finished!</button>
     <!-- </div> -->
 </template>
-
 <template name="MiniMapViewPane">
-    <div class="ScalingViewPane"> 
+    <div class="ScalingViewPane">
         <!-- <div class = "caliberBox2"> </div> -->
         <!-- <span class="glyphicon glyphicon-eye-open" id="leftEye" style="font-size:20px;"></span> <span class="glyphicon glyphicon-eye-open" id="rightEye" style="font-size:20px;"></span>  -->
     </div>
 </template>
 
 <template name="MiniClusterElement">
-    <div class="miniCluster" id = "miniCluster{{_id}}"></div>
+    <div class="miniCluster" id="miniCluster{{_id}}"></div>
 </template>
 
 <template name="MiniMapElement">
-    <div class="miniIdeas" id = "miniIdeas{{_id}}"></div>
+    <div class="miniIdeas" id="miniIdeas{{_id}}"></div>
 </template>
 
 <template name="Cluster">
@@ -118,12 +103,11 @@
             <div class="row">
                 <div class="col-xs-3 col-md-3">
                     {{#if getClusterIdeasCount}}
-                        <a data-toggle="collapse" data-parent="#cluster-idea-group-{{_id}}" href="#cluster-idea-list-{{_id}}">
-                            <span class="glyphicon glyphicon-collapse-down" id = "downArrow" style="font-size:36px;"></span>
-                        </a> 
+                    <a data-toggle="collapse" data-parent="#cluster-idea-group-{{_id}}" href="#cluster-idea-list-{{_id}}">
+                        <span class="glyphicon glyphicon-collapse-down" id="downArrow" style="font-size:36px;"></span>
+                    </a>
                     {{else}}
-                        <span class="glyphicon glyphicon-collapse-down" id = "downArrow" style="font-size:36px;"></span>
-                    {{/if}}
+                    <span class="glyphicon glyphicon-collapse-down" id="downArrow" style="font-size:36px;"></span> {{/if}}
                 </div>
                 <div class="col-xs-6 col-md-6">
                     <span class="badge clustNumIdeas"> {{getClusterIdeasCount}}</span> ideas
@@ -144,12 +128,11 @@
                 {{/each}} 
             </div> -->
         </div>
+        
         <div class="cluster-ideas row">
             <div id="cluster-idea-group-{{_id}}">
                 <div id="cluster-idea-list-{{_id}}" class="collapse">
-                    {{#each getClusterIdeas}} 
-                        {{> ClusterIdeaElement}} 
-                    {{/each}} 
+                    {{#each getClusterIdeas}} {{> ClusterIdeaElement}} {{/each}}
                 </div>
             </div>
         </div>
@@ -157,23 +140,19 @@
 </template>
 
 <template name="ClusterIdeaElement">
-    <div class="clusterListElement" id="{{_id}}"> 
-        {{content}} 
+    <div class="clusterListElement" id="{{_id}}">
+        {{content}}
     </div>
 </template>
-
 <template name="DeleteCluster">
     <span class="glyphicon glyphicon-remove" id="delX" style="font-size:36px;"> </span>
 </template>
-
 <!-- Load Minimap objects with ID's from the idea _.ids -->
-
 <!-- <ul id="cluster" class="cluster ul">
             {{#each getClusters}}
                 
             {{/each}}
         </ul> -->
-
 <!-- <template name="ClusterSpace">
     {{> InstantiateCluster}} 
     {{#each getClusters}} 
