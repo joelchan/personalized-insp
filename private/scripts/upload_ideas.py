@@ -9,6 +9,18 @@ from bson.objectid import ObjectId
 import sys, os
 
 """
+This script uploads ideas from a file into a specified ideagens db, 
+creating dummy prompt and user to associate with the ideas
+
+Usage:
+python upload_ideas.py <db_name> <file_name>
+
+db_name must match one of the db_param keys in db_params.py
+file_name must match a valid csv file with ideas in /private/scripts/data
+"""
+
+
+"""
 Read in the data
 Let's expect a csv with cols:
 1) id
@@ -52,7 +64,7 @@ Make and upload dummy prompt
 """
 question = "Dummy"
 title = filename.replace(".csv","")
-prompt = Prompt(question, user, title, 
+prompt = Prompt(question, user, title,
                 {'_id': str(ObjectId())})
 promptIDs = db_util.insert("prompts", [prompt])
 # # print result

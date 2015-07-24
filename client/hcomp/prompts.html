@@ -262,9 +262,9 @@
           <strong>Participant login URL: </strong> 
             <a href="{{ expURL }}">{{ expURL }}</a><br/>
           {{#if isSynthesis}}
-            <a class="init-synth" id="init-synth-{{_id}}">Tag as synthesis experiment</a>
-          {{else}}
             Tag as synthesis experiment
+          {{else}}
+            <a class="init-synth" id="init-synth-{{_id}}">Tag as synthesis experiment</a>
           {{/if}}
           <!-- <strong>Conditions: </strong><br/> -->
           {{#each conditions}}

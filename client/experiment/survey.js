@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Survey');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Survey', 'trace');
+Logger.setLevel('Client:Hcomp:Survey', 'trace');
 //Logger.setLevel('Client:Hcomp:Survey', 'debug');
-Logger.setLevel('Client:Hcomp:Survey', 'info');
+// Logger.setLevel('Client:Hcomp:Survey', 'info');
 // Logger.setLevel('Client:Hcomp:Survey', 'warn');
 
 Template.SurveyPage.rendered = function() {
@@ -72,7 +72,18 @@ Template.SurveyPage.events({
     // Participants.update({_id: part._id},
     //     {$set: {hasFinished: true}});
     //console.log("formsubmitted");
-    Router.go("LegionFinalPage", {'partID': part._id});
+    // Router.go("LegionFinalPage", {'partID': part._id});
+    var part = Session.get("currentParticipant");
+    var verifyCode = Random.hexString(20).toLowerCase();
+    Participants.update({_id: part._id},
+        {$set: {verifyCode: verifyCode}})
+    var cond = Conditions.findOne({_id: part.conditionID});
+    var curIndex = getIndex(cond.misc.routeSequence, "SurveyPage");
+    logger.trace("Current position in route sequence" + curIndex);
+    var nextPage = cond.misc.routeSequence[curIndex+1]
+    logger.trace("Next page in sequence: " + nextPage);
+    Session.set("nextPage", nextPage);
+    Router.go(Session.get("nextPage"), {partID: part._id});
     // Router.goToNextPage("SurveyPage");
     // try {
     //   var part = Session.get("currentParticipant");
