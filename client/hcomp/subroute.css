@@ -238,11 +238,11 @@
    
 }
 
-@-webkit-keyframes example {
-  from { background-color: #1CF8FF;
-         -moz-box-shadow:     0 0 125px #0CFFFF;
-         -webkit-box-shadow:  0 0 125px #96E7F6;
-          box-shadow:         0 0 125px #66D7FF;  
+@-webkit-keyframes glowone {
+  from { background-color: #0080FF;
+         -moz-box-shadow:     0 0 150px #0CFFFF;
+         -webkit-box-shadow:  0 0 150px #96E7F6;
+          box-shadow:         0 0 150px #66D7FF;  
     }
     to {  background-color: #def;}
 }
@@ -252,12 +252,11 @@
     to {background-color: #def;}
 }*/
 
-@-webkit-keyframes example2 {
-    
-  from { background-color: #1CF8FF;
-         -moz-box-shadow:     0 0 125px #0CFFFF;
-         -webkit-box-shadow:  0 0 125px #96E7F6;
-          box-shadow:         0 0 125px #66D7FF;  
+@-webkit-keyframes glowtwo {
+  from { background-color: #0080FF;
+         -moz-box-shadow:     0 0 150px #0CFFFF;
+         -webkit-box-shadow:  0 0 150px #96E7F6;
+          box-shadow:         0 0 150px #66D7FF;  
     }
     to {  background-color: #def;}
 }
@@ -309,7 +308,6 @@
 .zoomSpaceElement {
   position: absolute;
   list-style-type: none;
-  border: 1px solid #444;
   border-radius: 5px;
   width: 225px;
   min-height: 85px;
@@ -317,6 +315,20 @@
   background-color: #FFFC9B;
   /*overflow: hidden;*/
 }
+
+@-webkit-keyframes zoomGlow {
+  from { background-color: #FFFF66;
+         -moz-box-shadow:     0 0 20px #FFFF66;
+         -webkit-box-shadow:  0 0 20px #FFFF66;
+          box-shadow:         0 0 20px #FFFF66;
+    }
+    to {  background-color: #FFFC9B;}
+}
+
+/*@-webkit-keyframes example {
+    from {background-color: #B54DF2;}
+    to {background-color: #def;}
+}*/
 
 #mock{
   z-index: 999;
@@ -329,12 +341,12 @@
 
 .ideaListElement {
     position: relative;
+    border-radius: 3px;
     list-style-type: none;
-    border:1px solid #444;
     border-radius: 5px;
     width: 225px;
     min-height: 75px;
-    margin-top: 5px;
+    margin-top: 10px;
     /*overflow: hidden;*/
     background-color: #FFFC9B;
     cursor: move;

@@ -363,6 +363,11 @@ Template.ZoomSpaceElement.onRendered(function () {
                  e.stopPropagation();
     });
 
+
+    $("#" + zoomElementID).css('-webkit-animation-name', 'zoomGlow'); /* Chrome, Safari, Opera */
+    $("#" + zoomElementID).css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
+            
+
     var canvasHeight = $('.panZoomFrame').height();
     var canvasWidth = $('.panZoomFrame').width();
 
@@ -449,7 +454,7 @@ Template.Cluster.onRendered( function() {
             var clusterObject = Clusters.find(currentClusterID).fetch();
             var ideaObject =  Ideas.find(ideaID).fetch();            
         
-              $("#" + currentClusterID).css('-webkit-animation-name', 'example'); /* Chrome, Safari, Opera */
+              $("#" + currentClusterID).css('-webkit-animation-name', 'glowone'); /* Chrome, Safari, Opera */
               $("#" + currentClusterID).css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
             
               // -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */
@@ -476,8 +481,8 @@ Template.Cluster.onRendered( function() {
                });
             }
             
-            $("#" + currentClusterID).removeClass('-webkit-animation-name', 'example'); 
-            $("#" + currentClusterID).css('-webkit-animation-name', 'example2'); 
+            $("#" + currentClusterID).removeClass('-webkit-animation-name', 'glowone'); 
+            $("#" + currentClusterID).css('-webkit-animation-name', 'glowtwo'); 
             $("#" + currentClusterID).css('-webkit-animation-duration', '2s'); 
         }
     });    
