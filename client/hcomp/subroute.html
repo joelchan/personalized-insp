@@ -92,8 +92,12 @@
             <div class="row">
                 <div class="col-xs-3 col-md-3">
                     {{#if getClusterIdeasCount}}
-                        <a data-toggle="collapse" data-parent="#cluster-idea-group-{{_id}}" href="#cluster-idea-list-{{_id}}">
-                        <span class="glyphicon glyphicon-collapse-down" id="downArrow" style="font-size:36px;"></span>
+                    <a data-toggle="collapse" data-parent="#cluster-idea-group-{{_id}}" href="#cluster-idea-list-{{_id}}">
+                        {{#if isCollapsed}}
+                            <span class="glyphicon glyphicon-collapse-down" id="downArrow" style="font-size:36px;"></span>
+                        {{else}}
+                            <span class="glyphicon glyphicon-collapse-up" id="downArrow" style="font-size:36px;"></span>
+                        {{/if}}
                     </a>
                     {{else}}
                     <span class="glyphicon glyphicon-collapse-down" id="downArrow" style="font-size:36px;"></span> {{/if}}
@@ -119,9 +123,15 @@
         </div>
         <div class="cluster-ideas row">
             <div id="cluster-idea-group-{{_id}}">
+                {{#if isCollapsed}}
                 <div id="cluster-idea-list-{{_id}}" class="collapse">
                     {{#each getClusterIdeas}} {{> ClusterIdeaElement}} {{/each}}
                 </div>
+                {{else}}
+                <div id="cluster-idea-list-{{_id}}" class="collapse in">
+                    {{#each getClusterIdeas}} {{> ClusterIdeaElement}} {{/each}}
+                </div>
+                {{/if}}
             </div>
         </div>
     </div>
