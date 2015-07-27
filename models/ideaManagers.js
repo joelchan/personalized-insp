@@ -69,7 +69,7 @@ IdeaFactory = (function() {
       var ideas = [];
       for (var i=0; i<num; i++) {
        
-      var content = "CLICK, DRAG, DROP, PAN, AND ZOOM ME:)";
+      var content = "Creating a dummy list element. # " + i;
         ideas.push(this.create(content, user, prompt));
       }
        return ideas;

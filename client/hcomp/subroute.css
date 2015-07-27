@@ -32,6 +32,17 @@
   background-color: #000000;
 }*/
 
+.clusterName {
+  font-size: 20px;
+}
+
+.nameCluster {
+    background-color: transparent;
+    border-style: none;
+    font-style: bold;
+    width: 100%;
+} 
+
 .panZoomFrame{
     z-index: 0;
     position: fixed;
@@ -199,7 +210,6 @@
   cursor: pointer;
 }
 
-<<<<<<< Updated upstream
 #finished {
   font-size: 16px;
   font-family: sans-serif;
@@ -226,7 +236,6 @@
   min-height: 2120px;
   padding-left: 3px;
 }
-
 
  .cluster {
     position: absolute;
@@ -260,7 +269,6 @@
     }
     to {  background-color: #def;}
 }
-
 
 .cluster-ideas {
   margin-top:10px;
@@ -317,12 +325,12 @@
 }
 
 @-webkit-keyframes zoomGlow {
-  from { background-color: #FFFF66;
-         -moz-box-shadow:     0 0 20px #FFFF66;
-         -webkit-box-shadow:  0 0 20px #FFFF66;
-          box-shadow:         0 0 20px #FFFF66;
+  from { background-color: #EEEEE8;
+         -moz-box-shadow:     0 0 40px #EEEEE8;
+         -webkit-box-shadow:  0 0 40px #EEEEE8;
+          box-shadow:         0 0 40px #EEEEE8;
     }
-    to {  background-color: #FFFC9B;}
+    to {  background-color: #FFF182;}
 }
 
 /*@-webkit-keyframes example {
@@ -383,9 +391,3 @@
     height: 800px; 
     background-color: #BF3FC7;
 }
-
-
-
-
-
-
