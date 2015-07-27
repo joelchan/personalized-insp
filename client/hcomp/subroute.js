@@ -520,8 +520,11 @@ Template.Cluster.events({
             var textBoxID = this._id; 
             var label = $('.clusterName' +  "#" + clusterID);
             var textBox = $('.nameCluster' + "#" + textBoxID); 
+            var currentName = Clusters.findOne({_id: this._id}).name;
             label.hide();
+            textBox.val(currentName);
             textBox.show();
+            textBox.focus();
     }, 
     
     "keyup .nameCluster": function (event, template) {
@@ -531,13 +534,19 @@ Template.Cluster.events({
             var textBoxID = this._id; 
             var label = $('.clusterName' +  "#" + clusterID);
             var textBox = $('.nameCluster' + "#" + textBoxID); 
-            var text  = event.target.value;
+            var text  = event.target.value.slice(0, -1); // add slice to remove the carriage return
 
             textBox.hide();
             label.show();
             Clusters.update({_id: clusterID}, {$set: {'name' : text}});
         } 
         return false;
+    },
+
+    'click #downArrow': function(event, template) {
+          Clusters.update({_id: this._id},
+                {$set: {isCollapsed: !this.isCollapsed}});
+            event.stopPropagation();
     },
 });
 

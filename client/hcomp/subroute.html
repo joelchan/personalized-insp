@@ -82,14 +82,14 @@
 
 <template name="Cluster">
     <div class="cluster container" id="{{_id}}">
-        <div class="clusterLabel row">
-            <div class="row">
+        <div class="row">
+            <div class="row clusterLabel">
                 <div class="col-xs-12 col-md-12">          
-                    <label class = "clusterName" id = "{{_id}}" > {{getClusterName}}</label>
-                    <input class = "nameCluster" id = "{{_id}}" type = "input" style = "display:none;">
+                    <span class = "clusterName" id = "{{_id}}" > {{getClusterName}}</span>
+                    <textarea class = "nameCluster" id = "{{_id}}" type = "input" style = "display:none;"></textarea>
                 </div>
             </div>
-            <div class="row">
+            <div class="row clusterControls">
                 <div class="col-xs-3 col-md-3">
                     {{#if getClusterIdeasCount}}
                     <a data-toggle="collapse" data-parent="#cluster-idea-group-{{_id}}" href="#cluster-idea-list-{{_id}}">
