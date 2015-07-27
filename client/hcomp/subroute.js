@@ -134,7 +134,8 @@ Template.MiniMap.helpers({
         // return Ideas.find({inZoomSpace: true}, {fields: {inZoomSpace: 0}});        
     },
     getClusters: function() {
-        return Clusters.find();
+        var user = Session.get("currentUser");
+        return FilterManager.performQuery("clusterFilter", user, "clusters");
     },
 });
 
@@ -337,7 +338,8 @@ Template.ZoomSpace.helpers({
 
     getClusters: function() {
         var user = Session.get("currentUser");
-        return Clusters.find({userID: user._id, isTrash: false});
+        // return Clusters.find({userID: user._id, isTrash: false});
+        return FilterManager.performQuery("clusterFilter", user, "clusters");
     },
 });
 
