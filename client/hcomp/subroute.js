@@ -524,7 +524,7 @@ Template.Cluster.helpers({
 Template.Cluster.events({
     "keyup .clusterLabel": function (event, template) {
         // This function is called when the new task form is submitted
-        logger.trace(event.target);
+        // logger.trace(event.target);
         var text = event.target.value;
         var clusterID = event.target.id; 
         // clusterID =  clusterID.substring(0, clusterID.length -1);
@@ -533,6 +533,11 @@ Template.Cluster.events({
         event.target.value = text;
         return false;
       },
+      'click #downArrow': function(event, template) {
+        Clusters.update({_id: this._id},
+            {$set: {isCollapsed: !this.isCollapsed}});
+        event.stopPropagation();
+      }
 });
 
 Template.ClusterIdeaElement.onRendered(function () {
