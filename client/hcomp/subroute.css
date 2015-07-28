@@ -260,6 +260,10 @@ Cluster elements
    /*display: inline;*/
 }
 
+.ideaCollapser {
+  cursor: pointer;
+}
+
 .del-cluster {
   float:right;
   cursor: pointer;
