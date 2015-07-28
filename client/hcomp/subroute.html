@@ -16,20 +16,41 @@
     </div>
 </template>
 <template name="MiniMap">
-    <div class="map">
-        {{ > MiniMapViewPane}} {{#each getIdeas}} {{ > MiniMapElement}} {{/each}} {{#each getClusters}} {{ > MiniClusterElement}} {{/each}}
+    <div class="row map">
+        {{ > MiniMapViewPane}} 
+        {{#each getIdeas}} 
+            {{ > MiniMapElement}} 
+        {{/each}} 
+        {{#each getClusters}} 
+            {{ > MiniClusterElement}} 
+        {{/each}}
     </div>
-    <div class="zoomControl">
-        <div id="zOut"><span class="glyphicon glyphicon-zoom-out zoom-control-buttons"></span></div>
+    <div class="row zoomControl">
+        <div id="zOut">
+            <span class="glyphicon glyphicon-zoom-out zoom-control-buttons"></span>
+        </div>
         <div id="zBar">
             <input type="range" class="zoom-range" step="0.1" min="0.5" max="1">
         </div>
         <div id="zIn"><span class="glyphicon glyphicon-zoom-in zoom-control-buttons"></span></div>
-        <div class="createPattern"> {{ > InstantiateCluster}} </div>
-        <div class="numIdeas">
-            {{numIdeasTotal}} ideas to process
-            <br/> {{getRemainingIdeas}} to go {{#if couldBeDone}} {{ > Finished }} {{/if}}
+    </div>
+    <div class="row clusterControls">
+        <div class="col-md-2 col-xs-2 filler">
         </div>
+        <div class="col-md-8 col-xs-8 createPattern">
+            {{> InstantiateCluster}}
+        </div>
+        <div class="col-md-2 col-xs-2 instructionsContainer">
+            <a><span class="glyphicon glyphicon-question-sign" id="instructions"></span></a>
+        </div>
+    </div>
+        <!-- <div class="createPattern"> {{ > InstantiateCluster}} </div> -->
+    <div class="row numIdeas">
+        <!-- <div class="col-md-12 col-xs-12"> -->
+            <span style="font-size:24px; font-weight:bold">{{numIdeasTotal}}</span> ideas to process
+            <br/>
+            <span style="font-size:24px; font-weight:bold">{{getRemainingIdeas}}</span> to go {{#if couldBeDone}} {{ > Finished }} {{/if}}
+        <!-- </div> -->
     </div>
 </template>
 <template name="IdeaSpace">
@@ -44,9 +65,13 @@
 </template>
 <template name="ZoomSpace">
     <div class="panZoomFrame">
-        {{#each getZoomSpaceIdeas}} {{ > ZoomSpaceElement}} {{/each}}
+        {{#each getZoomSpaceIdeas}} 
+            {{ > ZoomSpaceElement}} 
+        {{/each}}
         <div class="caliberBox"> </div>
-        {{#each getClusters}} {{> Cluster}} {{/each}}
+        {{#each getClusters}} 
+            {{> Cluster}} 
+        {{/each}}
     </div>
 </template>
 <template name="ZoomSpaceElement">
@@ -57,10 +82,9 @@
     </div>
 </template>
 <template name="InstantiateCluster">
-    <div class="clusterButton">
+    <!-- <div class="clusterButton"> -->
         <button id="addCluster" class="btn-primary">New Pattern</button>
-        <a><span class="glyphicon glyphicon-question-sign" id="instructions"></span></a>
-    </div>
+    <!-- </div> -->
 </template>
 <template name="Finished">
     <!-- <div class="finishedButton"> -->

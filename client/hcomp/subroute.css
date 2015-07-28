@@ -2,67 +2,34 @@
   /*overflow:hidden;*/
 }
 
-::-webkit-scrollbar { 
-    display: none; 
+/**********************
+Console elements
+***********************/
+
+#console{
+  margin-left: 20px;
+  z-index: 500;
+  /*border-right: 3px solid #000000;*/
+ /* min-height: 8000px;*/
 }
 
-#leftSide {
-    border:1px solid #444;
-    /*margin: 50px;*/
+#mock{
+  z-index: 999;
+  border-bottom: 2px solid #000000;
+  position: fixed;
+  height: 390px;
+  width: 237px;
+  /*background-color: white;*/
 }
 
-.caliberBox2{
-  position: absolute;
-  border:1px solid #444;
-  top:10px;
-  left:18px;
-  width: 10px;
-  height: 10px; 
-  background-color: #000000;
-}
-
-
-/*.caliberBox{
-  position: absolute;
-  border:1px solid #444;
-  top: 2475px;
-  left: 2475px;
-  width: 50px;
-  height: 50px; 
-  background-color: #000000;
-}*/
-
-.panZoomFrame{
-    z-index: 0;
-    position: fixed;
-    border:1px solid #444;
-    top: -2075px;
-    left: -1780px;
-    min-height: 5000px;
-    min-width: 5000px;
-}
-
-#ideaSpace {
-  top: 70%;
-  height:3000px;
-}
-
-.zoomIn {
-    width: 240px;
-}
-
-.zoomOut {
-    width: 240px;
-}
-
-#small {
-    position: absolute;
-}
+/**********************
+Map and minimap elements
+***********************/
 
 .map {
     overflow: hidden;
     z-index: 990;
-    position: fixed;
+    /*position: fixed;*/
     background-color: white;
     border: 2px solid #000000;
     border-radius: 3px;
@@ -70,45 +37,7 @@
     left: 30px;
     min-width: 200px;
     min-height: 200px;
-}
-
-#leftEye{
-  position: absolute;
-  left: 30%; 
-  top:30%;
-}
-
-#rightEye{
-  position: absolute;
-  left: 50%; 
-  top:30%;
-}
-
-.createPattern{
-  margin-top: 5%;
-} 
-
-.END {
-  position: relative;
-  margin-top: 3%;
-}
-
-#console{
-  margin-left: 20px;
-  /*border-right: 3px solid #000000;*/
- /* min-height: 8000px;*/
-}
-
-.zoomBox {
-    position: relative;
-    border: 1px solid #000000;
-    width: 15%; 
-    height: 80px;
-}
-
-.col-md-8{
-    min-height: 3000px;
-    min-height: 3000px;
+    max-width:237px;
 }
 
 .miniIdeas {
@@ -133,108 +62,165 @@
     background-color:#def;
 }
 
-.dropdown-toggle {
-    
+/**********************
+Zoom control elements
+***********************/
+
+.zoomControl {
+    z-index: 999;
+    /*position: fixed;*/
+    display: inline;
+    /*padding-left: 40px;*/
+    /*top: 30%;*/
+    /*margin-top: 10px;*/
+    max-width: 237px;
+    margin-top:-5px;
+    margin-bottom:-5px;
 }
 
 .zoom-control-buttons {
   font-size: 20px;
 }
 
-.zoomControl {
-    z-index: 999;
-    position: fixed;
-    display: inline;
-    padding-left: 20px;
-    top: 30%;
-    padding-top: 5px;
-}
-
 #zBar{
-   
    display: inline-block;
 }
 #zIn {
-   
    display: inline-block;
 }
  #zOut{
+  margin-left: 20px;
    display: inline-block;
 }
 
-/*.clusterButton {
-    text-align: center;
-    border:1px solid #444;
-    border-radius: 12px;
-    left: 70px;
-    height: 35px;
-    width:  110px;
-    color:  #F2F2E8;
-    font-size: 16px;
-    background-color: #217EFF;
-}*/
+/**********************
+Cluster control elements
+***********************/
+
+.clusterControls{
+  /*margin-top: 5%;*/
+  max-width: 237px;
+  /*padding-left:25px;*/
+} 
+
+.createPattern {
+  padding:0px;
+}
+
+#addCluster {
+  font-family: sans-serif;
+  font-size: 20px;
+  margin:auto;
+}
+
+.instructionsContainer {
+  float:right;
+  /*margin-right:5px;*/
+  padding-left:0px;
+}
 
 #instructions {
   /*position:fixed;*/
-  padding-left: 10px;
-  top: -20px;
+  /*padding-left: 10px;*/
+  /*top: -20px;*/
   font-size:24px;
   font-weight: bold;
   color:#9C9C9C;
-  cursor: pointer;
+  cursor: pointer; 
+}
+
+.numIdeas {
+    /*position: fixed;*/
+    /*top:380px;*/
+    /*margin-top: 10px;*/
+    width: 200px;
+    max-width: 237px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 8px;
+    padding: 10px;
 }
 
 #finished {
   font-size: 16px;
   font-family: sans-serif;
   float:right;
+  margin-top:5px;
   /*left:75px;*/
   /*top: 355px;*/
   /*position:fixed;*/
 }
 
-.numIdeas {
-    position: fixed;
-    top:380px;
-    margin-top: 10px;
-    width: 200px;
-    height: 40px;
-    font-size: 20px;
-    border-radius: 8px;
-}
- 
+/**********************
+Display ideas elements
+***********************/
+
 .ideaArea{
   z-index: 995;
-  top: 450px;
-  position: absolute;
+  margin-top: 400px;
+  /*position: absolute;*/
   min-height: 2120px;
   padding-left: 3px;
+  max-width: 237px;
 }
 
-@-webkit-keyframes glowone {
-  from { background-color: #0080FF;
-         -moz-box-shadow:     0 0 150px #0CFFFF;
-         -webkit-box-shadow:  0 0 150px #96E7F6;
-          box-shadow:         0 0 150px #66D7FF;  
-    }
-    to {  background-color: #def;}
+.ideasList {
+    position: relative;
+    border:1px solid #444;
+    width: 400px;
+    height: relative;
 }
 
-/*@-webkit-keyframes example {
-    from {background-color: #B54DF2;}
-    to {background-color: #def;}
-}*/
-
-@-webkit-keyframes glowtwo {
-  from { background-color: #0080FF;
-         -moz-box-shadow:     0 0 150px #0CFFFF;
-         -webkit-box-shadow:  0 0 150px #96E7F6;
-          box-shadow:         0 0 150px #66D7FF;  
-    }
-    to {  background-color: #def;}
+.ideaListElement {
+    position: relative;
+    border-radius: 3px;
+    list-style-type: none;
+    border-radius: 5px;
+    width: 225px;
+    min-height: 75px;
+    margin-top: 10px;
+    /*overflow: hidden;*/
+    background-color: #FFFC9B;
+    cursor: move;
+    padding: 5px;
 }
 
- .cluster {
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+/**********************
+Zoomspace elements
+***********************/
+
+.panZoomFrame{
+    z-index: 0;
+    position: fixed;
+    border:1px solid #444;
+    top: -2075px;
+    left: -1780px;
+    min-height: 5000px;
+    min-width: 5000px;
+}
+
+.zoomSpaceElement {
+  position: absolute;
+  list-style-type: none;
+  border-radius: 5px;
+  width: 225px;
+  min-height: 85px;
+  margin-top: 5px;
+  background-color: #FFFC9B;
+  padding: 10px;
+  box-shadow: 5px 5px 5px #888888;
+  /*overflow: hidden;*/
+}
+
+/**********************
+Cluster elements
+***********************/
+
+.cluster {
     position: absolute;
     border: 2px solid #343737;
     width: 200px;
@@ -307,26 +293,31 @@
     padding: 5px;
 }
 
-.box {
-  position: relative;
-  top:  3000px;
-  left: 3250px;
-  border:1px solid #444;
-  width: 50px;
-  max-height: 50px;
+/**********************
+Animation styles
+***********************/
+
+@-webkit-keyframes glowone {
+  from { background-color: #0080FF;
+         -moz-box-shadow:     0 0 150px #0CFFFF;
+         -webkit-box-shadow:  0 0 150px #96E7F6;
+          box-shadow:         0 0 150px #66D7FF;  
+    }
+    to {  background-color: #def;}
 }
 
-.zoomSpaceElement {
-  position: absolute;
-  list-style-type: none;
-  border-radius: 5px;
-  width: 225px;
-  min-height: 85px;
-  margin-top: 5px;
-  background-color: #FFFC9B;
-  padding: 10px;
-  box-shadow: 5px 5px 5px #888888;
-  /*overflow: hidden;*/
+/*@-webkit-keyframes example {
+    from {background-color: #B54DF2;}
+    to {background-color: #def;}
+}*/
+
+@-webkit-keyframes glowtwo {
+  from { background-color: #0080FF;
+         -moz-box-shadow:     0 0 150px #0CFFFF;
+         -webkit-box-shadow:  0 0 150px #96E7F6;
+          box-shadow:         0 0 150px #66D7FF;  
+    }
+    to {  background-color: #def;}
 }
 
 @-webkit-keyframes zoomGlow {
@@ -343,34 +334,40 @@
     to {background-color: #def;}
 }*/
 
-#mock{
-  z-index: 999;
-  border-bottom: 2px solid #000000;
-  position: fixed;
-  height: 450px;
-  width: 237px;
-  /*background-color: white;*/
+/**********************
+Pretty sure these below
+are not being used;
+TODO: clean up;
+***********************/
+
+/*.caliberBox{
+  position: absolute;
+  border:1px solid #444;
+  top: 2475px;
+  left: 2475px;
+  width: 50px;
+  height: 50px; 
+  background-color: #000000;
+}*/
+
+/*not used*/
+#ideaSpace {
+  top: 70%;
+  height:3000px;
 }
 
-.ideaListElement {
-    position: relative;
-    border-radius: 3px;
-    list-style-type: none;
-    border-radius: 5px;
-    width: 225px;
-    min-height: 75px;
-    margin-top: 10px;
-    /*overflow: hidden;*/
-    background-color: #FFFC9B;
-    cursor: move;
-    padding: 5px;
+.END {
+  position: relative;
+  margin-top: 3%;
 }
- 
-.ideasList {
-    position: relative;
-    border:1px solid #444;
-    width: 400px;
-    height: relative;
+
+.box {
+  position: relative;
+  top:  3000px;
+  left: 3250px;
+  border:1px solid #444;
+  width: 50px;
+  max-height: 50px;
 }
 
 #trashSpace {
@@ -405,3 +402,46 @@
     /*margin:auto;*/
     /*border:2px solid #444;*/
 }
+
+#leftSide {
+    border:1px solid #444;
+    /*margin: 50px;*/
+}
+
+.caliberBox2{
+  position: absolute;
+  border:1px solid #444;
+  top:10px;
+  left:18px;
+  width: 10px;
+  height: 10px; 
+  background-color: #000000;
+}
+
+.zoomBox {
+    position: relative;
+    border: 1px solid #000000;
+    width: 15%; 
+    height: 80px;
+}
+
+.col-md-8{
+    /*min-height: 3000px;*/
+    /*min-height: 3000px;*/
+}
+
+.dropdown-toggle {
+    
+}
+
+/*.clusterButton {
+    text-align: center;
+    border:1px solid #444;
+    border-radius: 12px;
+    left: 70px;
+    height: 35px;
+    width:  110px;
+    color:  #F2F2E8;
+    font-size: 16px;
+    background-color: #217EFF;
+}*/
