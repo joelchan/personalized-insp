@@ -349,6 +349,56 @@ EventLogger = (function () {
     },
 
     /** Clustering events **/
+    logSynthExpPartialFinish: function () {
+      var msg = "User attempted to finish synth exp with some missing labels";
+      //var type = EventTypeManager.get(msg);
+      this.log(msg);
+    },
+    logDisplayToZoom: function(idea, pos) {
+      var msg = "User sent idea from display to zoom space";
+      var data = {"ideaID": idea._id,
+                  "position": pos};
+      this.log(msg, data);
+    },
+    logDisplayToCluster: function(idea, cluster) {
+      var msg = "User sent idea from display to cluster";
+      var data = {"clusterID": cluster._id,
+                  "ideaID": idea._id}
+      this.log(msg, data);
+    },
+    logMoveZoomIdea: function(idea, pos, prevPos) {
+      var msg = "User moved idea in zoom space";
+      var data = {"ideaID": idea._id,
+                  "position": pos,
+                  "prevPosition": prevPos};
+      this.log(msg, data);
+    },
+    logZoomToCluster: function(idea, cluster) {
+      var msg = "User sent idea from zoom to cluster";
+      var data = {"clusterID": cluster._id,
+                  "ideaID": idea._id}
+      this.log(msg, data);
+    },
+    logClusterToZoom: function(idea, cluster, pos) {
+      var msg = "User sent idea from cluster to zoom space";
+      var data = {"clusterID": cluster._id,
+                  "ideaID": idea._id,
+                  "position": pos}
+      this.log(msg, data);
+    },
+    logClusterToCluster: function(idea, prevCluster, newCluster) {
+      var msg = "User moved idea from cluster to a new cluster";
+      var data = {"prevClusterID": prevCluster._id,
+                  "newClusterID": newCluster._id,
+                  "ideaID": idea._id}
+      this.log(msg, data);
+    },
+    logClusterToDisplay: function(idea, cluster) {
+      var msg = "User sent idea back to display from cluster";
+      var data = {"clusterID": cluster._id,
+                  "ideaID": idea._id}
+      this.log(msg, data);
+    },
     logClusterCollapse: function(cluster) {
       var msg = "User toggled cluster collapse"
       var prompt = Session.get("currentPrompt");
@@ -367,22 +417,36 @@ EventLogger = (function () {
       };
       this.log(msg, data);
     },
-    logChangeClusterName: function(cluster, name) {
+    logChangeClusterName: function(cluster, name, oldName) {
       var msg = "User modified cluster name"
       var prompt = Session.get("currentPrompt");
       //var type = EventTypeManager.get(msg);
-      var data = {"clusterID": cluster._id,
-          'newName': name,
-      };
+      if (oldName) {
+        var data = {"clusterID": cluster._id,
+            'newName': name,
+            'oldName': oldName,
+        };
+      } else {
+        var data = {"clusterID": cluster._id,
+            'newName': name,
+        };
+      }
       this.log(msg, data);
     },
-    logMovedCluster: function(cluster, pos) {
+    logMovedCluster: function(cluster, pos, prevPos) {
       var msg = "User moved cluster"
       var prompt = Session.get("currentPrompt");
       //var type = EventTypeManager.get(msg);
-      var data = {"clusterID": cluster._id,
-          'position': pos,
-      };
+      if (prevPos) {
+        var data = {"clusterID": cluster._id,
+            'position': pos,
+            'prevPosition': prevPos,
+        };
+      } else {
+        var data = {"clusterID": cluster._id,
+            'position': pos,
+        };
+      }
       this.log(msg, data);
     },
     logDeletingCluster: function(cluster) {
@@ -408,7 +472,7 @@ EventLogger = (function () {
       };
       this.log(msg, data);
     },
-    logCreateCluster: function(idea, source, target) {
+    logCreateCluster: function(target, idea, source) {
       var msg = "User created new cluster"
       var prompt = Session.get("currentPrompt");
       //var type = EventTypeManager.get(msg);
@@ -416,10 +480,17 @@ EventLogger = (function () {
       if (source) {
         sourceID = source._id;
       } 
-      var data = {"ideaID": idea._id,
-          'sourceID': sourceID,
-          'targetID': target._id,
-      };
+      if (idea) {
+        var data = {"ideaID": idea._id,
+            'sourceID': sourceID,
+            'targetID': target._id,
+        };
+      } else {
+        var data = {'sourceID': sourceID,
+            'targetID': target._id,
+        };
+      }
+      
       this.log(msg, data);
     },
     logIdeaClustered: function(idea, source, target) {
