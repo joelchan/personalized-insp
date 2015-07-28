@@ -7,6 +7,7 @@ import itertools as it
 from ideagens import ExpSynthSubset, list_to_dict
 import db_params
 import mongohq
+from bson.objectid import ObjectId
 
 def clean_text(s):
     lines = s.split()
@@ -305,7 +306,8 @@ def insert_subsets_to_db(subSets, cond, exp):
                                 subsetName,
                                 {'seed': subsetData['seed'],
                                  'pairwiseSims_mean': subsetData['pairwiseSims_mean'],
-                                 'pairwiseSims_sd': subsetData['pairwiseSims_sd']}
+                                 'pairwiseSims_sd': subsetData['pairwiseSims_sd'],
+                                 '_id': str(ObjectId())}
                                 ) for subsetName, subsetData in subSets.items()]
     # for doc in subset_docs:
     #     print doc.__dict__
