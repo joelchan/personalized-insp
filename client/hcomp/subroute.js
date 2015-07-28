@@ -65,14 +65,19 @@ Template.SubrouteSandbox.onRendered(function () {
 
 Template.MiniMap.onRendered(function () {
 
-    var instructions = "<h2>Goal</h2>" +
+    var instructions = "<h3>Goal</h3>" +
                         "<p>Identify solution patterns in the ideas below. " +
-                            "Try to identify patterns that might be useful to others who want to generate ideas for the same/related problem.</p>" +
+                            "Try to identify patterns that might be useful to others who want to generate ideas for the same/related problem. " + 
+                            "These ideas are generated for the problem: </p><p>" + 
+                            "<em>\"" +
+                            Session.get("currentPrompt").question +
+                            "\"</em>" +
+                            "</p>" +
                         "<p>All ideas must be associated with at least one pattern. " +
                         "Number of ideas left (i.e., not labeled) is shown below. " +
                         "A 'finish' button will appear when all ideas have been labeled.</p>" +
                         "<br/>" +
-                        "<h2>Essential interactions</h2>" +
+                        "<h3>Essential interactions</h3>" +
                         "<ul>" +
                             "<li>Drag ideas from the list into the canvas on the right.</li>" +
                             "<li>Move ideas around on canvas to make sense of them (e.g., group them with other ideas).</li>" +
@@ -85,16 +90,16 @@ Template.MiniMap.onRendered(function () {
                             "</li>" +
                             "<li>Click on pattern label and type to create/edit pattern labels (all patterns must be labeled).</li>" +
                         "</ul>" +
-                        "<h2>Other interactions</h2>" +
+                        "<h3>Other interactions</h3>" +
                         "<ul>" +
                             "<li>Drag ideas from one label to another (swaps labels for idea).</li>" +
                             "<li>Drag ideas from label onto canvas (removes idea from label).</li>" +
                             "<li>Click on the 'x' button on labels to delete them " +
                                 "(removes all ideas from label and places them back in list on left).</li>" +
                             "<li>Zoom out of the canvas if you need more space</li>" +
-                        "</ul>" +
+                        "</ul>"
                         // "<br/>" +
-                        "<p>Click the question mark icon again to close this message. Good luck!</p>"
+                        // "<p>Click the question mark icon again to close this message. Good luck!</p>"
 
     $('#instructions').tooltipster({
         content: $(instructions),
