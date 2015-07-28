@@ -233,6 +233,7 @@ Cluster elements
 .clusterLabel {
   height: 135px;
   padding: 10px;
+  overflow: auto;
 }
 
 .clusterName {
@@ -241,7 +242,7 @@ Cluster elements
 }
 
 .nameCluster {
-    background-color: #E8B19B;
+    background-color: #F6EBE4;
     border-style: none;
     font-style: bold;
     font-size: 17px;
@@ -261,6 +262,7 @@ Cluster elements
 
 .del-cluster {
   float:right;
+  cursor: pointer;
 }
 
 #downArrow {

@@ -65,24 +65,35 @@ Template.SubrouteSandbox.onRendered(function () {
 
 Template.MiniMap.onRendered(function () {
 
-    var instructions = "<h1>Instructions</h1>" +
-                        "<p>Your job is to identify patterns of solutions in the ideas below. " +
-                            "Try to identify patterns that might be useful to others who want to generate ideas for the same/related problem." +
-                        "<p>Here's how you will do this:</p>" +
-                        "<ol>" +
-                            "<li>Drag ideas from the list into the canvas on the right. " +
-                            "You can move them around however you like to make sense of them (e.g., group them with other ideas).</li>" +
-                            "<li>To describe a group's pattern:" +
+    var instructions = "<h2>Goal</h2>" +
+                        "<p>Identify solution patterns in the ideas below. " +
+                            "Try to identify patterns that might be useful to others who want to generate ideas for the same/related problem.</p>" +
+                        "<p>All ideas must be associated with at least one pattern. " +
+                        "Number of ideas left (i.e., not labeled) is shown below. " +
+                        "A 'finish' button will appear when all ideas have been labeled.</p>" +
+                        "<br/>" +
+                        "<h2>Essential interactions</h2>" +
+                        "<ul>" +
+                            "<li>Drag ideas from the list into the canvas on the right.</li>" +
+                            "<li>Move ideas around on canvas to make sense of them (e.g., group them with other ideas).</li>" +
+                            "<li>Label an idea or group of ideas:" +
                                 "<ol>" +
-                                    "<li>Click on the New Pattern button. A new pattern label will appear on the canvas.</li>" +
-                                    "<li>Apply the label to one or more ideas by dragging those ideas onto the label. " +
+                                    "<li>Click on the New Pattern button to create a new pattern label. It will appear on the canvas.</li>" +
+                                    "<li>Drag idea(s) onto the label. " +
                                         "The ideas will change color to green and be attached to the label.</li>" +
                                 "</ol>" +
                             "</li>" +
-                            "<li>You may rename or delete pattern labels, or move ideas from one label to another or back onto the canvas.</li>" +
-                            "<li>You must label all ideas to finish this HIT. " +
-                                "The number of ideas left (i.e., not labeled) is shown below.</li>" +
-                        "</ol>" +
+                            "<li>Click on pattern label and type to create/edit pattern labels (all patterns must be labeled).</li>" +
+                        "</ul>" +
+                        "<h2>Other interactions</h2>" +
+                        "<ul>" +
+                            "<li>Drag ideas from one label to another (swaps labels for idea).</li>" +
+                            "<li>Drag ideas from label onto canvas (removes idea from label).</li>" +
+                            "<li>Click on the 'x' button on labels to delete them " +
+                                "(removes all ideas from label and places them back in list on left).</li>" +
+                            "<li>Zoom out of the canvas if you need more space</li>" +
+                        "</ul>" +
+                        // "<br/>" +
                         "<p>Click the question mark icon again to close this message. Good luck!</p>"
 
     $('#instructions').tooltipster({
@@ -90,8 +101,46 @@ Template.MiniMap.onRendered(function () {
         trigger: 'click',
         // autoClose: false,
         // hideOnClick: true,
+        theme: 'tooltipster-shadow',
         position: 'right',
+        offset: 40,
         speed: 200,
+        maxWidth: 500
+    });
+
+    $('#instructions').tooltipster('show');
+
+    $('.del-cluster').tooltipster({
+        content: "Click to delete this label",
+        // trigger: 'click',
+        // autoClose: false,
+        // hideOnClick: true,
+        offsetX: -15,
+        theme: 'tooltipster-shadow',
+        position: 'right',
+        speed: 750,
+        maxWidth: 400
+    })
+
+    $('.clusterName').tooltipster({
+        content: "Click to edit name; when finished, hit enter",
+        // trigger: 'click',
+        // autoClose: false,
+        // hideOnClick: true,
+        theme: 'tooltipster-shadow',
+        position: 'top',
+        speed: 750,
+        maxWidth: 400
+    })
+
+    $('.ideaCollapser').tooltipster({
+        content: "Click to show ideas",
+        // trigger: 'click',
+        // autoClose: false,
+        // hideOnClick: true,
+        theme: 'tooltipster-shadow',
+        position: 'left',
+        speed: 750,
         maxWidth: 400
     })
 

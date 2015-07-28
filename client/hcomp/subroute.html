@@ -35,9 +35,9 @@
         <div id="zIn"><span class="glyphicon glyphicon-zoom-in zoom-control-buttons"></span></div>
     </div>
     <div class="row clusterControls">
-        <div class="col-md-2 col-xs-2 filler">
+        <div class="col-md-3 col-xs-3 filler">
         </div>
-        <div class="col-md-8 col-xs-8 createPattern">
+        <div class="col-md-7 col-xs-7 createPattern">
             {{> InstantiateCluster}}
         </div>
         <div class="col-md-2 col-xs-2 instructionsContainer">
@@ -55,7 +55,9 @@
 </template>
 <template name="IdeaSpace">
     <div class="ideaArea">
-        {{#each displayIdeas}} {{ > IdeaListElement}} {{/each}}
+        {{#each displayIdeas}} 
+            {{ > IdeaListElement}} 
+        {{/each}}
     </div>
 </template>
 <template name="IdeaListElement">
@@ -114,7 +116,7 @@
                 </div>
             </div>
             <div class="row clusterControls">
-                <div class="col-xs-3 col-md-3">
+                <div class="col-xs-3 col-md-3 ideaCollapser">
                     {{#if getClusterIdeasCount}}
                     <a data-toggle="collapse" data-parent="#cluster-idea-group-{{_id}}" href="#cluster-idea-list-{{_id}}">
                         {{#if isCollapsed}}
