@@ -516,10 +516,12 @@ Template.Cluster.onRendered( function() {
             // animation-name: example;
             // animation-duration: 4s;
 
+            ClusterFactory.insertIdeaToCluster(ideaObject, clusterObject);  
+
             // from zoomSpace or displayIdeas
             if($.inArray(ideaID, clusterObject.ideaIDs) == -1) {
-                Ideas.update({_id: ideaObject._id}, {$set: {'inCluster': true, 'inZoomSpace':false}});
-                ClusterFactory.insertIdeaToCluster(ideaObject, clusterObject);  
+                // Ideas.update({_id: ideaObject._id}, {$set: {'inCluster': true, 'inZoomSpace':false}});
+                IdeaFactory.updateZoomSpaceFlag(ideaID, "remove");
                 if (isInList(user._id, ideaObject.zoomSpace)) {
                     EventLogger.logZoomToCluster(ideaObject, clusterObject);
                 } else {
@@ -527,12 +529,12 @@ Template.Cluster.onRendered( function() {
                 }           
             } 
             
-            // if it's already in another cluster belong to the user, remove it
+            // if it's already in another cluster belonging to the user, remove it
             if(ideaObject.clusterIDs.length > 1) {
                logger.debug("Array of clusters"  + ideaObject.clusterIDs);     
                var prevClusters = Clusters.find({_id: {$in: ideaObject.clusterIDs}}).fetch();
                prevClusters.forEach(function(cluster){
-                    if (cluster.userID == Session.get("currentUser")._id) {
+                    if ((cluster.userID == Session.get("currentUser")._id) && (cluster._id != currentClusterID)) {
                          logger.debug("Removing from user's previous cluster with id: " + cluster._id);
                          ClusterFactory.removeIdeaFromCluster(ideaObject, cluster); 
                          EventLogger.logClusterToCluster(ideaObject, cluster, clusterObject);
