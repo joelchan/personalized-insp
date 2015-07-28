@@ -220,6 +220,10 @@ Zoomspace elements
 Cluster elements
 ***********************/
 
+.cluster:hover {
+  background-color: #3ABCEE;
+}
+
 .cluster {
     position: absolute;
     border: 2px solid #343737;
