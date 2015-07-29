@@ -284,12 +284,14 @@ Template.IdeaListElement.onRendered(function () {
 
 Template.InstantiateCluster.events({
     'click #addCluster' : function(e, ui) {
+        var randomNoise = Math.floor((Math.random() * 100) + 1); 
+
         var user   = Session.get('currentUser');
         var prompt = Session.get('currentPrompt');
         var newCluster = ClusterFactory.create(user, prompt, null);
         EventLogger.logCreateCluster(newCluster);        
-        var tc = (clusterTop*-1/global) + 2475;
-        var lc = (clusterLeft*-1/global) + 2475;
+        var tc = (clusterTop*-1/global) + 2475 + randomNoise;
+        var lc = (clusterLeft*-1/global) + 2475 + randomNoise;
         var newPos = {"top": tc, "left": lc};
         updateClusterFilter(newCluster._id);
         ZoomManager.updatePosition(newCluster._id, "Clusters", newPos, Session.get("currentUser"));
