@@ -508,6 +508,7 @@ Template.Cluster.onRendered( function() {
     
     $(this.firstNode).droppable({
         accept:'.zoomSpaceElement, .clusterListElement, .ideaListElement',
+        greedy: true,
         drop: function(event, ui) {
             var currentClusterID = this.id;
             //logger.trace("current cluster ID: " + currentClusterID);
@@ -516,43 +517,53 @@ Template.Cluster.onRendered( function() {
             var ideaObject =  Ideas.findOne(ideaID);     
             var user = Session.get("currentUser");       
         
-            $("#" + currentClusterID).css('-webkit-animation-name', 'glowone'); /* Chrome, Safari, Opera */
-            $("#" + currentClusterID).css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
+            var clusterContainerID = $("#" + currentClusterID).children()[0].id;
+            logger.trace("cluster container ID: " + clusterContainerID);
+
+            $("#" + clusterContainerID).css('-webkit-animation-name', 'glowone'); /* Chrome, Safari, Opera */
+            $("#" + clusterContainerID).css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
             
             // -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */
             // animation-name: example;
             // animation-duration: 4s;
 
-            ClusterFactory.insertIdeaToCluster(ideaObject, clusterObject);  
+            // only do something to the idea if it's not already in the cluster
+            if(!isInList(ideaID, clusterObject.ideaIDs)) {
 
-            // from zoomSpace or displayIdeas
-            if($.inArray(ideaID, clusterObject.ideaIDs) == -1) {
-                // Ideas.update({_id: ideaObject._id}, {$set: {'inCluster': true, 'inZoomSpace':false}});
-                IdeaFactory.updateZoomSpaceFlag(ideaID, "remove");
-                if (isInList(user._id, ideaObject.zoomSpace)) {
-                    EventLogger.logZoomToCluster(ideaObject, clusterObject);
-                } else {
-                    EventLogger.logDisplayToCluster(ideaObject, clusterObject);
-                }           
-            } 
-            
-            // if it's already in another cluster belonging to the user, remove it
-            if(ideaObject.clusterIDs.length > 1) {
-               logger.debug("Array of clusters"  + ideaObject.clusterIDs);     
-               var prevClusters = Clusters.find({_id: {$in: ideaObject.clusterIDs}}).fetch();
-               prevClusters.forEach(function(cluster){
-                    if ((cluster.userID == Session.get("currentUser")._id) && (cluster._id != currentClusterID)) {
-                         logger.debug("Removing from user's previous cluster with id: " + cluster._id);
-                         ClusterFactory.removeIdeaFromCluster(ideaObject, cluster); 
-                         EventLogger.logClusterToCluster(ideaObject, cluster, clusterObject);
+                // manage various flags
+                var prevClusters = Clusters.find({userID: user._id, ideaIDs: ideaID}).fetch();
+                // update zoom space flag and log if from zoomSpace or displayIdeas
+                if(prevClusters.length < 1) {
+                    IdeaFactory.updateZoomSpaceFlag(ideaID, "remove");
+                    if (isInList(user._id, ideaObject.zoomSpace)) {
+                        logger.debug("From zoomSpace");
+                        EventLogger.logZoomToCluster(ideaObject, clusterObject);
                     } else {
-                         logger.debug("Cluster with id " + cluster._id + " not previously in user's clusters");
-                    }
-               });
+                        logger.debug("From displayIdeas");
+                        EventLogger.logDisplayToCluster(ideaObject, clusterObject);
+                    }   
+                // if it's already in another cluster belonging to the user, remove it 
+                } else {
+                    prevClusters.forEach(function(cluster){
+                        logger.debug("Removing from user's previous cluster with id: " + cluster._id);
+                        ClusterFactory.removeIdeaFromCluster(ideaObject, cluster); 
+                        EventLogger.logClusterToCluster(ideaObject, cluster, clusterObject);
+                    });
+                }
+
+                // then insert the idea into the cluster
+                ClusterFactory.insertIdeaToCluster(ideaObject, clusterObject);                
+            } else {
+                logger.debug("Idea is already in the cluster!");
             }
-            $("#" + currentClusterID).removeClass('-webkit-animation-name', 'glowone'); 
-            $("#" + currentClusterID).css('-webkit-animation-name', 'glowtwo'); 
-            $("#" + currentClusterID).css('-webkit-animation-duration', '2s'); 
+
+            $("#" + clusterContainerID).removeClass('-webkit-animation-name', 'glowone'); 
+            $("#" + clusterContainerID).css('-webkit-animation-name', 'glowtwo'); 
+            $("#" + clusterContainerID).css('-webkit-animation-duration', '2s');
+
+            // $("#" + currentClusterID).removeClass('-webkit-animation-name', 'glowone'); 
+            // $("#" + currentClusterID).css('-webkit-animation-name', 'glowtwo'); 
+            // $("#" + currentClusterID).css('-webkit-animation-duration', '2s'); 
         }
     });    
     $(this.firstNode).on({
@@ -640,7 +651,7 @@ Template.ClusterIdeaElement.onRendered(function () {
 
    $(this.firstNode).draggable({
         //containment: '.synth  esisBox',
-        //revert: true,
+        revert: true,
         zIndex: 50,
         drag: function(e, ui) {
             // var width = $(this).css('width');
@@ -752,12 +763,21 @@ var updateClusterFilter = function updateClusterFilter(clusterID, remove) {
 }
 
 fromCluster = function fromCluster(ideaID) {
-    var clusters = Clusters.find({ideaIDs: ideaID}).fetch();
-    if (clusters.length > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    
+    logger.debug("Checking if idea is in any of the user's clusters");
+
+    var userClusters = FilterManager.performQuery("clusterFilter", Session.get("currentUser"), "clusters").fetch();
+    var ideaObject = Ideas.findOne({_id: ideaID});
+
+    var inCluster = false;
+    userClusters.forEach(function(cluster) {
+        if(isInList(cluster._id, ideaObject.clusterIDs)) {
+            logger.trace("Idea is in cluster " + JSON.stringify(cluster));
+            inCluster = true;
+        }
+    });
+
+    return inCluster;
 }
 
 fromDisplayIdeas = function fromDisplayIdeas(ideaID) {

@@ -221,11 +221,20 @@ Cluster elements
 ***********************/
 
 .cluster:hover {
-  background-color: #3ABCEE;
+  /*background-color: #3ABCEE;*/
 }
 
 .cluster {
     position: absolute;
+    /*border: 2px solid #343737;*/
+    width: 200px;
+    /*height: 180px;*/
+    /*background-color: #def;*/
+    border-radius: 5px;   
+}
+
+.cluster-container {
+    /*position: absolute;*/
     border: 2px solid #343737;
     width: 200px;
     height: 180px;
@@ -287,8 +296,8 @@ Cluster elements
 }
 
 .cluster-ideas {
-  margin-top:7px;
-  margin-left:-18px;
+  margin-top:3px;
+  margin-left:-16px;
 }
 
 .clusterListElement {
