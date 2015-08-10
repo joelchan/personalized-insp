@@ -220,8 +220,12 @@ Zoomspace elements
 Cluster elements
 ***********************/
 
-.cluster:hover {
+.cluster-hover {
   /*background-color: #3ABCEE;*/
+  background-color: #0080FF;
+  -moz-box-shadow:     0 0 150px #0CFFFF;
+  -webkit-box-shadow:  0 0 150px #96E7F6;
+  box-shadow:         0 0 150px #66D7FF;  
 }
 
 .cluster {

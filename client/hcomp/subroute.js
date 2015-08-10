@@ -509,6 +509,7 @@ Template.Cluster.onRendered( function() {
     $(this.firstNode).droppable({
         accept:'.zoomSpaceElement, .clusterListElement, .ideaListElement',
         greedy: true,
+        hoverClass: "cluster-hover",
         drop: function(event, ui) {
             var currentClusterID = this.id;
             //logger.trace("current cluster ID: " + currentClusterID);
