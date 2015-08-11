@@ -49,7 +49,7 @@
         <!-- <div class="col-md-12 col-xs-12"> -->
             <span style="font-size:24px; font-weight:bold">{{numIdeasTotal}}</span> ideas to process
             <br/>
-            <span style="font-size:24px; font-weight:bold">{{getRemainingIdeas}}</span> to go {{#if couldBeDone}} {{ > Finished }} {{/if}}
+            <span style="font-size:24px; font-weight:bold">{{getRemainingIdeas}}</span> to go &nbsp;&nbsp; {{#if couldBeDone}} {{ > Finished }} {{else}} <button id="finished" disabled="disabled" class="btn btn-success">I'm finished!</button> {{/if}}
         <!-- </div> -->
     </div>
 </template>
@@ -85,12 +85,12 @@
 </template>
 <template name="InstantiateCluster">
     <!-- <div class="clusterButton"> -->
-        <button id="addCluster" class="btn-primary">New Pattern</button>
+        <button id="addCluster" class="btn btn-primary">New Pattern</button>
     <!-- </div> -->
 </template>
 <template name="Finished">
     <!-- <div class="finishedButton"> -->
-    <button id="finished" class="btn-success">I'm finished!</button>
+    <button id="finished" class="btn btn-success">I'm finished!</button>
     <!-- </div> -->
 </template>
 <template name="MiniMapViewPane">

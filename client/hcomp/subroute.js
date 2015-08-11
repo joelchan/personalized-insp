@@ -273,6 +273,7 @@ Template.IdeaListElement.onRendered(function () {
         zIndex: 50, 
         revert: true,
         greedy: true,       
+        cursor: "-webkit-grabbing",
         create: function(event, ui) {
         },
         drag: function(e, ui) {
@@ -447,6 +448,7 @@ Template.ZoomSpaceElement.onRendered(function () {
     $(this.firstNode).draggable({
         zIndex: 50,
         appendTo: '.panZoomFrame',
+        cursor: "-webkit-grabbing",
         drag: function(e, ui) {
               
             ui.position.top =  Math.round(ui.position.top / global);
@@ -501,6 +503,7 @@ Template.Cluster.onRendered( function() {
      var canvasWidth = $('.panZoomFrame').width();
      $(this.firstNode).draggable({
         accept: '.zoomSpaceElement',
+        cursor: "-webkit-grabbing",
         drag: function(e, ui) {
             ui.position.top = Math.round(ui.position.top/global);
             ui.position.left = Math.round(ui.position.left/global);
