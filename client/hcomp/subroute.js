@@ -65,22 +65,28 @@ Template.SubrouteSandbox.onRendered(function () {
 
 Template.MiniMap.onRendered(function () {
 
-    var instructions = "<h3>Goal</h3>" +
-                        "<p>Identify solution patterns in the ideas below. " +
-                            "Try to identify patterns that might be useful to others who want to generate ideas for the same/related problem. " + 
+    var instructions = "<h2>Goal</h2>" +
+                        "<p>Identify solution patterns in the ideas below. " + 
                             "These ideas are generated for the problem: </p><p>" + 
                             "<em>\"" +
                             Session.get("currentPrompt").question +
                             "\"</em>" +
                             "</p>" +
+                        "<p>Try to identify patterns that might be useful to others who want to generate ideas for the same/related problem. " +
+                            "For example, a good pattern for the ideas " + 
+                            "\"Use the fabric to support your team during sporting events\"," +
+                            "\"A color changing scarf\", and " + 
+                            "\"Change the color of your carpet to suit your mood\" " +
+                            "would be <strong>\"Customize/personalize your possessions\"</strong>.</p>" +
                         "<p>All ideas must be associated with at least one pattern. " +
                         "Number of ideas left (i.e., not labeled) is shown below. " +
-                        "A 'finish' button will appear when all ideas have been labeled.</p>" +
+                        "A 'finish' button will appear when all ideas have been labeled. Click on this button to complete the HIT. " +
+                        "You will then complete a brief survey and receive your completion code.</p>" +
                         "<br/>" +
-                        "<h3>Essential interactions</h3>" +
+                        "<h2>Essential interactions</h2>" +
                         "<ul>" +
-                            "<li>Drag ideas from the list into the canvas on the right.</li>" +
-                            "<li>Move ideas around on canvas to make sense of them (e.g., group them with other ideas).</li>" +
+                            "<li>Drag ideas from the list to canvas on the right.</li>" +
+                            "<li>Drag to arrange ideas on canvas (e.g., group with other ideas).</li>" +
                             "<li>Label an idea or group of ideas:" +
                                 "<ol>" +
                                     "<li>Click on the New Pattern button to create a new pattern label. It will appear on the canvas.</li>" +
@@ -88,9 +94,9 @@ Template.MiniMap.onRendered(function () {
                                         "The ideas will change color to green and be attached to the label.</li>" +
                                 "</ol>" +
                             "</li>" +
-                            "<li>Click on pattern label and type to create/edit pattern labels (all patterns must be labeled).</li>" +
+                            "<li>Click on pattern label and type to create/edit pattern labels (all patterns must be labeled). Hit enter when done editing.</li>" +
                         "</ul>" +
-                        "<h3>Other interactions</h3>" +
+                        "<h2>Other interactions</h2>" +
                         "<ul>" +
                             "<li>Drag ideas from one label to another (swaps labels for idea).</li>" +
                             "<li>Drag ideas from label onto canvas (removes idea from label).</li>" +
