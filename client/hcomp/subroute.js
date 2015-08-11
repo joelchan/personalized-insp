@@ -81,7 +81,9 @@ Template.MiniMap.onRendered(function () {
                         "<p>All ideas must be associated with at least one pattern. " +
                         "Number of ideas left (i.e., not labeled) is shown below. " +
                         "A 'finish' button will appear when all ideas have been labeled. Click on this button to complete the HIT. " +
-                        "You will then complete a brief survey and receive your completion code.</p>" +
+                        "You will then complete a brief survey and receive your completion code. " + 
+                        "If at any time you do not wish to continue, you may exit the study by clicking on the \"Exit Early\" button. " + 
+                        "Your compensation will be pro-rated based on how long you participated.</p>" +
                         "<br/>" +
                         "<h2>Essential interactions</h2>" +
                         "<ul>" +

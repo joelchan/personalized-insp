@@ -393,6 +393,9 @@ Router.map(function () {
           logger.debug("Not ready");
         }
     },
+    onAfterAction: function() {
+      insertExitStudy();
+    },
   });
 
   this.route('TutorialControl', {
@@ -770,7 +773,9 @@ Router.map(function () {
         this.render('loading');
       }
     },
-
+    onAfterAction: function() {
+      insertExitStudy();
+    },
   });
 
   this.route('MTurkFinalPage', {
@@ -968,9 +973,21 @@ var insertExitStudy = function() {
     EventLogger.logExitStudy();
     EventLogger.logEndRole();
     // ExperimentManager.logParticipantCompletion(Session.get("currentParticipant"));
-    Router.go("LegionFinalPage", {
-      'partID': Session.get("currentParticipant")._id
-    });
+    var exp = Session.get("currentExp");
+    var part = Session.get("currentParticipant");
+    if (exp.isSynthesis) {
+      var verifyCode = Random.hexString(20).toLowerCase();
+      Participants.update({_id: part._id},
+          {$set: {verifyCode: verifyCode}})
+      Router.go("MTurkFinalPage", {
+        'partID': part._id
+      });
+    } else {
+      Router.go("LegionFinalPage", {
+        'partID': part._id
+      });  
+    }
+    
   });
 };
 
