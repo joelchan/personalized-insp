@@ -152,9 +152,10 @@ getControlResponse = function() {
   answer = $("input[name='ethnicity']").val();
   // checkResponse(answer)
   responses.push(new QuestionResponse("What country do you call home", answer));
-  answer = $("select option:selected").val();
+  // brainstorming
+  // answer = $("select option:selected").val();
   // checkResponse(answer)
-  responses.push(new QuestionResponse("How Frequently do you brainstorm", answer));
+  // responses.push(new QuestionResponse("How Frequently do you brainstorm", answer));
   
   // activity/interface feedback
   answer = $("#activityLikeSurvey").val();
@@ -203,9 +204,9 @@ getTreatmentResponse = function() {
   // checkResponse(answer)
   responses.push(new QuestionResponse("What country do you call home", answer));
   //brainstorming
-  answer = $("select option:selected").val();
+  // answer = $("select option:selected").val();
   // checkResponse(answer)
-  responses.push(new QuestionResponse("How Frequently do you brainstorm", answer));
+  // responses.push(new QuestionResponse("How Frequently do you brainstorm", answer));
   
   // inspirations
   answer = $("input[name='inspirationHelpful']:checked").val();
