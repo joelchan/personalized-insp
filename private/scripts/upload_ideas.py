@@ -23,7 +23,7 @@ file_name must match a valid csv file with ideas in /private/scripts/data
 """
 Read in the data
 Let's expect a csv with cols:
-1) id
+1) previous_id
 2) content
 """
 filename = sys.argv[2]

@@ -743,6 +743,8 @@ var setBaseIdeasFilters = function setBaseIdeasFilters(filterName) {
 var setBaseClusterFilters = function setBaseClusterFilters(filterName) {
 
     var user = Session.get("currentUser");
+    FilterManager.create(filterName, user, 
+        "clusters", "promptIDD", Session.get("currentPrompt")._id);
 
     // get all clusters that belong to the user AND are not trashed
     FilterManager.create(filterName, user, 
