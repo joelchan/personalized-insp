@@ -96,7 +96,7 @@ Template.MiniMap.onRendered(function () {
                                         "The ideas will change color to green and be attached to the label.</li>" +
                                 "</ol>" +
                             "</li>" +
-                            "<li>Click on pattern label and type to create/edit pattern labels (all patterns must be labeled). Hit enter when done editing.</li>" +
+                            "<li>Click on pattern label and type to create/edit pattern labels (all patterns must be labeled). <strong>Hit enter when done editing.</strong></li>" +
                         "</ul>" +
                         "<h2>Other interactions</h2>" +
                         "<ul>" +
@@ -104,7 +104,7 @@ Template.MiniMap.onRendered(function () {
                             "<li>Drag ideas from label onto canvas (removes idea from label).</li>" +
                             "<li>Click on the 'x' button on labels to delete them " +
                                 "(removes all ideas from label and places them back in list on left).</li>" +
-                            "<li>Zoom out of the canvas if you need more space</li>" +
+                            "<li>Use the zoom controls on the left to zoom in/out of the canvas if you need more space</li>" +
                         "</ul>"
                         // "<br/>" +
                         // "<p>Click the question mark icon again to close this message. Good luck!</p>"
@@ -209,7 +209,7 @@ Template.Finished.events({
         var clusters = FilterManager.performQuery("clusterFilter", user, "clusters");
         var allNamed = true;
         clusters.forEach(function(cluster) {
-            if (cluster.name == "Not named yet") {
+            if (cluster.name.indexOf("Not named yet") > -1) {
                 allNamed = false;
             }
         });

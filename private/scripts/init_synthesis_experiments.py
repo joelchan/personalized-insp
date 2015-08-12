@@ -369,7 +369,8 @@ if __name__ == '__main__':
                 subSets = create_clustered_HITs(idea_ids, subsetNames, m, v, simData, idMappings)
                 insert_subsets_to_db(subSets, cond, exp)
             else:
-                subSets = create_clustered_HITs(idea_ids, subsetNames, m, v, simData, idMappings, reverse=True)
+                subSets = create_random_HITs(idea_ids, subsetNames, m, v, simData, idMappings)
+                # subSets = create_clustered_HITs(idea_ids, subsetNames, m, v, simData, idMappings, reverse=True)
                 insert_subsets_to_db(subSets, cond, exp)
 
         # untag the experiment
