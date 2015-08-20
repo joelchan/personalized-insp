@@ -20,7 +20,7 @@ IdeaToProcess = function(content, participant){
   this.inCluster = false;
 }
 
-Idea = function (content, user, prompt, participant) {
+Idea = function (content, user, prompt, theme, prop, participant) {
   /********************************************************************
   * Encapsulation of ideas recorded by the system
   *
@@ -28,11 +28,14 @@ Idea = function (content, user, prompt, participant) {
   ********************************************************************/
   this.time          = new Date().getTime();
   this.content       = content;
+  this.theme         = theme;
+  this.prop          = prop;
   this.userID        = user._id;
   this.userName      = user.name;
   this.prompt        = prompt; /*** Deprecated **/
   this.promptID      = prompt._id;
   this.isGamechanger = false;
+  this.isWedding     = false;
   
   //List of Id'S of users that have read that idea
   this.readIDs    = [];

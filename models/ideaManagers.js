@@ -24,6 +24,18 @@ IdeaFactory = (function() {
         return idea;
       }
     },
+    createWedding: function(theme, prop, content, user, prompt) {
+      logger.trace("Creating new wedding idea");
+      var trimmedTheme = removeCR(theme);
+      var trimmedProp = removeCR(prop);
+      var trimmedContent = removeCR(content);
+      if (trimmedTheme !== "" && trimmedProp !== "" && trimmedContent !== "") {
+        var idea = new Idea(trimmedContent, user, prompt, trimmedTheme, trimmedProp);
+        idea.isWedding = true;
+        idea._id = Ideas.insert(idea);
+      }
+      return idea
+    },
     toggleGameChanger: function(idea) {
       idea.isGamechanger = !idea.isGamechanger;
       Ideas.update({_id: idea._id}, 

@@ -1,0 +1,30 @@
+.ideate-p-container {
+    margin:auto;
+}
+
+.ideate-p-container .prompt {
+    border: 1px solid black;
+    background-color: white;
+    padding: 5px;
+}
+
+.ideate-p-container .wedding-idea {
+    background-color: #B6B6B6;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.ideate-p-container .submit-idea {
+    font-size: 16px;
+    font-family: sans-serif;
+    float:right;
+    border-radius: 5px;
+}
+
+.ideate-p-container .stuck-button {
+    font-size: 16px;
+    font-family: sans-serif;
+    /*float:right;*/
+    border-radius: 5px;
+}

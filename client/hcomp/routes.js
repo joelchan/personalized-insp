@@ -682,6 +682,63 @@ Router.map(function () {
     }
 
   });
+  
+  this.route('PersonalizedInsp', {
+    path: 'crowd/IdeateP/:promptID/:partID',
+    template: 'MTurkIdeationPersonalized',
+    subscriptions: function() {
+      this.subscribe('ideas', {promptID: this.params.promptID})
+      this.subscribe('prompts', {_id: this.params.promptID}).wait();
+      this.subscribe('experiments').wait();
+      this.subscribe('myUsers').wait();
+      this.subscribe('assignments').wait();
+      this.subscribe('tasks', {promptID: this.params.promptID});
+    },
+    onBeforeAction: function(pause) {
+      logger.debug("Data ready");
+      if (this.ready()) {
+        logger.debug("Data ready");
+        var part = Participants.findOne({_id: this.params.partID});
+        Session.set("currentParticipant", part);
+        var exp = Experiments.findOne({_id: part.experimentID});
+        Session.set("currentExp",exp);
+        var pID = exp.promptID;
+        var user = MyUsers.findOne({_id: part.userID});
+        logger.trace("user: " + user.name);
+        // MyUsers.update({_id: user._id}, {$set: {route: 'MturkIdeationTreatment'}});
+        LoginManager.loginUser(user.name);
+        Session.set("currentUser", user);
+        var prompt = Prompts.findOne({_id: pID});
+        if (prompt) {
+          Session.set("currentPrompt", prompt);
+        } else {
+          logger.warn("no prompt found with id: " + pID);
+        }
+        this.next();
+      } else {
+        logger.debug("Not ready");
+        this.next();
+      }
+    },
+    action: function(){
+      if(this.ready()) {
+        Session.set("useTimer", true);
+        Session.set("isTutorialTimer", false);
+        this.render();
+      } else
+        this.render('loading');
+    },
+    onAfterAction: function() {
+      if (this.ready()) {
+        setNextPage("MturkSynthesis", 
+          {promptID: Session.get("currentPrompt")._id,
+            userID: Session.get("currentUser")._id
+          }
+        );
+        //initRolePage();
+      }
+    }
+  });
 
   this.route('CrowdIdeation', {
       path: 'crowd/Ideations/:promptID/:userID',
