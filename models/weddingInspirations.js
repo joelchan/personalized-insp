@@ -16,31 +16,42 @@ WeddingInspiration = function(previous_id, content, type) {
 
 WeddingInspManager = (function() {
   return {
-    retrieveInsp: function(filterName, query, queryType, different) {
+    retrieveInsp: function(filterName, query, queryType, N, different) {
       FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-      logger.trace("Retrieving new set of inspirations for " + filterName);
+      logger.trace("Retrieving " + N + " new " + filterName);
       Meteor.call('topN', "GloVe", query, queryType, function(err, res) {
         var data = JSON.parse(res.content);
-        var matchIDs = [];
+        var matches = [];
         if (different) {
-            data.different.forEach(function(insp) {
-                matchIDs.push(insp.id);
+            slicedData = data.different.sort(function(a, b){ return a.similarity-b.similarity }).slice(0,N);
+            logger.trace("Matches are: " + JSON.stringify(slicedData));
+            slicedData.forEach(function(insp) {
+                matches.push(insp);
                 FilterManager.create(filterName, Session.get("currentUser"), 
                   "weddingInspirations", "previous_id", insp.id);
             });
-            logger.trace(matchIDs.length + " matches with IDs: " + matchIDs);
+            logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
             // return matchIDs;
         } else {
-            data.similar.forEach(function(insp) {
-                matchIDs.push(insp.id);
+            slicedData = data.similar.sort(function(a, b) { return b.similarity-a.similarity }).slice(0,N);
+            logger.trace("Matches are: " + JSON.stringify(slicedData));
+            slicedData.forEach(function(insp) {
+                matches.push(insp);
                 FilterManager.create(filterName, Session.get("currentUser"), 
                   "weddingInspirations", "previous_id", insp.id);
             });
-            logger.trace(matchIDs.length + " matches with IDs: " + matchIDs);
+            logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
             // return matchIDs;
         }
       });
     },
+    averageSim: function(matches) {
+        simSum = 0.0;
+        matches.forEach(function(match) {
+            simSum += match.similarity;
+        });
+        return simSum/matches.length;
+    }
   };
 }());
 

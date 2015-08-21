@@ -2,12 +2,11 @@
     margin:auto;
 }
 
-.ideate-p-container 
-
-.ideate-p-container .prompt {
+.ideate-p-container .prompt-text {
     border: 1px solid black;
     background-color: white;
     padding: 5px;
+    margin-bottom: 10px;
 }
 
 .ideate-p-container .wedding-idea {
@@ -47,11 +46,16 @@
     margin-top: 10px;
 }
 
+.ideate-p-container .stuck-insps-inactive {
+    opacity: 0.5;
+}
+
 .ideate-p-container .wedding-insp-item {
     font-size: 14px;
     font-family: sans-serif;
     /*float:right;*/
     border-radius: 5px;
+    display: block;
 }
 
 .ideate-p-container .stuck-button-container {

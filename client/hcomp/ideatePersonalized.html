@@ -3,19 +3,19 @@
         <!-- <div class="col-md-4 col-xs-4 insp-on-roll">
             {{> InspRoll}}
         </div> -->
-        <div class="col-md-4 col-xs-4 col-md-offset-1 col-xs-offset-1 ideate">
+        <div class="col-md-4 col-xs-4 col-md-offset-2 col-xs-offset-2 ideate">
             {{> Prompt}}
             {{> IdeaEntry}}
             {{> IdeaList}}
         </div>
-        <div class="col-md-5 col-xs-5 insp-stuck">
+        <div class="col-md-3 col-xs-3 insp-stuck">
             {{> Inspiration}}
         </div>
     </div>
 </template>
 
 <template name="Inspiration">
-    <div class="roll-insps">
+    <div id="roll-insps-container" class="roll-insps">
         <div id="roll-insps-themes" class="insp-container">
             <h2>Related themes</h2>
             {{#each inspRollThemes}}
@@ -29,7 +29,7 @@
             {{/each}}
         </div>
     </div>
-    <div class="stuck-insps">
+    <div id="stuck-insps-container" class="stuck-insps stuck-insps-inactive">
         <div class="stuck-button-container">
             <button class="btn btn-success stuck-button">Inspire me!</button>
         </div>
