@@ -21,17 +21,20 @@ Template.IdeaEntry.events({
         Session.get("currentPrompt")
     );
     Session.set("lastIdea", idea);
-    //if (idea) {
+    if (idea) {
       //EventLogger.logIdeaSubmission(idea); 
     //}
     // Clear the text field
-    $("#idea-theme").val("");
-    $("#idea-prop").val("");
-    $("#idea-description").val("");
+      $("#idea-theme").val("");
+      $("#idea-prop").val("");
+      $("#idea-description").val("");
 
-    logger.trace("Theme: " + theme + ", Prop: " + prop);
-    WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches);
-    WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches);
+      logger.trace("Theme: " + theme + ", Prop: " + prop);
+      WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches);
+      WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches);
+    } else {
+      alert("Make sure all fields are filled out before submitting!");
+    }
   },
 });
 
