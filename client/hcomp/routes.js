@@ -692,7 +692,7 @@ Router.map(function () {
       this.subscribe('experiments').wait();
       this.subscribe('myUsers').wait();
       this.subscribe('assignments').wait();
-      this.subscribe('tasks', {promptID: this.params.promptID});
+      this.subscribe('weddingInspirations');
     },
     onBeforeAction: function(pause) {
       logger.debug("Data ready");

@@ -23,4 +23,7 @@ Meteor.startup(function(){
     Meteor.publish("dummyTasks", function(){
 	  return DummyTasks.find();
   });
+  Meteor.publish("weddingInspirations", function(){
+    return WeddingInspirations.find();
+  })
 });

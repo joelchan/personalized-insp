@@ -3,7 +3,12 @@ Meteor.startup(function() {
   // var natural = Meteor.require('natural'),
   //   tokenizer = new natural.WordTokenizer();
   // console.log(tokenizer.tokenize("your dog has fleas."));
-
+  if(WeddingInspirations.find().count() == 0) {
+    WeddingData.forEach(function(insp) {
+      newInsp = new WeddingInspiration(insp.previous_id, insp.content, insp.type);
+      WeddingInspirations.insert(newInsp);
+    });
+  }
 });
 //
 //Meteor.startup(function() {

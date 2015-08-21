@@ -3,29 +3,49 @@
         <!-- <div class="col-md-4 col-xs-4 insp-on-roll">
             {{> InspRoll}}
         </div> -->
-        <div class="col-md-4 col-xs-4 col-md-offset-2 col-xs-offset-2 ideate">
+        <div class="col-md-4 col-xs-4 col-md-offset-1 col-xs-offset-1 ideate">
             {{> Prompt}}
             {{> IdeaEntry}}
             {{> IdeaList}}
         </div>
-        <div class="col-md-4 col-xs-4 insp-stuck">
+        <div class="col-md-5 col-xs-5 insp-stuck">
             {{> Inspiration}}
         </div>
     </div>
 </template>
 
 <template name="Inspiration">
-    <!-- <div class="row roll-insps"> -->
-        <h2>Related themes</h2>
-        <div id="roll-insps-themes"></div>
-        <h2>Related props</h2>
-        <div id="roll-insps-props"></div>
-        <button class="btn btn-success stuck-button">Inspire me!</button>
-        <h2>Other themes</h2>
-        <div id="stuck-insps-themes"></div>
-        <h2>Other Props</h2>
-        <div id="stuck-insps-props"></div>
-    <!-- </div> -->
+    <div class="roll-insps">
+        <div id="roll-insps-themes" class="insp-container">
+            <h2>Related themes</h2>
+            {{#each inspRollThemes}}
+                {{> WeddingInspiration}}
+            {{/each}}
+        </div>
+        <div id="roll-insps-props" class="insp-container">
+            <h2>Related props</h2>
+            {{#each inspRollProps}}
+                {{> WeddingInspiration}}
+            {{/each}}
+        </div>
+    </div>
+    <div class="stuck-insps">
+        <div class="stuck-button-container">
+            <button class="btn btn-success stuck-button">Inspire me!</button>
+        </div>
+        <div id="stuck-insps-themes" class="insp-container">
+            <h2>Other themes</h2>
+            {{#each inspStuckThemes}}
+                {{> WeddingInspiration}}
+            {{/each}}
+        </div>
+        <div id="stuck-insps-props" class="insp-container">
+            <h2>Other Props</h2>
+            {{#each inspStuckProps}}
+                {{> WeddingInspiration}}
+            {{/each}}
+        </div>
+    </div>
 </template>
 
 <template name="Prompt">
@@ -55,24 +75,13 @@
 </template>
 
 <template name="IdeaList">
-    <div class="row idea-list">
+    <div class="idea-list-header">
+        <h2>{{numIdeas}} ideas</h2>
+    </div>
+    <div class="idea-list">
         {{#each weddingIdeas}}
             {{> WeddingIdea}}
         {{/each}}
-    </div>
-</template>
-
-<template name="InspStuck">
-    <div class="row stuck-insps-header">
-        <h2>Now for something different</h2>
-        <button class="btn btn-success stuck-button">Get me another!</button>
-    </div>
-    <div class="row stuck-insps-bookmarked">
-        <h3>Bookmarked</h3>
-        This is where we bookmark inspirations
-    </div>
-    <div class="row stuck-insps">
-        <h3>All</h3>
     </div>
 </template>
 
@@ -81,4 +90,8 @@
         <p><strong>Theme: </strong>{{theme}} <strong>Prop: </strong>{{prop}}</p>
         <p><strong>Description: </strong>{{content}}</p>
     </div>
+</template>
+
+<template name="WeddingInspiration">
+    <button id="insp-{{previous_id}}" class="btn btn-default wedding-insp-item">{{content}}</button>
 </template>
