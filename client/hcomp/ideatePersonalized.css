@@ -2,6 +2,12 @@
     margin:auto;
 }
 
+.ideate-p-container .ideate {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px;
+}
+
 .ideate-p-container .prompt-text {
     border: 1px solid black;
     background-color: white;
@@ -31,19 +37,35 @@
     margin-top: 10px;
 }
 
+.ideate-p-container .insp-master-container {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px;
+    margin-left: 5px;
+    background-color: #F2F2F2;
+}
+
+.ideate-p-container .insp-container-header {
+    padding: 5px;
+    margin-top: 5px;
+}
+
 .ideate-p-container .insp-container {
     padding: 5px;
 }
 
 .ideate-p-container .roll-insps {
     padding: 5px;
-    background-color: #E2E2E2;
+    background-color: white;
+    margin-top: 10px;
+    border-radius: 5px;
 }
 
 .ideate-p-container .stuck-insps {
     padding: 5px;
-    background-color: #E2E2E2;
+    background-color: #D2FFB4;
     margin-top: 10px;
+    border-radius: 5px;
 }
 
 .ideate-p-container .stuck-insps-inactive {
@@ -67,4 +89,13 @@
     font-family: sans-serif;
     /*float:right;*/
     border-radius: 5px;
+}
+
+@-webkit-keyframes rollGlow {
+  from { background-color: #D2FFB4;
+         -moz-box-shadow:     0 0 150px #D2FFB4;
+         -webkit-box-shadow:  0 0 150px #D2FFB4;
+          box-shadow:         0 0 150px #D2FFB4;  
+    }
+    to {  background-color: #E2E2E2;}
 }

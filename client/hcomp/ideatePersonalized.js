@@ -53,6 +53,7 @@ Template.Inspiration.onRendered(function () {
   initInspirationFilter("rollProps");
   initInspirationFilter("stuckThemes");
   initInspirationFilter("stuckProps");
+  Session.set("cogState", "onRoll");
 });
 
 Template.Inspiration.helpers({
@@ -68,6 +69,9 @@ Template.Inspiration.helpers({
   inspStuckProps: function() {
     return FilterManager.performQuery("stuckProps", Session.get("currentUser"), "weddingInspirations");
   },
+  isStuck: function() {
+    return Session.equals("cogState", "stuck");
+  }
 });
 
 Template.Inspiration.events({
@@ -76,9 +80,12 @@ Template.Inspiration.events({
     logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
     WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
     WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
-    $("#stuck-insps-container").removeClass('stuck-insps-inactive');
+    Session.set("cogState", "stuck");
     Meteor.setTimeout(function() {
-      $("#stuck-insps-container").addClass('stuck-insps-inactive')}, 60000);
+      Session.set("cogState", "onRoll");
+      $("#roll-insps-container").css('-webkit-animation-name', 'rollGlow'); /* Chrome, Safari, Opera */
+      $("#roll-insps-container").css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
+    }, 30000);
   }
 });
 
