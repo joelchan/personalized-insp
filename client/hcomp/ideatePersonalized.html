@@ -16,21 +16,34 @@
 
 <template name="Inspiration">
     <div class="insp-container-header">
-        <h2>Inspiration</h2>
+        <h2>For your inspiration!</h2>
     </div>
-    <div class="stuck-button-container">
-        <button class="btn btn-success stuck-button">I'm stuck!</button>
-    </div>
+    <!-- <div class="stuck-button-container"> -->
+        <!-- <input class="stuck-button" name="cogState" type="checkbox" value="0"> -->
+        <!-- <label>I'm</label>
+        {{#if isStuck}}
+            <div class="btn-group" role="group" aria-label="...">
+                <button class="btn btn-default roll-button">On a roll</button>
+                <button class="btn btn-primary active stuck-button">Stuck</button>
+            </div>
+        {{else}}
+            <div class="btn-group" role="group" aria-label="...">
+                <button class="btn btn-primary active roll-button">On a roll</button>
+                <button class="btn btn-default stuck-button">Stuck</button>
+            </div>
+        {{/if}} -->
+        <!-- <button class="btn btn-success submit-idea">Submit wedding idea</button> -->
+    <!-- </div> -->
     {{#if isStuck}}
         <div id="stuck-insps-container" class="stuck-insps">
             <div id="stuck-insps-themes" class="insp-container">
-                <label>Other themes</label>
+                <strong>Themes</strong>
                 {{#each inspStuckThemes}}
                     {{> WeddingInspiration}}
                 {{/each}}
             </div>
             <div id="stuck-insps-props" class="insp-container">
-                <label>Other Props</label>
+                <strong>Props</strong>
                 {{#each inspStuckProps}}
                     {{> WeddingInspiration}}
                 {{/each}}
@@ -39,13 +52,13 @@
     {{else}}
         <div id="roll-insps-container" class="roll-insps">
             <div id="roll-insps-themes" class="insp-container">
-                <label>Related themes</label>
+                <strong>Themes</strong>
                 {{#each inspRollThemes}}
                     {{> WeddingInspiration}}
                 {{/each}}
             </div>
             <div id="roll-insps-props" class="insp-container">
-                <label>Related props</label>
+                <strong>Props</strong>
                 {{#each inspRollProps}}
                     {{> WeddingInspiration}}
                 {{/each}}
@@ -78,8 +91,22 @@
                     <input type="text" class="form-control" id="idea-prop" placeholder="(Noun)">
                 </div> 
             </form>
-            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Describe all guest activities"></textArea>
-            <button class="btn btn-success submit-idea">Submit wedding idea</button>
+            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Describe how the wedding will incorporate the theme and prop"></textArea>
+            <div class="idea-entry-controls">
+                <label>I'm</label>
+                {{#if isStuck}}
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button class="btn btn-default roll-button">On a roll</button>
+                        <button class="btn btn-primary active stuck-button">Stuck</button>
+                    </div>
+                {{else}}
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button class="btn btn-primary active roll-button">On a roll</button>
+                        <button class="btn btn-default stuck-button">Stuck</button>
+                    </div>
+                {{/if}}
+                <button class="btn btn-success submit-idea">Submit wedding idea</button>
+            </div>
         </div>
     </div>
 </template>
@@ -103,5 +130,5 @@
 </template>
 
 <template name="WeddingInspiration">
-    <button id="insp-{{previous_id}}" class="btn btn-default wedding-insp-item">{{content}}</button>
+    <li id="insp-{{previous_id}}" class="wedding-insp-item">{{content}}</li>
 </template>

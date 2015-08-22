@@ -197,9 +197,9 @@ Display ideas elements
   cursor: -moz-grabbing;
 }
 
-::-webkit-scrollbar { 
+/*::-webkit-scrollbar { 
     display: none; 
-}
+}*/
 
 /**********************
 Zoomspace elements

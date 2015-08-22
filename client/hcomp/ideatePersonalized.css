@@ -3,13 +3,13 @@
 }
 
 .ideate-p-container .ideate {
-    border: 1px solid gray;
-    border-radius: 5px;
+    /*border: 1px solid gray;*/
+    /*border-radius: 5px;*/
     padding: 10px;
 }
 
 .ideate-p-container .prompt-text {
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     background-color: white;
     padding: 5px;
     margin-bottom: 10px;
@@ -21,6 +21,14 @@
     margin-top: 5px;
     margin-bottom: 5px;
     border: 1px solid black;
+    border-radius: 5px;
+}
+
+.ideate-p-container .idea-entry-controls {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    /*padding-top: 5px;*/
+    /*padding-bottom: 5px;*/
 }
 
 .ideate-p-container .submit-idea {
@@ -33,15 +41,22 @@
 .ideate-p-container .idea-list {
     max-height: 385px;
     overflow: scroll;
-    background-color: #E2E2E2;
+    /*background-color: #E2E2E2;*/
+    /*margin-top: 10px;*/
+}
+
+.ideate-p-container .idea-list-header {
+    border-top: 1px solid #E2E2E2;
     margin-top: 10px;
+    padding-top: 10px;
 }
 
 .ideate-p-container .insp-master-container {
-    border: 1px solid gray;
+    /*border: 1px solid gray;*/
     border-radius: 5px;
     padding: 10px;
     margin-left: 5px;
+    margin-top: 10px;
     background-color: #F2F2F2;
 }
 
@@ -63,7 +78,7 @@
 
 .ideate-p-container .stuck-insps {
     padding: 5px;
-    background-color: #D2FFB4;
+    background-color: white;
     margin-top: 10px;
     border-radius: 5px;
 }
@@ -82,10 +97,19 @@
 
 .ideate-p-container .stuck-button-container {
     padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .ideate-p-container .stuck-button {
-    font-size: 16px;
+    font-size: 14px;
+    font-family: sans-serif;
+    /*float:right;*/
+    border-radius: 5px;
+}
+
+.ideate-p-container .roll-button {
+    font-size: 14px;
     font-family: sans-serif;
     /*float:right;*/
     border-radius: 5px;

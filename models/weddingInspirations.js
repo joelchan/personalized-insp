@@ -17,7 +17,6 @@ WeddingInspiration = function(previous_id, content, type) {
 WeddingInspManager = (function() {
   return {
     retrieveInsp: function(filterName, query, queryType, N, different) {
-      FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
       logger.trace("Retrieving " + N + " new " + filterName);
       Meteor.call('topN', "GloVe", query, queryType, function(err, res) {
         var data = JSON.parse(res.content);
@@ -25,6 +24,7 @@ WeddingInspManager = (function() {
         if (different) {
             slicedData = data.different.sort(function(a, b){ return a.similarity-b.similarity }).slice(0,N);
             logger.trace("Matches are: " + JSON.stringify(slicedData));
+            FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
             slicedData.forEach(function(insp) {
                 matches.push(insp);
                 FilterManager.create(filterName, Session.get("currentUser"), 
@@ -35,6 +35,7 @@ WeddingInspManager = (function() {
         } else {
             slicedData = data.similar.sort(function(a, b) { return b.similarity-a.similarity }).slice(0,N);
             logger.trace("Matches are: " + JSON.stringify(slicedData));
+            FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
             slicedData.forEach(function(insp) {
                 matches.push(insp);
                 FilterManager.create(filterName, Session.get("currentUser"), 
