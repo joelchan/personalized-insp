@@ -15,8 +15,8 @@
 </template>
 
 <template name="Inspiration">
-    <div class="insp-container-header">
-        <h2>For your inspiration!</h2>
+    <div class="insp-container-header ideagens-section-header">
+        For your inspiration!
     </div>
     <!-- <div class="stuck-button-container"> -->
         <!-- <input class="stuck-button" name="cogState" type="checkbox" value="0"> -->
@@ -37,13 +37,13 @@
     {{#if isStuck}}
         <div id="stuck-insps-container" class="stuck-insps">
             <div id="stuck-insps-themes" class="insp-container">
-                <strong>Themes</strong>
+                <span class="ideagens-label">Themes</span>
                 {{#each inspStuckThemes}}
                     {{> WeddingInspiration}}
                 {{/each}}
             </div>
             <div id="stuck-insps-props" class="insp-container">
-                <strong>Props</strong>
+                <span class="ideagens-label">Props</span>
                 {{#each inspStuckProps}}
                     {{> WeddingInspiration}}
                 {{/each}}
@@ -52,13 +52,13 @@
     {{else}}
         <div id="roll-insps-container" class="roll-insps">
             <div id="roll-insps-themes" class="insp-container">
-                <strong>Themes</strong>
+                <span class="ideagens-label">Themes</span>
                 {{#each inspRollThemes}}
                     {{> WeddingInspiration}}
                 {{/each}}
             </div>
             <div id="roll-insps-props" class="insp-container">
-                <strong>Props</strong>
+                <span class="ideagens-label">Props</span>
                 {{#each inspRollProps}}
                     {{> WeddingInspiration}}
                 {{/each}}
@@ -96,24 +96,24 @@
                 <label>I'm</label>
                 {{#if isStuck}}
                     <div class="btn-group" role="group" aria-label="...">
-                        <button class="btn btn-default roll-button">On a roll</button>
-                        <button class="btn btn-primary active stuck-button">Stuck</button>
+                        <button class="btn btn-default ideagens-button roll-button">On a roll</button>
+                        <button class="btn btn-primary ideagens-button active stuck-button">Stuck</button>
                     </div>
                 {{else}}
                     <div class="btn-group" role="group" aria-label="...">
-                        <button class="btn btn-primary active roll-button">On a roll</button>
-                        <button class="btn btn-default stuck-button">Stuck</button>
+                        <button class="btn btn-primary ideagens-button active roll-button">On a roll</button>
+                        <button class="btn btn-default ideagens-button stuck-button">Stuck</button>
                     </div>
                 {{/if}}
-                <button class="btn btn-success submit-idea">Submit wedding idea</button>
+                <button class="btn btn-success ideagens-button submit-idea">Submit wedding idea</button>
             </div>
         </div>
     </div>
 </template>
 
 <template name="IdeaList">
-    <div class="idea-list-header">
-        <h2>{{numIdeas}} ideas</h2>
+    <div class="idea-list-header ideagens-section-header">
+        {{numIdeas}} ideas
     </div>
     <div class="idea-list">
         {{#each weddingIdeas}}
@@ -124,8 +124,8 @@
 
 <template name="WeddingIdea">
     <div class="wedding-idea">
-        <p><strong>Theme: </strong>{{theme}} <strong>Prop: </strong>{{prop}}</p>
-        <p><strong>Description: </strong>{{content}}</p>
+        <p><span class="ideagens-label">Theme: </span>{{theme}} &nbsp;&nbsp;&nbsp;<span class="ideagens-label">Prop: </span>{{prop}}</p>
+        <p><span class="ideagens-label">Description: </span>{{content}}</p>
     </div>
 </template>
 
