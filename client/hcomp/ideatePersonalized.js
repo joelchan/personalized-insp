@@ -12,6 +12,13 @@ var stuckTimeOut;
 Template.IdeaEntry.onRendered(function(){
 
   spell = BJSpell("dictionary.js/en_US.js");
+
+  Session.set("misspelledThemes", []);
+  Session.set("numMisspelledThemes", 0);
+
+  Session.set("misspelledProps", []);
+  Session.set("numMisspelledProps", 0);
+
   // var themeHighlightWords = [];
   // var propHighlightWords = [];
 
@@ -46,10 +53,94 @@ Template.IdeaEntry.onRendered(function(){
 Template.IdeaEntry.helpers({
   isStuck: function() {
     return Session.equals("cogState", "stuck");
-  }
+  },
+  anyMisSpellings: function() {
+    if (Session.equals("numMisspelledThemes", 0) && Session.equals("numMisspelledProps", 0)) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+  anyMisSpelledTheme: function() {
+    if (Session.equals("numMisspelledThemes", 0)) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+  anyMisSpelledProp: function() {
+    if (Session.equals("numMisspelledProps", 0)) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+  misspelledThemes: function() {
+    var misSpellings = Session.get("misspelledThemes");
+    var msg = "";
+    if (misSpellings) {
+      if (misSpellings.length > 1) {
+        msg = " any of these: ";
+        msg += misSpellings.join(", ");
+      } else {
+        msg = misSpellings[0];
+      }
+    }
+    return msg;
+  },
+  misspelledProps: function() {
+    var misSpellings = Session.get("misspelledProps");
+    var msg = "";
+    if (misSpellings) {
+      if (misSpellings.length > 1) {
+        msg = " any of these: ";
+        msg += misSpellings.join(", ");
+      } else {
+        msg = misSpellings[0];
+      }
+    }
+    return msg;
+  },
 });
 
 Template.IdeaEntry.events({
+  'change input[id="idea-theme"]': function() {
+    logger.debug("Changed input in idea theme box");
+    var words = $("#idea-theme").val().split(" ");
+    var misSpelled = [];
+    words.forEach(function(w) {
+      if (!spell.check(w)) {
+        misSpelled.push(w)
+      }
+    });
+    Session.set("misspelledThemes", misSpelled);
+    Session.set("numMisspelledThemes", misSpelled.length);
+    if (misSpelled.length < 1) {
+      logger.debug("No misspelled themes!");
+      // Session.set("misspelledThemes", []);
+    } else {
+      logger.trace("Possibly misspelled themes: " + JSON.stringify(misSpelled));
+    }
+  },
+
+  'change input[id="idea-prop"]': function() {
+    logger.debug("Changed input in idea prop box");
+    var words = $("#idea-prop").val().split(" ");
+    var misSpelled = [];
+    words.forEach(function(w) {
+      if (!spell.check(w)) {
+        misSpelled.push(w)
+      }
+    });
+    Session.set("misspelledProps", misSpelled);
+    Session.set("numMisspelledProps", misSpelled.length);
+    if (misSpelled.length < 1) {
+      logger.debug("No misspelled props!");
+    } else {
+      logger.trace("Possibly misspelled props: " + JSON.stringify(misSpelled));
+    }
+  },
+
   'click .submit-idea': function (e, target) {
     //console.log("event submitted");
     logger.debug("submitting a new idea");
@@ -69,6 +160,12 @@ Template.IdeaEntry.events({
       $("#idea-theme").val("");
       $("#idea-prop").val("");
       $("#idea-description").val("");
+
+      Session.set("misspelledThemes", []);
+      Session.set("numMisspelledThemes", 0);
+
+      Session.set("misspelledProps", []);
+      Session.set("numMisspelledProps", 0);
 
       logger.trace("Theme: " + theme + ", Prop: " + prop);
       WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches);

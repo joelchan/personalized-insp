@@ -91,6 +91,20 @@
                     <input type="text" class="form-control" id="idea-prop" placeholder="(Noun)">
                 </div> 
             </form>
+            {{#if anyMisSpellings}}
+            <div class="misSpellings">
+                <div class="col-md-6 col-xs-6 misSpelledThemes">
+                    {{#if anyMisSpelledTheme}}
+                        Did you misspell {{misspelledThemes}}?
+                    {{/if}}
+                </div>
+                <div class="col-md-6 col-xs-6 misSpelledProps">
+                    {{#if anyMisSpelledProp}}
+                        Did you misspell {{misspelledProps}}?
+                    {{/if}}
+                </div>
+            </div>
+            {{/if}}
             <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Describe how the wedding will incorporate the theme and prop"></textArea>
             <div class="idea-entry-controls">
                 <label>I'm</label>
