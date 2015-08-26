@@ -9,6 +9,40 @@ Logger.setLevel('Client:IdeatePersonal', 'trace');
 var numMatches = 3;
 var stuckTimeOut;
 
+Template.IdeaEntry.onRendered(function(){
+
+  spell = BJSpell("dictionary.js/en_US.js");
+  // var themeHighlightWords = [];
+  // var propHighlightWords = [];
+
+  // $("#idea-theme").highlightTextarea({
+  //     words: themeHighlightWords
+  // });
+
+  // $("#idea-prop").highlightTextarea({
+  //     words: propHighlightWords
+  // });
+
+  // Meteor.setInterval(function() {
+  //   var themeWords = $("#idea-theme").val().split(" ");
+  //   themeWords.forEach(function(w) {
+  //     if (!spell.check(w)) {
+  //       logger.trace("Misspelled word: " + w);
+  //       themeHighlightWords.push(w)
+  //     }
+  //   });
+  //   var propWords = $("#idea-prop").val().split(" ");
+  //   propWords.forEach(function(w) {
+  //     if (!spell.check(w)) {
+  //       logger.trace("Misspelled word: " + w);
+  //       propHighlightWords.push(w)
+  //     }
+  //   });
+  // }, 5000);
+  
+
+});
+
 Template.IdeaEntry.helpers({
   isStuck: function() {
     return Session.equals("cogState", "stuck");
@@ -39,6 +73,8 @@ Template.IdeaEntry.events({
       logger.trace("Theme: " + theme + ", Prop: " + prop);
       WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches);
       WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches);
+      // updateInspFilter("rollThemes");
+      // updateInspFilter("rollProps");
 
       if (Session.equals("cogState", "stuck")) {
         // Meteor.clearTimeout(stuckTimeOut);
@@ -56,12 +92,22 @@ Template.IdeaEntry.events({
     Session.set("cogState", "onRoll");
   },
   'click .stuck-button': function(e, target) {
-    logger.trace("Clicked stuck button");
-    var lastIdea = Session.get("lastIdea");
-    logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-    WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
-    WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
-    Session.set("cogState", "stuck");
+    logger.debug("Clicked stuck button");
+    if (Session.equals("cogState", "onRoll")) {
+      logger.debug("Switching from onRoll to stuck");
+      var lastIdea = Session.get("lastIdea");
+      logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
+      WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
+      WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
+      Session.set("cogState", "stuck");  
+    } else {
+      logger.debug("Already stuck, refreshing stuck inspirations");
+      updateInspFilter("stuckThemes");
+      updateInspFilter("stuckProps");
+    }
+    
+    // updateInspFilter("stuckThemes");
+    // updateInspFilter("stuckProps");
     // if($(this).is(':checked')) {
     //   logger.trace("Changing back to on a roll state");
     //   Session.set("cogState", "onRoll");
@@ -77,7 +123,8 @@ Template.IdeaEntry.events({
     //   $("#roll-insps-container").css('-webkit-animation-name', 'rollGlow'); /* Chrome, Safari, Opera */
     //   $("#roll-insps-container").css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
     // }, 30000);
-  }
+    
+  },
 });
 
 Template.IdeaList.helpers({
@@ -100,10 +147,10 @@ Template.Inspiration.onRendered(function () {
   initInspirationFilter("stuckProps");
   Session.set("cogState", "onRoll");
 
-  $("input[name=cogState").switchButton({
-    on_label: 'Stuck!',
-    off_label: 'On a roll!'
-  });
+  // $("input[name=cogState").switchButton({
+  //   on_label: 'Stuck!',
+  //   off_label: 'On a roll!'
+  // });
 
   // $('input[name="cogState"]').change(function () {
   //   if ($(this).attr('checked') == 'checked'){
@@ -124,15 +171,23 @@ Template.Inspiration.onRendered(function () {
 
 Template.Inspiration.helpers({
   inspRollThemes: function() {
+    // var rollThemes = Session.get("rollThemes");
+    // updateInspFilter(rollThemes, "rollThemes");
     return FilterManager.performQuery("rollThemes", Session.get("currentUser"), "weddingInspirations");
   },
   inspRollProps: function() {
+    // var rollProps = Session.get("rollProps");
+    // updateInspFilter(rollProps, "rollProps");
     return FilterManager.performQuery("rollProps", Session.get("currentUser"), "weddingInspirations");
   },
   inspStuckThemes: function() {
+    // var stuckThemes = Session.get("stuckThemes");
+    // updateInspFilter(stuckThemes, "stuckThemes");
     return FilterManager.performQuery("stuckThemes", Session.get("currentUser"), "weddingInspirations");
   },
   inspStuckProps: function() {
+    // var stuckProps = Session.get("stuckProps");
+    // updateInspFilter(stuckProps, "stuckProps");
     return FilterManager.performQuery("stuckProps", Session.get("currentUser"), "weddingInspirations");
   },
   isStuck: function() {
@@ -192,4 +247,30 @@ var initInspirationFilter = function(filterName) {
     FilterManager.create(filterName, Session.get("currentUser"), 
       "weddingInspirations", "previous_id", "NonsenseID");
   }
+}
+
+var updateInspFilter = function(filterName) {
+  var insps = Session.get(filterName);
+  // logger.trace("Inspirations: " + JSON.stringify(insps));
+  var samples = []
+  while (samples.length < numMatches) {
+    var sample = getRandomElement(insps);
+    if (!isInList(sample, samples)) {
+      samples.push(sample);  
+    }
+  }
+  // for (i=0; i<numMatches; i++) {
+  //   var sample = getRandomElement(insps);
+  //   samples.push(sample);
+  // }
+  // var slicedData = insps.slice(0,numMatches);
+  // var matches = [];
+  FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+  samples.forEach(function(sample) {
+      // matches.push(WeddingInspirations.findOne({previous_id: sample}));
+      FilterManager.create(filterName, Session.get("currentUser"), 
+        "weddingInspirations", "previous_id", sample.id);
+  });
+  logger.trace(samples.length + " matches with average similarity: " + WeddingInspManager.averageSim(samples));
+  logger.trace("New matches are: " + JSON.stringify(samples));
 }

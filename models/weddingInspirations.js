@@ -17,14 +17,17 @@ WeddingInspiration = function(previous_id, content, type) {
 WeddingInspManager = (function() {
   return {
     retrieveInsp: function(filterName, query, queryType, N, different) {
-      logger.trace("Retrieving " + N + " new " + filterName);
+      logger.trace("Retrieving " + N + " new " + queryType + " for " + filterName + " with query: " + query);
       Meteor.call('topN', "GloVe", query, queryType, function(err, res) {
         var data = JSON.parse(res.content);
         var matches = [];
         if (different) {
-            slicedData = data.different.sort(function(a, b){ return a.similarity-b.similarity }).slice(0,N);
-            logger.trace("Matches are: " + JSON.stringify(slicedData));
+            // slicedData = data.different.sort(function(a, b){ return a.similarity-b.similarity }).slice(0,N);
+            var diffMatches = data.different.sort(function(a, b){ return a.similarity-b.similarity });
+            logger.trace("Matches are: " + JSON.stringify(diffMatches));
+            Session.set(filterName, diffMatches);
             FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+            var slicedData = diffMatches.slice(0, N);
             slicedData.forEach(function(insp) {
                 matches.push(insp);
                 FilterManager.create(filterName, Session.get("currentUser"), 
@@ -33,9 +36,12 @@ WeddingInspManager = (function() {
             logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
             // return matchIDs;
         } else {
-            slicedData = data.similar.sort(function(a, b) { return b.similarity-a.similarity }).slice(0,N);
-            logger.trace("Matches are: " + JSON.stringify(slicedData));
+            var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
+            logger.trace("Matches are: " + JSON.stringify(simMatches));
+            Session.set(filterName, simMatches);
             FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+            var offSet = 3;
+            var slicedData = simMatches.slice(offSet,offSet+N);
             slicedData.forEach(function(insp) {
                 matches.push(insp);
                 FilterManager.create(filterName, Session.get("currentUser"), 
