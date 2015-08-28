@@ -14,46 +14,6 @@
     </div>
 </template>
 
-<template name="Inspiration">
-    <div class="insp-container-header ideagens-section-header">
-        For your inspiration!
-    </div>
-    <div class="stuck-button-container">
-        <button class="btn btn-success ideagens-button stuck-button">Give me other inspirations!</button>
-    </div>
-    {{#if isStuck}}
-        <div id="stuck-insps-container" class="stuck-insps">
-            <div id="stuck-insps-themes" class="insp-container">
-                <span class="ideagens-label">Themes</span>
-                {{#each inspStuckThemes}}
-                    {{> WeddingInspiration}}
-                {{/each}}
-            </div>
-            <div id="stuck-insps-props" class="insp-container">
-                <span class="ideagens-label">Props</span>
-                {{#each inspStuckProps}}
-                    {{> WeddingInspiration}}
-                {{/each}}
-            </div>
-        </div>
-    {{else}}
-        <div id="roll-insps-container" class="roll-insps">
-            <div id="roll-insps-themes" class="insp-container">
-                <span class="ideagens-label">Themes</span>
-                {{#each inspRollThemes}}
-                    {{> WeddingInspiration}}
-                {{/each}}
-            </div>
-            <div id="roll-insps-props" class="insp-container">
-                <span class="ideagens-label">Props</span>
-                {{#each inspRollProps}}
-                    {{> WeddingInspiration}}
-                {{/each}}
-            </div>
-        </div>
-    {{/if}}
-</template>
-
 <template name="Prompt">
     <div class="row prompt" id="p-insp-prompt">
         <div class="col-md-12 col-xs-12">
@@ -128,6 +88,46 @@
         <p><span class="ideagens-label">Theme: </span>{{theme}} &nbsp;&nbsp;&nbsp;<span class="ideagens-label">Prop: </span>{{prop}}</p>
         <p><span class="ideagens-label">Description: </span>{{content}}</p>
     </div>
+</template>
+
+<template name="Inspiration">
+    <div class="insp-container-header ideagens-section-header">
+        For your inspiration!
+    </div>
+    <div class="stuck-button-container">
+        <button class="btn btn-success ideagens-button stuck-button">Give me other inspirations!</button>
+    </div>
+    {{#if isStuck}}
+        <div id="stuck-insps-container" class="stuck-insps">
+            <div id="stuck-insps-themes" class="insp-container">
+                <span class="ideagens-label">Themes</span>
+                {{#each inspStuckThemes}}
+                    {{> WeddingInspiration}}
+                {{/each}}
+            </div>
+            <div id="stuck-insps-props" class="insp-container">
+                <span class="ideagens-label">Props</span>
+                {{#each inspStuckProps}}
+                    {{> WeddingInspiration}}
+                {{/each}}
+            </div>
+        </div>
+    {{else}}
+        <div id="roll-insps-container" class="roll-insps">
+            <div id="roll-insps-themes" class="insp-container">
+                <span class="ideagens-label">Themes</span>
+                {{#each inspRollThemes}}
+                    {{> WeddingInspiration}}
+                {{/each}}
+            </div>
+            <div id="roll-insps-props" class="insp-container">
+                <span class="ideagens-label">Props</span>
+                {{#each inspRollProps}}
+                    {{> WeddingInspiration}}
+                {{/each}}
+            </div>
+        </div>
+    {{/if}}
 </template>
 
 <template name="WeddingInspiration">

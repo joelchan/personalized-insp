@@ -52,6 +52,11 @@ Template.IdeaEntry.onRendered(function(){
 
   initTimer();
 
+  // disable idea submission during tutorial
+  $(".idea-entry input").prop("disabled", true);
+  $(".idea-entry textArea").prop("disabled", true);
+  $(".submit-idea").prop("disabled", true);
+
   var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
   // Instance the tour
   var pInspTour = new Tour({
@@ -67,7 +72,7 @@ Template.IdeaEntry.onRendered(function(){
     steps: [
     {
       element: "#p-insp-prompt",
-      title: "Instructions tutorial (Step 1 of 5)" + spacer,
+      title: "Instructions tutorial (Step 1 of 7)" + spacer,
       content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative wedding theme ideas as you can.", 
       backdrop: true,
       placement: "bottom",
@@ -77,7 +82,7 @@ Template.IdeaEntry.onRendered(function(){
     },
     {
       element: "#p-insp-idea-entry",
-      title: "Instructions tutorial (Step 2 of 5)" + spacer,
+      title: "Instructions tutorial (Step 2 of 7)" + spacer,
       content: "Enter your ideas using this template. The system will automatically notify you if you misspell a theme/prop. " +
       "If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.",
       backdrop: true,
@@ -87,23 +92,32 @@ Template.IdeaEntry.onRendered(function(){
     },
     {
       element: "#p-insp-insp-container",
-      title: "Instructions tutorial (Step 3 of 5)" + spacer,
+      title: "Instructions tutorial (Step 3 of 7)" + spacer,
       content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
-      "The inspiration feed will refresh every time you submit a new idea. " +
-      "Feel free to use the suggested themes/props as inspiration when you brainstorm ideas. " +
-      "If a suggested theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
+      "The inspiration feed will refresh every time you submit a new idea. ",  
       backdrop: true,
       placement: "bottom",
-      onNext: function() {
-        removeTutorialInsp();
-      },
+      // onNext: function() {
+      //   removeTutorialInsp();
+      // },
       onPrev: function() {
         removeTutorialInsp();
       },
     },
     {
+      element: "#insp-tutorialInsp",
+      title: "Instructions tutorial (Step 4 of 7)" + spacer,
+      content: "Feel free to use the suggested themes/props as inspiration when you brainstorm ideas. " +
+      "If a suggested theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
+      placement: "bottom",
+      backdrop: true,
+      onNext: function() {
+        removeTutorialInsp();
+      }
+    },
+    {
       element: ".stuck-button",
-      title: "Instructions tutorial (Step 4 of 5)" + spacer,
+      title: "Instructions tutorial (Step 5 of 7)" + spacer,
       content: "If you feel like you are stuck or running low on ideas, click on this button to receive another set of inspirations. " +
       "You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).",
       backdrop: true,
@@ -111,8 +125,19 @@ Template.IdeaEntry.onRendered(function(){
       onPrev: function() {
         addTutorialInsp();
       }
+    },
+    {
+      element: "#nav-right",
+      title: "Instructions tutorial (Step 6 of 7)" + spacer,
+      content: "The time remaining will be shown in the top right corner of the page. " +
+        "When your time is up, you will automatically be taken to a brief survey page, and then your completion code.",
+        // backdrop: true,
+      placement: "bottom",
     }],
     onEnd: function(tour) {
+      $(".idea-entry input").prop("disabled", false);
+      $(".idea-entry textArea").prop("disabled", false);
+      $(".submit-idea").prop("disabled", false);
       var promptLength = Session.get("currentPrompt").length*60000;
       countdown.start(promptLength);
       EventLogger.logTutorialComplete();
@@ -122,10 +147,8 @@ Template.IdeaEntry.onRendered(function(){
 
   pInspTour.addStep({
     element: "#nav-right",
-    title: "Instructions tutorial (Step 5 of 5)" + spacer,
-    content: "The time remaining will be shown in the top right corner of the page. " +
-      "When your time is up, you will automatically be taken to a brief survey page, and then your completion code. " + 
-      "If at any time you do not wish to continue, you may exit the study by clicking on the \"Exit Early\" button. " +
+    title: "Instructions tutorial (Step 7 of 7)" + spacer,
+    content: "You may exit the study at any time by clicking on the \"Exit Early\" button. " +
       "Your compensation will be pro-rated based on how long you participated. " +
       "When you are ready to begin, click \"Begin!\", and the timer will start. Good luck!",
       // backdrop: true,
