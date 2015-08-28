@@ -589,7 +589,17 @@ EventLogger = (function () {
                   "newInsps": newInsps,
                   "trigger": trigger}
       this.log(msg, data);
-    }
+    },
+    logStarInspiration: function(insp) {
+      var msg = "User starred an inspiration";
+      var data = {"insp": insp, "cogState": Session.get("cogState")}
+      this.log(msg, data);
+    },
+    logUnStarInspiration: function(insp) {
+      var msg = "User unstarred an inspiration";
+      var data = {"insp": insp, "cogState": Session.get("cogState")}
+      this.log(msg, data);
+    },
   };
 }());
 

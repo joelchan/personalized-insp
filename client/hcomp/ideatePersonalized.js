@@ -81,14 +81,25 @@ Template.IdeaEntry.onRendered(function(){
       content: "Enter your ideas using this template. The system will automatically notify you if you misspell a theme/prop. " +
       "If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.",
       backdrop: true,
+      onNext: function() {
+        addTutorialInsp();
+      }
     },
     {
       element: "#p-insp-insp-container",
       title: "Instructions tutorial (Step 3 of 5)" + spacer,
       content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
-      "Feel free to use them as inspiration when you brainstorm ideas. " +
-      "The inspiration feed will refresh every time you submit a new idea.",
+      "The inspiration feed will refresh every time you submit a new idea. " +
+      "Feel free to use the suggested themes/props as inspiration when you brainstorm ideas. " +
+      "If a suggested theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
       backdrop: true,
+      placement: "bottom",
+      onNext: function() {
+        removeTutorialInsp();
+      },
+      onPrev: function() {
+        removeTutorialInsp();
+      },
     },
     {
       element: ".stuck-button",
@@ -97,6 +108,9 @@ Template.IdeaEntry.onRendered(function(){
       "You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).",
       backdrop: true,
       placement: "bottom",
+      onPrev: function() {
+        addTutorialInsp();
+      }
     }],
     onEnd: function(tour) {
       var promptLength = Session.get("currentPrompt").length*60000;
@@ -374,6 +388,42 @@ Template.Inspiration.events({
       EventLogger.logInspirationRefresh(lastInsps, newInsps, "Click stuck button again");
     }
   },
+  'click #insp-star-insp-tutorialInsp': function() {
+    var selector = "#insp-star-insp-tutorialInsp";
+    logger.trace("User starred inspiration with id: " + this.previous_id);
+    if ($(selector).hasClass("insp-star-empty")) {
+      $(selector).removeClass("insp-star-empty");
+      $(selector).removeClass("glyphicon-star-empty");
+      $(selector).addClass("insp-star");
+      $(selector).addClass("glyphicon-star");
+    } else {
+      $(selector).removeClass("insp-star");
+      $(selector).removeClass("glyphicon-star");
+      $(selector).addClass("insp-star-empty");
+      $(selector).addClass("glyphicon-star-empty");
+    }
+  },
+});
+
+Template.WeddingInspiration.events({
+  'click .insp-star-empty': function() {
+    var selector = "#insp-star-" + this.previous_id;
+    logger.trace("User starred inspiration with id: " + this.previous_id);
+    $(selector).removeClass("insp-star-empty");
+    $(selector).removeClass("glyphicon-star-empty");
+    $(selector).addClass("insp-star");
+    $(selector).addClass("glyphicon-star");
+    EventLogger.logStarInspiration(this);
+  },
+  'click .insp-star': function() {
+    var selector = "#insp-star-" + this.previous_id;
+    logger.trace("User unstarred inspiration with id: " + this.previous_id);
+    $(selector).removeClass("insp-star");
+    $(selector).removeClass("glyphicon-star");
+    $(selector).addClass("insp-star-empty");
+    $(selector).addClass("glyphicon-star-empty");
+    EventLogger.logUnStarInspiration(this);
+  },
 });
 
 var initInspirationFilter = function(filterName) {
@@ -426,4 +476,15 @@ var initTimer = function() {
     // var promptLength = prompt.length*60000;
     // countdown.start(promptLength);
   }
+}
+
+var addTutorialInsp = function() {
+  var template = "<li id=\"insp-tutorialInsp\" class=\"wedding-insp-item\">" +
+  "Example inspiration &nbsp;&nbsp;&nbsp;" +
+  "<span id=\"insp-star-insp-tutorialInsp\" class=\"insp-star-empty glyphicon glyphicon-star-empty\"></span></li>"
+  $("#roll-insps-themes").append(template);
+}
+
+var removeTutorialInsp = function() {
+  $("#insp-tutorialInsp").remove();
 }

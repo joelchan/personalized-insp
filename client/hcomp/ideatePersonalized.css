@@ -170,6 +170,17 @@
     display: block;
 }
 
+.ideate-p-container .insp-star {
+    color: #F8BA26;
+    cursor: pointer;
+}
+
+.ideate-p-container .insp-star-empty {
+    color: #C3C3C3;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
 .ideate-p-container .stuck-button-container {
     padding: 5px 5px 0px 5px;
     margin-top: 5px;
