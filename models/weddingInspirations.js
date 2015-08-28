@@ -21,7 +21,7 @@ WeddingInspManager = (function() {
       Meteor.call('topN', "GloVe", query, queryType, function(err, res) {
         var data = JSON.parse(res.content);
         var matches = [];
-        if (different) {
+        if (different == "different") {
             // slicedData = data.different.sort(function(a, b){ return a.similarity-b.similarity }).slice(0,N);
             var diffMatches = data.different.sort(function(a, b){ return a.similarity-b.similarity });
             logger.trace("Matches are: " + JSON.stringify(diffMatches));

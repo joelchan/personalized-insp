@@ -176,6 +176,22 @@ Template.IdeaEntry.onRendered(function(){
     pInspTour.restart();
   }
 
+  var part = Session.get("currentParticipant");
+  var cond = Conditions.findOne({_id: part.conditionID});
+  if (cond.description == "Far-Near") {
+    Session.set("rollDistance", "different");
+    Session.set("stuckDistance", "similar");
+  } else if (cond.description == "Far-Far") {
+    Session.set("rollDistance", "different");
+    Session.set("stuckDistance", "different");
+  } else if (cond.description == "Near-Near") {
+    Session.set("rollDistance", "similar");
+    Session.set("stuckDistance", "similar");
+  } else {
+    Session.set("rollDistance", "similar");
+    Session.set("stuckDistance", "different");
+  }
+
 });
 
 Template.IdeaEntry.helpers({
@@ -309,8 +325,8 @@ Template.IdeaEntry.events({
                         "props": FilterManager.performQuery("rollProps", user, "weddingInspirations").fetch()}
       }
       EventLogger.logWeddingSubmission(idea, lastInsps);
-      WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches);
-      WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches);
+      WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, Session.get("rollDistance"));
+      WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, Session.get("rollDistance"));
       // updateInspFilter("rollThemes");
       // updateInspFilter("rollProps");
 
@@ -393,8 +409,8 @@ Template.Inspiration.events({
       var lastInsps = {"themes": FilterManager.performQuery("rollThemes", user, "weddingInspirations").fetch(),
                         "props": FilterManager.performQuery("rollProps", user, "weddingInspirations").fetch()}
       logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-      WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
-      WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
+      WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, Session.get("stuckDistance"));
+      WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, Session.get("stuckDistance"));
       Session.set("cogState", "stuck");  
       EventLogger.logChangeCogState("onRoll", "stuck");
       var newInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
