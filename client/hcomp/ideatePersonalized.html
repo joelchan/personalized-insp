@@ -8,8 +8,9 @@
             {{> IdeaEntry}}
             {{> IdeaList}}
         </div>
-        <div class="col-md-2 col-xs-2 insp-master-container" id="p-insp-insp-container">
+        <div class="col-md-2 col-xs-2">
             {{> Inspiration}}
+            {{> PInspInstructions}}
         </div>
     </div>
 </template>
@@ -91,45 +92,67 @@
 </template>
 
 <template name="Inspiration">
-    <div class="insp-container-header ideagens-section-header">
-        For your inspiration!
-    </div>
-    <div class="stuck-button-container">
-        <button class="btn btn-success ideagens-button stuck-button">Give me other inspirations!</button>
-    </div>
-    {{#if isStuck}}
-        <div id="stuck-insps-container" class="stuck-insps">
-            <div id="stuck-insps-themes" class="insp-container">
-                <span class="ideagens-label">Themes</span>
-                {{#each inspStuckThemes}}
-                    {{> WeddingInspiration}}
-                {{/each}}
-            </div>
-            <div id="stuck-insps-props" class="insp-container">
-                <span class="ideagens-label">Props</span>
-                {{#each inspStuckProps}}
-                    {{> WeddingInspiration}}
-                {{/each}}
-            </div>
+    <div class="insp-master-container" id="p-insp-insp-container">
+        <div class="insp-container-header ideagens-section-header">
+            For your inspiration!
         </div>
-    {{else}}
-        <div id="roll-insps-container" class="roll-insps">
-            <div id="roll-insps-themes" class="insp-container">
-                <span class="ideagens-label">Themes</span>
-                {{#each inspRollThemes}}
-                    {{> WeddingInspiration}}
-                {{/each}}
-            </div>
-            <div id="roll-insps-props" class="insp-container">
-                <span class="ideagens-label">Props</span>
-                {{#each inspRollProps}}
-                    {{> WeddingInspiration}}
-                {{/each}}
-            </div>
+        <div class="stuck-button-container">
+            <button class="btn btn-success ideagens-button stuck-button">Give me other inspirations!</button>
         </div>
-    {{/if}}
+        {{#if isStuck}}
+            <div id="stuck-insps-container" class="stuck-insps">
+                <div id="stuck-insps-themes" class="insp-container">
+                    <span class="ideagens-label">Themes</span>
+                    {{#each inspStuckThemes}}
+                        {{> WeddingInspiration}}
+                    {{/each}}
+                </div>
+                <div id="stuck-insps-props" class="insp-container">
+                    <span class="ideagens-label">Props</span>
+                    {{#each inspStuckProps}}
+                        {{> WeddingInspiration}}
+                    {{/each}}
+                </div>
+            </div>
+        {{else}}
+            <div id="roll-insps-container" class="roll-insps">
+                <div id="roll-insps-themes" class="insp-container">
+                    <span class="ideagens-label">Themes</span>
+                    {{#each inspRollThemes}}
+                        {{> WeddingInspiration}}
+                    {{/each}}
+                </div>
+                <div id="roll-insps-props" class="insp-container">
+                    <span class="ideagens-label">Props</span>
+                    {{#each inspRollProps}}
+                        {{> WeddingInspiration}}
+                    {{/each}}
+                </div>
+            </div>
+        {{/if}}
+    </div>
 </template>
 
 <template name="WeddingInspiration">
     <li id="insp-{{previous_id}}" class="wedding-insp-item">{{content}} &nbsp;&nbsp;&nbsp;<span id="insp-star-{{previous_id}}" class="insp-star-empty glyphicon glyphicon-star-empty"></span></li>
+</template>
+
+<template name="PInspInstructions">
+    <div class = "ideator-directions">
+      <label class="ideagens-label"> Instructions&nbsp; </label><a class="show-hide" data-toggle="collapse" data-parent="#directions-container" href="#directions-content">(Show/Hide)</a>
+      <!-- <div class="row"> -->
+        <div id="directions-container">
+          <div id="directions-content" class="collapse">
+            <ol>
+              <li>In the next 10 minutes, please brainstorm as many creative ideas for a themed wedding as you can. Enter your ideas using the provided template. The system will automatically notify you if you misspell a theme/prop. If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.</li>
+              <li>To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. This inspiration feed will refresh every time you submit a new idea. Feel free to use the suggested themes/props as inspiration. It's ok to generate ideas similar to those themes/props.</li>
+              <li>If a theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it!</li>
+              <li>If you feel like you are stuck or running low on ideas, click on this button to receive another set of inspirations. You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).</li>
+              <li>The time remaining will be shown in the top right corner of the page. When your time is up, you will automatically be taken to a brief survey page, and then your completion code. </li>
+              <li>You may exit the study at any time by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
+            </ol>
+          </div>
+        </div>
+      <!-- </div> -->
+    </div>
 </template>

@@ -73,7 +73,7 @@ Template.IdeaEntry.onRendered(function(){
     {
       element: "#p-insp-prompt",
       title: "Instructions tutorial (Step 1 of 7)" + spacer,
-      content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative wedding theme ideas as you can.", 
+      content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.", 
       backdrop: true,
       placement: "bottom",
       onNext: function() {
@@ -94,7 +94,7 @@ Template.IdeaEntry.onRendered(function(){
       element: "#p-insp-insp-container",
       title: "Instructions tutorial (Step 3 of 7)" + spacer,
       content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
-      "The inspiration feed will refresh every time you submit a new idea. ",  
+      "This inspiration feed will refresh every time you submit a new idea. ",  
       backdrop: true,
       placement: "bottom",
       // onNext: function() {
@@ -107,8 +107,8 @@ Template.IdeaEntry.onRendered(function(){
     {
       element: "#insp-tutorialInsp",
       title: "Instructions tutorial (Step 4 of 7)" + spacer,
-      content: "Feel free to use the suggested themes/props as inspiration when you brainstorm ideas. " +
-      "If a suggested theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
+      content: "Feel free to use the suggested themes/props as inspiration. It's ok to generate ideas similar to those themes/props. " +
+      "If a theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
       placement: "bottom",
       backdrop: true,
       onNext: function() {
@@ -150,7 +150,7 @@ Template.IdeaEntry.onRendered(function(){
     title: "Instructions tutorial (Step 7 of 7)" + spacer,
     content: "You may exit the study at any time by clicking on the \"Exit Early\" button. " +
       "Your compensation will be pro-rated based on how long you participated. " +
-      "When you are ready to begin, click \"Begin!\", and the timer will start. Good luck!",
+      "When you are ready, click \"Begin!\", and the timer will start. Good luck!",
       // backdrop: true,
       placement: "bottom",
       template: "<div class='popover tour'>" +
@@ -159,7 +159,7 @@ Template.IdeaEntry.onRendered(function(){
         "<div class='popover-content'></div>" +
         "<div class='popover-navigation'>" +
             "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
-            "<button class='btn btn-default' data-role='end'>Finish</button>" +
+            "<button class='btn btn-default' data-role='end'>Begin!</button>" +
         "</div>" +
       "</div>",
   })

@@ -189,8 +189,10 @@
     /*margin-bottom: 5px;*/
 }
 
-.ideate-p-container .stuck-button {
-    /*font-size: 14px;*/
+.ideate-p-container #directions-content {
+    font-size: 12px;
+    max-height: 400px;
+    overflow: auto;
     /*font-family: sans-serif;*/
     /*float:right;*/
     /*border-radius: 5px;*/
