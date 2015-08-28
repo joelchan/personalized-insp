@@ -39,6 +39,7 @@ Template.HcompConsentPage.events({
                           // we grab the first route in the sequence
                           var cond = Conditions.findOne({_id: part.conditionID});
                           Session.set("nextPage", cond.misc.routeSequence[0]);
+                          logger.trace("Next page is: " + Session.get("nextPage"));
                           // if (condDesc == "Treatment") {
                           //     logger.trace("Assigned to treatment condition, sending to treatment tutorial page");
                           //     Session.set("nextPage", "TutorialTreatment");
@@ -55,7 +56,11 @@ Template.HcompConsentPage.events({
                           }
                         }
                         EventLogger.logConsent();
-                        Router.go(Session.get("nextPage"), {partID: part._id});
+                        if (isInList(cond.description, pInspConds)) {
+                          Router.go(Session.get("nextPage"), {promptID: cond.promptID, partID: part._id});  
+                        } else {
+                          Router.go(Session.get("nextPage"), {partID: part._id});  
+                        }
                 });
               } else {
                 logger.trace("Participant has participated before; rejecting participant");

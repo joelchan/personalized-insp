@@ -165,19 +165,31 @@ ExperimentManager = (function () {
         newCond.assignedParts = [];
         newCond.completedParts = [];
         newCond.readyParts = [];
+        if (desc == "Treatment") {
+          newCond.misc.routeSequence = conditionRouteData.IdeationTreatment;
+        } else if (desc == "Control") {
+          newCond.misc.routeSequence = conditionRouteData.IdeationControl;
+        } else if (isInList(desc, pInspConds)) {
+          newCond.misc.routeSequence = conditionRouteData.PInsp;
+        } else {
+          newCond.misc.routeSequence = conditionRouteData.Synthesis;
+        }
+        logger.trace("New condition created: " + JSON.stringify(newCond));
         // logger.trace("Created group template: " + JSON.stringify(groupTemplate));
         // newCond.groupTemplate = groupTemplate;
         var newCondID = Conditions.insert(newCond);
         newCond._id = newCondID;
         Experiments.update({_id: expID},
             {$addToSet: {conditions: newCond}});
-        if (desc == "Treatment") {
-          ExperimentManager.initCondRoutes(newCondID, conditionRouteData.IdeationTreatment);
-        } else if (desc == "Control") {
-          ExperimentManager.initCondRoutes(newCondID, conditionRouteData.IdeationControl);
-        } else {
-          ExperimentManager.initCondRoutes(newCondID, conditionRouteData.Synthesis);
-        }
+        // if (desc == "Treatment") {
+        //   ExperimentManager.initCondRoutes(newCondID, conditionRouteData.IdeationTreatment);
+        // } else if (desc == "Control") {
+        //   ExperimentManager.initCondRoutes(newCondID, conditionRouteData.IdeationControl);
+        // } else if (isInList(desc, pInspConds)) {
+        //   ExperimentManager.initCondRoutes(newCondID, conditionRouteData.pInspConds);
+        // } else {
+        //   ExperimentManager.initCondRoutes(newCondID, conditionRouteData.Synthesis);
+        // }
         return newCond;
     },
 

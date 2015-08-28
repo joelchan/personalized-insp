@@ -54,7 +54,7 @@ Template.IdeaEntry.onRendered(function(){
 
   var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
   // Instance the tour
-  pInspTour = new Tour({
+  var pInspTour = new Tour({
     template: "<div class='popover tour'>" +
         "<div class='arrow'></div>" +
         "<h3 class='popover-title'></h3>" +

@@ -14,22 +14,23 @@
 }
 
 .ideate-p-container {
-    font-family: Lato;
+    font-family: Lato, sans-serif;
 }
 
 .ideate-p-container #exitStudy {
-    font-family: Lato;
+    font-family: Lato, sans-serif;
 }
 
 .ideagens-button {
-    font-family: Lato;
+    font-family: Lato, sans-serif;
     font-size: 14px;
     border-radius: 10px;
     /*box-shadow: 4px 4px 2px #F8F8F8;*/
 }
 
 .ideagens-label {
-    font-family: Lato-Black;
+    font-family: Lato-Black, sans-serif;
+    font-style: bold;
     font-size: 16px;
     border-bottom: 1px solid #E2E2E2;
 }
@@ -39,7 +40,8 @@
 }
 
 .ideagens-section-header {
-    font-family: Lato-Black;
+    font-family: Lato-Black, sans-serif;
+    font-style: bold;
     font-size: 22px;
     padding-bottom: 5px;
     border-bottom: 1px solid #E2E2E2;
