@@ -723,6 +723,7 @@ Router.map(function () {
     action: function(){
       if(this.ready()) {
         Session.set("useTimer", true);
+        Session.set("useFluencyTimer", false);
         Session.set("isTutorialTimer", false);
         this.render();
       } else
@@ -730,12 +731,7 @@ Router.map(function () {
     },
     onAfterAction: function() {
       if (this.ready()) {
-        setNextPage("MturkSynthesis", 
-          {promptID: Session.get("currentPrompt")._id,
-            userID: Session.get("currentUser")._id
-          }
-        );
-        //initRolePage();
+        insertExitStudy();
       }
     }
   });
@@ -1022,7 +1018,7 @@ var insertTimer = function() {
 
 var insertExitStudy = function() {
   if ($('.exitStudy').length == 0) {
-    Blaze.render(Template.ExitStudy, $('.login')[0]);
+    Blaze.render(Template.ExitStudy, $('#nav-right')[0]);
   }
   //Add event handler for the exit study button
   $('.exitStudy').click(function() {

@@ -19,34 +19,120 @@ Template.IdeaEntry.onRendered(function(){
   Session.set("misspelledProps", []);
   Session.set("numMisspelledProps", 0);
 
-  // var themeHighlightWords = [];
-  // var propHighlightWords = [];
+  var timer = new Tock({
+      callback: function () {
+          $('#clockface').text(timer.msToTime(timer.lap()));
+      }
+  });
 
-  // $("#idea-theme").highlightTextarea({
-  //     words: themeHighlightWords
-  // });
+  var countdown = Tock({
+      countdown: true,
+      interval: 1000,
+      callback: function () {
+          // logger.debug(countdown.lap() / 1000);
+          // var currentTime = moment(timer.lap());
+          // logger.trace(currentTime);
+          // console.log(currentTime.getSeconds())
+          var remaining = timer.msToTime(countdown.lap())
+          remaining = remaining.slice(0,-4)
+          $('#countdown_clock').text(remaining);
+          // $('#countdown_clock').text(timer.msToTime(countdown.lap()));
+      },
+      complete: function () {
+          // console.log('end');
+          alert("Time's up!");
+          
+          logger.info("Exitting current page");
+          
+          Router.go("SurveyPage", {
+                'partID': Session.get("currentParticipant")._id
+              });
+      }
+  });
 
-  // $("#idea-prop").highlightTextarea({
-  //     words: propHighlightWords
-  // });
+  initTimer();
 
-  // Meteor.setInterval(function() {
-  //   var themeWords = $("#idea-theme").val().split(" ");
-  //   themeWords.forEach(function(w) {
-  //     if (!spell.check(w)) {
-  //       logger.trace("Misspelled word: " + w);
-  //       themeHighlightWords.push(w)
-  //     }
-  //   });
-  //   var propWords = $("#idea-prop").val().split(" ");
-  //   propWords.forEach(function(w) {
-  //     if (!spell.check(w)) {
-  //       logger.trace("Misspelled word: " + w);
-  //       propHighlightWords.push(w)
-  //     }
-  //   });
-  // }, 5000);
-  
+  var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+  // Instance the tour
+  pInspTour = new Tour({
+    template: "<div class='popover tour'>" +
+        "<div class='arrow'></div>" +
+        "<h3 class='popover-title'></h3>" +
+        "<div class='popover-content'></div>" +
+        "<div class='popover-navigation'>" +
+            "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
+            "<button class='btn btn-default' data-role='next'>Next »</button>" +
+        "</div>" +
+      "</div>",
+    steps: [
+    {
+      element: "#p-insp-prompt",
+      title: "Instructions tutorial (Step 1 of 5)" + spacer,
+      content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative wedding theme ideas as you can.", 
+      backdrop: true,
+      placement: "bottom",
+    },
+    {
+      element: "#p-insp-idea-entry",
+      title: "Instructions tutorial (Step 2 of 5)" + spacer,
+      content: "Enter your ideas using this template. The system will automatically notify you if you misspell a theme/prop. " +
+      "If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.",
+      backdrop: true,
+    },
+    {
+      element: "#p-insp-insp-container",
+      title: "Instructions tutorial (Step 3 of 5)" + spacer,
+      content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
+      "Feel free to use them as inspiration when you brainstorm ideas. " +
+      "The inspiration feed will refresh every time you submit a new idea.",
+      backdrop: true,
+    },
+    {
+      element: ".stuck-button",
+      title: "Instructions tutorial (Step 4 of 5)" + spacer,
+      content: "If you feel like you are stuck or running low on ideas, click on this button to receive another set of inspirations. " +
+      "You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).",
+      backdrop: true,
+      placement: "bottom",
+    }],
+    onEnd: function(tour) {
+      var promptLength = Session.get("currentPrompt").length*60000;
+      countdown.start(promptLength);
+    },
+  });
+
+  pInspTour.addStep({
+    element: "#nav-right",
+    title: "Instructions tutorial (Step 5 of 5)" + spacer,
+    content: "The time remaining will be shown in the top right corner of the page. " +
+      "When your time is up, you will automatically be taken to a brief survey page, and then your completion code. " + 
+      "If at any time you do not wish to continue, you may exit the study by clicking on the \"Exit Early\" button. " +
+      "Your compensation will be pro-rated based on how long you participated. " +
+      "When you are ready to begin, click \"Begin!\", and the timer will start. Good luck!",
+      // backdrop: true,
+      placement: "bottom",
+      template: "<div class='popover tour'>" +
+        "<div class='arrow'></div>" +
+        "<h3 class='popover-title'></h3>" +
+        "<div class='popover-content'></div>" +
+        "<div class='popover-navigation'>" +
+            "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
+            "<button class='btn btn-default' data-role='end'>Finish</button>" +
+        "</div>" +
+      "</div>",
+  })
+
+  // Initialize the tour
+  logger.debug("Initializing tutorial");
+  pInspTour.init();
+
+  // Start the tour
+  logger.debug("Starting tutorial");
+  pInspTour.start();
+
+  if(pInspTour.ended()) {
+    pInspTour.restart();
+  }
 
 });
 
@@ -106,13 +192,15 @@ Template.IdeaEntry.helpers({
 Template.IdeaEntry.events({
   'change input[id="idea-theme"]': function() {
     logger.debug("Changed input in idea theme box");
-    var words = $("#idea-theme").val().split(" ");
     var misSpelled = [];
-    words.forEach(function(w) {
-      if (!spell.check(w)) {
-        misSpelled.push(w)
-      }
-    });
+    if ($("#idea-theme").val() != "") {
+      var words = $("#idea-theme").val().split(" ");
+      words.forEach(function(w) {
+        if (!spell.check(w)) {
+          misSpelled.push(w)
+        }
+      });
+    }
     Session.set("misspelledThemes", misSpelled);
     Session.set("numMisspelledThemes", misSpelled.length);
     if (misSpelled.length < 1) {
@@ -125,13 +213,15 @@ Template.IdeaEntry.events({
 
   'change input[id="idea-prop"]': function() {
     logger.debug("Changed input in idea prop box");
-    var words = $("#idea-prop").val().split(" ");
     var misSpelled = [];
-    words.forEach(function(w) {
-      if (!spell.check(w)) {
-        misSpelled.push(w)
-      }
-    });
+    if ($("#idea-theme").val() != "") {
+      var words = $("#idea-prop").val().split(" ");
+      words.forEach(function(w) {
+        if (!spell.check(w)) {
+          misSpelled.push(w)
+        }
+      });
+    } 
     Session.set("misspelledProps", misSpelled);
     Session.set("numMisspelledProps", misSpelled.length);
     if (misSpelled.length < 1) {
@@ -203,24 +293,6 @@ Template.IdeaEntry.events({
       updateInspFilter("stuckProps");
     }
     
-    // updateInspFilter("stuckThemes");
-    // updateInspFilter("stuckProps");
-    // if($(this).is(':checked')) {
-    //   logger.trace("Changing back to on a roll state");
-    //   Session.set("cogState", "onRoll");
-    // } else {
-    //   var lastIdea = Session.get("lastIdea");
-    //   logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-    //   WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
-    //   WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
-    //   Session.set("cogState", "stuck");  
-    // }
-    // stuckTimeOut = Meteor.setTimeout(function() {
-    //   Session.set("cogState", "onRoll");
-    //   $("#roll-insps-container").css('-webkit-animation-name', 'rollGlow'); /* Chrome, Safari, Opera */
-    //   $("#roll-insps-container").css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
-    // }, 30000);
-    
   },
 });
 
@@ -244,26 +316,6 @@ Template.Inspiration.onRendered(function () {
   initInspirationFilter("stuckProps");
   Session.set("cogState", "onRoll");
 
-  // $("input[name=cogState").switchButton({
-  //   on_label: 'Stuck!',
-  //   off_label: 'On a roll!'
-  // });
-
-  // $('input[name="cogState"]').change(function () {
-  //   if ($(this).attr('checked') == 'checked'){
-  //     $('input[name="cogState"]').trigger('change').removeAttr('checked');
-  //     logger.trace("Changing back to on a roll state");
-  //     Session.set("cogState", "onRoll");
-  //   }
-  //   else {
-  //     $('input[name="cogState"]').trigger('change').attr('checked', 'checked');
-  //     var lastIdea = Session.get("lastIdea");
-  //     logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-  //     WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
-  //     WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
-  //     Session.set("cogState", "stuck"); 
-  //   }
-  // });
 });
 
 Template.Inspiration.helpers({
@@ -293,49 +345,24 @@ Template.Inspiration.helpers({
 });
 
 Template.Inspiration.events({
-  // 'click .stuck-button': function(e) {
-    // logger.trace("Clicked stuck checkbox");
-    // var name = $(e.target).attr('for');
-    // if ($("input[name='+name+']").attr('checked') == 'checked'){
-    //   $("input[name='+name+']").trigger('change').removeAttr('checked');
-    //   logger.trace("Changing back to on a roll state");
-    //   Session.set("cogState", "onRoll");
-    // }
-    // else {
-    //   $('input[name="cogState"]').trigger('change').attr('checked', 'checked');
-    //   var lastIdea = Session.get("lastIdea");
-    //   logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-    //   WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
-    //   WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
-    //   Session.set("cogState", "stuck"); 
-    // }
-  // },
   'click .roll-button': function() {
     logger.debug("Clicked on a roll");
     Session.set("cogState", "onRoll");
   },
   'click .stuck-button': function(e, target) {
-    logger.trace("Clicked stuck button");
-    var lastIdea = Session.get("lastIdea");
-    logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-    WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
-    WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
-    Session.set("cogState", "stuck");
-    // if($(this).is(':checked')) {
-    //   logger.trace("Changing back to on a roll state");
-    //   Session.set("cogState", "onRoll");
-    // } else {
-    //   var lastIdea = Session.get("lastIdea");
-    //   logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-    //   WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
-    //   WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
-    //   Session.set("cogState", "stuck");  
-    // }
-    // stuckTimeOut = Meteor.setTimeout(function() {
-    //   Session.set("cogState", "onRoll");
-    //   $("#roll-insps-container").css('-webkit-animation-name', 'rollGlow'); /* Chrome, Safari, Opera */
-    //   $("#roll-insps-container").css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
-    // }, 30000);
+    logger.debug("Clicked stuck button");
+    if (Session.equals("cogState", "onRoll")) {
+      logger.debug("Switching from onRoll to stuck");
+      var lastIdea = Session.get("lastIdea");
+      logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
+      WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
+      WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
+      Session.set("cogState", "stuck");  
+    } else {
+      logger.debug("Already stuck, refreshing stuck inspirations");
+      updateInspFilter("stuckThemes");
+      updateInspFilter("stuckProps");
+    }
   }
 });
 
@@ -370,4 +397,23 @@ var updateInspFilter = function(filterName) {
   });
   logger.trace(samples.length + " matches with average similarity: " + WeddingInspManager.averageSim(samples));
   logger.trace("New matches are: " + JSON.stringify(samples));
+}
+
+var initTimer = function() {
+  var prompt = Session.get("currentPrompt");
+  if ($('.timer').length == 0 && prompt.length > 0) {
+    logger.info("using a timer");
+    // Session.set("hasTimer",true);
+    Blaze.render(Template.TockTimer, $('#nav-right')[0]);
+    if (prompt.length > 9) {
+      $("#countdown_clock").html(prompt.length + ":00");
+    } else {
+      $("#countdown_clock").html("0" + prompt.length + ":00");
+    }
+    // var promptLength = prompt.length*60000;
+    // countdown.start(promptLength);
+  } else if (prompt.length > 0) {
+    // var promptLength = prompt.length*60000;
+    // countdown.start(promptLength);
+  }
 }

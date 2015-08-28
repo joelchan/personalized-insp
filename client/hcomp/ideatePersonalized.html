@@ -8,7 +8,7 @@
             {{> IdeaEntry}}
             {{> IdeaList}}
         </div>
-        <div class="col-md-2 col-xs-2 insp-master-container">
+        <div class="col-md-2 col-xs-2 insp-master-container" id="p-insp-insp-container">
             {{> Inspiration}}
         </div>
     </div>
@@ -18,22 +18,9 @@
     <div class="insp-container-header ideagens-section-header">
         For your inspiration!
     </div>
-    <!-- <div class="stuck-button-container"> -->
-        <!-- <input class="stuck-button" name="cogState" type="checkbox" value="0"> -->
-        <!-- <label>I'm</label>
-        {{#if isStuck}}
-            <div class="btn-group" role="group" aria-label="...">
-                <button class="btn btn-default roll-button">On a roll</button>
-                <button class="btn btn-primary active stuck-button">Stuck</button>
-            </div>
-        {{else}}
-            <div class="btn-group" role="group" aria-label="...">
-                <button class="btn btn-primary active roll-button">On a roll</button>
-                <button class="btn btn-default stuck-button">Stuck</button>
-            </div>
-        {{/if}} -->
-        <!-- <button class="btn btn-success submit-idea">Submit wedding idea</button> -->
-    <!-- </div> -->
+    <div class="stuck-button-container">
+        <button class="btn btn-success ideagens-button stuck-button">Give me other inspirations!</button>
+    </div>
     {{#if isStuck}}
         <div id="stuck-insps-container" class="stuck-insps">
             <div id="stuck-insps-themes" class="insp-container">
@@ -68,19 +55,19 @@
 </template>
 
 <template name="Prompt">
-    <div class="row prompt">
+    <div class="row prompt" id="p-insp-prompt">
         <div class="col-md-12 col-xs-12">
             <div class="prompt-text">
-                <p>Pat and Taylor are getting married! And they want you to be there at XX:XX on XX-XX-XXX.</p>
-                <p>If you haven't guessed already, the wedding theme is <u>(Common Noun)</u>. Please bring a/an <u>(Noun)</u> for all guest activities.</p>
+                <p>Pat and Taylor are getting married! And they want you to be there!</p>
+                <p>If you haven't guessed already, the wedding theme is <u>(Common Noun)</u>. Please bring a/an <u>(Common Noun)</u> for all guest activities.</p>
             </div>  
         </div>
     </div>
 </template>
 
 <template name="IdeaEntry">
-    <div class="row idea-entry">
-        <div class="col-md-12 col-xs-12">
+    <div class="row idea-entry" id="p-insp-idea-entry">
+        <div class="col-md-12 col-xs-12 idea-entry-container">
             <form class="form-inline">
                 <div class="form-group">
                     <label for="idea-theme">Theme</label>
@@ -88,7 +75,7 @@
                 </div>
                 <div class="form-group">
                     <label for="idea-prop">Prop</label>
-                    <input type="text" class="form-control" id="idea-prop" placeholder="(Noun)">
+                    <input type="text" class="form-control" id="idea-prop" placeholder="(Common Noun)">
                 </div> 
             </form>
             {{#if anyMisSpellings}}
@@ -105,9 +92,9 @@
                 </div>
             </div>
             {{/if}}
-            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Describe how the wedding will incorporate the theme and prop"></textArea>
+            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Describe how the wedding will incorporate the theme and prop(s)..."></textArea>
             <div class="idea-entry-controls">
-                <label>I'm</label>
+                <!-- <label>I'm</label>
                 {{#if isStuck}}
                     <div class="btn-group" role="group" aria-label="...">
                         <button class="btn btn-default ideagens-button roll-button">On a roll</button>
@@ -118,7 +105,7 @@
                         <button class="btn btn-primary ideagens-button active roll-button">On a roll</button>
                         <button class="btn btn-default ideagens-button stuck-button">Stuck</button>
                     </div>
-                {{/if}}
+                {{/if}} -->
                 <button class="btn btn-success ideagens-button submit-idea">Submit wedding idea</button>
             </div>
         </div>

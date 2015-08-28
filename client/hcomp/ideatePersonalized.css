@@ -1,19 +1,23 @@
 @font-face {
     font-family: Lato;
-    src: url(Lato-Reg.ttf);
+    src: url("../lib/fonts/Lato-Reg.ttf");
 }
 
 @font-face {
     font-family: Lato-Black;
-    src: url(Lato-Bla.ttf);
+    src: url("../lib/fonts/Lato-Bla.ttf");
 }
 
 @font-face {
     font-family: Lato-Light;
-    src: url(Lato-Lig.ttf);
+    src: url("../lib/fonts/Lato-Lig.ttf");
 }
 
 .ideate-p-container {
+    font-family: Lato;
+}
+
+.ideate-p-container #exitStudy {
     font-family: Lato;
 }
 
@@ -21,7 +25,7 @@
     font-family: Lato;
     font-size: 14px;
     border-radius: 10px;
-    box-shadow: 4px 4px 2px #F8F8F8;
+    /*box-shadow: 4px 4px 2px #F8F8F8;*/
 }
 
 .ideagens-label {
@@ -66,6 +70,13 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 4px 4px 2px #F8F8F8;
+}
+
+.ideate-p-container .idea-entry-container {
+    /*margin-top: 5px;*/
+    /*margin-bottom: 5px;*/
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .ideate-p-container .idea-entry-controls {
@@ -120,7 +131,8 @@
     margin-left: 5px;
     margin-top: 10px;
     /*background-color: #F2F2F2;*/
-    box-shadow: 4px 4px 2px #F8F8F8;
+    /*box-shadow: 4px 4px 2px #F8F8F8;*/
+    width: 245px;
 }
 
 .ideate-p-container .insp-container-header {
@@ -135,14 +147,14 @@
 .ideate-p-container .roll-insps {
     padding: 5px;
     background-color: white;
-    margin-top: 10px;
+    /*margin-top: 10px;*/
     border-radius: 5px;
 }
 
 .ideate-p-container .stuck-insps {
     padding: 5px;
     background-color: white;
-    margin-top: 10px;
+    /*margin-top: 10px;*/
     border-radius: 5px;
 }
 
@@ -159,9 +171,9 @@
 }
 
 .ideate-p-container .stuck-button-container {
-    padding: 5px;
+    padding: 5px 5px 0px 5px;
     margin-top: 5px;
-    margin-bottom: 5px;
+    /*margin-bottom: 5px;*/
 }
 
 .ideate-p-container .stuck-button {
