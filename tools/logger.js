@@ -563,6 +563,33 @@ EventLogger = (function () {
       logger.debug(data);
       this.log(msg, data);
     },
+    /**************************
+    * Personalized insp stuff *
+    ***************************/
+    logChangeCogState: function(oldState, newState) {
+      var msg = "User changed cognitive state";
+      var data = {'oldState': oldState, 'newState': newState}
+      this.log(msg, data);
+    },
+    logWeddingSubmission: function(idea, inspirations) {
+      var msg = "User submitted wedding idea";
+      var prompt = Session.get("currentPrompt");
+      //var type = EventTypeManager.get(msg);
+      var data = {"ideaID": idea._id,
+          'promptID': prompt._id,
+      };
+      if (inspirations) {
+        data['inspirationContext'] = inspirations;
+      }
+      this.log(msg, data);
+    },
+    logInspirationRefresh: function(oldInsps, newInsps, trigger) {
+      var msg = "User received a new set of inspirations";
+      var data = {"oldInsps": oldInsps,
+                  "newInsps": newInsps,
+                  "trigger": trigger}
+      this.log(msg, data);
+    }
   };
 }());
 

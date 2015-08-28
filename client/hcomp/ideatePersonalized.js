@@ -71,6 +71,9 @@ Template.IdeaEntry.onRendered(function(){
       content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative wedding theme ideas as you can.", 
       backdrop: true,
       placement: "bottom",
+      onNext: function() {
+        EventLogger.logTutorialStarted();
+      }
     },
     {
       element: "#p-insp-idea-entry",
@@ -98,6 +101,8 @@ Template.IdeaEntry.onRendered(function(){
     onEnd: function(tour) {
       var promptLength = Session.get("currentPrompt").length*60000;
       countdown.start(promptLength);
+      EventLogger.logTutorialComplete();
+      EventLogger.logBeginIdeation();
     },
   });
 
@@ -243,9 +248,9 @@ Template.IdeaEntry.events({
         Session.get("currentPrompt")
     );
     if (idea) {
-      Session.set("lastIdea", idea);
-      //EventLogger.logIdeaSubmission(idea); 
-    //}
+      Session.set("lastIdea", idea); 
+      var user = Session.get("currentUser");
+
     // Clear the text field
       $("#idea-theme").val("");
       $("#idea-prop").val("");
@@ -258,6 +263,15 @@ Template.IdeaEntry.events({
       Session.set("numMisspelledProps", 0);
 
       logger.trace("Theme: " + theme + ", Prop: " + prop);
+      var lastInsps;
+      if (Session.equals("cogState", "stuck")) {
+        lastInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
+                        "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
+      } else {
+        lastInsps = {"themes": FilterManager.performQuery("rollThemes", user, "weddingInspirations").fetch(),
+                        "props": FilterManager.performQuery("rollProps", user, "weddingInspirations").fetch()}
+      }
+      EventLogger.logWeddingSubmission(idea, lastInsps);
       WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches);
       WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches);
       // updateInspFilter("rollThemes");
@@ -266,33 +280,17 @@ Template.IdeaEntry.events({
       if (Session.equals("cogState", "stuck")) {
         // Meteor.clearTimeout(stuckTimeOut);
         Session.set("cogState", "onRoll");
+        EventLogger.logChangeCogState("stuck", "onRoll");
         // $('input[type=checkbox]').val("1");
         // $("#roll-insps-container").css('-webkit-animation-name', 'rollGlow'); /* Chrome, Safari, Opera */
         // $("#roll-insps-container").css('-webkit-animation-duration', '2s'); /* Chrome, Safari, Opera */
       }
+      var newInsps = {"themes": FilterManager.performQuery("rollThemes", user, "weddingInspirations").fetch(),
+                        "props": FilterManager.performQuery("rollProps", user, "weddingInspirations").fetch()}
+      EventLogger.logInspirationRefresh(lastInsps, newInsps, "New idea submission");
     } else {
       alert("Make sure all fields are filled out before submitting!");
     }
-  },
-  'click .roll-button': function() {
-    logger.debug("Clicked on a roll");
-    Session.set("cogState", "onRoll");
-  },
-  'click .stuck-button': function(e, target) {
-    logger.debug("Clicked stuck button");
-    if (Session.equals("cogState", "onRoll")) {
-      logger.debug("Switching from onRoll to stuck");
-      var lastIdea = Session.get("lastIdea");
-      logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-      WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
-      WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
-      Session.set("cogState", "stuck");  
-    } else {
-      logger.debug("Already stuck, refreshing stuck inspirations");
-      updateInspFilter("stuckThemes");
-      updateInspFilter("stuckProps");
-    }
-    
   },
 });
 
@@ -351,19 +349,31 @@ Template.Inspiration.events({
   },
   'click .stuck-button': function(e, target) {
     logger.debug("Clicked stuck button");
+    var user = Session.get("currentUser");
     if (Session.equals("cogState", "onRoll")) {
       logger.debug("Switching from onRoll to stuck");
       var lastIdea = Session.get("lastIdea");
+      var lastInsps = {"themes": FilterManager.performQuery("rollThemes", user, "weddingInspirations").fetch(),
+                        "props": FilterManager.performQuery("rollProps", user, "weddingInspirations").fetch()}
       logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
       WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, "different");
       WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, "different");
       Session.set("cogState", "stuck");  
+      EventLogger.logChangeCogState("onRoll", "stuck");
+      var newInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
+                        "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
+      EventLogger.logInspirationRefresh(lastInsps, newInsps, "Switch from onRoll to stuck");
     } else {
       logger.debug("Already stuck, refreshing stuck inspirations");
+      var lastInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
+                        "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
       updateInspFilter("stuckThemes");
       updateInspFilter("stuckProps");
+      var newInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
+                        "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
+      EventLogger.logInspirationRefresh(lastInsps, newInsps, "Click stuck button again");
     }
-  }
+  },
 });
 
 var initInspirationFilter = function(filterName) {
