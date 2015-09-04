@@ -40,7 +40,7 @@ Template.SurveyPage.helpers({
     logger.trace("Found participant: " + JSON.stringify(part));
     var cond = Conditions.findOne({_id: part.conditionID});
     logger.trace("Found condition: " + JSON.stringify(cond));
-    if (cond.description == "Treatment") {
+    if (cond.description == "Treatment" || isInList(cond.description, pInspConds)) {
       logger.trace("Participant is in treatment condition");
       return true;
     } else {
