@@ -197,4 +197,4 @@ conditionRouteData = {
   "PInsp": ["PersonalizedInsp", "SurveyPage", "MTurkFinalPage"]
 }
 
-pInspConds = ["Near-Near", "Near-Far", "Far-Near", "Far-Far"];
+pInspConds = ["Near-Near", "Near-Far", "Far-Near", "Far-Far", "pInspControl"];

@@ -9,7 +9,35 @@ Logger.setLevel('Client:IdeatePersonal', 'trace');
 var numMatches = 3;
 var stuckTimeOut;
 
+Template.MTurkIdeationPersonalized.helpers({
+  useInspirations: function() {
+    return Session.equals("useInspirations", true);
+  }
+});
+
 Template.IdeaEntry.onRendered(function(){
+
+  var part = Session.get("currentParticipant");
+  var cond = Conditions.findOne({_id: part.conditionID});
+  if (cond.description == "Far-Near") {
+    Session.set("rollDistance", "different");
+    Session.set("stuckDistance", "similar");
+    Session.set("useInspirations", true);
+  } else if (cond.description == "Far-Far") {
+    Session.set("rollDistance", "different");
+    Session.set("stuckDistance", "different");
+    Session.set("useInspirations", true);
+  } else if (cond.description == "Near-Near") {
+    Session.set("rollDistance", "similar");
+    Session.set("stuckDistance", "similar");
+    Session.set("useInspirations", true);
+  } else if (cond.description == "Near-Far") {
+    Session.set("rollDistance", "similar");
+    Session.set("stuckDistance", "different");
+    Session.set("useInspirations", true);
+  } else {
+    Session.set("useInspirations", false);
+  }
 
   spell = BJSpell("dictionary.js/en_US.js");
 
@@ -59,118 +87,199 @@ Template.IdeaEntry.onRendered(function(){
 
   var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
   // Instance the tour
-  var pInspTour = new Tour({
-    template: "<div class='popover tour'>" +
-        "<div class='arrow'></div>" +
-        "<h3 class='popover-title'></h3>" +
-        "<div class='popover-content'></div>" +
-        "<div class='popover-navigation'>" +
-            "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
-            "<button class='btn btn-default' data-role='next'>Next »</button>" +
-        "</div>" +
-      "</div>",
-    steps: [
-    {
-      element: "#lpheader",
-      title: "Instructions tutorial (Step 1 of 8)" + spacer,
-      content: "Welcome! Before you begin, please follow this brief 8-step tutorial to familiarize you with the interface.",
-      backdrop: true,
-      placement: "bottom",
-      // orphan: true,
-      onNext: function() {
-        EventLogger.logTutorialStarted();
-      }
-    },
-    {
-      element: "#p-insp-prompt",
-      title: "Instructions tutorial (Step 2 of 8)" + spacer,
-      content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.", 
-      backdrop: true,
-      placement: "bottom",
-    },
-    {
-      element: "#p-insp-idea-entry",
-      title: "Instructions tutorial (Step 3 of 8)" + spacer,
-      content: "Enter your ideas using this template. The system will automatically notify you if you misspell a theme/prop. " +
-      "If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.",
-      backdrop: true,
-      onNext: function() {
-        addTutorialInsp();
-      }
-    },
-    {
-      element: "#p-insp-insp-container",
-      title: "Instructions tutorial (Step 4 of 8)" + spacer,
-      content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
-      "This inspiration feed will refresh every time you submit a new idea. ",  
-      backdrop: true,
-      placement: "bottom",
-      // onNext: function() {
-      //   removeTutorialInsp();
-      // },
-      onPrev: function() {
-        removeTutorialInsp();
-      },
-    },
-    {
-      element: "#insp-tutorialInsp",
-      title: "Instructions tutorial (Step 5 of 8)" + spacer,
-      content: "Feel free to use the suggested themes/props as inspiration. It's ok to generate ideas similar to those themes/props. " +
-      "If a theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
-      placement: "bottom",
-      backdrop: true,
-      onNext: function() {
-        removeTutorialInsp();
-      }
-    },
-    {
-      element: ".stuck-button",
-      title: "Instructions tutorial (Step 6 of 8)" + spacer,
-      content: "If you feel like you are stuck or running low on ideas, click on this button to receive another set of inspirations. " +
-      "You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).",
-      backdrop: true,
-      placement: "bottom",
-      onPrev: function() {
-        addTutorialInsp();
-      }
-    },
-    {
-      element: "#nav-right",
-      title: "Instructions tutorial (Step 7 of 8)" + spacer,
-      content: "The time remaining will be shown in the top right corner of the page. " +
-        "When your time is up, you will automatically be taken to a brief survey page, and then your completion code.",
-        // backdrop: true,
-      placement: "bottom",
-    }],
-    onEnd: function(tour) {
-      $(".idea-entry input").prop("disabled", false);
-      $(".idea-entry textArea").prop("disabled", false);
-      $(".submit-idea").prop("disabled", false);
-      var promptLength = Session.get("currentPrompt").length*60000;
-      countdown.start(promptLength);
-      EventLogger.logTutorialComplete();
-      EventLogger.logBeginIdeation();
-    },
-  });
-
-  pInspTour.addStep({
-    element: "#nav-right",
-    title: "Instructions tutorial (Step 8 of 8)" + spacer,
-    content: "You may exit the study at any time by clicking on the \"Exit Early\" button. " +
-      "Your compensation will be pro-rated based on how long you participated. " +
-      "When you are ready, click \"Begin!\", and the timer will start. Good luck!",
-      // backdrop: true,
-      placement: "bottom",
+  var pInspTour;
+  if (Session.equals("useInspirations", true)) {
+    pInspTour = new Tour({
       template: "<div class='popover tour'>" +
-        "<div class='arrow'></div>" +
-        "<h3 class='popover-title'></h3>" +
-        "<div class='popover-content'></div>" +
-        "<div class='popover-navigation'>" +
-            "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
-            "<button class='btn btn-default' data-role='end'>Begin!</button>" +
-        "</div>" +
-      "</div>",
-  })
+          "<div class='arrow'></div>" +
+          "<h3 class='popover-title'></h3>" +
+          "<div class='popover-content'></div>" +
+          "<div class='popover-navigation'>" +
+              "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
+              "<button class='btn btn-default' data-role='next'>Next »</button>" +
+          "</div>" +
+        "</div>",
+      steps: [
+      {
+        element: "#lpheader",
+        title: "Instructions tutorial (Step 1 of 8)" + spacer,
+        content: "Welcome! Before you begin, please follow this brief 8-step tutorial to familiarize you with the interface.",
+        backdrop: true,
+        placement: "bottom",
+        // orphan: true,
+        onNext: function() {
+          EventLogger.logTutorialStarted();
+        }
+      },
+      {
+        element: "#p-insp-prompt",
+        title: "Instructions tutorial (Step 2 of 8)" + spacer,
+        content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.", 
+        backdrop: true,
+        placement: "bottom",
+      },
+      {
+        element: "#p-insp-idea-entry",
+        title: "Instructions tutorial (Step 3 of 8)" + spacer,
+        content: "Enter your ideas using this template. The system will automatically notify you if you misspell a theme/prop. " +
+        "If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.",
+        backdrop: true,
+        onNext: function() {
+          addTutorialInsp();
+        }
+      },
+      {
+        element: "#p-insp-insp-container",
+        title: "Instructions tutorial (Step 4 of 8)" + spacer,
+        content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
+        "This inspiration feed will refresh every time you submit a new idea. ",  
+        backdrop: true,
+        placement: "bottom",
+        // onNext: function() {
+        //   removeTutorialInsp();
+        // },
+        onPrev: function() {
+          removeTutorialInsp();
+        },
+      },
+      {
+        element: "#insp-tutorialInsp",
+        title: "Instructions tutorial (Step 5 of 8)" + spacer,
+        content: "Feel free to use the suggested themes/props as inspiration. It's ok to generate ideas similar to those themes/props. " +
+        "If a theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
+        placement: "bottom",
+        backdrop: true,
+        onNext: function() {
+          removeTutorialInsp();
+        }
+      },
+      {
+        element: ".stuck-button",
+        title: "Instructions tutorial (Step 6 of 8)" + spacer,
+        content: "If you feel like you are stuck or running low on ideas, click on this button to receive another set of inspirations. " +
+        "You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).",
+        backdrop: true,
+        placement: "bottom",
+        onPrev: function() {
+          addTutorialInsp();
+        }
+      },
+      {
+        element: "#nav-right",
+        title: "Instructions tutorial (Step 7 of 8)" + spacer,
+        content: "The time remaining will be shown in the top right corner of the page. " +
+          "When your time is up, you will automatically be taken to a brief survey page, and then your completion code.",
+          // backdrop: true,
+        placement: "bottom",
+      }],
+      onEnd: function(tour) {
+        $(".idea-entry input").prop("disabled", false);
+        $(".idea-entry textArea").prop("disabled", false);
+        $(".submit-idea").prop("disabled", false);
+        var promptLength = Session.get("currentPrompt").length*60000;
+        countdown.start(promptLength);
+        EventLogger.logTutorialComplete();
+        EventLogger.logBeginIdeation();
+      },
+    });
+
+    pInspTour.addStep({
+      element: "#nav-right",
+      title: "Instructions tutorial (Step 8 of 8)" + spacer,
+      content: "You may exit the study at any time by clicking on the \"Exit Early\" button. " +
+        "Your compensation will be pro-rated based on how long you participated. " +
+        "When you are ready, click \"Begin!\", and the timer will start. Good luck!",
+        // backdrop: true,
+        placement: "bottom",
+        template: "<div class='popover tour'>" +
+          "<div class='arrow'></div>" +
+          "<h3 class='popover-title'></h3>" +
+          "<div class='popover-content'></div>" +
+          "<div class='popover-navigation'>" +
+              "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
+              "<button class='btn btn-default' data-role='end'>Begin!</button>" +
+          "</div>" +
+        "</div>",
+    })
+  } else {
+    pInspTour = new Tour({
+      template: "<div class='popover tour'>" +
+          "<div class='arrow'></div>" +
+          "<h3 class='popover-title'></h3>" +
+          "<div class='popover-content'></div>" +
+          "<div class='popover-navigation'>" +
+              "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
+              "<button class='btn btn-default' data-role='next'>Next »</button>" +
+          "</div>" +
+        "</div>",
+      steps: [
+      {
+        element: "#lpheader",
+        title: "Instructions tutorial (Step 1 of 8)" + spacer,
+        content: "Welcome! Before you begin, please follow this brief 5-step tutorial to familiarize you with the interface.",
+        backdrop: true,
+        placement: "bottom",
+        // orphan: true,
+        onNext: function() {
+          EventLogger.logTutorialStarted();
+        }
+      },
+      {
+        element: "#p-insp-prompt",
+        title: "Instructions tutorial (Step 2 of 5)" + spacer,
+        content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.", 
+        backdrop: true,
+        placement: "bottom",
+      },
+      {
+        element: "#p-insp-idea-entry",
+        title: "Instructions tutorial (Step 3 of 5)" + spacer,
+        content: "Enter your ideas using this template. The system will automatically notify you if you misspell a theme/prop. " +
+        "If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.",
+        backdrop: true,
+        onNext: function() {
+          // addTutorialInsp();
+        }
+      },
+      {
+        element: "#nav-right",
+        title: "Instructions tutorial (Step 4 of 5)" + spacer,
+        content: "The time remaining will be shown in the top right corner of the page. " +
+          "When your time is up, you will automatically be taken to a brief survey page, and then your completion code.",
+          // backdrop: true,
+        placement: "bottom",
+      }],
+      onEnd: function(tour) {
+        $(".idea-entry input").prop("disabled", false);
+        $(".idea-entry textArea").prop("disabled", false);
+        $(".submit-idea").prop("disabled", false);
+        var promptLength = Session.get("currentPrompt").length*60000;
+        countdown.start(promptLength);
+        EventLogger.logTutorialComplete();
+        EventLogger.logBeginIdeation();
+      },
+    });
+
+    pInspTour.addStep({
+      element: "#nav-right",
+      title: "Instructions tutorial (Step 5 of 5)" + spacer,
+      content: "You may exit the study at any time by clicking on the \"Exit Early\" button. " +
+        "Your compensation will be pro-rated based on how long you participated. " +
+        "When you are ready, click \"Begin!\", and the timer will start. Good luck!",
+        // backdrop: true,
+        placement: "bottom",
+        template: "<div class='popover tour'>" +
+          "<div class='arrow'></div>" +
+          "<h3 class='popover-title'></h3>" +
+          "<div class='popover-content'></div>" +
+          "<div class='popover-navigation'>" +
+              "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
+              "<button class='btn btn-default' data-role='end'>Begin!</button>" +
+          "</div>" +
+        "</div>",
+    })
+  }
+  
 
   // Initialize the tour
   logger.debug("Initializing tutorial");
@@ -182,22 +291,6 @@ Template.IdeaEntry.onRendered(function(){
 
   if(pInspTour.ended()) {
     pInspTour.restart();
-  }
-
-  var part = Session.get("currentParticipant");
-  var cond = Conditions.findOne({_id: part.conditionID});
-  if (cond.description == "Far-Near") {
-    Session.set("rollDistance", "different");
-    Session.set("stuckDistance", "similar");
-  } else if (cond.description == "Far-Far") {
-    Session.set("rollDistance", "different");
-    Session.set("stuckDistance", "different");
-  } else if (cond.description == "Near-Near") {
-    Session.set("rollDistance", "similar");
-    Session.set("stuckDistance", "similar");
-  } else {
-    Session.set("rollDistance", "similar");
-    Session.set("stuckDistance", "different");
   }
 
 });
@@ -297,34 +390,6 @@ Template.IdeaEntry.events({
     }
   },
 
-  // 'click .stuck-button': function(e, target) {
-  //   logger.debug("Clicked stuck button");
-  //   var user = Session.get("currentUser");
-  //   if (Session.equals("cogState", "onRoll")) {
-  //     logger.debug("Switching from onRoll to stuck");
-  //     var lastIdea = Session.get("lastIdea");
-  //     var lastInsps = {"themes": FilterManager.performQuery("rollThemes", user, "weddingInspirations").fetch(),
-  //                       "props": FilterManager.performQuery("rollProps", user, "weddingInspirations").fetch()}
-  //     logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-  //     WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, Session.get("stuckDistance"));
-  //     WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, Session.get("stuckDistance"));
-  //     Session.set("cogState", "stuck");  
-  //     EventLogger.logChangeCogState("onRoll", "stuck");
-  //     var newInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
-  //                       "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
-  //     EventLogger.logInspirationRefresh(lastInsps, newInsps, "Switch from onRoll to stuck");
-  //   } else {
-  //     logger.debug("Already stuck, refreshing stuck inspirations");
-  //     var lastInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
-  //                       "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
-  //     updateInspFilter("stuckThemes");
-  //     updateInspFilter("stuckProps");
-  //     var newInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
-  //                       "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
-  //     EventLogger.logInspirationRefresh(lastInsps, newInsps, "Click stuck button again");
-  //   }
-  // },
-
   'click .submit-idea': function (e, target) {
     //console.log("event submitted");
     logger.debug("submitting a new idea");
@@ -360,11 +425,15 @@ Template.IdeaEntry.events({
         lastInsps = {"themes": FilterManager.performQuery("rollThemes", user, "weddingInspirations").fetch(),
                         "props": FilterManager.performQuery("rollProps", user, "weddingInspirations").fetch()}
       }
-      EventLogger.logWeddingSubmission(idea, lastInsps);
-      WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
+      if (Session.equals("useInspirations", true)) {
+        EventLogger.logWeddingSubmission(idea, lastInsps);
+        WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
                                       "New idea submission", Session.get("rollDistance"));
-      WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
-                                      "New idea submission", Session.get("rollDistance"));
+        WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
+                                      "New idea submission", Session.get("rollDistance"));  
+      } else {
+        EventLogger.logWeddingSubmission(idea);
+      }
       // updateInspFilter("rollThemes");
       // updateInspFilter("rollProps");
 

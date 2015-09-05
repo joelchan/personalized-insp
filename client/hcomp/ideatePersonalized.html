@@ -9,7 +9,9 @@
             {{> IdeaList}}
         </div>
         <div class="col-md-2 col-xs-2">
-            {{> Inspiration}}
+            {{#if useInspirations}}
+                {{> Inspiration}}
+            {{/if}}
             {{> PInspInstructions}}
         </div>
     </div>
