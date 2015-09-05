@@ -583,11 +583,15 @@ EventLogger = (function () {
       }
       this.log(msg, data);
     },
-    logInspirationRefresh: function(oldInsps, newInsps, trigger) {
-      var msg = "User received a new set of inspirations";
-      var data = {"oldInsps": oldInsps,
-                  "newInsps": newInsps,
-                  "trigger": trigger}
+    // logInspirationRefresh: function(oldInsps, newInsps, trigger) {
+    logInspirationRefresh: function(newInsps, inspType, reason) {
+      var msg = "User received a new set of " + inspType;
+      // var data = {"oldInsps": oldInsps,
+      //             "newInsps": newInsps,
+      //             "trigger": trigger}
+      var data = {"newInsps": newInsps,
+                  // "inspType": inspType,
+                  "reason": reason}
       this.log(msg, data);
     },
     logStarInspiration: function(insp) {

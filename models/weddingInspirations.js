@@ -16,10 +16,11 @@ WeddingInspiration = function(previous_id, content, type) {
 
 WeddingInspManager = (function() {
   return {
-    retrieveInsp: function(filterName, query, queryType, N, different) {
+    retrieveInsp: function(filterName, query, queryType, N, reason, different) {
       logger.trace("Retrieving " + N + " new " + queryType + " for " + filterName + " with query: " + query);
       Meteor.call('topN', "GloVe", query, queryType, function(err, res) {
         var data = JSON.parse(res.content);
+        // var lastInsps = FilterManager.performQuery(filterName, Session.get("currentUser"), "weddingInspirations");
         var matches = [];
         if (different == "different") {
             // slicedData = data.different.sort(function(a, b){ return a.similarity-b.similarity }).slice(0,N);
@@ -34,6 +35,7 @@ WeddingInspManager = (function() {
                   "weddingInspirations", "previous_id", insp.id);
             });
             logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+            EventLogger.logInspirationRefresh(matches, filterName, reason);
             // return matchIDs;
         } else {
             var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
@@ -49,6 +51,7 @@ WeddingInspManager = (function() {
             });
             logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
             // return matchIDs;
+            EventLogger.logInspirationRefresh(matches, filterName, reason);
         }
       });
     },
