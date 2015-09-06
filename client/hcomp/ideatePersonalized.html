@@ -149,10 +149,12 @@
         <div id="directions-container">
           <div id="directions-content" class="collapse">
             <ol>
-              <li>In the next 10 minutes, please brainstorm as many creative ideas for a themed wedding as you can. Enter your ideas using the provided template. The system will automatically notify you if you misspell a theme/prop. If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.</li>
-              <li>To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. This inspiration feed will refresh every time you submit a new idea. Feel free to use the suggested themes/props as inspiration. It's ok to generate ideas similar to those themes/props.</li>
-              <li>If a theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it!</li>
-              <li>If you feel like you are stuck or running low on ideas, click on this button to receive another set of inspirations. You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).</li>
+              <li>In the next {{promptLength}} minutes, please brainstorm as many creative ideas for a themed wedding as you can. Enter your ideas using the provided template. The system will automatically notify you if you misspell a theme/prop. If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.</li>
+              {{#if useInspirations}}
+                <li>To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. This inspiration feed will refresh every time you submit a new idea. Feel free to use the suggested themes/props as inspiration. It's ok to generate ideas similar to those themes/props.</li>
+                <li>If a theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it!</li>
+                <li>If you feel like you are stuck or running low on ideas, click on this button to receive another set of inspirations. You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).</li>
+              {{/if}}
               <li>The time remaining will be shown in the top right corner of the page. When your time is up, you will automatically be taken to a brief survey page, and then your completion code. </li>
               <li>You may exit the study at any time by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</li>
             </ol>

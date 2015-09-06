@@ -215,7 +215,7 @@ Template.IdeaEntry.onRendered(function(){
       steps: [
       {
         element: "#lpheader",
-        title: "Instructions tutorial (Step 1 of 8)" + spacer,
+        title: "Instructions tutorial (Step 1 of 5)" + spacer,
         content: "Welcome! Before you begin, please follow this brief 5-step tutorial to familiarize you with the interface.",
         backdrop: true,
         placement: "bottom",
@@ -584,6 +584,15 @@ Template.WeddingInspiration.events({
     $(selector).addClass("glyphicon-star-empty");
     EventLogger.logUnStarInspiration(this);
   },
+});
+
+Template.PInspInstructions.helpers({
+  promptLength: function() {
+    return Session.get("currentPrompt").length;
+  },
+  useInspirations: function() {
+    return Session.equals("useInspirations", true);
+  }
 });
 
 var initInspirationFilter = function(filterName) {
