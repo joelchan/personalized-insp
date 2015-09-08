@@ -446,8 +446,8 @@ Template.IdeaEntry.events({
       if (Session.equals("useInspirations", true)) {
         EventLogger.logWeddingSubmission(idea, lastInsps);
         // replace eranames
-        // theme = replaceEraNames(theme);
-        // prop = replaceEraNames(prop);
+        theme = replaceEraNames(theme);
+        prop = replaceEraNames(prop);
         WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
                                       "New idea submission", Session.get("rollDistance"));
         WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
@@ -550,9 +550,11 @@ Template.Inspiration.events({
       // var lastInsps = {"themes": FilterManager.performQuery("rollThemes", user, "weddingInspirations").fetch(),
                         // "props": FilterManager.performQuery("rollProps", user, "weddingInspirations").fetch()}
       logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
-      WeddingInspManager.retrieveInsp("stuckThemes", lastIdea.theme, "weddingTheme", numMatches, 
+      var theme = replaceEraNames(lastIdea.theme);
+      var prop = replaceEraNames(lastIdea.prop);
+      WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
                                       "Switch from onRoll to stuck", Session.get("stuckDistance"));
-      WeddingInspManager.retrieveInsp("stuckProps", lastIdea.prop, "weddingProp", numMatches, 
+      WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
                                       "Switch from onRoll to stuck", Session.get("stuckDistance"));
       Session.set("cogState", "stuck");
       // var newInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
@@ -674,3 +676,24 @@ var addTutorialInsp = function() {
 var removeTutorialInsp = function() {
   $("#insp-tutorialInsp").remove();
 }
+
+var replaceEraNames = function(phrase) {
+  /*
+  * Replace era names (e.g., "70's") that would be treated as misspellings
+  * in GloVe, to improve usability
+  */
+  var words = phrase.split(" ");
+  var newWords = [];
+  words.forEach(function(word) {
+    if (spell.check(word)) {
+      newWords.push(word);
+    } else {
+      if (isInList(word, Object.keys(eraNames))) {
+        newWords.push(eraNames[word]);
+      } else {
+        newWords.push(word)
+      }
+    }
+  });
+  return newWords.join(" ");
+} 
