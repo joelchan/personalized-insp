@@ -16,7 +16,7 @@ WeddingInspiration = function(previous_id, content, type) {
 
 WeddingInspManager = (function() {
   return {
-    retrieveInsp: function(filterName, query, queryType, N, reason, different) {
+    retrieveInsp: function(filterName, query, queryType, N, reason, different, partner) {
       logger.trace("Retrieving " + N + " new " + queryType + " for " + filterName + " with query: " + query);
       var selector = "#" + filterName + "-question";
       Meteor.call('topN', "GloVe", query, queryType, function(err, res) {
@@ -53,13 +53,39 @@ WeddingInspManager = (function() {
                 $(selector).hide();
                 // return matchIDs;
             } else {
-                logger.trace("No matches found! Showing nothing.");
-                Session.set(filterName, []);
-                FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-                FilterManager.create(filterName, Session.get("currentUser"), 
-                  "weddingInspirations", "previous_id", "################");
-                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
-                $(selector).show();
+                logger.trace("No results: trying to retrieve from partner...")
+                Meteor.call('topN', "GloVe", partner, queryType, function(err, res) {
+                    var data = JSON.parse(res.content);
+                    var diffMatches = data.different.sort(function(a, b){ return a.similarity-b.similarity });
+                    if (diffMatches.length > 0) {
+                        logger.trace("Matches are: " + JSON.stringify(diffMatches));
+                        Session.set(filterName, diffMatches);
+                        FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+                        var i = 0;
+                        var sampledWords = [];
+                        while (matches.length < N) {
+                          var insp = diffMatches[i];
+                          if (!isInList(insp.text, sampledWords)) {
+                              matches.push(insp);
+                              sampledWords.push(insp.text);
+                              FilterManager.create(filterName, Session.get("currentUser"), 
+                                "weddingInspirations", "previous_id", insp.id);
+                          }
+                          i += 1;
+                        }
+                        logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+                        EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                        $(selector).hide();
+                    } else {
+                        logger.trace("No matches found! Showing nothing.");
+                        Session.set(filterName, []);
+                        FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+                        FilterManager.create(filterName, Session.get("currentUser"), 
+                          "weddingInspirations", "previous_id", "################");
+                        EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                        $(selector).show();
+                   }
+                });
             }
         } else {
             var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
@@ -91,13 +117,39 @@ WeddingInspManager = (function() {
                 EventLogger.logInspirationRefresh(matches, query, filterName, reason);
                 $(selector).hide();
             } else {
-                logger.trace("No matches found! Showing nothing.");
-                Session.set(filterName, []);
-                FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-                FilterManager.create(filterName, Session.get("currentUser"), 
-                  "weddingInspirations", "previous_id", "################");
-                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
-                $(selector).show();
+                logger.trace("No results: trying to retrieve from partner...")
+                Meteor.call('topN', "GloVe", partner, queryType, function(err, res) {
+                    var data = JSON.parse(res.content);
+                    var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
+                    if (simMatches.length > 0) {
+                        logger.trace("Matches are: " + JSON.stringify(simMatches));
+                        Session.set(filterName, simMatches);
+                        FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+                        var i = 0;
+                        var sampledWords = [];
+                        while (matches.length < N) {
+                            var insp = simMatches[i];
+                            if ((insp.similarity < 0.5) && (!isInList(insp.text, sampledWords))) {
+                                matches.push(insp);
+                                sampledWords.push(insp.text);
+                                FilterManager.create(filterName, Session.get("currentUser"), 
+                                  "weddingInspirations", "previous_id", insp.id);
+                            }
+                            i += 1;
+                        }
+                        logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+                        EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                        $(selector).hide();
+                    } else {
+                        logger.trace("No matches found! Showing nothing.");
+                        Session.set(filterName, []);
+                        FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+                        FilterManager.create(filterName, Session.get("currentUser"), 
+                          "weddingInspirations", "previous_id", "################");
+                        EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                        $(selector).show();
+                   }
+                });
             }
         }
       });

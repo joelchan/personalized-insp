@@ -448,22 +448,26 @@ Template.IdeaEntry.events({
         // replace eranames
         theme = replaceEraNames(theme);
         prop = replaceEraNames(prop);
-        if (anyCorrect(theme)) {
-          WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
-                                                "New idea submission", Session.get("rollDistance"));
-        } else {
-          logger.trace("No valid words in theme; retrieiving prop inspirations based on prop");
-          WeddingInspManager.retrieveInsp("rollThemes", prop, "weddingTheme", numMatches, 
-                                                "New idea submission", Session.get("rollDistance"));
-        }
-        if (anyCorrect(prop)) {
-          WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
-                                        "New idea submission", Session.get("rollDistance"));  
-        } else {
-          logger.trace("No valid words in prop; retrieiving prop inspirations based on theme");
-          WeddingInspManager.retrieveInsp("rollProps", theme, "weddingProp", numMatches, 
-                                                  "New idea submission", Session.get("rollDistance"));  
-        }
+        WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
+                                              "New idea submission", Session.get("rollDistance"), prop);
+        WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
+                                      "New idea submission", Session.get("rollDistance"), theme);
+        // if (anyCorrect(theme)) {
+        //   WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
+        //                                         "New idea submission", Session.get("rollDistance"));
+        // } else {
+        //   logger.trace("No valid words in theme; retrieiving prop inspirations based on prop");
+        //   WeddingInspManager.retrieveInsp("rollThemes", prop, "weddingTheme", numMatches, 
+        //                                         "New idea submission", Session.get("rollDistance"));
+        // }
+        // if (anyCorrect(prop)) {
+        //   WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
+        //                                 "New idea submission", Session.get("rollDistance"));  
+        // } else {
+        //   logger.trace("No valid words in prop; retrieiving prop inspirations based on theme");
+        //   WeddingInspManager.retrieveInsp("rollProps", theme, "weddingProp", numMatches, 
+        //                                           "New idea submission", Session.get("rollDistance"));  
+        // }
         
         
       } else {
@@ -513,8 +517,8 @@ Template.Inspiration.onRendered(function () {
   $('#stuck-insps-container').hide();
   $('#roll-insps-container').show();
 
-  var msg = "<p>No suggestions because we couldn't understand your last idea. " +
-            "Submit another idea (hopefully with correct spelling!) to get suggested inspirations.</p>"
+  var msg = "<p>Sorry, we couldn't find suggestions for your last idea! " +
+            "Submit another idea to get suggested inspirations. It might help to check your spelling before submitting.</p>"
   $('#stuckThemes-question').tooltipster({
       content: $(msg),
       position: 'right',
@@ -593,22 +597,26 @@ Template.Inspiration.events({
       logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
       var theme = replaceEraNames(lastIdea.theme);
       var prop = replaceEraNames(lastIdea.prop);
-      if (anyCorrect(theme)) {
-        WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
-                                      "Switch from onRoll to stuck", Session.get("stuckDistance"));
-      } else {
-        logger.trace("No valid words in theme; retrieiving prop inspirations based on prop");
-        WeddingInspManager.retrieveInsp("stuckThemes", prop, "weddingTheme", numMatches, 
-                                      "Switch from onRoll to stuck", Session.get("stuckDistance"));
-      }
-      if (anyCorrect(prop)) {
-        WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
-                                        "Switch from onRoll to stuck", Session.get("stuckDistance"));  
-      } else {
-        logger.trace("No valid words in prop; retrieiving prop inspirations based on theme");
-        WeddingInspManager.retrieveInsp("stuckProps", theme, "weddingProp", numMatches, 
-                                        "Switch from onRoll to stuck", Session.get("stuckDistance"));
-      }
+      WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
+                                    "Switch from onRoll to stuck", Session.get("stuckDistance"), prop);
+      WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
+                                      "Switch from onRoll to stuck", Session.get("stuckDistance"), theme);
+      // if (anyCorrect(theme)) {
+      //   WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
+      //                                 "Switch from onRoll to stuck", Session.get("stuckDistance"));
+      // } else {
+      //   logger.trace("No valid words in theme; retrieiving prop inspirations based on prop");
+      //   WeddingInspManager.retrieveInsp("stuckThemes", prop, "weddingTheme", numMatches, 
+      //                                 "Switch from onRoll to stuck", Session.get("stuckDistance"));
+      // }
+      // if (anyCorrect(prop)) {
+      //   WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
+      //                                   "Switch from onRoll to stuck", Session.get("stuckDistance"));  
+      // } else {
+      //   logger.trace("No valid words in prop; retrieiving prop inspirations based on theme");
+      //   WeddingInspManager.retrieveInsp("stuckProps", theme, "weddingProp", numMatches, 
+      //                                   "Switch from onRoll to stuck", Session.get("stuckDistance"));
+      // }
       Session.set("cogState", "stuck");
       $('#stuck-insps-container').show();
       $('#roll-insps-container').hide();
