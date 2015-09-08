@@ -19,8 +19,31 @@ SimExternal.topN = function(method, word, topic) {
     return response;
 }
 
+SimExternal.simToQuery = function(target, words) {
+    logger.trace("Calculating similarity between " + target + " and " + JSON.stringify(words));
+    var url = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/similarity";
+    var similarities = [];
+    words.forEach(function(word) {
+        var response = Meteor.http.post(
+            url,
+            {data: {words: [{'id': 'foo', 'text': target}, 
+                            {'id': 'bar', 'text': word}]
+                    }
+            }
+        );
+        // var parsed = JSON.parse(response);
+        logger.trace("Response: " + JSON.stringify(response));
+        similarities.push({'target': target, 'word': word, 'similarity': response.data.similarity});
+    });
+    logger.trace("Similarites: " + JSON.stringify(similarities));
+    return similarities;
+}
+
 Meteor.methods({
     topN: function(method, word, topic) {
         return SimExternal.topN(method, word, topic);
     },
+    simToQuery: function(target, words) {
+        return SimExternal.simToQuery(target, words);
+    }
 });
