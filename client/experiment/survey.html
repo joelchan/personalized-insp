@@ -40,7 +40,7 @@
       <input type="radio" class="radioButton" name="lang1" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="lang1" value="false">No
     </div>
-    <div id="lang2Question" class="row formQuestion hidden">
+    <!-- <div id="lang2Question" class="row formQuestion hidden">
       <div class="question">Do you speak a second language?: *</div><br/>
       <input type="radio" class="radioButton" name="lang2" value="true">Yes<br/>
       <input type="radio" class="radioButton" name="lang2" value="false">No
@@ -52,7 +52,7 @@
     <div class="row formQuestion">
       <div class="question">What country do you call home?: *</div><br/>
       <input type="text" class="shortText" name="ethnicity">
-    </div>
+    </div> -->
     <!-- <div class="row formQuestion">
       <div class="question">Do you currently or have you ever owned either an ipod or an mp3 player of any sort?: *</div><br/>
       <input type="radio" class="radioButton" name="ipod" value="true">Yes<br/>
@@ -79,12 +79,68 @@
 <template name="SurveyInspiration">
   <form class="surveyForm">
     <div class="row formQuestion">
-      <div class="question">Did you find any of the suggested inspirations helpful?: *</div><br/>
-      <input type="radio" class="radioButton" name="inspirationHelpful" value="true">Yes<br/>
-      <input type="radio" class="radioButton" name="inspirationHelpful" value="false">No
+      <div class="question">Did you interact with the inspiration feature at all (e.g., looked at one or two, based ideas off an inspiration)? *</div><br/>
+      <input type="radio" class="radioButton" name="inspirationUse" value="true">Yes<br/>
+      <input type="radio" class="radioButton" name="inspirationUse" value="false">No
     </div>
-    <div class="row formQuestion">
-      <div class="question">Please briefly explain why or why not:*</div><br/>
+    <div id="inspNotUseWhy" class="row formQuestion hidden">
+      <div class="question">(Optional) Please tell us why you didn't interact with the inspiration feature:</div><br/>
+      <textArea id="inspirationUseSurvey" class="survey-textbox"></textarea>
+    </div>
+    <div class="row formQuestion inspUseDetails hidden">
+      <div class="question">How often did you interact with (e.g., attend to, use as inspiration) the inspirations when you weren't stuck (i.e., when you weren't actively clicking to get more inspirations)? *</div><br/>
+      <select id="inspirationRollUse">
+        <option value="5">5 - Very frequently</option>
+        <option value="4">4 - Frequently</option>
+        <option value="3">3 - Somewhat frequently</option>
+        <option value="2">2 - Barely</option>
+        <option value="1">1 - Not at all</option>
+      </select>
+      <!-- <input type="radio" class="radioButton" name="inspirationHelpful" value="true">Yes<br/>
+      <input type="radio" class="radioButton" name="inspirationHelpful" value="false">No -->
+    </div>
+    <div class="row formQuestion inspUseDetails hidden">
+      <div class="question">Overall, did you feel like the inspirations helped you come up with more ideas? *</div><br/>
+      <select id="inspirationHelpfulFluency">
+        <option value="5">5 - Very much so</option>
+        <option value="4">4 - Yes</option>
+        <option value="3">3 - Somewhat</option>
+        <option value="2">2 - Barely</option>
+        <option value="1">1 - Not at all</option>
+      </select>
+      <!-- <input type="radio" class="radioButton" name="inspirationHelpful" value="true">Yes<br/>
+      <input type="radio" class="radioButton" name="inspirationHelpful" value="false">No -->
+    </div>
+    <div class="row formQuestion inspUseDetails hidden">
+      <div class="question">Overall, did you feel like the inspirations helped you come up with better ideas? *</div><br/>
+      <select id="inspirationHelpfulQuality">
+        <option value="5">5 - Very much so</option>
+        <option value="4">4 - Yes</option>
+        <option value="3">3 - Somewhat</option>
+        <option value="2">2 - Barely</option>
+        <option value="1">1 - Not at all</option>
+      </select>
+      <!-- <input type="radio" class="radioButton" name="inspirationHelpful" value="true">Yes<br/>
+      <input type="radio" class="radioButton" name="inspirationHelpful" value="false">No -->
+    </div>
+    <div class="row formQuestion inspUseDetails hidden">
+      <div class="question">(Optional) Please tell us about one or two instances where an inspiration helped you come up with an idea:</div><br/>
+      <textArea id="inspirationExplainSurvey" class="survey-textbox"></textarea>
+    </div>
+    <div class="row formQuestion inspUseDetails hidden">
+      <div class="question">Did you find the inspirations to be distracting? *</div><br/>
+      <select id="inspirationDistract">
+        <option value="5">5 - Very much so</option>
+        <option value="4">4 - Yes</option>
+        <option value="3">3 - Somewhat</option>
+        <option value="2">2 - Barely</option>
+        <option value="1">1 - Not at all</option>
+      </select>
+      <!-- <input type="radio" class="radioButton" name="inspirationHelpful" value="true">Yes<br/>
+      <input type="radio" class="radioButton" name="inspirationHelpful" value="false">No -->
+    </div>
+    <div class="row formQuestion inspUseDetails hidden">
+      <div class="question">(Optional) Please tell us how the inspirations were distracting:</div><br/>
       <textArea id="inspirationExplainSurvey" class="survey-textbox"></textarea>
     </div>
   </form>

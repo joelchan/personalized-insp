@@ -26,6 +26,14 @@ Template.SurveyPage.rendered = function() {
       } 
     });
 
+    $("input[name='inspirationUse']").click(function() {
+      if ($("input[name='inspirationUse']:checked").val() == "true") {
+        $('.inspUseDetails').toggleClass("hidden");
+      } else {
+        $('#inspNotUseWhy').toggleClass("hidden");
+      }
+    });
+
     var userID = Session.get("currentParticipant").userID;
     Session.set("currentUser",MyUsers.findOne({_id: userID}));
 
@@ -60,7 +68,8 @@ Template.SurveyPage.events({
 	'click button.submitForm' : function(){
     var part = Session.get("currentParticipant");
     var cond = Conditions.findOne({_id: part.conditionID});
-    if (cond.description == "Treatment") {
+    var treatmentConds = ["Treatment", "Near-Near", "Near-Far", "Far-Near", "Far-Far"];
+    if (isInList(cond.description, treatmentConds)) {
       var resp = getTreatmentResponse();
     } else {
       var resp = getControlResponse();
@@ -133,26 +142,26 @@ getControlResponse = function() {
   answer = $("input[name='lang1']:checked").val();
   // checkResponse(answer)
   responses.push(new QuestionResponse("Is English your first language", answer));
-  var lang1 = answer;
-  var lang2 = "false";
-  //2nd language yes/no
-  if (lang1 == "true") {
-    answer = $("input[name='lang2']:checked").val();
-    // checkResponse(answer)
-    responses.push(new QuestionResponse("Do you speak a 2nd language", answer));
-    lang2 = answer;
+  // var lang1 = answer;
+  // var lang2 = "false";
+  // //2nd language yes/no
+  // if (lang1 == "true") {
+  //   answer = $("input[name='lang2']:checked").val();
+  //   // checkResponse(answer)
+  //   responses.push(new QuestionResponse("Do you speak a 2nd language", answer));
+  //   lang2 = answer;
 
-  }
-  //2nd language
-  if (lang1 == "false" || lang2 == "true") {
-    answer = $("input[name='lang2text']").val();
-    // checkResponse(answer)
-    responses.push(new QuestionResponse("What is your 2nd language", answer));
-  }
-  //Ethnicity
-  answer = $("input[name='ethnicity']").val();
-  // checkResponse(answer)
-  responses.push(new QuestionResponse("What country do you call home", answer));
+  // }
+  // //2nd language
+  // if (lang1 == "false" || lang2 == "true") {
+  //   answer = $("input[name='lang2text']").val();
+  //   // checkResponse(answer)
+  //   responses.push(new QuestionResponse("What is your 2nd language", answer));
+  // }
+  // //Ethnicity
+  // answer = $("input[name='ethnicity']").val();
+  // // checkResponse(answer)
+  // responses.push(new QuestionResponse("What country do you call home", answer));
   // brainstorming
   // answer = $("select option:selected").val();
   // checkResponse(answer)
@@ -184,38 +193,52 @@ getTreatmentResponse = function() {
   answer = $("input[name='lang1']:checked").val();
   // checkResponse(answer)
   responses.push(new QuestionResponse("Is English your first language", answer));
-  var lang1 = answer;
-  var lang2 = "false";
-  //2nd language yes/no
-  if (lang1 == "true") {
-    answer = $("input[name='lang2']:checked").val();
-    // checkResponse(answer)
-    responses.push(new QuestionResponse("Do you speak a 2nd language", answer));
-    lang2 = answer;
+  // var lang1 = answer;
+  // var lang2 = "false";
+  // //2nd language yes/no
+  // if (lang1 == "true") {
+  //   answer = $("input[name='lang2']:checked").val();
+  //   // checkResponse(answer)
+  //   responses.push(new QuestionResponse("Do you speak a 2nd language", answer));
+  //   lang2 = answer;
 
-  }
-  //2nd language
-  if (lang1 == "false" || lang2 == "true") {
-    answer = $("input[name='lang2text']").val();
-    // checkResponse(answer)
-    responses.push(new QuestionResponse("What is your 2nd language", answer));
-  }
-  //Ethnicity
-  answer = $("input[name='ethnicity']").val();
-  // checkResponse(answer)
-  responses.push(new QuestionResponse("What country do you call home", answer));
+  // }
+  // //2nd language
+  // if (lang1 == "false" || lang2 == "true") {
+  //   answer = $("input[name='lang2text']").val();
+  //   // checkResponse(answer)
+  //   responses.push(new QuestionResponse("What is your 2nd language", answer));
+  // }
+  // //Ethnicity
+  // answer = $("input[name='ethnicity']").val();
+  // // checkResponse(answer)
+  // responses.push(new QuestionResponse("What country do you call home", answer));
   //brainstorming
   // answer = $("select option:selected").val();
   // checkResponse(answer)
   // responses.push(new QuestionResponse("How Frequently do you brainstorm", answer));
   
   // inspirations
-  answer = $("input[name='inspirationHelpful']:checked").val();
+  answer = $("input[name='inspirationUse']:checked").val();
   // checkResponse(answer)
-  responses.push(new QuestionResponse("Did you find any of the suggested inspirations helpful", answer));
-  answer = $("#inspirationExplainSurvey").val();
-  // checkResponse(answer)
-  responses.push(new QuestionResponse("Briefly explain why inspiration (not) helpful", answer));
+  responses.push(new QuestionResponse("Did you interact with the inspiration feature at all", answer));
+  var usedInspiration = answer;
+  if (usedInspiration) {
+    answer = $("select[id='inspirationRollUse'] option:selected").val();
+    responses.push(new QuestionResponse("Used inspirations when on a roll", answer));
+    answer = $("select[id='inspirationHelpfulFluency'] option:selected").val();
+    responses.push(new QuestionResponse("Inspirations spark more ideas", answer));
+    answer = $("select[id='inspirationHelpfulQuality'] option:selected").val();
+    responses.push(new QuestionResponse("Inspirations spark better ideas", answer));
+    answer = $("select[id='inspirationDistract'] option:selected").val();
+    responses.push(new QuestionResponse("Inspirations distracting", answer));
+    answer = $("#inspirationExplainSurvey").val();
+    // checkResponse(answer)
+    responses.push(new QuestionResponse("Briefly explain why inspiration (not) helpful", answer));
+  } else {
+    answer = $("#inspirationUseSurvey").val();
+    responses.push(new QuestionResponse("Briefly explain why didn't use inspiration", answer));
+  }
   
   // activity/interface feedback
   answer = $("#activityLikeSurvey").val();
