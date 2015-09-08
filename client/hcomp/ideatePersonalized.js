@@ -9,6 +9,24 @@ Logger.setLevel('Client:IdeatePersonal', 'trace');
 var numMatches = 3;
 var stuckTimeOut;
 
+var eraNames = { '20s': 'twenties',
+                 '30s': 'thirties',
+                 '40s': 'forties',
+                 '50s': 'fifties',
+                 '60s': 'sixties',
+                 '70s': 'seventies',
+                 '80s': 'eighties',
+                 '90s': 'nineties',
+                 "20's": 'twenties',
+                 "30's": 'thirties',
+                 "40's": 'forties',
+                 "50's": 'fifties',
+                 "60's": 'sixties',
+                 "70's": 'seventies',
+                 "80's": 'eighties',
+                 "90's": 'nineties',
+                 }
+
 Template.MTurkIdeationPersonalized.helpers({
   useInspirations: function() {
     return Session.equals("useInspirations", true);
@@ -427,6 +445,9 @@ Template.IdeaEntry.events({
       }
       if (Session.equals("useInspirations", true)) {
         EventLogger.logWeddingSubmission(idea, lastInsps);
+        // replace eranames
+        // theme = replaceEraNames(theme);
+        // prop = replaceEraNames(prop);
         WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
                                       "New idea submission", Session.get("rollDistance"));
         WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 

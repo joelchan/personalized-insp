@@ -28,12 +28,24 @@ WeddingInspManager = (function() {
             logger.trace("Matches are: " + JSON.stringify(diffMatches));
             Session.set(filterName, diffMatches);
             FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-            var slicedData = diffMatches.slice(0, N);
-            slicedData.forEach(function(insp) {
-                matches.push(insp);
-                FilterManager.create(filterName, Session.get("currentUser"), 
-                  "weddingInspirations", "previous_id", insp.id);
-            });
+            var i = 0;
+            var sampledWords = [];
+            while (matches.length < N) {
+                var insp = diffMatches[i];
+                if (!isInList(insp.text, sampledWords)) {
+                    matches.push(insp);
+                    sampledWords.push(insp.text);
+                    FilterManager.create(filterName, Session.get("currentUser"), 
+                      "weddingInspirations", "previous_id", insp.id);
+                }
+                i += 1;
+            }
+            // var slicedData = diffMatches.slice(0, N);
+            // slicedData.forEach(function(insp) {
+            //     matches.push(insp);
+            //     FilterManager.create(filterName, Session.get("currentUser"), 
+            //       "weddingInspirations", "previous_id", insp.id);
+            // });
             logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
             EventLogger.logInspirationRefresh(matches, filterName, reason);
             // return matchIDs;
@@ -42,13 +54,25 @@ WeddingInspManager = (function() {
             logger.trace("Matches are: " + JSON.stringify(simMatches));
             Session.set(filterName, simMatches);
             FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-            var offSet = 3;
-            var slicedData = simMatches.slice(offSet,offSet+N);
-            slicedData.forEach(function(insp) {
-                matches.push(insp);
-                FilterManager.create(filterName, Session.get("currentUser"), 
-                  "weddingInspirations", "previous_id", insp.id);
-            });
+            var i = 0;
+            var sampledWords = [];
+            while (matches.length < N) {
+                var insp = simMatches[i];
+                if ((insp.similarity < 0.5) && (!isInList(insp.text, sampledWords))) {
+                    matches.push(insp);
+                    sampledWords.push(insp.text);
+                    FilterManager.create(filterName, Session.get("currentUser"), 
+                      "weddingInspirations", "previous_id", insp.id);
+                }
+                i += 1;
+            }
+            // var offSet = 3;
+            // var slicedData = simMatches.slice(offSet,offSet+N);
+            // slicedData.forEach(function(insp) {
+            //     matches.push(insp);
+            //     FilterManager.create(filterName, Session.get("currentUser"), 
+            //       "weddingInspirations", "previous_id", insp.id);
+            // });
             logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
             // return matchIDs;
             EventLogger.logInspirationRefresh(matches, filterName, reason);
