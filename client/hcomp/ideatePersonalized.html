@@ -104,37 +104,41 @@
         <div class="stuck-button-container">
             <button class="btn btn-success ideagens-button stuck-button">Give me other inspirations!</button>
         </div>
-        {{#if isStuck}}
-            <div id="stuck-insps-container" class="stuck-insps">
-                <div id="stuck-insps-themes" class="insp-container">
-                    <span class="ideagens-label">Themes</span>
-                    {{#each inspStuckThemes}}
-                        {{> WeddingInspiration}}
-                    {{/each}}
-                </div>
-                <div id="stuck-insps-props" class="insp-container">
-                    <span class="ideagens-label">Props</span>
-                    {{#each inspStuckProps}}
-                        {{> WeddingInspiration}}
-                    {{/each}}
-                </div>
+    <!-- {{#if isStuck}} -->
+        <div id="stuck-insps-container" class="stuck-insps">
+            <div id="stuck-insps-themes" class="insp-container">
+                <span class="ideagens-label">Themes</span> 
+                <span id="stuckThemes-question" class="glyphicon glyphicon-question-sign"></span> 
+                {{#each inspStuckThemes}}
+                    {{> WeddingInspiration}}
+                {{/each}}
             </div>
-        {{else}}
-            <div id="roll-insps-container" class="roll-insps">
-                <div id="roll-insps-themes" class="insp-container">
-                    <span class="ideagens-label">Themes</span>
-                    {{#each inspRollThemes}}
-                        {{> WeddingInspiration}}
-                    {{/each}}
-                </div>
-                <div id="roll-insps-props" class="insp-container">
-                    <span class="ideagens-label">Props</span>
-                    {{#each inspRollProps}}
-                        {{> WeddingInspiration}}
-                    {{/each}}
-                </div>
+            <div id="stuck-insps-props" class="insp-container">
+                <span class="ideagens-label">Props</span> 
+                <span id="stuckProps-question" class="glyphicon glyphicon-question-sign"></span> 
+                {{#each inspStuckProps}}
+                    {{> WeddingInspiration}}
+                {{/each}}
             </div>
-        {{/if}}
+        </div>
+    <!-- {{else}} -->
+        <div id="roll-insps-container" class="roll-insps">
+            <div id="roll-insps-themes" class="insp-container">
+                <span class="ideagens-label">Themes</span> 
+                <span id="rollThemes-question" class="glyphicon glyphicon-question-sign"></span> 
+                {{#each inspRollThemes}}
+                    {{> WeddingInspiration}}
+                {{/each}}
+            </div>
+            <div id="roll-insps-props" class="insp-container">
+                <span class="ideagens-label">Props</span> 
+                <span id="rollProps-question" class="glyphicon glyphicon-question-sign"></span> 
+                {{#each inspRollProps}}
+                    {{> WeddingInspiration}}
+                {{/each}}
+            </div>
+        </div>
+        <!-- {{/if}} -->
     </div>
 </template>
 

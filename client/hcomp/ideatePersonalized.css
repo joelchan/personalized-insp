@@ -202,7 +202,9 @@
     /*border-radius: 5px;*/
 }
 
-.ideate-p-container .roll-button {
+#rollThemes-question, #rollProps-question, #stuckThemes-question, #stuckProps-question {
+    color: #F86245;
+    opacity: 0.4;
     /*font-size: 14px;*/
     /*font-family: sans-serif;*/
     /*float:right;*/

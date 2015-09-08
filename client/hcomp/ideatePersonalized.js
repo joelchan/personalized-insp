@@ -461,6 +461,8 @@ Template.IdeaEntry.events({
       if (Session.equals("cogState", "stuck")) {
         // Meteor.clearTimeout(stuckTimeOut);
         Session.set("cogState", "onRoll");
+        $('#stuck-insps-container').hide();
+        $('#roll-insps-container').show();
         EventLogger.logChangeCogState("stuck", "onRoll");
         // $('input[type=checkbox]').val("1");
         // $("#roll-insps-container").css('-webkit-animation-name', 'rollGlow'); /* Chrome, Safari, Opera */
@@ -494,6 +496,48 @@ Template.Inspiration.onRendered(function () {
   initInspirationFilter("stuckThemes");
   initInspirationFilter("stuckProps");
   Session.set("cogState", "onRoll");
+  $('#stuck-insps-container').hide();
+  $('#roll-insps-container').show();
+
+  var msg = "<p>No suggested themes because we couldn't understand your last theme. " +
+            "To avoid this situation, please make sure your themes are spelled correctly " +
+            "before submitting.</p>"
+  $('#stuckThemes-question').tooltipster({
+      content: $(msg),
+      position: 'right',
+      offset: 40,
+      speed: 200,
+      maxWidth: 200
+  });
+  $('#rollThemes-question').tooltipster({
+      content: $(msg),
+      position: 'right',
+      offset: 40,
+      speed: 200,
+      maxWidth: 200
+  });
+  $('#stuckThemes-question').hide();
+  $('#rollThemes-question').hide();
+
+  var msg = "<p>No suggested props because we couldn't understand your last prop. " +
+            "To avoid this situation, please make sure your props are spelled correctly " +
+            "before submitting.</p>"
+  $('#stuckProps-question').tooltipster({
+      content: $(msg),
+      position: 'right',
+      offset: 40,
+      speed: 200,
+      maxWidth: 200
+  });
+  $('#rollProps-question').tooltipster({
+      content: $(msg),
+      position: 'right',
+      offset: 40,
+      speed: 200,
+      maxWidth: 200
+  });
+  $('#stuckProps-question').hide();
+  $('#rollProps-question').hide();
 
 });
 
@@ -532,7 +576,39 @@ Template.Inspiration.helpers({
   },
   isStuck: function() {
     return Session.equals("cogState", "stuck");
-  }
+  },
+  noStuckThemes: function() {
+    var count = FilterManager.performQuery("stuckThemes", Session.get("currentUser"), "weddingInspirations").count();
+    if (count > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+  noStuckProps: function() {
+    var count = FilterManager.performQuery("stuckProps", Session.get("currentUser"), "weddingInspirations").count();
+    if (count > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+  noRollThemes: function() {
+    var count = FilterManager.performQuery("rollThemes", Session.get("currentUser"), "weddingInspirations").count();
+    if (count > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+  noRollProps: function() {
+    var count = FilterManager.performQuery("rollProps", Session.get("currentUser"), "weddingInspirations").count();
+    if (count > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  },
 });
 
 Template.Inspiration.events({
@@ -557,6 +633,8 @@ Template.Inspiration.events({
       WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
                                       "Switch from onRoll to stuck", Session.get("stuckDistance"));
       Session.set("cogState", "stuck");
+      $('#stuck-insps-container').show();
+      $('#roll-insps-container').hide();
       // var newInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
                         // "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
       // EventLogger.logInspirationRefresh(lastInsps, newInsps, "Switch from onRoll to stuck");
