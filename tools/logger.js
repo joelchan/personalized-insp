@@ -584,13 +584,13 @@ EventLogger = (function () {
       this.log(msg, data);
     },
     // logInspirationRefresh: function(oldInsps, newInsps, trigger) {
-    logInspirationRefresh: function(newInsps, inspType, reason) {
+    logInspirationRefresh: function(newInsps, seed, inspType, reason) {
       var msg = "User received a new set of " + inspType;
       // var data = {"oldInsps": oldInsps,
       //             "newInsps": newInsps,
       //             "trigger": trigger}
       var data = {"newInsps": newInsps,
-                  // "inspType": inspType,
+                  "seed": seed,
                   "reason": reason}
       this.log(msg, data);
     },

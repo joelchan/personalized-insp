@@ -49,7 +49,7 @@ WeddingInspManager = (function() {
                 //       "weddingInspirations", "previous_id", insp.id);
                 // });
                 logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
-                EventLogger.logInspirationRefresh(matches, filterName, reason);
+                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
                 $(selector).hide();
                 // return matchIDs;
             } else {
@@ -58,7 +58,7 @@ WeddingInspManager = (function() {
                 FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
                 FilterManager.create(filterName, Session.get("currentUser"), 
                   "weddingInspirations", "previous_id", "################");
-                EventLogger.logInspirationRefresh(matches, filterName, reason);
+                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
                 $(selector).show();
             }
         } else {
@@ -88,7 +88,7 @@ WeddingInspManager = (function() {
                 // });
                 logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
                 // return matchIDs;
-                EventLogger.logInspirationRefresh(matches, filterName, reason);
+                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
                 $(selector).hide();
             } else {
                 logger.trace("No matches found! Showing nothing.");
@@ -96,7 +96,7 @@ WeddingInspManager = (function() {
                 FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
                 FilterManager.create(filterName, Session.get("currentUser"), 
                   "weddingInspirations", "previous_id", "################");
-                EventLogger.logInspirationRefresh(matches, filterName, reason);
+                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
                 $(selector).show();
             }
         }

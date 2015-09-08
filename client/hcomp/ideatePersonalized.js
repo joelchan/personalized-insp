@@ -448,10 +448,24 @@ Template.IdeaEntry.events({
         // replace eranames
         theme = replaceEraNames(theme);
         prop = replaceEraNames(prop);
-        WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
-                                      "New idea submission", Session.get("rollDistance"));
-        WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
-                                      "New idea submission", Session.get("rollDistance"));  
+        if (anyCorrect(theme)) {
+          WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
+                                                "New idea submission", Session.get("rollDistance"));
+        } else {
+          logger.trace("No valid words in theme; retrieiving prop inspirations based on prop");
+          WeddingInspManager.retrieveInsp("rollThemes", prop, "weddingTheme", numMatches, 
+                                                "New idea submission", Session.get("rollDistance"));
+        }
+        if (anyCorrect(prop)) {
+          WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
+                                        "New idea submission", Session.get("rollDistance"));  
+        } else {
+          logger.trace("No valid words in prop; retrieiving prop inspirations based on theme");
+          WeddingInspManager.retrieveInsp("rollProps", theme, "weddingProp", numMatches, 
+                                                  "New idea submission", Session.get("rollDistance"));  
+        }
+        
+        
       } else {
         EventLogger.logWeddingSubmission(idea);
       }
@@ -499,9 +513,8 @@ Template.Inspiration.onRendered(function () {
   $('#stuck-insps-container').hide();
   $('#roll-insps-container').show();
 
-  var msg = "<p>No suggested themes because we couldn't understand your last theme. " +
-            "To avoid this situation, please make sure your themes are spelled correctly " +
-            "before submitting.</p>"
+  var msg = "<p>No suggestions because we couldn't understand your last idea. " +
+            "Submit another idea (hopefully with correct spelling!) to get suggested inspirations.</p>"
   $('#stuckThemes-question').tooltipster({
       content: $(msg),
       position: 'right',
@@ -519,9 +532,9 @@ Template.Inspiration.onRendered(function () {
   $('#stuckThemes-question').hide();
   $('#rollThemes-question').hide();
 
-  var msg = "<p>No suggested props because we couldn't understand your last prop. " +
-            "To avoid this situation, please make sure your props are spelled correctly " +
-            "before submitting.</p>"
+  // var msg = "<p>No suggested props because we couldn't understand your last prop. " +
+  //           "To avoid this situation, please make sure your props are spelled correctly " +
+  //           "before submitting.</p>"
   $('#stuckProps-question').tooltipster({
       content: $(msg),
       position: 'right',
@@ -543,71 +556,23 @@ Template.Inspiration.onRendered(function () {
 
 Template.Inspiration.helpers({
   inspRollThemes: function() {
-    // var rollThemes = Session.get("rollThemes");
-    // updateInspFilter(rollThemes, "rollThemes");
     var newInsps = FilterManager.performQuery("rollThemes", Session.get("currentUser"), "weddingInspirations").fetch();
-    // EventLogger.logInspirationRefresh(newInsps, "rollThemes");
     return newInsps;
-    // return FilterManager.performQuery("rollThemes", Session.get("currentUser"), "weddingInspirations");
   },
   inspRollProps: function() {
-    // var rollProps = Session.get("rollProps");
-    // updateInspFilter(rollProps, "rollProps");
-    // return FilterManager.performQuery("rollProps", Session.get("currentUser"), "weddingInspirations");
     var newInsps = FilterManager.performQuery("rollProps", Session.get("currentUser"), "weddingInspirations").fetch();
-    // EventLogger.logInspirationRefresh(newInsps, "rollProps");
     return newInsps;
   },
   inspStuckThemes: function() {
-    // var stuckThemes = Session.get("stuckThemes");
-    // updateInspFilter(stuckThemes, "stuckThemes");
-    // return FilterManager.performQuery("stuckThemes", Session.get("currentUser"), "weddingInspirations");
     var newInsps = FilterManager.performQuery("stuckThemes", Session.get("currentUser"), "weddingInspirations").fetch();
-    // EventLogger.logInspirationRefresh(newInsps, "stuckThemes");
     return newInsps;
   },
   inspStuckProps: function() {
-    // var stuckProps = Session.get("stuckProps");
-    // updateInspFilter(stuckProps, "stuckProps");
-    // return FilterManager.performQuery("stuckProps", Session.get("currentUser"), "weddingInspirations");
     var newInsps = FilterManager.performQuery("stuckProps", Session.get("currentUser"), "weddingInspirations").fetch();
-    // EventLogger.logInspirationRefresh(newInsps, "stuckProps");
     return newInsps;
   },
   isStuck: function() {
     return Session.equals("cogState", "stuck");
-  },
-  noStuckThemes: function() {
-    var count = FilterManager.performQuery("stuckThemes", Session.get("currentUser"), "weddingInspirations").count();
-    if (count > 0) {
-      return false;
-    } else {
-      return true;
-    }
-  },
-  noStuckProps: function() {
-    var count = FilterManager.performQuery("stuckProps", Session.get("currentUser"), "weddingInspirations").count();
-    if (count > 0) {
-      return false;
-    } else {
-      return true;
-    }
-  },
-  noRollThemes: function() {
-    var count = FilterManager.performQuery("rollThemes", Session.get("currentUser"), "weddingInspirations").count();
-    if (count > 0) {
-      return false;
-    } else {
-      return true;
-    }
-  },
-  noRollProps: function() {
-    var count = FilterManager.performQuery("rollProps", Session.get("currentUser"), "weddingInspirations").count();
-    if (count > 0) {
-      return false;
-    } else {
-      return true;
-    }
   },
 });
 
@@ -628,10 +593,22 @@ Template.Inspiration.events({
       logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
       var theme = replaceEraNames(lastIdea.theme);
       var prop = replaceEraNames(lastIdea.prop);
-      WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
+      if (anyCorrect(theme)) {
+        WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
                                       "Switch from onRoll to stuck", Session.get("stuckDistance"));
-      WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
+      } else {
+        logger.trace("No valid words in theme; retrieiving prop inspirations based on prop");
+        WeddingInspManager.retrieveInsp("stuckThemes", prop, "weddingTheme", numMatches, 
                                       "Switch from onRoll to stuck", Session.get("stuckDistance"));
+      }
+      if (anyCorrect(prop)) {
+        WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
+                                        "Switch from onRoll to stuck", Session.get("stuckDistance"));  
+      } else {
+        logger.trace("No valid words in prop; retrieiving prop inspirations based on theme");
+        WeddingInspManager.retrieveInsp("stuckProps", theme, "weddingProp", numMatches, 
+                                        "Switch from onRoll to stuck", Session.get("stuckDistance"));
+      }
       Session.set("cogState", "stuck");
       $('#stuck-insps-container').show();
       $('#roll-insps-container').hide();
@@ -722,7 +699,11 @@ var updateInspFilter = function(filterName) {
   });
   logger.trace(samples.length + " matches with average similarity: " + WeddingInspManager.averageSim(samples));
   logger.trace("New matches are: " + JSON.stringify(samples));
-  EventLogger.logInspirationRefresh(samples, filterName, "Click stuck button again");
+  if (filterName.indexOf("Theme") > -1) {
+    EventLogger.logInspirationRefresh(samples, Session.get("lastIdea").theme, filterName, "Click stuck button again");
+  } else {
+    EventLogger.logInspirationRefresh(samples, Session.get("lastIdea").prop, filterName, "Click stuck button again");  
+  }
 }
 
 var initTimer = function() {
@@ -775,3 +756,17 @@ var replaceEraNames = function(phrase) {
   });
   return newWords.join(" ");
 } 
+
+var anyCorrect = function(phrase) {
+  /*
+  * Check if the whole theme/prop is misspelled (could potentially be multi-word)
+  */
+  var words = phrase.split(" ");
+  var numMisspellings = 0;
+  words.forEach(function(word) {
+    if (!spell.check(word)) {
+      numMisspellings += 1;
+    }
+  });
+  return (numMisspellings < words.length);
+}
