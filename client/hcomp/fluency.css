@@ -1,9 +1,66 @@
+@font-face {
+    font-family: Lato;
+    src: url("../lib/fonts/Lato-Reg.ttf");
+}
+
+@font-face {
+    font-family: Lato-Black;
+    src: url("../lib/fonts/Lato-Bla.ttf");
+}
+
+@font-face {
+    font-family: Lato-Light;
+    src: url("../lib/fonts/Lato-Lig.ttf");
+}
+
 .exp-base-fluency {
     padding: 2em 15em 2em 15em;
+    font-family: Lato, sans-serif;
     /*padding-bottom: 2em;*/
     /*padding*/
+    width: 1000px;
 }
 
 .exp-base-fluency .fluency-instructions {
-    /*margin-bottom: 2em;*/
+    margin-bottom: 5px;
+}
+
+.exp-base-fluency .idea-entry-container {
+    /*margin-top: 5px;*/
+    /*margin-bottom: 5px;*/
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.exp-base-fluency .idea-entry-controls {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    /*padding-top: 5px;*/
+    /*padding-bottom: 5px;*/
+}
+
+.exp-base-fluency .submit-idea {
+    float:right;
+}
+
+.exp-base-fluency .idea-box {
+  width: 85%;
+  margin: 10px 7%;
+  padding: 8px;
+  min-height: 1.1em;
+  background: white;
+  border: 1px solid #464646;
+  border-radius: 5px;
+  color: black;
+  text-align: left;
+  position: relative;
+}
+.exp-base-fluency .idea-box p {
+  margin: 0;
+  color: #000;
+}
+
+.exp-base-fluency .idea-list {
+    max-height: 400px;
+    overflow: auto;
 }

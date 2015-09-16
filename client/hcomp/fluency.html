@@ -1,27 +1,49 @@
 <template name="ExpBaselineFluencyPage">
   <div class="exp-base-fluency container">
-      <div class="row fluency-instructions">
-        Welcome! Let's begin with a short warm-up exercise to get your creative juices flowing. 
-        <h2>Over the next 2 minutes, try to think of as many uses as you can for a brick.</h2> 
-        Please do not merely list other things that come to mind when you think about the object (e.g., “house, construction hats, etc."); the goal is to come up with as many uses of an object as possible (e.g., “building material, doorstop, anchor, etc.”). Write your ideas in the textbox below, one idea per line. When the time is up, you will automatically be taken to the next page. 
-        <h2>Please do not refresh your browser or hit the back button or you will lose all your answers!</h2>
+      <div class="fluency-instructions">
+        <h2>Warm-up</h2> 
+        Over the next 1 minute, try to <u><b>think of as many uses as you can for a brick</b></u>. Please do not merely list other things that come to mind when you think about the object (e.g., “house, construction hats, etc."); the goal is to come up with as many uses of an object as possible (e.g., “building material, doorstop, anchor, etc.”). We'll take you to the main task after 1 minute.
       </div>
-      <div class="row fluency-input-area">
+      {{> FluencyEntry}}
+      {{> FluencyIdeas}}
+      <!-- <div class="fluency-input-area">
         <textArea id="baseFluencyInput" class="form-control" rows="10" placeholder="Write your ideas here, each on a new line."></textarea>
-      </div>
-      <section>
+      </div> -->
+      <!-- <section>
           <h2>Countdown</h2>
           <p>
               <button id="startCountdown">Start</button> 
               <button id="stopCountdown">Stop</button> 
               <button id="pauseCountdown">Pause</button> 
-              <!-- <button id="resetCountdown">Reset</button>  -->
-              <!-- <input id="countdown_clock" placeholder="00:00" value="00:02"> -->
+              <button id="resetCountdown">Reset</button> 
+              <input id="countdown_clock" placeholder="00:00" value="00:02">
           </p>
       </section>
-      <!-- <button class="btn-default grab-fluency-input">
+      <button class="btn-default grab-fluency-input">
         Grab
       </button> -->
   </div>
   {{> ExperimentBeginModal }}
+</template>
+
+<template name="FluencyEntry">
+    <div class="row idea-entry" id="p-insp-idea-entry">
+        <div class="col-md-12 col-xs-12 idea-entry-container">
+            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Enter your ideas here..."></textArea>
+            <div class="idea-entry-controls">
+                <button class="btn btn-success ideagens-button submit-idea">Submit idea</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="FluencyIdeas">
+  <div class="idea-list-header ideagens-section-header">
+      {{numIdeas}} ideas
+  </div>
+  <div class="idea-list">
+      {{#each fluencyIdeas}}
+          {{> MturkIdeabox}}
+      {{/each}}
+  </div>
 </template>

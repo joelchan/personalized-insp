@@ -194,7 +194,7 @@ conditionRouteData = {
   "IdeationControl": ["TutorialControl", "MTurkIdeationControl", "SurveyPage", "LegionFinalPage"],
   "IdeationTreatment": ["TutorialTreatment", "MTurkIdeationTreatment", "SurveyPage", "LegionFinalPage"],
   "Synthesis": ["SynthesisExp", "SurveyPage", "MTurkFinalPage"],
-  "PInsp": ["PersonalizedInsp", "SurveyPage", "MTurkFinalPage"]
+  "PInsp": ["ExpFluency", "PersonalizedInsp", "SurveyPage", "MTurkFinalPage"]
 }
 
 pInspConds = ["Near-Near", "Near-Far", "Far-Near", "Far-Far", "pInspControl"];
