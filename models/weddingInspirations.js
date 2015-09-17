@@ -17,6 +17,9 @@ WeddingInspiration = function(previous_id, content, type) {
 WeddingInspManager = (function() {
   return {
     retrieveInsp: function(filterName, query, queryType, N, reason, different, partner) {
+      FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+      FilterManager.create(filterName, Session.get("currentUser"), 
+        "weddingInspirations", "previous_id", "################");
       logger.trace("Retrieving " + N + " new " + queryType + " for " + filterName + " with query: " + query);
       var selector = "#" + filterName + "-question";
       Meteor.call('topN', "GloVe", query, queryType, function(err, res) {
@@ -27,30 +30,55 @@ WeddingInspManager = (function() {
             // slicedData = data.different.sort(function(a, b){ return a.similarity-b.similarity }).slice(0,N);
             var diffMatches = data.different.sort(function(a, b){ return a.similarity-b.similarity });
             if (diffMatches.length > 0) {
-                logger.trace("Matches are: " + JSON.stringify(diffMatches));
+                logger.trace("Initial set of matches are: " + JSON.stringify(diffMatches));
                 Session.set(filterName, diffMatches);
                 FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-                var i = 0;
-                var sampledWords = [];
-                while (matches.length < N) {
-                    var insp = diffMatches[i];
-                    if (!isInList(insp.text, sampledWords)) {
-                        matches.push(insp);
-                        sampledWords.push(insp.text);
-                        FilterManager.create(filterName, Session.get("currentUser"), 
-                          "weddingInspirations", "previous_id", insp.id);
+                // sample one
+                var sample = diffMatches[0];
+                matches.push(sample)
+                logger.trace("Retrieved and creating filter for " + JSON.stringify(sample));
+                FilterManager.create(filterName, Session.get("currentUser"), 
+                          "weddingInspirations", "previous_id", sample.id);
+                // get the remaining ones nearby
+                Meteor.call('topN', "GloVe", sample.text, queryType, function(err, res) {
+                    logger.trace("Retrieving the ones nearby");
+                    var data = JSON.parse(res.content);
+                    var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
+                    var i = 0
+                    var sampledIDs = [sample.id]
+                    while (matches.length < N) {
+                        var insp = simMatches[i];
+                        if (!isInList(insp.id, sampledIDs)) {
+                            matches.push(insp);
+                            sampledIDs.push(insp.id);
+                            FilterManager.create(filterName, Session.get("currentUser"), 
+                              "weddingInspirations", "previous_id", insp.id);
+                        }
+                        i += 1;
                     }
-                    i += 1;
-                }
+                    logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+                    EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                    $(selector).hide();
+                });
+                
+                // var i = 0;
+                // var sampledWords = [];
+                // while (matches.length < N) {
+                //     var insp = diffMatches[i];
+                //     if (!isInList(insp.text, sampledWords)) {
+                //         matches.push(insp);
+                //         sampledWords.push(insp.text);
+                //         FilterManager.create(filterName, Session.get("currentUser"), 
+                //           "weddingInspirations", "previous_id", insp.id);
+                //     }
+                //     i += 1;
+                // }
                 // var slicedData = diffMatches.slice(0, N);
                 // slicedData.forEach(function(insp) {
                 //     matches.push(insp);
                 //     FilterManager.create(filterName, Session.get("currentUser"), 
                 //       "weddingInspirations", "previous_id", insp.id);
                 // });
-                logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
-                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
-                $(selector).hide();
                 // return matchIDs;
             } else {
                 logger.trace("No results: trying to retrieve from partner...")
@@ -61,21 +89,32 @@ WeddingInspManager = (function() {
                         logger.trace("Matches are: " + JSON.stringify(diffMatches));
                         Session.set(filterName, diffMatches);
                         FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-                        var i = 0;
-                        var sampledWords = [];
-                        while (matches.length < N) {
-                          var insp = diffMatches[i];
-                          if (!isInList(insp.text, sampledWords)) {
-                              matches.push(insp);
-                              sampledWords.push(insp.text);
-                              FilterManager.create(filterName, Session.get("currentUser"), 
-                                "weddingInspirations", "previous_id", insp.id);
-                          }
-                          i += 1;
-                        }
-                        logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
-                        EventLogger.logInspirationRefresh(matches, query, filterName, reason);
-                        $(selector).hide();
+                        var sample = diffMatches[0];
+                        matches.push(sample)
+                        logger.trace("Retrieved and creating filter for " + JSON.stringify(sample));
+                        FilterManager.create(filterName, Session.get("currentUser"), 
+                                  "weddingInspirations", "previous_id", sample.id);
+                        // get the remaining ones nearby
+                        Meteor.call('topN', "GloVe", sample.text, queryType, function(err, res) {
+                            logger.trace("Retrieving the ones nearby");
+                            var data = JSON.parse(res.content);
+                            var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
+                            var i = 0
+                            var sampledIDs = [sample.id]
+                            while (matches.length < N) {
+                                var insp = simMatches[i];
+                                if (!isInList(insp.id, sampledIDs)) {
+                                    matches.push(insp);
+                                    sampledIDs.push(insp.id);
+                                    FilterManager.create(filterName, Session.get("currentUser"), 
+                                      "weddingInspirations", "previous_id", insp.id);
+                                }
+                                i += 1;
+                            }
+                            logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+                            EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                            $(selector).hide();
+                        });
                     } else {
                         logger.trace("No matches found! Showing nothing.");
                         Session.set(filterName, []);
@@ -87,24 +126,39 @@ WeddingInspManager = (function() {
                    }
                 });
             }
+        // similar
         } else {
             var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
             if (simMatches.length > 0) {
                 logger.trace("Matches are: " + JSON.stringify(simMatches));
                 Session.set(filterName, simMatches);
                 FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-                var i = 0;
-                var sampledWords = [];
-                while (matches.length < N) {
-                    var insp = simMatches[i];
-                    if ((insp.similarity < 0.5) && (!isInList(insp.text, sampledWords))) {
-                        matches.push(insp);
-                        sampledWords.push(insp.text);
-                        FilterManager.create(filterName, Session.get("currentUser"), 
-                          "weddingInspirations", "previous_id", insp.id);
+                var sample = simMatches[0];
+                matches.push(sample)
+                logger.trace("Retrieved and creating filter for " + JSON.stringify(sample));
+                FilterManager.create(filterName, Session.get("currentUser"), 
+                          "weddingInspirations", "previous_id", sample.id);
+                // get the remaining ones nearby
+                Meteor.call('topN', "GloVe", sample.text, queryType, function(err, res) {
+                    logger.trace("Retrieving the ones nearby");
+                    var data = JSON.parse(res.content);
+                    var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
+                    var i = 0
+                    var sampledIDs = [sample.id]
+                    while (matches.length < N) {
+                        var insp = simMatches[i];
+                        if (!isInList(insp.id, sampledIDs)) {
+                            matches.push(insp);
+                            sampledIDs.push(insp.id);
+                            FilterManager.create(filterName, Session.get("currentUser"), 
+                              "weddingInspirations", "previous_id", insp.id);
+                        }
+                        i += 1;
                     }
-                    i += 1;
-                }
+                    logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+                    EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                    $(selector).hide();
+                });
                 // var offSet = 3;
                 // var slicedData = simMatches.slice(offSet,offSet+N);
                 // slicedData.forEach(function(insp) {
@@ -112,10 +166,10 @@ WeddingInspManager = (function() {
                 //     FilterManager.create(filterName, Session.get("currentUser"), 
                 //       "weddingInspirations", "previous_id", insp.id);
                 // });
-                logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
-                // return matchIDs;
-                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
-                $(selector).hide();
+                // logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+                // // return matchIDs;
+                // EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                // $(selector).hide();
             } else {
                 logger.trace("No results: trying to retrieve from partner...")
                 Meteor.call('topN', "GloVe", partner, queryType, function(err, res) {
@@ -125,21 +179,48 @@ WeddingInspManager = (function() {
                         logger.trace("Matches are: " + JSON.stringify(simMatches));
                         Session.set(filterName, simMatches);
                         FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-                        var i = 0;
-                        var sampledWords = [];
-                        while (matches.length < N) {
-                            var insp = simMatches[i];
-                            if ((insp.similarity < 0.5) && (!isInList(insp.text, sampledWords))) {
-                                matches.push(insp);
-                                sampledWords.push(insp.text);
-                                FilterManager.create(filterName, Session.get("currentUser"), 
-                                  "weddingInspirations", "previous_id", insp.id);
+                        var sample = simMatches[0];
+                        matches.push(sample)
+                        logger.trace("Retrieved and creating filter for " + JSON.stringify(sample));
+                        FilterManager.create(filterName, Session.get("currentUser"), 
+                                  "weddingInspirations", "previous_id", sample.id);
+                        // get the remaining ones nearby
+                        Meteor.call('topN', "GloVe", sample.text, queryType, function(err, res) {
+                            logger.trace("Retrieving the ones nearby");
+                            var data = JSON.parse(res.content);
+                            var simMatches = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
+                            var i = 0
+                            var sampledIDs = [sample.id]
+                            while (matches.length < N) {
+                                var insp = simMatches[i];
+                                if (!isInList(insp.id, sampledIDs)) {
+                                    matches.push(insp);
+                                    sampledIDs.push(insp.id);
+                                    FilterManager.create(filterName, Session.get("currentUser"), 
+                                      "weddingInspirations", "previous_id", insp.id);
+                                }
+                                i += 1;
                             }
-                            i += 1;
-                        }
-                        logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
-                        EventLogger.logInspirationRefresh(matches, query, filterName, reason);
-                        $(selector).hide();
+                            logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+                            EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                            $(selector).hide();
+                        });
+                        // FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+                        // var i = 0;
+                        // var sampledWords = [];
+                        // while (matches.length < N) {
+                        //     var insp = simMatches[i];
+                        //     if ((insp.similarity < 0.5) && (!isInList(insp.text, sampledWords))) {
+                        //         matches.push(insp);
+                        //         sampledWords.push(insp.text);
+                        //         FilterManager.create(filterName, Session.get("currentUser"), 
+                        //           "weddingInspirations", "previous_id", insp.id);
+                        //     }
+                        //     i += 1;
+                        // }
+                        // logger.trace(matches.length + " matches with average similarity: " + WeddingInspManager.averageSim(matches));
+                        // EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                        // $(selector).hide();
                     } else {
                         logger.trace("No matches found! Showing nothing.");
                         Session.set(filterName, []);
