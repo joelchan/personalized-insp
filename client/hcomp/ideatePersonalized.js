@@ -471,9 +471,9 @@ Template.IdeaEntry.events({
         // replace eranames
         theme = replaceEraNames(theme);
         prop = replaceEraNames(prop);
-        WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
+        WeddingInspManager.getInspirations("rollThemes", theme, "weddingTheme", numMatches, 
                                               "New idea submission", Session.get("rollDistance"), prop);
-        WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
+        WeddingInspManager.getInspirations("rollProps", prop, "weddingProp", numMatches, 
                                       "New idea submission", Session.get("rollDistance"), theme);
         // if (anyCorrect(theme)) {
         //   WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
@@ -621,9 +621,9 @@ Template.Inspiration.events({
         logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
         var theme = replaceEraNames(lastIdea.theme);
         var prop = replaceEraNames(lastIdea.prop);
-        WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
+        WeddingInspManager.getInspirations("stuckThemes", theme, "weddingTheme", numMatches, 
                                       "Switch from onRoll to stuck", Session.get("stuckDistance"), prop);
-        WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
+        WeddingInspManager.getInspirations("stuckProps", prop, "weddingProp", numMatches, 
                                         "Switch from onRoll to stuck", Session.get("stuckDistance"), theme);
         // if (anyCorrect(theme)) {
         //   WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
