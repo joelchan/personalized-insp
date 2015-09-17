@@ -14,6 +14,9 @@ WeddingInspiration = function(previous_id, content, type) {
     this.type = type;
 }
 
+SIM_URL = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/similarity/"
+TOPN_URL = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/top15/"
+
 WeddingInspManager = (function() {
   return {
     retrieveInsp: function(filterName, query, queryType, N, reason, different, partner) {
@@ -235,38 +238,54 @@ WeddingInspManager = (function() {
         }
       });
     },
-    assembleSet: function(query, queryType, matches) {
+    assembleSet: function(initialMatches, query, queryType, matches, filterName) {
         // get the seed
         var seed = initialMatches[0]
-        matches = WeddingInspManager.addMatch(matches, seed);
+        FilterManager.create(filterName, Session.get("currentUser"), 
+                        "weddingInspirations", "previous_id", seed.id);
+        // matches = WeddingInspManager.addMatch(matches, seed);
         // get the neighbors
-        logger.trace("Call API to retrieve neighbors at " + Date.now());
-        var data = JSON.parse(WeddingInspManager.topN("GloVe", query, queryType));
-        logger.trace("Received neighbors from API at " + Date.now());
-        var neighborPool = data.similar.sort(function(a, b){ return b.similarity-a.similarity });
-        // first neighbor
-        var firstNeighbor = neighborPool[0];
-        matches = WeddingInspManager.addMatch(matches, firstNeighbor);
-        var matchPool = []
-        // second neighbor
-        for (i=1; i<26; i++) {
-            var nextNeighbor = neighborPool[i]
-            logger.trace("Call API to compare " + nextNeighbor['text'] + " with " + seed['text'] + " at " + Date.now());
-            var toSeed = WeddingInspManager.gloveSim(nextNeighbor['text'], seed['text']);
-            logger.trace("Received comparison data from API at " + Date.now());
-            if (toSeed < 0.5) {
-                matches = WeddingInspManager.addMatch(matches, nextNeighbor);
-                break;
-            } else {
-                matchPool.push({"match": nextNeighbor, "sim": toSeed});
-            }
-        } 
-        // fallback
-        if (len(matches) < 3) {
-            matchPool.sort(function(a, b) { return b.sim-a.sim });
-            matches = WeddingInspManager.addMatch(matches, matchPool[0].match);
-        }
-        return matches;
+        logger.trace("Call API to retrieve " + filterName + " neighbors at " + Date.now());
+        var url = TOPN_URL + queryType;
+        HTTP.call("POST",
+                    url,
+                    {data: {word: {'id': 'foo', 'text': query}}},
+                    function(err, res) {
+                        // var data = JSON.parse(res);
+                        logger.trace("Received " + filterName + " neighbors from API at " + Date.now());
+                        var neighborPool = res.data.similar.sort(function(a, b){ return b.similarity-a.similarity });
+                        logger.trace(filterName + " meighbors are: " + JSON.stringify(neighborPool));
+                        // first neighbor
+                        var firstNeighbor = neighborPool[0];
+                        FilterManager.create(filterName, Session.get("currentUser"), 
+                            "weddingInspirations", "previous_id", firstNeighbor.id);
+                        // matches = WeddingInspManager.addMatch(matches, firstNeighbor);
+                        // var matchPool = []
+                        // second neighbor
+                        var secondNeighbor = neighborPool[1];
+                        FilterManager.create(filterName, Session.get("currentUser"), 
+                            "weddingInspirations", "previous_id", secondNeighbor.id);
+                        // matches = WeddingInspManager.addMatch(matches, secondNeighbor);
+                        // for (i=1; i<26; i++) {
+                        //     var nextNeighbor = neighborPool[i]
+                        //     logger.trace("Call API to compare " + nextNeighbor['text'] + " with " + seed['text'] + " at " + Date.now());
+
+                        //     var toSeed = WeddingInspManager.gloveSim(nextNeighbor['text'], seed['text']);
+                        //     logger.trace("Received comparison data from API at " + Date.now());
+                        //     if (toSeed < 0.5) {
+                        //         matches = WeddingInspManager.addMatch(matches, nextNeighbor);
+                        //         break;
+                        //     } else {
+                        //         matchPool.push({"match": nextNeighbor, "sim": toSeed});
+                        //     }
+                        // } 
+                        // // fallback
+                        // if (len(matches) < 3) {
+                        //     matchPool.sort(function(a, b) { return b.sim-a.sim });
+                        //     matches = WeddingInspManager.addMatch(matches, matchPool[0].match);
+                        // }
+                        return matches;
+                    });
     },
     initialSample: function(data, operation) {
         // grab the initial matches
@@ -278,10 +297,11 @@ WeddingInspManager = (function() {
         }
         return initialMatches;
     },
-    addMatch: function(matches, toAdd) {
+    addMatch: function(matches, toAdd, filterName) {
         matches.push(toAdd);
         FilterManager.create(filterName, Session.get("currentUser"), 
                         "weddingInspirations", "previous_id", toAdd.id);
+        return matches;
     },
     getInspirations: function(filterName, query, queryType, N, reason, different, partner) {
         logger.trace("Calling getInspirations");
@@ -291,30 +311,37 @@ WeddingInspManager = (function() {
         logger.trace("Retrieving " + N + " new " + queryType + " for " + filterName + " with query: " + query);
         var selector = "#" + filterName + "-question";
         var matches = [];
-        logger.trace("Initial call to API at " + Date.now());
-        var data = JSON.parse(WeddingInspManager.topN("GloVe", query, queryType));
-        logger.trace("Received initial set from API at " + Date.now());
-        
-        var initialMatches = initialSample(data, different);
-        if (initialMatches.length > 0) {
-            matches = WeddingInspManager.assembleSet(query, queryType, matches);
-        } else {
-            logger.trace("No results: trying to retrieve from partner...")
-            var initialMatches = initialSample(data, different);
-            if (initialMatches.length > 0) {
-                matches = WeddingInspManager.assembleSet(query, queryType, matches);
-            } else {
-                logger.trace("No matches found! Showing nothing.");
-                Session.set(filterName, []);
-                FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-                FilterManager.create(filterName, Session.get("currentUser"), 
-                  "weddingInspirations", "previous_id", "################");
-                EventLogger.logInspirationRefresh(matches, query, filterName, reason);
-                $(selector).show();
-            }
-            matches = WeddingInspManager.assembleSet(partner, queryType, matches);
-        }
-        return {"initialPool": initialMatches, "matches": matches};
+        logger.trace("Initial call to API to retrieve " + filterName + "  at " + Date.now());
+        var url = TOPN_URL + queryType;
+        HTTP.call("POST",
+                    url,
+                    {data: {word: {'id': 'foo', 'text': query}}},
+                    function(err, res) {
+                        // var data = JSON.parse(res);
+                        logger.trace("Received initial set of " + filterName + " from API at " + Date.now());
+                        var initialMatches = WeddingInspManager.initialSample(res.data, different);
+                        logger.trace("Initial set of " + filterName + " are: " + JSON.stringify(initialMatches));
+                        if (initialMatches.length > 0) {
+                            FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+                            matches = WeddingInspManager.assembleSet(initialMatches, query, queryType, matches, filterName);
+                        } else {
+                            logger.trace("No results: trying to retrieve from partner...")
+                            // var initialMatches = WeddingInspManager.initialSample(data, different);
+                            // if (initialMatches.length > 0) {
+                                // matches = WeddingInspManager.assembleSet(initialMatches, query, queryType, matches, filterName);
+                            // } else {
+                                // logger.trace("No matches found! Showing nothing.");
+                                // Session.set(filterName, []);
+                                // FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+                                // FilterManager.create(filterName, Session.get("currentUser"), 
+                                  // "weddingInspirations", "previous_id", "################");
+                                // EventLogger.logInspirationRefresh(matches, query, filterName, reason);
+                                // $(selector).show();
+                            // }
+                            // matches = WeddingInspManager.assembleSet(partner, queryType, matches);
+                        }
+                    });
+        // return {"initialPool": initialMatches, "matches": matches};
     },
     averageSim: function(matches) {
         simSum = 0.0;
