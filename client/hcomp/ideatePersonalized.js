@@ -73,8 +73,6 @@ Template.IdeaEntry.onRendered(function(){
     Session.set("useInspirations", false);
   }
 
-  $('.loading').hide()
-
   var lastIdeas = Ideas.find({promptID: Session.get("currentPrompt")._id, 
                        userID: Session.get("currentUser")._id, 
                        isWedding: true}, {sort: {time: -1}}).fetch();
