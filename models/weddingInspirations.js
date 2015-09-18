@@ -17,6 +17,8 @@ WeddingInspiration = function(previous_id, content, type) {
 SIM_URL = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/similarity/"
 TOPN_URL = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/top15/"
 SIMSET_URL = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/simSet/"
+SIMSET_URL2 = "http://wordsim2.iis-dev.seas.harvard.edu/GloVe/simSet/"
+
 
 WeddingInspManager = (function() {
   return {
@@ -25,11 +27,23 @@ WeddingInspManager = (function() {
         FilterManager.create(filterName, Session.get("currentUser"), 
           "weddingInspirations", "previous_id", "################");
         logger.trace("Retrieving " + N + " new " + queryType + " for " + filterName + " with query: " + query);
+        
         var selector = "#" + filterName + "-question";
-        Meteor.call("simSet", query, queryType, function(err, res) {
+        var loadingSelector = ".loading-" + queryType;
+        $(loadingSelector).show()
+
+        // switch to alt server to speed things up
+        var alt = false;
+        if (queryType.toLowerCase().indexOf("prop") > -1) {
+          logger.trace("Asking for prop, sending to alt API server");
+          alt = true;
+        }
+        Meteor.call("simSet", query, queryType, different, alt, function(err, res) {
            data = JSON.parse(res.content);
+           logger.trace(JSON.stringify(data));
            // var operation = different + "_set";
            var matchSets = data[different];
+           logger.trace(JSON.stringify(matchSets));
            if (matchSets.length > 0) {
                Session.set(filterName, matchSets);
                var sampledMatches = getRandomElement(matchSets);
@@ -39,12 +53,14 @@ WeddingInspManager = (function() {
                });
                logger.trace("Seed is " + sampledMatches[0].text + " with similarity " + sampledMatches[0].similarity + " to query");
                EventLogger.logInspirationRefresh(sampledMatches, query, filterName, reason);
+               $(loadingSelector).hide()
                $(selector).hide();
            } else {
                logger.trace("No results: trying to retrieve from partner...");
-               Meteor.call("simSet", partner, queryType, function(err, res) {
+               Meteor.call("simSet", partner, queryType, different, alt, function(err, res) {
                       data = JSON.parse(res.content);
-                      var operation = different + "_set";
+                      logger.trace(JSON.stringify(data));
+                      var operation = different;
                       var matchSets = data[operation];
                       if (matchSets.length > 0) {
                           Session.set(filterName, matchSets);
@@ -56,6 +72,7 @@ WeddingInspManager = (function() {
                           logger.trace("Seed is " + sampledMatches[0].text + " with similarity " + sampledMatches[0].similarity + " to query");
                           EventLogger.logInspirationRefresh(sampledMatches, query, filterName, reason);
                           $(selector).hide();
+                          $(loadingSelector).hide()
                       } else {
                           logger.trace("No matches found! Showing nothing.");
                           Session.set(filterName, []);
@@ -64,6 +81,7 @@ WeddingInspManager = (function() {
                             "weddingInspirations", "previous_id", "################");
                           EventLogger.logInspirationRefresh([], query, filterName, reason);
                           $(selector).show();
+                          $(loadingSelector).hide()
                       }
                 });
            }

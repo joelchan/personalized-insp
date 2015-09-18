@@ -39,13 +39,20 @@ SimExternal.simToQuery = function(target, words) {
     return similarities;
 }
 
-SimExternal.simSet = function(word, topic) {
+SimExternal.simSet = function(word, topic, operation, alt) {
     logger.trace("Retrieving similarity matches for " + topic + ": " + word);
-    var url = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/simSet/" + topic;
+    var url;
+    if (alt) {
+        url = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/simSet/" + topic;    
+    } else {
+        url = "http://wordsim2.iis-dev.seas.harvard.edu/GloVe/simSet/" + topic;
+    }
+    
     logger.trace(url)
     var response = Meteor.http.post(
         url,
-        {data: {word: {'id': 'foo', 'text': word}}}
+        {data: {word: {'id': 'foo', 'text': word},
+                operation: operation}}
     );
     logger.trace("Result: " + JSON.stringify(response.content));
     return response;
@@ -58,7 +65,7 @@ Meteor.methods({
     simToQuery: function(target, words) {
         return SimExternal.simToQuery(target, words);
     },
-    simSet: function(word, topic) {
-        return SimExternal.simSet(word, topic);
+    simSet: function(word, topic, operation, alt) {
+        return SimExternal.simSet(word, topic, operation, alt);
     }
 });

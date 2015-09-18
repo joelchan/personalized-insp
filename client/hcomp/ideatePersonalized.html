@@ -113,6 +113,7 @@
                 {{#each inspStuckThemes}}
                     {{> WeddingInspiration}}
                 {{/each}}
+                <img class="loading loading-weddingTheme" src="/Preloader_4.gif">
             </div>
             <div id="stuck-insps-props" class="insp-container">
                 <span class="ideagens-section-header" style="border-bottom:none;">Props</span> 
@@ -120,6 +121,7 @@
                 {{#each inspStuckProps}}
                     {{> WeddingInspiration}}
                 {{/each}}
+                <img class="loading loading-weddingProp" src="/Preloader_4.gif">
             </div>
         </div>
     <!-- {{else}} -->
@@ -130,6 +132,7 @@
                 {{#each inspRollThemes}}
                     {{> WeddingInspiration}}
                 {{/each}}
+                <img class="loading loading-weddingTheme" src="/Preloader_4.gif">
             </div>
             <div id="roll-insps-props" class="insp-container">
                 <span class="ideagens-section-header" style="border-bottom:none;">Props</span> 
@@ -137,6 +140,7 @@
                 {{#each inspRollProps}}
                     {{> WeddingInspiration}}
                 {{/each}}
+                <img class="loading loading-weddingProp" src="/Preloader_4.gif">
             </div>
         </div>
         <!-- {{/if}} -->
@@ -176,4 +180,8 @@
         </div>
       <!-- </div> -->
     </div>
+</template>
+
+<template name="Loading">
+    <img class="loading" src="/Preloader_4.gif">
 </template>
