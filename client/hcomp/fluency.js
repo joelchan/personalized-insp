@@ -67,8 +67,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
   }
 
   var instructions = "Welcome! Let's begin with a short warm-up exercise to get your creative juices flowing. " +
-  "Over the next 1 minute, try to think of as many uses as you can for a brick. " +
-  "We'll start a timer once you hit \"Begin\", and take you to the main task after 1 minute."
+  "Over the next 1 minute, try to think of as many uses as you can for a brick. "
   var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 
   var fluencyTour = new Tour({
@@ -77,14 +76,14 @@ Template.ExpBaselineFluencyPage.rendered = function(){
         "<h3 class='popover-title'></h3>" +
         "<div class='popover-content'></div>" +
         "<div class='popover-navigation'>" +
-            // "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
-            "<button class='btn btn-default' data-role='end'>Begin!</button>" +
+            "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
+            "<button class='btn btn-default' data-role='next'>Next »</button>" +
         "</div>" +
       "</div>",
     steps: [
     {
       element: "#lpheader",
-      title: "Warm up" + spacer + spacer + spacer + spacer,
+      title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
       content: instructions,
       backdrop: true,
       placement: "bottom",
@@ -94,6 +93,23 @@ Template.ExpBaselineFluencyPage.rendered = function(){
       countdown.start(fluencyTaskLength);
     },
   });
+  fluencyTour.addStep({
+        element: "#lpheader",
+        title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
+        content: "<strong>This warm-up task is an important part of the HIT</strong>. It will get you appropriately warmed up for the task. Also, we won't be able to use your data on the main task if you don't do this warmup! " +
+        "We'll start a timer once you hit \"Begin\", and take you to the main task after 1 minute.",
+          // backdrop: true,
+          placement: "bottom",
+          template: "<div class='popover tour'>" +
+            "<div class='arrow'></div>" +
+            "<h3 class='popover-title'></h3>" +
+            "<div class='popover-content'></div>" +
+            "<div class='popover-navigation'>" +
+                "<button class='btn btn-default' data-role='prev'>« Prev</button>" +
+                "<button class='btn btn-default' data-role='end'>Begin!</button>" +
+            "</div>" +
+          "</div>",
+      });
 
   fluencyTour.restart();
   // alert(instructions);
