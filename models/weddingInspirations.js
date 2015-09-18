@@ -28,8 +28,8 @@ WeddingInspManager = (function() {
         var selector = "#" + filterName + "-question";
         Meteor.call("simSet", query, queryType, function(err, res) {
            data = JSON.parse(res.content);
-           var operation = different + "_set";
-           var matchSets = data[operation];
+           // var operation = different + "_set";
+           var matchSets = data[different];
            if (matchSets.length > 0) {
                Session.set(filterName, matchSets);
                var sampledMatches = getRandomElement(matchSets);

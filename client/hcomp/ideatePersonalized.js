@@ -765,8 +765,8 @@ var initTimer = function() {
 
 var addTutorialInsp = function() {
   var template = "<li id=\"insp-tutorialInsp\" class=\"wedding-insp-item\">" +
-  "Example inspiration &nbsp;&nbsp;&nbsp;" +
-  "<span id=\"insp-star-insp-tutorialInsp\" class=\"insp-star-empty glyphicon glyphicon-star-empty\"></span></li>"
+  "<span id=\"insp-star-insp-tutorialInsp\" class=\"insp-star-empty glyphicon glyphicon-star-empty\"></span>" +
+  "Example inspiration</li>";
   $("#roll-insps-themes").append(template);
 }
 

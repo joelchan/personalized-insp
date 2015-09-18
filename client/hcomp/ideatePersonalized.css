@@ -134,7 +134,7 @@
     margin-top: 10px;
     /*background-color: #F2F2F2;*/
     /*box-shadow: 4px 4px 2px #F8F8F8;*/
-    width: 245px;
+    /*width: 322px;*/
 }
 
 .ideate-p-container .insp-container-header {
@@ -165,11 +165,15 @@
 }
 
 .ideate-p-container .wedding-insp-item {
-    font-size: 14px;
+    font-size: 20px;
+    /*color: ;*/
     /*font-family: sans-serif;*/
     /*float:right;*/
     border-radius: 5px;
-    display: block;
+    /*display: block;*/
+    font-style: italic;
+    list-style: none;
+    color: #00710F;
 }
 
 .ideate-p-container .insp-star {
@@ -190,7 +194,7 @@
 }
 
 .ideate-p-container #directions-container {
-    width: 245px;
+    /*width: 245px;*/
 }
 
 .ideate-p-container #directions-content {
