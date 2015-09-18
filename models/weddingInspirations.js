@@ -16,9 +16,59 @@ WeddingInspiration = function(previous_id, content, type) {
 
 SIM_URL = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/similarity/"
 TOPN_URL = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/top15/"
+SIMSET_URL = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/simSet/"
 
 WeddingInspManager = (function() {
   return {
+    getSimSet: function(filterName, query, queryType, N, reason, different, partner) {
+        FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+        FilterManager.create(filterName, Session.get("currentUser"), 
+          "weddingInspirations", "previous_id", "################");
+        logger.trace("Retrieving " + N + " new " + queryType + " for " + filterName + " with query: " + query);
+        var selector = "#" + filterName + "-question";
+        Meteor.call("simSet", query, queryType, function(err, res) {
+           data = JSON.parse(res.content);
+           var operation = different + "_set";
+           var matchSets = data[operation];
+           if (matchSets.length > 0) {
+               Session.set(filterName, matchSets);
+               var sampledMatches = getRandomElement(matchSets);
+               sampledMatches.forEach(function(insp) {
+                   FilterManager.create(filterName, Session.get("currentUser"), 
+                     "weddingInspirations", "previous_id", insp.id);
+               });
+               logger.trace("Seed is " + sampledMatches[0].text + " with similarity " + sampledMatches[0].similarity + " to query");
+               EventLogger.logInspirationRefresh(sampledMatches, query, filterName, reason);
+               $(selector).hide();
+           } else {
+               logger.trace("No results: trying to retrieve from partner...");
+               Meteor.call("simSet", partner, queryType, function(err, res) {
+                      data = JSON.parse(res.content);
+                      var operation = different + "_set";
+                      var matchSets = data[operation];
+                      if (matchSets.length > 0) {
+                          Session.set(filterName, matchSets);
+                          var sampledMatches = getRandomElement(matchSets);
+                          sampledMatches.forEach(function(insp) {
+                              FilterManager.create(filterName, Session.get("currentUser"), 
+                                "weddingInspirations", "previous_id", insp.id);
+                          });
+                          logger.trace("Seed is " + sampledMatches[0].text + " with similarity " + sampledMatches[0].similarity + " to query");
+                          EventLogger.logInspirationRefresh(sampledMatches, query, filterName, reason);
+                          $(selector).hide();
+                      } else {
+                          logger.trace("No matches found! Showing nothing.");
+                          Session.set(filterName, []);
+                          FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
+                          FilterManager.create(filterName, Session.get("currentUser"), 
+                            "weddingInspirations", "previous_id", "################");
+                          EventLogger.logInspirationRefresh([], query, filterName, reason);
+                          $(selector).show();
+                      }
+                });
+           }
+        });
+    },
     retrieveInsp: function(filterName, query, queryType, N, reason, different, partner) {
       FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
       FilterManager.create(filterName, Session.get("currentUser"), 

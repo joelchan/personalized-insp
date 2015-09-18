@@ -471,9 +471,9 @@ Template.IdeaEntry.events({
         // replace eranames
         theme = replaceEraNames(theme);
         prop = replaceEraNames(prop);
-        WeddingInspManager.getInspirations("rollThemes", theme, "weddingTheme", numMatches, 
+        WeddingInspManager.getSimSet("rollThemes", theme, "weddingTheme", numMatches, 
                                               "New idea submission", Session.get("rollDistance"), prop);
-        WeddingInspManager.getInspirations("rollProps", prop, "weddingProp", numMatches, 
+        WeddingInspManager.getSimSet("rollProps", prop, "weddingProp", numMatches, 
                                       "New idea submission", Session.get("rollDistance"), theme);
         // if (anyCorrect(theme)) {
         //   WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
@@ -621,9 +621,9 @@ Template.Inspiration.events({
         logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
         var theme = replaceEraNames(lastIdea.theme);
         var prop = replaceEraNames(lastIdea.prop);
-        WeddingInspManager.getInspirations("stuckThemes", theme, "weddingTheme", numMatches, 
+        WeddingInspManager.getSimSet("stuckThemes", theme, "weddingTheme", numMatches, 
                                       "Switch from onRoll to stuck", Session.get("stuckDistance"), prop);
-        WeddingInspManager.getInspirations("stuckProps", prop, "weddingProp", numMatches, 
+        WeddingInspManager.getSimSet("stuckProps", prop, "weddingProp", numMatches, 
                                         "Switch from onRoll to stuck", Session.get("stuckDistance"), theme);
         // if (anyCorrect(theme)) {
         //   WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
@@ -718,27 +718,29 @@ var initInspirationFilter = function(filterName) {
 
 var updateInspFilter = function(filterName) {
   // var lastInsps = FilterManager.performQuery(filterName, Session.get("currentUser"), "weddingInspirations");
-  var insps = Session.get(filterName);
+  var inspPool = Session.get(filterName);
+  var newSample = getRandomElement(inspPool);
+  logger.trace("Drew new set of inspirations: " + JSON.stringify(newSample));
+  logger.trace("New seed is " + newSample[0].text + " with similarity " + newSample[0].similarity + " to query");
+  // logger.trace("New inspirations have average similarity: " + WeddingInspManager.averageSim(newSample));
   // logger.trace("Inspirations: " + JSON.stringify(insps));
-  var samples = []
-  while (samples.length < numMatches) {
-    var sample = getRandomElement(insps);
-    if (!isInList(sample, samples)) {
-      samples.push(sample);  
-    }
-  }
+  // var samples = []
+  // while (samples.length < numMatches) {
+  //   var sample = getRandomElement(insps);
+  //   if (!isInList(sample, samples)) {
+  //     samples.push(sample);  
+  //   }
+  // }
   FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
-  samples.forEach(function(sample) {
+  newSample.forEach(function(insp) {
       // matches.push(WeddingInspirations.findOne({previous_id: sample}));
       FilterManager.create(filterName, Session.get("currentUser"), 
-        "weddingInspirations", "previous_id", sample.id);
+        "weddingInspirations", "previous_id", insp.id);
   });
-  logger.trace(samples.length + " matches with average similarity: " + WeddingInspManager.averageSim(samples));
-  logger.trace("New matches are: " + JSON.stringify(samples));
   if (filterName.indexOf("Theme") > -1) {
-    EventLogger.logInspirationRefresh(samples, Session.get("lastIdea").theme, filterName, "Click stuck button again");
+    EventLogger.logInspirationRefresh(newSample, Session.get("lastIdea").theme, filterName, "Click stuck button again");
   } else {
-    EventLogger.logInspirationRefresh(samples, Session.get("lastIdea").prop, filterName, "Click stuck button again");  
+    EventLogger.logInspirationRefresh(newSample, Session.get("lastIdea").prop, filterName, "Click stuck button again");  
   }
 }
 
