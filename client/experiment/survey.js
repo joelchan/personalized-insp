@@ -26,11 +26,17 @@ Template.SurveyPage.rendered = function() {
       } 
     });
 
-    $("input[name='inspirationUse']").click(function() {
+    $("input[name='inspirationUse']").change(function() {
       if ($("input[name='inspirationUse']:checked").val() == "true") {
-        $('.inspUseDetails').toggleClass("hidden");
+        if ($('.inspUseDetails').hasClass("hidden")) {
+          $('.inspUseDetails').removeClass("hidden");
+        }
+        $('#inspNotUseWhy').addClass("hidden");
       } else {
-        $('#inspNotUseWhy').toggleClass("hidden");
+        if ($('#inspNotUseWhy').hasClass("hidden")) {
+          $('#inspNotUseWhy').removeClass("hidden");
+        }
+        $('.inspUseDetails').addClass("hidden");
       }
     });
 
@@ -232,9 +238,10 @@ getTreatmentResponse = function() {
     responses.push(new QuestionResponse("Inspirations spark better ideas", answer));
     answer = $("select[id='inspirationDistract'] option:selected").val();
     responses.push(new QuestionResponse("Inspirations distracting", answer));
-    answer = $("#inspirationExplainSurvey").val();
-    // checkResponse(answer)
+    answer = $("#inspirationHelpfulExplain").val();
     responses.push(new QuestionResponse("Briefly explain why inspiration (not) helpful", answer));
+    answer = $("#inspirationDistractExplain").val();
+    responses.push(new QuestionResponse("Briefly explain why inspiration (not) distracting", answer));
   } else {
     answer = $("#inspirationUseSurvey").val();
     responses.push(new QuestionResponse("Briefly explain why didn't use inspiration", answer));

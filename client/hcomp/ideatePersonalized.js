@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:IdeatePersonal');
 // Comment out to use global logging level
-Logger.setLevel('Client:IdeatePersonal', 'trace');
+// Logger.setLevel('Client:IdeatePersonal', 'trace');
 // Logger.setLevel('Client:IdeatePersonal', 'debug');
-// Logger.setLevel('Client:IdeatePersonal', 'info');
+Logger.setLevel('Client:IdeatePersonal', 'info');
 // Logger.setLevel('Client:IdeatePersonal', 'warn');
 
 var numMatches = 3;
@@ -130,6 +130,10 @@ Template.IdeaEntry.onRendered(function(){
   // Instance the tour
   var pInspTour;
   if (Session.equals("useInspirations", true)) {
+    initInspirationFilter("rollThemes");
+    initInspirationFilter("rollProps");
+    initInspirationFilter("stuckThemes");
+    initInspirationFilter("stuckProps");
     pInspTour = new Tour({
       template: "<div class='popover tour'>" +
           "<div class='arrow'></div>" +
@@ -532,10 +536,10 @@ Template.IdeaList.helpers({
 });
 
 Template.Inspiration.onRendered(function () {
-  initInspirationFilter("rollThemes");
-  initInspirationFilter("rollProps");
-  initInspirationFilter("stuckThemes");
-  initInspirationFilter("stuckProps");
+  // initInspirationFilter("rollThemes");
+  // initInspirationFilter("rollProps");
+  // initInspirationFilter("stuckThemes");
+  // initInspirationFilter("stuckProps");
   Session.set("cogState", "onRoll");
   $('#stuck-insps-container').hide();
   $('#roll-insps-container').show();

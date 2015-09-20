@@ -25,6 +25,10 @@ Router.map(function () {
           Meteor.subscribe('graphs'),
           Meteor.subscribe('nodes'),
           Meteor.subscribe('edges'),
+          Meteor.subscribe('ideas'),
+          Meteor.subscribe('weddingInspirations'),
+          Meteor.subscribe('fluencyMeasures'),
+          Meteor.subscribe('SurveyResponses'),
       ];
     }, 
     onBeforeAction: function() {

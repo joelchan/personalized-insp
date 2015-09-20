@@ -322,9 +322,10 @@ ExperimentManager = (function () {
               
               //Determin number of participants expected - number already 
               //  assigned
-              var numPartWanted = exp.conditions[i].partNum; // desired number of participants
               var cond = Conditions.findOne({_id: exp.conditions[i]._id})
-              var numPartAssigned = cond.completedParts.length; // number of participants currently assigned
+              var numPartWanted = exp.conditions[i].partNum; // desired number of participants
+              var numPartAssigned = cond.assignedParts.length; // number of participants currently assigned
+              // var numPartAssigned = cond.completedParts.length; // number of participants currently assigned
               logger.debug(numPartWanted + " participants wanted for " + cond.description + " condition, " + numPartAssigned + " assigned so far");
               
               // Square the number to heavily bias in favor conditions with fewer assigned participants

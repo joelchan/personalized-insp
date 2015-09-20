@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Fluency');
 // Comment out to use global logging level
-Logger.setLevel('Client:Hcomp:Fluency', 'trace');
+// Logger.setLevel('Client:Hcomp:Fluency', 'trace');
 // Logger.setLevel('Client:Hcomp:Fluency', 'debug');
-// Logger.setLevel('Client:Hcomp:Fluency', 'info');
+Logger.setLevel('Client:Hcomp:Fluency', 'info');
 // Logger.setLevel('Client:Hcomp:Fluency', 'warn');
 
 var timer = new Tock({

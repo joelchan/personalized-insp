@@ -381,8 +381,7 @@ Template.CondParticipant.helpers({
   tutorialStart: function() {
     if (this.tutorialStarted) {
       var msg = "User started a tutorial";
-      var time = Events.findOne({userID: this.userID, description: msg}).time;
-      return time.toTimeString().substring(0,9);
+      return parseTime(this.userID, msg);
     } else {
       return "";
     }
@@ -390,8 +389,7 @@ Template.CondParticipant.helpers({
   fluencyStart: function() {
     if (this.fluencyStarted) {
       var msg = "User started fluency measure task";
-      var time = Events.findOne({userID: this.userID, description: msg}).time;
-      return time.toTimeString().substring(0,9);
+      return parseTime(this.userID, msg);
     } else {
       return "";
     }
@@ -400,8 +398,7 @@ Template.CondParticipant.helpers({
     // return this.fluencyFinished;
     if (this.fluencyFinished) {
       var msg = "User finished fluency measure task";
-      var time = Events.findOne({userID: this.userID, description: msg}).time;
-      return time.toTimeString().substring(0,9);
+      return parseTime(this.userID, msg);
     } else {
       return "";
     }
@@ -410,8 +407,7 @@ Template.CondParticipant.helpers({
     // return this.isReady;
     if (this.isReady) {
       var msg = "User finished a tutorial";
-      var time = Events.findOne({userID: this.userID, description: msg}).time;
-      return time.toTimeString().substring(0,9);
+      return parseTime(this.userID, msg);
     } else {
       return "";
     }
@@ -420,8 +416,7 @@ Template.CondParticipant.helpers({
     // return this.hasStarted;
     if (this.hasStarted) {
       var msg = "User began ideation";
-      var time = Events.findOne({userID: this.userID, description: msg}).time;
-      return time.toTimeString().substring(0,9);
+      return parseTime(this.userID, msg);
     } else {
       return "";
     }
@@ -430,8 +425,7 @@ Template.CondParticipant.helpers({
     // return this.surveyStarted;
     if (this.surveyStarted) {
       var msg = "User began survey";
-      var time = Events.findOne({userID: this.userID, description: msg}).time;
-      return time.toTimeString().substring(0,9);
+      return parseTime(this.userID, msg);
     } else {
       return "";
     }
@@ -440,8 +434,7 @@ Template.CondParticipant.helpers({
     // return this.hasFinished;
     if (this.hasFinished) {
       var msg = "User submitted survey";
-      var time = Events.findOne({userID: this.userID, description: msg}).time;
-      return time.toTimeString().substring(0,9);
+      return parseTime(this.userID, msg);
     } else {
       return "";
     }
@@ -450,8 +443,7 @@ Template.CondParticipant.helpers({
     // return this.exitedEarly;
     if (this.exitedEarly) {
       var msg = "User exited study early";
-      var time = Events.findOne({userID: this.userID, description: msg}).time;
-      return time.toTimeString().substring(0,9);
+      return parseTime(this.userID, msg);
     } else {
       return "";
     }
@@ -508,3 +500,8 @@ Template.CrowdExperiment.events({
 /********************************************************************
  * Data Processing tab helpers and events
  * *****************************************************************/
+
+var parseTime = function(userID, msg) {
+  var time = new Date(Events.findOne({userID: userID, description: msg}).time);
+  return time.toTimeString().substring(0,9);
+} 
