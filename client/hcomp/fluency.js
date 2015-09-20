@@ -16,8 +16,15 @@ var countdown = Tock({
     countdown: true,
     interval: 1000,
     callback: function () {
-        // console.log(countdown.lap() / 1000);
         $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
+        if (timer.msToTimecode(countdown.lap()) == "00:00:45") {
+          var answers = DummyIdeas.find(
+                        {userID: Session.get("currentUser")._id,
+                        'prompt._id': Session.get("currentPrompt")._id}).fetch();
+          if (answers.length < 1) {
+            alert("We noticed you haven't entered any ideas yet: please complete this warm up task to proceed with the HIT!");
+          }
+        }
     },
     complete: function () {
         alert("Time's up! We'll take you to the main task now.")
