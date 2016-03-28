@@ -23,6 +23,7 @@ SIMSET_URL2 = "http://wordsim2.iis-dev.seas.harvard.edu/GloVe/simSet/"
 WeddingInspManager = (function() {
   return {
     getSimSet: function(filterName, query, queryType, N, reason, different, partner) {
+        var startTime = new Date().getTime();
         FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
         FilterManager.create(filterName, Session.get("currentUser"), 
           "weddingInspirations", "previous_id", "################");
@@ -55,6 +56,9 @@ WeddingInspManager = (function() {
                EventLogger.logInspirationRefresh(sampledMatches, query, filterName, reason);
                $(loadingSelector).hide()
                $(selector).hide();
+               var endTime = new Date().getTime();
+               var duration = endTime - startTime;
+               console.log("Finished standard sim set retrieval for " + filterName + " in " + duration);
            } else {
                logger.trace("No results: trying to retrieve from partner...");
                Meteor.call("simSet", partner, queryType, different, alt, function(err, res) {
@@ -73,6 +77,9 @@ WeddingInspManager = (function() {
                           EventLogger.logInspirationRefresh(sampledMatches, query, filterName, reason);
                           $(selector).hide();
                           $(loadingSelector).hide()
+                          var endTime = new Date().getTime();
+                          var duration = endTime - startTime;
+                          console.log("Finished alternate sim set retrieval for " + filterName + " in " + duration);
                       } else {
                           logger.trace("No matches found! Showing nothing.");
                           Session.set(filterName, []);
@@ -82,6 +89,9 @@ WeddingInspManager = (function() {
                           EventLogger.logInspirationRefresh([], query, filterName, reason);
                           $(selector).show();
                           $(loadingSelector).hide()
+                          var endTime = new Date().getTime();
+                          var duration = endTime - startTime;
+                          console.log("Finished failed sim set retrieval for " + filterName + " in " + duration);
                       }
                 });
            }

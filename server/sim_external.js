@@ -43,7 +43,8 @@ SimExternal.simSet = function(word, topic, operation, alt) {
     logger.trace("Retrieving similarity matches for " + topic + ": " + word);
     var url;
     if (alt) {
-        url = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/simSet/" + topic;    
+        url = "http://wordsim.iis-dev.seas.harvard.edu/GloVe/simSet/" + topic;
+        // url = "http://127.0.0.1:5000/GloVe/simSet/" + topic;        
     } else {
         url = "http://wordsim2.iis-dev.seas.harvard.edu/GloVe/simSet/" + topic;
     }
