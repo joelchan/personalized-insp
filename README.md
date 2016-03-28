@@ -5,11 +5,11 @@ Explores group/crowd Ideation
 
 # Dependencies
 =============
-Node.js
-Meteor 0.8
-moment
-fontawesome4
-pince
+* Node.js
+* Meteor
+* moment
+* fontawesome4
+* pince
 
 
 
@@ -23,17 +23,11 @@ pince
 
 # Run Directions
 ===================
-To run locally, just enter the root git directory and execute using
-run shell script.  
+To run locally, enter the root git directory and execute using the simple meteor command.
 
 ```
-> cd CrowdIdeation
-> ./run.sh
-```
-Alternatively you may also have success using the simple meteor command
-```
-> cd CrowdIdeation
-> meteor 
+> cd personalized-insp
+> meteor
 ```
 
 # Heroku directions
@@ -51,7 +45,7 @@ a db along with a user for that db.
 > heroku config:set --app <app-name> MONGO_URL=mongodb://<mongo-user:<pswd@<url_to_mongodb>:<mongodb_port>/<remainder_of_url>
 > heroku config:set --app <app_name> ROOT_URL=http://<app_name>.herokuapp.com
 ```
-3. From within the CrowdIdeation project, add the git repo provided by heroku for your app
+3. From within the personalized-insp project, add the git repo provided by heroku for your app
 ```
 > git remote add heroku git@heroku.com:<app_name>.git
 > git push heroku master
