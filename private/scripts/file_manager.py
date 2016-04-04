@@ -3,7 +3,6 @@
 # Author: Steven Dang & Joel Chan
 
 import logging
-import pandas as pd
 import json
 import csv
 from os import mkdir, listdir, path, walk
@@ -100,15 +99,3 @@ def read_data(filename):
 		s = f.read().replace('\r\n', '\n').replace('\r', '\n')
 		data = s.split('\n')
 	return data
-
-
-def data_to_csv(data, file_path, fields=None):
-    """
-    Convert a list of uniform data objects be written to a csv file
-
-    """
-          
-    dataDF = pd.DataFrame(data)
-    dataDF.to_csv(file_path)
-
-
