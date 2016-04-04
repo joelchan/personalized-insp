@@ -30,6 +30,19 @@ To run locally, enter the root git directory and execute using the simple meteor
 > meteor
 ```
 
+If you are successful, you should see the following sequence of messages in your terminal:
+```
+[[[[[ ~/Projects/personalized-insp ]]]]]      
+
+=> Started proxy.                             
+=> Meteor 1.2.1 is available. Update this project with 'meteor update'.
+=> Started MongoDB.                           
+=> Started your app.                          
+
+=> App running at: http://localhost:3000/
+```
+Navigate to the local host port that is serving the meteor app (e.g., localhost:3000).
+
 # Heroku directions
 ===================
 To setup this project within your own heroku account, you'll need
