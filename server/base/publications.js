@@ -74,6 +74,9 @@ Meteor.startup(function(){
 		Meteor.publish("events", function(){
 			return Events.find();
 		});
+		Meteor.publish("userEvents", function(userName){
+			return Events.find({userName: userName})
+		});
 		Meteor.publish("eventTypes", function(){
 			return EventTypes.find();
 		});

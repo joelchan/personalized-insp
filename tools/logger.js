@@ -615,6 +615,16 @@ EventLogger = (function () {
     logFNIRSBaselineStop: function() {
       var msg = "Stop FNIRS baseline";
       this.log(msg);
+    },
+    logStartTyping: function(location) {
+      var msg = "User started typing";
+      var data = {"location": location}
+      this.log(msg, data);
+    },
+    logStopTyping: function(location) {
+      var msg = "User stopped typing";
+      var data = {"location": location}
+      this.log(msg, data);
     }
   };
 }());

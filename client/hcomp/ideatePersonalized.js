@@ -8,6 +8,9 @@ Logger.setLevel('Client:IdeatePersonal', 'info');
 
 var numMatches = 3;
 var stuckTimeOut;
+var timerTheme;
+var timerProp;
+var timerDescription;
 
 var eraNames = { '20s': 'twenties',
                  '30s': 'thirties',
@@ -87,6 +90,10 @@ Template.IdeaEntry.onRendered(function(){
 
   Session.set("misspelledProps", []);
   Session.set("numMisspelledProps", 0);
+
+  Session.set("isTypingTheme", false);
+  Session.set("isTypingProp", false);
+  Session.set("isTypingDescr", false);
 
   var timer = new Tock({
       callback: function () {
@@ -519,6 +526,45 @@ Template.IdeaEntry.events({
     } else {
       alert("Make sure all fields are filled out before submitting!");
     }
+  },
+  'keyup input[id="idea-theme"]': function(e, target) {
+    Meteor.clearTimeout(timerTheme);
+    if (Session.equals("isTypingTheme", false)) {
+      EventLogger.logStartTyping(e.currentTarget.id);
+      Session.set("isTypingTheme", true);  
+    }
+    timerTheme = Meteor.setTimeout(function(){
+        EventLogger.logStopTyping(e.currentTarget.id);
+        Session.set("isTypingTheme", false);
+    }, 5000);
+    // console.log("input keyup at " + target.firstNode.id);
+  },
+  'keyup input[id="idea-prop"]': function(e, target) {
+    Meteor.clearTimeout(timerProp);
+    if (Session.equals("isTypingProp", false)) {
+      EventLogger.logStartTyping(e.currentTarget.id);
+      Session.set("isTypingProp", true);  
+    }
+    timerProp = Meteor.setTimeout(function(){
+        EventLogger.logStopTyping(e.currentTarget.id);
+        Session.set("isTypingProp", false);
+    }, 5000);
+    // console.log("input keyup at " + target.firstNode.id);
+  },
+  'keyup textarea': function(e, target) {
+    Meteor.clearTimeout(timerDescription);
+    if (Session.equals("isTypingDescr", false)) {
+      EventLogger.logStartTyping(e.currentTarget.id);
+      Session.set("isTypingDescr", true);  
+    }
+    EventLogger.logStartTyping(e.currentTarget.id);
+    timerDescription = Meteor.setTimeout(function(){
+        EventLogger.logStopTyping(e.currentTarget.id);
+        Session.set("isTypingDescr", false);
+    }, 5000);
+    // console.log("textarea keyup");
+    // console.log(target);
+    // console.log(e.currentTarget.id);
   },
 });
 
