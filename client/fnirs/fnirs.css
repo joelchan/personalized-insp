@@ -1,0 +1,18 @@
+.fnirs-instructions {
+    text-align: center;
+}
+
+.fnirs-button {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.fixation-cross-container {
+    position: absolute;
+    left: 48%;
+    top:30%;
+}
+
+.fixation-cross {
+    font-size: 72px;
+}

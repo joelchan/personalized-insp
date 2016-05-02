@@ -64,7 +64,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
   // }
   var part = Session.get("currentParticipant");
   var cond = Conditions.findOne({_id: part.conditionID});
-  Session.set("nextPage", cond.misc.routeSequence[1]);
+  Session.set("nextPage", cond.misc.routeSequence[2]);
   logger.trace("Next page is: " + Session.get("nextPage"));
 
   if ($('.timer').length == 0 && Session.get("useFluencyTimer")) {

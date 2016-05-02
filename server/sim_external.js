@@ -59,6 +59,17 @@ SimExternal.simSet = function(word, topic, operation, alt) {
     return response;
 }
 
+SimExternal.lsaRanks = function(ideas) {
+    var url = "http://sim-api.herokuapp.com/LSArank"
+    var response = Meteor.http.post(
+        url,
+        {data: {ideas: ideas
+                }
+        }
+    );
+    return response.data.rankings;
+}
+
 Meteor.methods({
     topN: function(method, word, topic) {
         return SimExternal.topN(method, word, topic);
@@ -68,5 +79,8 @@ Meteor.methods({
     },
     simSet: function(word, topic, operation, alt) {
         return SimExternal.simSet(word, topic, operation, alt);
+    },
+    lsaRanks: function(ideas) {
+        return SimExternal.lsaRanks(ideas);
     }
 });

@@ -604,6 +604,18 @@ EventLogger = (function () {
       var data = {"insp": insp, "cogState": Session.get("cogState")}
       this.log(msg, data);
     },
+    logFNIRSMarker: function() {
+      var msg = "Start FNIRS sync";
+      this.log(msg);
+    },
+    logFNIRSBaselineStart: function() {
+      var msg = "Start FNIRS baseline";
+      this.log(msg);
+    },
+    logFNIRSBaselineStop: function() {
+      var msg = "Stop FNIRS baseline";
+      this.log(msg);
+    }
   };
 }());
 
