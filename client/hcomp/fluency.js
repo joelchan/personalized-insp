@@ -27,7 +27,7 @@ var countdown = Tock({
         }
     },
     complete: function () {
-        alert("Time's up! We'll take you to the main task now.")
+        alert("Your time is up! When you hit OK, we will automatically take you to the next page, which includes the main task.")
         logger.debug("Grabbing fluency data");
         var answers = DummyIdeas.find(
                         {userID: Session.get("currentUser")._id,

@@ -625,6 +625,12 @@ EventLogger = (function () {
       var msg = "User stopped typing";
       var data = {"location": location}
       this.log(msg, data);
+    },
+    logMisspelling: function(misspellings, type) {
+      var msg = "User misspelled a theme/prop";
+      var data = {"misspellings": misspellings,
+                  "type": type}
+      this.log(msg, data);
     }
   };
 }());

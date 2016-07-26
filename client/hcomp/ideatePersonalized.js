@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:IdeatePersonal');
 // Comment out to use global logging level
-// Logger.setLevel('Client:IdeatePersonal', 'trace');
+Logger.setLevel('Client:IdeatePersonal', 'trace');
 // Logger.setLevel('Client:IdeatePersonal', 'debug');
-Logger.setLevel('Client:IdeatePersonal', 'info');
+// Logger.setLevel('Client:IdeatePersonal', 'info');
 // Logger.setLevel('Client:IdeatePersonal', 'warn');
 
 var numMatches = 3;
@@ -116,7 +116,7 @@ Template.IdeaEntry.onRendered(function(){
       },
       complete: function () {
           // console.log('end');
-          alert("Time's up!");
+          alert("Your time is up! When you hit OK, we will automatically take you to the final page, which includes a post-task survey.");
           
           logger.info("Exitting current page");
           
@@ -418,6 +418,7 @@ Template.IdeaEntry.events({
       logger.debug("No misspelled themes!");
       // Session.set("misspelledThemes", []);
     } else {
+      EventLogger.logMisspelling(misSpelled, "themes");
       logger.trace("Possibly misspelled themes: " + JSON.stringify(misSpelled));
     }
   },
@@ -438,6 +439,7 @@ Template.IdeaEntry.events({
     if (misSpelled.length < 1) {
       logger.debug("No misspelled props!");
     } else {
+      EventLogger.logMisspelling(misSpelled, "props");
       logger.trace("Possibly misspelled props: " + JSON.stringify(misSpelled));
     }
   },

@@ -2,7 +2,7 @@
   <div class="exp-base-fluency container">
       <div class="fluency-instructions">
         <h2>Warm-up</h2> 
-        Over the next 1 minute, try to <u><b>think of as many uses as you can for a brick</b></u>. Please do not merely list other things that come to mind when you think about the object (e.g., “house, construction hats, etc."); the goal is to come up with as many uses of an object as possible (e.g., “building material, doorstop, anchor, etc.”). We'll take you to the main task after 1 minute.
+        Over the next 1 minute, try to <u><b>think of as many uses as you can for a brick</b></u>. Please do not merely list other things that come to mind when you think about the object (e.g., “house, construction hats, etc."); the goal is to come up with as many uses of an object as possible (e.g., “building material, doorstop, anchor, etc.”). We'll take you to the main task after 1 minute. Please enter each idea as a separate submission by pressing the "Enter" button or clicking on "Submit idea"
       </div>
       {{> FluencyEntry}}
       {{> FluencyIdeas}}
@@ -29,7 +29,7 @@
 <template name="FluencyEntry">
     <div class="row idea-entry" id="p-insp-idea-entry">
         <div class="col-md-12 col-xs-12 idea-entry-container">
-            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Enter your ideas here..."></textArea>
+            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Enter each idea here..."></textArea>
             <div class="idea-entry-controls">
                 <button class="btn btn-success ideagens-button submit-idea">Submit idea</button>
             </div>
@@ -46,4 +46,7 @@
           {{> MturkIdeabox}}
       {{/each}}
   </div>
+</template>
+
+<template name="TransitionModal">
 </template>
