@@ -76,8 +76,8 @@ Template.IdeaEntry.onRendered(function(){
     Session.set("useInspirations", false);
   }
 
-  var lastIdeas = Ideas.find({promptID: Session.get("currentPrompt")._id, 
-                       userID: Session.get("currentUser")._id, 
+  var lastIdeas = Ideas.find({promptID: Session.get("currentPrompt")._id,
+                       userID: Session.get("currentUser")._id,
                        isWedding: true}, {sort: {time: -1}}).fetch();
   if (lastIdeas.length > 0) {
     Session.set("lastIdea", lastIdeas[0]);
@@ -117,9 +117,9 @@ Template.IdeaEntry.onRendered(function(){
       complete: function () {
           // console.log('end');
           alert("Your time is up! When you hit OK, we will automatically take you to the final page, which includes a post-task survey.");
-          
+
           logger.info("Exitting current page");
-          
+
           Router.go("SurveyPage", {
                 'partID': Session.get("currentParticipant")._id
               });
@@ -166,7 +166,7 @@ Template.IdeaEntry.onRendered(function(){
       {
         element: "#p-insp-prompt",
         title: "Instructions tutorial (Step 2 of 8)" + spacer,
-        content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.", 
+        content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.",
         backdrop: true,
         placement: "bottom",
       },
@@ -184,7 +184,7 @@ Template.IdeaEntry.onRendered(function(){
         element: "#p-insp-insp-container",
         title: "Instructions tutorial (Step 4 of 8)" + spacer,
         content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
-        "This inspiration feed will refresh every time you submit a new idea. ",  
+        "This inspiration feed will refresh every time you submit a new idea. ",
         backdrop: true,
         placement: "bottom",
         // onNext: function() {
@@ -279,7 +279,7 @@ Template.IdeaEntry.onRendered(function(){
       {
         element: "#p-insp-prompt",
         title: "Instructions tutorial (Step 2 of 5)" + spacer,
-        content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.", 
+        content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.",
         backdrop: true,
         placement: "bottom",
       },
@@ -331,7 +331,7 @@ Template.IdeaEntry.onRendered(function(){
         "</div>",
     })
   }
-  
+
 
   // Initialize the tour
   logger.debug("Initializing tutorial");
@@ -433,7 +433,7 @@ Template.IdeaEntry.events({
           misSpelled.push(w)
         }
       });
-    } 
+    }
     Session.set("misspelledProps", misSpelled);
     Session.set("numMisspelledProps", misSpelled.length);
     if (misSpelled.length < 1) {
@@ -451,12 +451,12 @@ Template.IdeaEntry.events({
     var prop = $("#idea-prop").val();
     var description = $("#idea-description").val();
     //Add idea to database
-    var idea = IdeaFactory.createWedding(theme, prop, description, 
+    var idea = IdeaFactory.createWedding(theme, prop, description,
         Session.get("currentUser"),
         Session.get("currentPrompt")
     );
     if (idea) {
-      Session.set("lastIdea", idea); 
+      Session.set("lastIdea", idea);
       var user = Session.get("currentUser");
 
     // Clear the text field
@@ -484,28 +484,28 @@ Template.IdeaEntry.events({
         // replace eranames
         theme = replaceEraNames(theme);
         prop = replaceEraNames(prop);
-        WeddingInspManager.getSimSet("rollThemes", theme, "weddingTheme", numMatches, 
-                                              "New idea submission", Session.get("rollDistance"), prop);
-        WeddingInspManager.getSimSet("rollProps", prop, "weddingProp", numMatches, 
-                                      "New idea submission", Session.get("rollDistance"), theme);
+        // WeddingInspManager.getSimSet("rollThemes", theme, "weddingTheme", numMatches,
+                                              // "New idea submission", Session.get("rollDistance"), prop);
+        // WeddingInspManager.getSimSet("rollProps", prop, "weddingProp", numMatches,
+                                      // "New idea submission", Session.get("rollDistance"), theme);
         // if (anyCorrect(theme)) {
-        //   WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches, 
+        //   WeddingInspManager.retrieveInsp("rollThemes", theme, "weddingTheme", numMatches,
         //                                         "New idea submission", Session.get("rollDistance"));
         // } else {
         //   logger.trace("No valid words in theme; retrieiving prop inspirations based on prop");
-        //   WeddingInspManager.retrieveInsp("rollThemes", prop, "weddingTheme", numMatches, 
+        //   WeddingInspManager.retrieveInsp("rollThemes", prop, "weddingTheme", numMatches,
         //                                         "New idea submission", Session.get("rollDistance"));
         // }
         // if (anyCorrect(prop)) {
-        //   WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches, 
-        //                                 "New idea submission", Session.get("rollDistance"));  
+        //   WeddingInspManager.retrieveInsp("rollProps", prop, "weddingProp", numMatches,
+        //                                 "New idea submission", Session.get("rollDistance"));
         // } else {
         //   logger.trace("No valid words in prop; retrieiving prop inspirations based on theme");
-        //   WeddingInspManager.retrieveInsp("rollProps", theme, "weddingProp", numMatches, 
-        //                                           "New idea submission", Session.get("rollDistance"));  
+        //   WeddingInspManager.retrieveInsp("rollProps", theme, "weddingProp", numMatches,
+        //                                           "New idea submission", Session.get("rollDistance"));
         // }
-        
-        
+
+
       } else {
         EventLogger.logWeddingSubmission(idea);
       }
@@ -515,8 +515,8 @@ Template.IdeaEntry.events({
       if (Session.equals("cogState", "stuck")) {
         // Meteor.clearTimeout(stuckTimeOut);
         Session.set("cogState", "onRoll");
-        $('#stuck-insps-container').hide();
-        $('#roll-insps-container').show();
+        // $('#stuck-insps-container').hide();
+        // $('#roll-insps-container').show();
         EventLogger.logChangeCogState("stuck", "onRoll");
         // $('input[type=checkbox]').val("1");
         // $("#roll-insps-container").css('-webkit-animation-name', 'rollGlow'); /* Chrome, Safari, Opera */
@@ -533,7 +533,7 @@ Template.IdeaEntry.events({
     Meteor.clearTimeout(timerTheme);
     if (Session.equals("isTypingTheme", false)) {
       EventLogger.logStartTyping(e.currentTarget.id);
-      Session.set("isTypingTheme", true);  
+      Session.set("isTypingTheme", true);
     }
     timerTheme = Meteor.setTimeout(function(){
         EventLogger.logStopTyping(e.currentTarget.id);
@@ -545,7 +545,7 @@ Template.IdeaEntry.events({
     Meteor.clearTimeout(timerProp);
     if (Session.equals("isTypingProp", false)) {
       EventLogger.logStartTyping(e.currentTarget.id);
-      Session.set("isTypingProp", true);  
+      Session.set("isTypingProp", true);
     }
     timerProp = Meteor.setTimeout(function(){
         EventLogger.logStopTyping(e.currentTarget.id);
@@ -557,7 +557,7 @@ Template.IdeaEntry.events({
     Meteor.clearTimeout(timerDescription);
     if (Session.equals("isTypingDescr", false)) {
       EventLogger.logStartTyping(e.currentTarget.id);
-      Session.set("isTypingDescr", true);  
+      Session.set("isTypingDescr", true);
     }
     EventLogger.logStartTyping(e.currentTarget.id);
     timerDescription = Meteor.setTimeout(function(){
@@ -572,13 +572,13 @@ Template.IdeaEntry.events({
 
 Template.IdeaList.helpers({
   weddingIdeas: function() {
-    return Ideas.find({promptID: Session.get("currentPrompt")._id, 
-                       userID: Session.get("currentUser")._id, 
+    return Ideas.find({promptID: Session.get("currentPrompt")._id,
+                       userID: Session.get("currentUser")._id,
                        isWedding: true}, {sort: {time: -1}})
   },
   numIdeas: function() {
-    return Ideas.find({promptID: Session.get("currentPrompt")._id, 
-                       userID: Session.get("currentUser")._id, 
+    return Ideas.find({promptID: Session.get("currentPrompt")._id,
+                       userID: Session.get("currentUser")._id,
                        isWedding: true}).count();
   }
 });
@@ -589,8 +589,8 @@ Template.Inspiration.onRendered(function () {
   // initInspirationFilter("stuckThemes");
   // initInspirationFilter("stuckProps");
   Session.set("cogState", "onRoll");
-  $('#stuck-insps-container').hide();
-  $('#roll-insps-container').show();
+  // $('#stuck-insps-container').hide();
+  // $('#roll-insps-container').show();
 
   var msg = "<p>Sorry, we couldn't find suggestions for your last idea! " +
             "Submit another idea to get suggested inspirations. It might help to check your spelling before submitting.</p>"
@@ -634,6 +634,14 @@ Template.Inspiration.onRendered(function () {
 });
 
 Template.Inspiration.helpers({
+  noInspirationsAvailable: function() {
+    var insps = FilterManager.performQuery("stuckThemes", Session.get("currentUser"), "weddingInspirations").fetch();
+    if (insps.length > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  },
   inspRollThemes: function() {
     var newInsps = FilterManager.performQuery("rollThemes", Session.get("currentUser"), "weddingInspirations").fetch();
     return newInsps;
@@ -673,29 +681,29 @@ Template.Inspiration.events({
         logger.trace("Last idea: Theme: " + lastIdea.theme + ", Prop: " + lastIdea.prop);
         var theme = replaceEraNames(lastIdea.theme);
         var prop = replaceEraNames(lastIdea.prop);
-        WeddingInspManager.getSimSet("stuckThemes", theme, "weddingTheme", numMatches, 
+        WeddingInspManager.getSimSet("stuckThemes", theme, "weddingTheme", numMatches,
                                       "Switch from onRoll to stuck", Session.get("stuckDistance"), prop);
-        WeddingInspManager.getSimSet("stuckProps", prop, "weddingProp", numMatches, 
+        WeddingInspManager.getSimSet("stuckProps", prop, "weddingProp", numMatches,
                                         "Switch from onRoll to stuck", Session.get("stuckDistance"), theme);
         // if (anyCorrect(theme)) {
-        //   WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches, 
+        //   WeddingInspManager.retrieveInsp("stuckThemes", theme, "weddingTheme", numMatches,
         //                                 "Switch from onRoll to stuck", Session.get("stuckDistance"));
         // } else {
         //   logger.trace("No valid words in theme; retrieiving prop inspirations based on prop");
-        //   WeddingInspManager.retrieveInsp("stuckThemes", prop, "weddingTheme", numMatches, 
+        //   WeddingInspManager.retrieveInsp("stuckThemes", prop, "weddingTheme", numMatches,
         //                                 "Switch from onRoll to stuck", Session.get("stuckDistance"));
         // }
         // if (anyCorrect(prop)) {
-        //   WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches, 
-        //                                   "Switch from onRoll to stuck", Session.get("stuckDistance"));  
+        //   WeddingInspManager.retrieveInsp("stuckProps", prop, "weddingProp", numMatches,
+        //                                   "Switch from onRoll to stuck", Session.get("stuckDistance"));
         // } else {
         //   logger.trace("No valid words in prop; retrieiving prop inspirations based on theme");
-        //   WeddingInspManager.retrieveInsp("stuckProps", theme, "weddingProp", numMatches, 
+        //   WeddingInspManager.retrieveInsp("stuckProps", theme, "weddingProp", numMatches,
         //                                   "Switch from onRoll to stuck", Session.get("stuckDistance"));
         // }
         Session.set("cogState", "stuck");
-        $('#stuck-insps-container').show();
-        $('#roll-insps-container').hide();
+        // $('#stuck-insps-container').show();
+        // $('#roll-insps-container').hide();
         // var newInsps = {"themes": FilterManager.performQuery("stuckThemes", user, "weddingInspirations").fetch(),
                           // "props": FilterManager.performQuery("stuckProps", user, "weddingInspirations").fetch()}
         // EventLogger.logInspirationRefresh(lastInsps, newInsps, "Switch from onRoll to stuck");
@@ -712,7 +720,7 @@ Template.Inspiration.events({
     } else {
       alert("You must submit at least one idea before using this feature!");
     }
-    
+
   },
   'click #insp-star-insp-tutorialInsp': function() {
     var selector = "#insp-star-insp-tutorialInsp";
@@ -763,7 +771,7 @@ Template.PInspInstructions.helpers({
 
 var initInspirationFilter = function(filterName) {
   if(Filters.find({name: filterName, user: Session.get("currentUser")._id}).count() == 0) {
-    FilterManager.create(filterName, Session.get("currentUser"), 
+    FilterManager.create(filterName, Session.get("currentUser"),
       "weddingInspirations", "previous_id", "NonsenseID");
   }
 }
@@ -780,19 +788,19 @@ var updateInspFilter = function(filterName) {
   // while (samples.length < numMatches) {
   //   var sample = getRandomElement(insps);
   //   if (!isInList(sample, samples)) {
-  //     samples.push(sample);  
+  //     samples.push(sample);
   //   }
   // }
   FilterManager.reset(filterName, Session.get("currentUser"), "weddingInspirations");
   newSample.forEach(function(insp) {
       // matches.push(WeddingInspirations.findOne({previous_id: sample}));
-      FilterManager.create(filterName, Session.get("currentUser"), 
+      FilterManager.create(filterName, Session.get("currentUser"),
         "weddingInspirations", "previous_id", insp.id);
   });
   if (filterName.indexOf("Theme") > -1) {
     EventLogger.logInspirationRefresh(newSample, Session.get("lastIdea").theme, filterName, "Click stuck button again");
   } else {
-    EventLogger.logInspirationRefresh(newSample, Session.get("lastIdea").prop, filterName, "Click stuck button again");  
+    EventLogger.logInspirationRefresh(newSample, Session.get("lastIdea").prop, filterName, "Click stuck button again");
   }
 }
 
@@ -845,7 +853,7 @@ var replaceEraNames = function(phrase) {
     }
   });
   return newWords.join(" ");
-} 
+}
 
 var anyCorrect = function(phrase) {
   /*

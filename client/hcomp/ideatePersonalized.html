@@ -25,7 +25,7 @@
                 <p>Imagine that you are a wedding planner. You have been recruited to plan a themed wedding for Pat and Taylor.</p>
                 <p>A themed wedding has a recurring, unifying element throughout the day, and often includes a unique set of activities that showcase that theme. A theme is a good way to personalize a wedding and represent the personalities of the couple.</p>
                 <p>Please generate as many ideas as you can for a themed wedding. An idea should consist of a <u>theme</u>, described (preferably) with a common noun, a <u>prop</u> for guest activities, described (preferably) with a common noun, and a brief <u>description</u> of guest activities.</p>
-            </div>  
+            </div>
         </div>
     </div>
 </template>
@@ -41,7 +41,7 @@
                 <div class="form-group">
                     <label for="idea-prop">Prop</label>
                     <input type="text" class="form-control" id="idea-prop" placeholder="(Common Noun)">
-                </div> 
+                </div>
             </form>
             {{#if anyMisSpellings}}
             <div class="misSpellings">
@@ -104,21 +104,27 @@
             For your inspiration!
         </div>
         <div class="stuck-button-container">
-            <button class="btn btn-success ideagens-button stuck-button">Give me other inspirations!</button>
+            <button class="btn btn-success ideagens-button stuck-button">Inspire me!</button>
         </div>
     <!-- {{#if isStuck}} -->
         <div id="stuck-insps-container" class="stuck-insps">
             <div id="stuck-insps-themes" class="insp-container">
-                <span class="ideagens-section-header" style="border-bottom:none;">Themes</span> 
-                <span id="stuckThemes-question" class="glyphicon glyphicon-question-sign"></span> 
+                <span class="ideagens-section-header" style="border-bottom:none;">Themes</span>
+                <span id="stuckThemes-question" class="glyphicon glyphicon-question-sign"></span>
+                {{#if noInspirationsAvailable}}
+                  No inspirations yet!
+                {{/if}}
                 {{#each inspStuckThemes}}
                     {{> WeddingInspiration}}
                 {{/each}}
                 <img class="loading loading-weddingTheme" src="/Preloader_4.gif" style="display:none;">
             </div>
             <div id="stuck-insps-props" class="insp-container">
-                <span class="ideagens-section-header" style="border-bottom:none;">Props</span> 
-                <span id="stuckProps-question" class="glyphicon glyphicon-question-sign"></span> 
+                <span class="ideagens-section-header" style="border-bottom:none;">Props</span>
+                <span id="stuckProps-question" class="glyphicon glyphicon-question-sign"></span>
+                {{#if noInspirationsAvailable}}
+                  No inspirations yet!
+                {{/if}}
                 {{#each inspStuckProps}}
                     {{> WeddingInspiration}}
                 {{/each}}
@@ -126,24 +132,24 @@
             </div>
         </div>
     <!-- {{else}} -->
-        <div id="roll-insps-container" class="roll-insps">
+        <!-- <div id="roll-insps-container" class="roll-insps">
             <div id="roll-insps-themes" class="insp-container">
-                <span class="ideagens-section-header" style="border-bottom:none;">Themes</span> 
-                <span id="rollThemes-question" class="glyphicon glyphicon-question-sign"></span> 
+                <span class="ideagens-section-header" style="border-bottom:none;">Themes</span>
+                <span id="rollThemes-question" class="glyphicon glyphicon-question-sign"></span>
                 {{#each inspRollThemes}}
                     {{> WeddingInspiration}}
                 {{/each}}
                 <img class="loading loading-weddingTheme" src="/Preloader_4.gif" style="display:none;">
             </div>
             <div id="roll-insps-props" class="insp-container">
-                <span class="ideagens-section-header" style="border-bottom:none;">Props</span> 
-                <span id="rollProps-question" class="glyphicon glyphicon-question-sign"></span> 
+                <span class="ideagens-section-header" style="border-bottom:none;">Props</span>
+                <span id="rollProps-question" class="glyphicon glyphicon-question-sign"></span>
                 {{#each inspRollProps}}
                     {{> WeddingInspiration}}
                 {{/each}}
                 <img class="loading loading-weddingProp" src="/Preloader_4.gif" style="display:none;">
             </div>
-        </div>
+        </div> -->
         <!-- {{/if}} -->
         <a href="" data-toggle="modal" data-target="#directions-content">Need help?</a>
     </div>
@@ -156,7 +162,7 @@
             <span id="insp-star-{{previous_id}}" class="insp-star-empty glyphicon glyphicon-star-empty"></span>
         <!-- </div> -->
         <!-- <div class="col-md-11 col-xs-11 wedding-insp-star-content"> -->
-            {{content}} 
+            {{content}}
         <!-- </div> -->
         </li>
     <!-- </div> -->
@@ -208,7 +214,7 @@
                 <h3>What if I run out of ideas?</h3>
                 <p>If you feel like you are stuck or running low on ideas, click on the "I'm stuck" button to receive another set of inspirations. You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).</p>
               {{/if}}
-            <h3>What if I don't want to continue with this task?</h3>  
+            <h3>What if I don't want to continue with this task?</h3>
             <p>You may exit the study at any time by clicking on the "Exit Early" button. Your compensation will be pro-rated based on how long you participated.</p>
           </div>
           <div class="modal-footer">

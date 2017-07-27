@@ -36,31 +36,31 @@ var countdown = Tock({
         var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
         var measureID = FluencyMeasures.insert(measure);
         if (measureID) {
-          logger.trace("Fluency measure for " + 
-            Session.get("currentParticipant")._id + 
+          logger.trace("Fluency measure for " +
+            Session.get("currentParticipant")._id +
             ": " + JSON.stringify(measure));
         } else {
           logger.debug("Failed to grab the data")
-        }        
+        }
         var part = Session.get("currentParticipant");
         var cond = Conditions.findOne({_id: part.conditionID});
         // var condName = Conditions.findOne({_id: part.conditionID}).description;
         EventLogger.logFluencyTaskComplete();
-        Router.go(Session.get("nextPage"), {promptID: cond.promptID, partID: part._id});  
+        Router.go(Session.get("nextPage"), {promptID: cond.promptID, partID: part._id});
     }
 });
 
 var fluencyTaskLength = 1*60000;
 
 Template.ExpBaselineFluencyPage.rendered = function(){
-  // EventLogger.logEnterIdeation(); 
+  // EventLogger.logEnterIdeation();
   //Hide logout
   // $(".btn-login").toggleClass("hidden");
-  
+
   // logger.debug("checking to show begin ideation modal");
   // if (!Session.get("currentParticipant").hasStarted) {
   //   logger.debug("showing begin ideation modal");
-  //   $("#exp-begin-modal").modal('show');  
+  //   $("#exp-begin-modal").modal('show');
   // }
   var part = Session.get("currentParticipant");
   var cond = Conditions.findOne({_id: part.conditionID});
@@ -72,7 +72,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
   if ($('.timer').length == 0 && Session.get("useFluencyTimer")) {
     logger.info("using a timer");
     Session.set("hasTimer",true);
-    Blaze.render(Template.TockTimer, $('#nav-right')[0]);  
+    Blaze.render(Template.TockTimer, $('#nav-right')[0]);
   }
 
   var instructions = "Welcome! Let's begin with a short warm-up exercise to get your creative juices flowing. " +
@@ -124,7 +124,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
   // alert(instructions);
   // countdown.start(fluencyTaskLength);
 
-  
+
   // alert(instructions);
   // countdown.start(fluencyTaskLength);
 }
@@ -137,8 +137,8 @@ Template.ExpBaselineFluencyPage.events({
     var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
     var measureID = FluencyMeasures.insert(measure);
     if (measureID) {
-      logger.trace("Fluency measure for " + 
-        Session.get("currentParticipant")._id + 
+      logger.trace("Fluency measure for " +
+        Session.get("currentParticipant")._id +
         ": " + JSON.stringify(measure));
     } else {
       logger.debug("Failed to grab the data")
@@ -153,7 +153,7 @@ Template.FluencyEntry.events({
     logger.debug("submitting a new idea");
     var content = $("#idea-description").val();
     //Add idea to database
-    var idea = IdeaFactory.create(content, 
+    var idea = IdeaFactory.create(content,
         Session.get("currentUser"),
         Session.get("currentPrompt"),
         true

@@ -1,3 +1,5 @@
+var baselineLength = 1*60000;
+
 Template.FNIRS_Baseline.events({
     'click .continue': function() {
         $('.instructions').hide();
@@ -17,6 +19,6 @@ Template.FNIRS_Baseline.events({
 
             // logger.debug("Sending to " + routeName);
             Router.go(routeName, {'promptID': promptID, 'partID': part._id});
-        }, 60000);
+        }, baselineLength);
     }
 });
