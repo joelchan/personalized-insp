@@ -154,8 +154,8 @@ Template.IdeaEntry.onRendered(function(){
       steps: [
       {
         element: "#lpheader",
-        title: "Instructions tutorial (Step 1 of 8)" + spacer,
-        content: "Welcome! Before you begin, please follow this brief 8-step tutorial to familiarize you with the interface.",
+        title: "Instructions tutorial (Step 1 of 7)" + spacer,
+        content: "Welcome! Before you begin, please follow this brief 7-step tutorial to familiarize you with the interface.",
         backdrop: true,
         placement: "bottom",
         // orphan: true,
@@ -165,64 +165,80 @@ Template.IdeaEntry.onRendered(function(){
       },
       {
         element: "#p-insp-prompt",
-        title: "Instructions tutorial (Step 2 of 8)" + spacer,
+        title: "Instructions tutorial (Step 2 of 7)" + spacer,
         content: "In the next " + Session.get("currentPrompt").length + " minutes, please brainstorm as many creative ideas for a themed wedding as you can.",
         backdrop: true,
         placement: "bottom",
       },
       {
         element: "#p-insp-idea-entry",
-        title: "Instructions tutorial (Step 3 of 8)" + spacer,
+        title: "Instructions tutorial (Step 3 of 7)" + spacer,
         content: "Enter your ideas using this template. The system will automatically notify you if you misspell a theme/prop. " +
         "If possible, please correct misspellings before submitting your ideas: this will help the system function smoothly.",
         backdrop: true,
+        onNext: function() {
+          // addTutorialInsp();
+        }
+      },
+      // {
+      //   element: "#p-insp-insp-container",
+      //   title: "Instructions tutorial (Step 4 of 8)" + spacer,
+      //   content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
+      //   "This inspiration feed will refresh every time you submit a new idea. ",
+      //   backdrop: true,
+      //   placement: "bottom",
+      //   // onNext: function() {
+      //   //   removeTutorialInsp();
+      //   // },
+      //   onPrev: function() {
+      //     removeTutorialInsp();
+      //   },
+      // },
+      // {
+      //   element: "#insp-tutorialInsp",
+      //   title: "Instructions tutorial (Step 5 of 8)" + spacer,
+      //   content: "Feel free to use the suggested themes/props as inspiration. It's ok to generate ideas similar to those themes/props. " +
+      //   "If a theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
+      //   placement: "bottom",
+      //   backdrop: true,
+      //   onNext: function() {
+      //     removeTutorialInsp();
+      //   }
+      // },
+      {
+        element: ".stuck-button",
+        title: "Instructions tutorial (Step 4 of 7)" + spacer,
+        content: "If you feel like you are stuck or running low on ideas, click on this button to let us know!",
+        backdrop: true,
+        placement: "bottom",
+        onPrev: function() {
+          removeTutorialInsp();
+        },
         onNext: function() {
           addTutorialInsp();
         }
       },
       {
         element: "#p-insp-insp-container",
-        title: "Instructions tutorial (Step 4 of 8)" + spacer,
-        content: "To boost your creativity, the system will automatically show you a carefully selected set of themes and props that others have generated. " +
-        "This inspiration feed will refresh every time you submit a new idea. ",
+        title: "Instructions tutorial (Step 5 of 7)" + spacer,
+        content: "Our system will show you a carefully selected set of themes and props as inspiration. It's ok to generate ideas similar to those themes/props. If a theme/prop is helpful, please let us know by clicking on the star icon next to it! If the inspirations are not helpful, feel free to ignore them, or sample more inspirations by clicking the button again. " +
+        "Please use this inspiration feature as often as you feel the need to.",
         backdrop: true,
         placement: "bottom",
-        // onNext: function() {
-        //   removeTutorialInsp();
-        // },
-        onPrev: function() {
+        onNext: function() {
           removeTutorialInsp();
         },
       },
       {
-        element: "#insp-tutorialInsp",
-        title: "Instructions tutorial (Step 5 of 8)" + spacer,
-        content: "Feel free to use the suggested themes/props as inspiration. It's ok to generate ideas similar to those themes/props. " +
-        "If a theme/prop helps you generate a new idea, please let us know by clicking on the star icon next to it! ",
-        placement: "bottom",
-        backdrop: true,
-        onNext: function() {
-          removeTutorialInsp();
-        }
-      },
-      {
-        element: ".stuck-button",
-        title: "Instructions tutorial (Step 6 of 8)" + spacer,
-        content: "If you feel like you are stuck or running low on ideas, click on this button to receive another set of inspirations. " +
-        "You may do this as often as you feel the need to (i.e., you will not be evaluated on how often you do this).",
-        backdrop: true,
-        placement: "bottom",
-        onPrev: function() {
-          addTutorialInsp();
-        }
-      },
-      {
         element: "#nav-right",
-        title: "Instructions tutorial (Step 7 of 8)" + spacer,
+        title: "Instructions tutorial (Step 6 of 7)" + spacer,
         content: "The time remaining will be shown in the top right corner of the page. " +
           "When your time is up, you will automatically be taken to a brief survey page, and then your completion code.",
           // backdrop: true,
         placement: "bottom",
+        onPrev: function() {
+          addTutorialInsp();
+        }
       }],
       onEnd: function(tour) {
         $(".idea-entry input").prop("disabled", false);
@@ -237,7 +253,7 @@ Template.IdeaEntry.onRendered(function(){
 
     pInspTour.addStep({
       element: "#nav-right",
-      title: "Instructions tutorial (Step 8 of 8)" + spacer,
+      title: "Instructions tutorial (Step 7 of 7)" + spacer,
       content: "You may exit the study at any time by clicking on the \"Exit Early\" button. " +
         "Your compensation will be pro-rated based on how long you participated. " +
         "When you are ready, click \"Begin!\", and the timer will start. Good luck!",
@@ -827,7 +843,7 @@ var addTutorialInsp = function() {
   var template = "<li id=\"insp-tutorialInsp\" class=\"wedding-insp-item\">" +
   "<span id=\"insp-star-insp-tutorialInsp\" class=\"insp-star-empty glyphicon glyphicon-star-empty\"></span>" +
   "Example inspiration</li>";
-  $("#roll-insps-themes").append(template);
+  $("#stuck-insps-themes").append(template);
 }
 
 var removeTutorialInsp = function() {
