@@ -100,14 +100,15 @@
 
 <template name="Inspiration">
     <div class="insp-master-container" id="p-insp-insp-container">
-        <div class="insp-container-header ideagens-section-header">
+        <!-- <div class="insp-container-header ideagens-section-header">
             For your inspiration!
-        </div>
+        </div> -->
         <div class="stuck-button-container">
-            <button class="btn btn-success ideagens-button stuck-button">Inspire me!</button>
+            <button class="btn btn-warning ideagens-button stuck-button">I'm running low on ideas</button>
         </div>
     <!-- {{#if isStuck}} -->
-        <div id="stuck-insps-container" class="stuck-insps">
+        <a class="insp-container-toggle" data-toggle="collapse" href="#stuck-insps-container" aria-expanded="false" aria-controls="collapseExample">Show/Hide inspirations</a>
+        <div id="stuck-insps-container" class="stuck-insps collapse">
             <div id="stuck-insps-themes" class="insp-container">
                 <span class="ideagens-section-header" style="border-bottom:none;">Themes</span>
                 <span id="stuckThemes-question" class="glyphicon glyphicon-question-sign"></span>

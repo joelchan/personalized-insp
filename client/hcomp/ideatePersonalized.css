@@ -164,6 +164,11 @@
     opacity: 0.5;
 }
 
+.ideate-p-container .insp-container-toggle {
+    display: block;
+    margin-top: 10px;
+}
+
 .ideate-p-container .wedding-insp-item {
     font-size: 20px;
     /*color: ;*/
@@ -219,7 +224,7 @@
   from { background-color: #D2FFB4;
          -moz-box-shadow:     0 0 150px #D2FFB4;
          -webkit-box-shadow:  0 0 150px #D2FFB4;
-          box-shadow:         0 0 150px #D2FFB4;  
+          box-shadow:         0 0 150px #D2FFB4;
     }
     to {  background-color: #E2E2E2;}
 }

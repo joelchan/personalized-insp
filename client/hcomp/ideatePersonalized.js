@@ -208,7 +208,7 @@ Template.IdeaEntry.onRendered(function(){
       {
         element: ".stuck-button",
         title: "Instructions tutorial (Step 4 of 7)" + spacer,
-        content: "If you feel like you are stuck or running low on ideas, click on this button to let us know!",
+        content: "If you feel like you are running low on ideas, please click on this button to let us know! It's important to us that you click on this button as often as you run low on ideas.",
         backdrop: true,
         placement: "bottom",
         onPrev: function() {
@@ -216,18 +216,22 @@ Template.IdeaEntry.onRendered(function(){
         },
         onNext: function() {
           addTutorialInsp();
+          $('.insp-container-toggle').click();
         }
       },
       {
         element: "#p-insp-insp-container",
         title: "Instructions tutorial (Step 5 of 7)" + spacer,
-        content: "Our system will show you a carefully selected set of themes and props as inspiration. It's ok to generate ideas similar to those themes/props. If a theme/prop is helpful, please let us know by clicking on the star icon next to it! If the inspirations are not helpful, feel free to ignore them, or sample more inspirations by clicking the button again. " +
-        "Please use this inspiration feature as often as you feel the need to.",
+        content: "Our system will then populate this space with a carefully selected set of themes and props as inspiration, which you can access by clicking on the 'show inspirations' link. This is an entirely OPTIONAL feature. If a theme/prop is helpful, please let us know by clicking on the star icon next to it! It's ok to generate ideas similar to those themes/props. If the inspirations are not helpful, feel free to ignore them, or sample more inspirations by clicking the button again. ",
         backdrop: true,
         placement: "bottom",
         onNext: function() {
           removeTutorialInsp();
+          $('.insp-container-toggle').click();
         },
+        onPrev: function() {
+          $('.insp-container-toggle').click();
+        }
       },
       {
         element: "#nav-right",
@@ -238,6 +242,7 @@ Template.IdeaEntry.onRendered(function(){
         placement: "bottom",
         onPrev: function() {
           addTutorialInsp();
+          $('.insp-container-toggle').click();
         }
       }],
       onEnd: function(tour) {
