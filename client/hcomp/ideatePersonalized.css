@@ -88,11 +88,21 @@
     /*padding-bottom: 5px;*/
 }
 
-.ideate-p-container .submit-idea {
+.submit-idea {
     /*font-size: 16px;*/
     /*font-family: sans-serif;*/
     float:right;
     /*border-radius: 5px;*/
+}
+
+.stuck-button {
+  float: left;
+}
+
+.stuck-button:active {
+  background-color: #f5c88a;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
 }
 
 .ideate-p-container .misSpellings {

@@ -1,9 +1,9 @@
 // Configure logger for Tools
 var logger = new Logger('Client:Hcomp:Fluency');
 // Comment out to use global logging level
-// Logger.setLevel('Client:Hcomp:Fluency', 'trace');
+Logger.setLevel('Client:Hcomp:Fluency', 'trace');
 // Logger.setLevel('Client:Hcomp:Fluency', 'debug');
-Logger.setLevel('Client:Hcomp:Fluency', 'info');
+// Logger.setLevel('Client:Hcomp:Fluency', 'info');
 // Logger.setLevel('Client:Hcomp:Fluency', 'warn');
 
 var timer = new Tock({
@@ -53,6 +53,8 @@ var countdown = Tock({
 var fluencyTaskLength = 1*60000;
 
 Template.ExpBaselineFluencyPage.rendered = function(){
+
+  Session.set("cogState", "onRoll");
   // EventLogger.logEnterIdeation();
   //Hide logout
   // $(".btn-login").toggleClass("hidden");
@@ -90,22 +92,39 @@ Template.ExpBaselineFluencyPage.rendered = function(){
         "</div>" +
       "</div>",
     steps: [
-    {
-      element: "#lpheader",
-      title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
-      content: instructions,
-      backdrop: true,
-      placement: "bottom",
-    }],
+      {
+        element: "#lpheader",
+        title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
+        content: instructions,
+        backdrop: true,
+        placement: "bottom",
+      },
+      {
+        element: ".stuck-button",
+        title: "Tell us if you run low on ideas" + spacer,
+        content: "If you feel like you are running low on ideas, please click on this button to let us know! It's important to us that you click on this button as often as you run low on ideas.",
+        backdrop: true,
+        placement: "bottom",
+        onPrev: function() {
+          // removeTutorialInsp();
+        },
+        onNext: function() {
+          // addTutorialInsp();
+          // $('.insp-container-toggle').click();
+        }
+      },
+    ],
     onEnd: function(tour) {
       EventLogger.logFluencyTaskBegin();
       countdown.start(fluencyTaskLength);
+      $('.submit-idea').prop("disabled", false);
+      $('.stuck-button').prop("disabled", false);
     },
   });
   fluencyTour.addStep({
         element: "#lpheader",
         title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
-        content: "<strong>This warm-up task is an important part of the HIT</strong>. It will get you appropriately warmed up for the task. Also, we won't be able to use your data on the main task if you don't do this warmup! " +
+        content: "<strong>This warm-up task is an important part of the experiment</strong>. It will get you appropriately warmed up for the main task. Also, we won't be able to use your data on the main task if you don't do this warmup! " +
         "We'll start a timer once you hit \"Begin\", and take you to the main task after 1 minute.",
           // backdrop: true,
           placement: "bottom",
@@ -121,6 +140,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
       });
 
   fluencyTour.restart();
+  
   // alert(instructions);
   // countdown.start(fluencyTaskLength);
 
@@ -151,6 +171,11 @@ Template.FluencyEntry.events({
   'click .submit-idea': function (e, target) {
     //console.log("event submitted");
     logger.debug("submitting a new idea");
+    if (Session.equals("cogState", "stuck")) {
+      logger.debug("Marking cogState transition from stuck to onRoll");
+      EventLogger.logChangeCogState("stuck", "onRoll");
+      Session.set("cogState", "onRoll");
+    }
     var content = $("#idea-description").val();
     //Add idea to database
     var idea = IdeaFactory.create(content,
@@ -171,7 +196,19 @@ Template.FluencyEntry.events({
       var btn = $('.submit-idea');
       btn.click();
     }
-  }
+  },
+  'click .stuck-button': function(e, target) {
+    logger.debug("Clicked stuck button");
+    var user = Session.get("currentUser");
+    if (Session.equals("cogState", "onRoll")) {
+      EventLogger.logChangeCogState("onRoll", "stuck");
+      Session.set("cogState", "stuck");
+      logger.debug("Marking cogState transition from onRoll to stuck");
+    } else {
+      EventLogger.logChangeCogState("stuck", "stuck");
+      logger.debug("Marking cogState transition from stuck to stuck");
+    }
+  },
 });
 
 Template.FluencyIdeas.helpers({
