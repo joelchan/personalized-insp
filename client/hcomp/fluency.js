@@ -6,13 +6,51 @@ Logger.setLevel('Client:Hcomp:Fluency', 'trace');
 // Logger.setLevel('Client:Hcomp:Fluency', 'info');
 // Logger.setLevel('Client:Hcomp:Fluency', 'warn');
 
-var fluencyTaskLength = 5*60000;
+var fluencyTaskLength = .5*60000;
 
 var timer = new Tock({
     callback: function () {
         $('#clockface').text(timer.msToTime(timer.lap()));
     }
 });
+
+var countdown_2 = Tock({
+    countdown: true,
+    interval: 1000,
+    callback: function () {
+        $('#countdown_clock').text(timer.msToTimecode(countdown.lap()));
+        if (timer.msToTimecode(countdown.lap()) == "00:00:45") {
+          var answers = DummyIdeas.find(
+                        {userID: Session.get("currentUser")._id,
+                        'prompt._id': Session.get("currentPrompt")._id}).fetch();
+          if (answers.length < 1) {
+            alert("We noticed you haven't entered any ideas yet: please complete this warm up task to proceed with the HIT!");
+          }
+        }
+    },
+    complete: function () {
+        alert("Your time is up! When you hit OK, we will automatically take you to the next page, which includes the next task.")
+        logger.debug("Grabbing fluency data");
+        var answers = DummyIdeas.find(
+                        {userID: Session.get("currentUser")._id,
+                        'prompt._id': Session.get("currentPrompt")._id}).fetch();
+        logger.trace("Answers: " + JSON.stringify(answers));
+        var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+        var measureID = FluencyMeasures.insert(measure);
+        if (measureID) {
+          logger.trace("Fluency measure for " +
+            Session.get("currentParticipant")._id +
+            ": " + JSON.stringify(measure));
+        } else {
+          logger.debug("Failed to grab the data")
+        }
+        var part = Session.get("currentParticipant");
+        var cond = Conditions.findOne({_id: part.conditionID});
+        // var condName = Conditions.findOne({_id: part.conditionID}).description;
+        EventLogger.logFluencyTaskComplete();
+        Router.go(Session.get("nextPage"), {promptID: cond.promptID, partID: part._id});
+    }
+  });
 
 var countdown = Tock({
     countdown: true,
@@ -29,8 +67,8 @@ var countdown = Tock({
         }
     },
     complete: function () {
-        if (Session.equals("fluencyPromptSeq", 2)) {
-          alert("Your time is up! When you hit OK, we will automatically take you to the next page, which includes the main task.")
+        var ready = confirm("Time's up! Now for round 2: take the next 5 minutes to brainstorm alternative ways to use a newspaper.");
+        if (ready == true) {
           logger.debug("Grabbing fluency data");
           var answers = DummyIdeas.find(
                           {userID: Session.get("currentUser")._id,
@@ -45,33 +83,10 @@ var countdown = Tock({
           } else {
             logger.debug("Failed to grab the data")
           }
-          var part = Session.get("currentParticipant");
-          var cond = Conditions.findOne({_id: part.conditionID});
-          // var condName = Conditions.findOne({_id: part.conditionID}).description;
-          EventLogger.logFluencyTaskComplete();
-          Router.go(Session.get("nextPage"), {promptID: cond.promptID, partID: part._id});
-        } else {
-          var ready = confirm("Time's up! Now for round 2: take the next 5 minutes to brainstorm alternative ways to use a newspaper.");
-          if (ready == true) {
-            logger.debug("Grabbing fluency data");
-            var answers = DummyIdeas.find(
-                            {userID: Session.get("currentUser")._id,
-                            'prompt._id': Session.get("currentPrompt")._id}).fetch();
-            logger.trace("Answers: " + JSON.stringify(answers));
-            var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
-            var measureID = FluencyMeasures.insert(measure);
-            if (measureID) {
-              logger.trace("Fluency measure for " +
-                Session.get("currentParticipant")._id +
-                ": " + JSON.stringify(measure));
-            } else {
-              logger.debug("Failed to grab the data")
-            }
-            // Go to the next alt uses prompt
-            Session.set("currentFluencyObject", "NEWSPAPER");
-            Session.set("fluencyPromptSeq", 2);
-            countdown.start(fluencyTaskLength);
-          }
+          // Go to the next alt uses prompt
+          Session.set("currentFluencyObject", "NEWSPAPER");
+          Session.set("fluencyPromptSeq", 2);
+          countdown_2.start(fluencyTaskLength);
         }
     }
 });
