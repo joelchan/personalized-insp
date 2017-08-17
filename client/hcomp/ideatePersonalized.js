@@ -250,6 +250,7 @@ Template.IdeaEntry.onRendered(function(){
         $(".idea-entry input").prop("disabled", false);
         $(".idea-entry textArea").prop("disabled", false);
         $(".submit-idea").prop("disabled", false);
+        $(".stuck-button").prop("disabled", false);
         var promptLength = Session.get("currentPrompt").length*60000;
         countdown.start(promptLength);
         EventLogger.logTutorialComplete();

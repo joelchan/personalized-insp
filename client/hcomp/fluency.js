@@ -6,7 +6,7 @@ Logger.setLevel('Client:Hcomp:Fluency', 'trace');
 // Logger.setLevel('Client:Hcomp:Fluency', 'info');
 // Logger.setLevel('Client:Hcomp:Fluency', 'warn');
 
-var fluencyTaskLength = .5*60000;
+var fluencyTaskLength = 5*60000;
 
 var timer = new Tock({
     callback: function () {
@@ -71,7 +71,7 @@ var countdown = Tock({
             Session.set("currentFluencyObject", "newspaper");
             Session.set("fluencyPromptSeq", 2);
             countdown.start(fluencyTaskLength);
-          }          
+          }
         }
     }
 });
