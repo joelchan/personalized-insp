@@ -57,7 +57,7 @@
                 </div>
             </div>
             {{/if}}
-            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="Describe how the wedding will incorporate the theme and prop(s)..."></textArea>
+            <textArea id="idea-description" class="idea-input form-control" rows="2" placeholder="In at most 1 sentence, briefly describe how the wedding will incorporate the theme and prop(s)..."></textArea>
             <div class="idea-entry-controls">
                 <!-- <div class="stuck-button-container">
                     <button class="btn btn-primary ideagens-button stuck-button">I feel stuck</button>
@@ -74,6 +74,7 @@
                         <button class="btn btn-default ideagens-button stuck-button">Stuck</button>
                     </div>
                 {{/if}} -->
+                <button class="btn btn-warning ideagens-button stuck-button">I'm running low on ideas</button>
                 <button class="btn btn-success ideagens-button submit-idea">Submit wedding idea</button>
             </div>
         </div>
@@ -103,9 +104,9 @@
         <!-- <div class="insp-container-header ideagens-section-header">
             For your inspiration!
         </div> -->
-        <div class="stuck-button-container">
+        <!-- <div class="stuck-button-container">
             <button class="btn btn-warning ideagens-button stuck-button">I'm running low on ideas</button>
-        </div>
+        </div> -->
     <!-- {{#if isStuck}} -->
         <a class="insp-container-toggle" data-toggle="collapse" href="#stuck-insps-container" aria-expanded="false" aria-controls="collapseExample">Show/Hide inspirations</a>
         <div id="stuck-insps-container" class="stuck-insps collapse">
@@ -152,7 +153,8 @@
             </div>
         </div> -->
         <!-- {{/if}} -->
-        <a href="" data-toggle="modal" data-target="#directions-content">Need help?</a>
+        <br/>
+        <a href="" data-toggle="modal" data-target="#directions-content">Review task instructions</a>
     </div>
 </template>
 
