@@ -119,7 +119,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
   }
 
   var instructions = "Welcome! Let's begin with an alternative uses task. " +
-  "We'd like you to brainstorm alternative ways you can use common objects. We'll ask you do this for 5 mins each for 2 objects."
+  "We'd like you to brainstorm alternative ways you can use common objects. Please do not merely list other things that come to mind when you think about the object the goal is to come up with as many uses of an object as possible. For example, if the object is a \"cup\", do NOT simply list words like \"water\", \"handle\", and \"coffee\", but DO list uses like \"musical instrument\", \"hold water\", \"pencil holder\". You'll be doing this for 5 mins each for 2 objects. Our system will keep time and move you through the objects and take you to the next page automatically."
   var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 
   var fluencyTour = new Tour({
@@ -135,7 +135,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
     steps: [
       {
         element: "#lpheader",
-        title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
+        title: "Welcome!" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
         content: instructions,
         backdrop: true,
         placement: "bottom",
@@ -164,8 +164,8 @@ Template.ExpBaselineFluencyPage.rendered = function(){
   });
   fluencyTour.addStep({
         element: "#lpheader",
-        title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
-        content: "That's it! We'll start a timer once you hit \"Begin\". Good luck!",
+        title: "Get ready!" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
+        content: "That's it! Your first object to brainstorm uses for is a BRICK. We'll start a timer once you hit \"Begin\". Good luck!",
           // backdrop: true,
           placement: "bottom",
           template: "<div class='popover tour'>" +
