@@ -6,6 +6,8 @@ Logger.setLevel('Client:Hcomp:Fluency', 'trace');
 // Logger.setLevel('Client:Hcomp:Fluency', 'info');
 // Logger.setLevel('Client:Hcomp:Fluency', 'warn');
 
+var fluencyTaskLength = .5*60000;
+
 var timer = new Tock({
     callback: function () {
         $('#clockface').text(timer.msToTime(timer.lap()));
@@ -27,33 +29,57 @@ var countdown = Tock({
         }
     },
     complete: function () {
-        alert("Your time is up! When you hit OK, we will automatically take you to the next page, which includes the main task.")
-        logger.debug("Grabbing fluency data");
-        var answers = DummyIdeas.find(
-                        {userID: Session.get("currentUser")._id,
-                        'prompt._id': Session.get("currentPrompt")._id}).fetch();
-        logger.trace("Answers: " + JSON.stringify(answers));
-        var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
-        var measureID = FluencyMeasures.insert(measure);
-        if (measureID) {
-          logger.trace("Fluency measure for " +
-            Session.get("currentParticipant")._id +
-            ": " + JSON.stringify(measure));
+        if (Session.equals("fluencyPromptSeq", 2)) {
+          alert("Your time is up! When you hit OK, we will automatically take you to the next page, which includes the main task.")
+          logger.debug("Grabbing fluency data");
+          var answers = DummyIdeas.find(
+                          {userID: Session.get("currentUser")._id,
+                          'prompt._id': Session.get("currentPrompt")._id}).fetch();
+          logger.trace("Answers: " + JSON.stringify(answers));
+          var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+          var measureID = FluencyMeasures.insert(measure);
+          if (measureID) {
+            logger.trace("Fluency measure for " +
+              Session.get("currentParticipant")._id +
+              ": " + JSON.stringify(measure));
+          } else {
+            logger.debug("Failed to grab the data")
+          }
+          var part = Session.get("currentParticipant");
+          var cond = Conditions.findOne({_id: part.conditionID});
+          // var condName = Conditions.findOne({_id: part.conditionID}).description;
+          EventLogger.logFluencyTaskComplete();
+          Router.go(Session.get("nextPage"), {promptID: cond.promptID, partID: part._id});
         } else {
-          logger.debug("Failed to grab the data")
+          var ready = confirm("Time's up! Now for round 2: take the next 5 minutes to brainstorm alternative ways to use a newspaper.");
+          if (ready == true) {
+            logger.debug("Grabbing fluency data");
+            var answers = DummyIdeas.find(
+                            {userID: Session.get("currentUser")._id,
+                            'prompt._id': Session.get("currentPrompt")._id}).fetch();
+            logger.trace("Answers: " + JSON.stringify(answers));
+            var measure = new FluencyMeasure(answers, Session.get("currentParticipant"));
+            var measureID = FluencyMeasures.insert(measure);
+            if (measureID) {
+              logger.trace("Fluency measure for " +
+                Session.get("currentParticipant")._id +
+                ": " + JSON.stringify(measure));
+            } else {
+              logger.debug("Failed to grab the data")
+            }
+            // Go to the next alt uses prompt
+            Session.set("currentFluencyObject", "newspaper");
+            Session.set("fluencyPromptSeq", 2);
+            countdown.start(fluencyTaskLength);
+          }          
         }
-        var part = Session.get("currentParticipant");
-        var cond = Conditions.findOne({_id: part.conditionID});
-        // var condName = Conditions.findOne({_id: part.conditionID}).description;
-        EventLogger.logFluencyTaskComplete();
-        Router.go(Session.get("nextPage"), {promptID: cond.promptID, partID: part._id});
     }
 });
 
-var fluencyTaskLength = 1*60000;
-
 Template.ExpBaselineFluencyPage.rendered = function(){
 
+  Session.set("currentFluencyObject", "brick");
+  Session.set("fluencyPromptSeq", 1);
   Session.set("cogState", "onRoll");
   // EventLogger.logEnterIdeation();
   //Hide logout
@@ -77,8 +103,8 @@ Template.ExpBaselineFluencyPage.rendered = function(){
     Blaze.render(Template.TockTimer, $('#nav-right')[0]);
   }
 
-  var instructions = "Welcome! Let's begin with a short warm-up exercise to get your creative juices flowing. " +
-  "Over the next 1 minute, try to think of as many uses as you can for a brick. "
+  var instructions = "Welcome! Let's begin with a warm-up exercise to get your creative juices flowing. " +
+  "We'd like you to brainstorm alternative ways you can use common objects. We'll ask you do this for 5 mins each for 2 objects."
   var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 
   var fluencyTour = new Tour({
@@ -125,7 +151,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
         element: "#lpheader",
         title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
         content: "<strong>This warm-up task is an important part of the experiment</strong>. It will get you appropriately warmed up for the main task. Also, we won't be able to use your data on the main task if you don't do this warmup! " +
-        "We'll start a timer once you hit \"Begin\", and take you to the main task after 1 minute.",
+        "We'll start a timer once you hit \"Begin\"!",
           // backdrop: true,
           placement: "bottom",
           template: "<div class='popover tour'>" +
@@ -140,7 +166,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
       });
 
   fluencyTour.restart();
-  
+
   // alert(instructions);
   // countdown.start(fluencyTaskLength);
 
@@ -165,6 +191,12 @@ Template.ExpBaselineFluencyPage.events({
     }
   },
 
+})
+
+Template.ExpBaselineFluencyPage.helpers({
+  fluencyObject: function() {
+    return Session.get("currentFluencyObject");
+  },
 })
 
 Template.FluencyEntry.events({
