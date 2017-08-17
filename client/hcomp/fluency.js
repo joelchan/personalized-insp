@@ -103,7 +103,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
     Blaze.render(Template.TockTimer, $('#nav-right')[0]);
   }
 
-  var instructions = "Welcome! Let's begin with a warm-up exercise to get your creative juices flowing. " +
+  var instructions = "Welcome! Let's begin with an alternative uses task. " +
   "We'd like you to brainstorm alternative ways you can use common objects. We'll ask you do this for 5 mins each for 2 objects."
   var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 
@@ -150,8 +150,7 @@ Template.ExpBaselineFluencyPage.rendered = function(){
   fluencyTour.addStep({
         element: "#lpheader",
         title: "Warm up" + spacer + spacer + spacer + spacer + "&nbsp;&nbsp;&nbsp;&nbsp;",
-        content: "<strong>This warm-up task is an important part of the experiment</strong>. It will get you appropriately warmed up for the main task. Also, we won't be able to use your data on the main task if you don't do this warmup! " +
-        "We'll start a timer once you hit \"Begin\"!",
+        content: "That's it! We'll start a timer once you hit \"Begin\". Good luck!",
           // backdrop: true,
           placement: "bottom",
           template: "<div class='popover tour'>" +
