@@ -68,7 +68,7 @@ var countdown = Tock({
               logger.debug("Failed to grab the data")
             }
             // Go to the next alt uses prompt
-            Session.set("currentFluencyObject", "newspaper");
+            Session.set("currentFluencyObject", "NEWSPAPER");
             Session.set("fluencyPromptSeq", 2);
             countdown.start(fluencyTaskLength);
           }
@@ -78,7 +78,7 @@ var countdown = Tock({
 
 Template.ExpBaselineFluencyPage.rendered = function(){
 
-  Session.set("currentFluencyObject", "brick");
+  Session.set("currentFluencyObject", "BRICK");
   Session.set("fluencyPromptSeq", 1);
   Session.set("cogState", "onRoll");
   // EventLogger.logEnterIdeation();
